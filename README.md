@@ -6,8 +6,8 @@
 - Add penalty if design results in a sequence that already exists? 
 
 
-<blockquote>
-  <strong>@Abbie:</strong>
+<blockquote style="color: black;">
+  <strong style="color: blue;">@Abbie:</strong><br>
   
   Please adjust ./design/AIzyme_Run_Abbie_1.ipynb so that the paths point to the correct files, this should be:
 
