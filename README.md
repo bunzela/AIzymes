@@ -10,7 +10,7 @@ This will be the AIzymes Github. Lets use the readme to collect notes.
 > Feel free to change the Manual, but always track changes!
 
 > [!TIP]
-> See [How_to_push_and_pull.txt](https://github.com/bunzela/AIzymes/blob/main/How_to_push_and_pull.txt) for a quick manual how to push and pull changes to GitHub
+> See [How_to_push_and_pull.txt](https://github.com/bunzela/AIzymes/blob/main/How_to_push_and_pull.txt) for a quick manual how to push and pull changes to GitHub.
 
 # Requirments
 AIzymes requires ESMfold through HuggingFace (https://huggingface.co/facebook/esmfold_v1)
