@@ -13,6 +13,12 @@
 - BACKGROUND_JOB starting to be implemented but not yet completed
 - Add penalty if design results in a sequence that already exists? 
 
+
+<blockquote>
+  <strong>Tip:</strong> Use HTML for more complex formatting in Markdown files.
+</blockquote>
+
+
 # AIzymes
 This will be the AIzymes Github. Lets use the readme to collect notes.
 
