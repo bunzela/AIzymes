@@ -1,21 +1,19 @@
 # To Do
 
-> **@Abbie:**
->
-> Please adjust ./design/AIzyme_Run_Abbie_1.ipynb so that the paths point to the correct files, this should be:
->
-> For AIzyme_Functions: ./src/AIzyme_Functions_009.ipynb
->
-> for the parent folder: ./design/Parent_1ohp
->
-> 
+
 - ProteinMPNN starting to be implemented but not yet completed
 - BACKGROUND_JOB starting to be implemented but not yet completed
 - Add penalty if design results in a sequence that already exists? 
 
 
 <blockquote>
-  <strong>Tip:</strong> Use HTML for more complex formatting in Markdown files.
+  <strong>@Abbie:</strong>
+  
+  Please adjust ./design/AIzyme_Run_Abbie_1.ipynb so that the paths point to the correct files, this should be:
+
+  For AIzyme_Functions: ./src/AIzyme_Functions_009.ipynb
+ 
+  for the parent folder: ./design/Parent_1ohp
 </blockquote>
 
 
