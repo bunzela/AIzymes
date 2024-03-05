@@ -1,0 +1,33 @@
+HETATM    1  C1    F     7      -0.748   2.154  -0.000  0.00  0.00          C  
+HETATM    2  N1    F     7       0.051  -2.413  -0.000  0.00  0.00          N  
+HETATM    3  C2    F     7       0.657   2.266   0.000  0.00  0.00          C  
+HETATM    4 N2     F     7      -1.549   3.361  -0.000  0.00  0.00          N  
+HETATM    5  C3    F     7       1.459   1.142   0.000  0.00  0.00          C  
+HETATM    6  O3    F     7      -0.973   4.454  -0.000  0.00  0.00          O
+HETATM    7  C4    F     7       0.836  -0.127   0.000  0.00  0.00          C  
+HETATM    8  O4    F     7      -2.779   3.256  -0.000  0.00  0.00          O
+HETATM    9  C5    F     7      -0.587  -0.210  -0.000  0.00  0.00          C  
+HETATM   10  O5    F     7       1.440  -1.276   0.000  0.00  0.00          O  
+HETATM   11  C6    F     7      -1.391   0.916  -0.000  0.00  0.00          C  
+HETATM   12  C9    F     7      -0.913  -1.622  -0.000  0.00  0.00          C  
+HETATM   13  H1    F     7       2.540   1.213   0.000  0.00  0.00          H  
+HETATM   14  H2    F     7       1.103   3.251   0.000  0.00  0.00          H  
+HETATM   15  H3    F     7      -2.469   0.820  -0.000  0.00  0.00          H  
+HETATM   16  H4    F     7      -2.109  -2.120  -0.000  0.00  0.00          H  
+CONECT    1    3    4   11
+CONECT    2   10   12
+CONECT    3    1    5   14
+CONECT    4    1    6    8
+CONECT    5    3    7   13
+CONECT    6    4
+CONECT    7    5    9   10
+CONECT    8    4
+CONECT    9    7   11   12
+CONECT   10    2    7
+CONECT   11    1    9   15
+CONECT   12    2    9   16
+CONECT   13    5
+CONECT   14    3
+CONECT   15   11
+CONECT   16   12
+END
