@@ -1,5 +1,6 @@
 # To Do
-> [!IMPORTANT]
+
+> **Note:** This is a custom note highlight.
 > @Abbie:
 >
 > Please adjust ./design/AIzyme_Run_Abbie_1.ipynb so that the paths point to the correct files, this should be:
