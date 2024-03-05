@@ -7,7 +7,7 @@ On the Grid, run the following command with your username and the access token a
 git clone https://github.com/bunzela/AIzymes
 ```
 
-Use the [https://github.com/bunzela/AIzymes/blob/main/How_to_push_and_pull.txt](https://github.com/bunzela/AIzymes/blob/main/push_to_github.sh) and [pull_from_github.sh](https://github.com/bunzela/AIzymes/blob/main/pull_from_github.sh) scripts to push and pull respectively.
+Use the [push_to_github.sh](https://github.com/bunzela/AIzymes/blob/main/push_to_github.sh) and [pull_from_github.sh](https://github.com/bunzela/AIzymes/blob/main/pull_from_github.sh) scripts to push and pull respectively.
 
 Note: You need to add every newly created file using
 ```
