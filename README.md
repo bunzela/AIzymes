@@ -4,7 +4,7 @@ This will be the AIzymes Github. Still work in progress ;)
 
 @Abbie:
 
-  Can you please upload your version of AIzymetools into the folder src.
+  Can you please upload your version of AIzyme_Functions into the folder src.
 
   Also, please upload your current design script into the folder design.
 
