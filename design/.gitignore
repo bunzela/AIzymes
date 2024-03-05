@@ -1,3 +1,0 @@
-# Do not push any sub-sub-directories in this folder
-# This is to prevent us from clogging up GitHub with design data
-*/*/
