@@ -14,6 +14,7 @@ AIzymes requires ESMfold through HuggingFace (https://huggingface.co/facebook/es
 ```
 pip install --upgrade transformers py3Dmol accelerate
 ```
+# How to push/pull from HPC (in progress, please adjust
 
 # To Do
 > [!IMPORTANT]
