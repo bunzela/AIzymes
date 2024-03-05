@@ -2,8 +2,12 @@ Hi All,
 
 This will be the AIzymes Github. Lets use the readme to collect notes.
 
-> [!IMPORTANT]
+> [!NOTE]
 > Track all versions of AIzyme_Functions in ./src/README.md
+
+> [!TIP]
+> Read AIzymes Manual.docx for detailed information
+> Feel free to change the Manual, but always track changes!
 
 # Requirments
 AIzymes requires ESMfold through HuggingFace (https://huggingface.co/facebook/esmfold_v1)
