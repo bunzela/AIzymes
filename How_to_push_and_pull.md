@@ -1,15 +1,16 @@
-# How to push/pull from HPC (in progress, please adjust)
-On the cluster, run:
-```
-ssh-keygen
-```
-Add the ssh key on this site
-```
-https://github.com/settings/keys
-```
-On the cluster, run:
+# Setup connection with GitHub
+
+Ask Adrian for an access token.
+
+On the Grid, run the following command with your username and the access token as password:
 ```
 git clone https://github.com/bunzela/AIzymes
 ```
 
-what next?
+Use the push_to_github.sh and pull_from_github.sh scripts to push and pull respectively.
+
+Note: You need to add every newly created file using
+```
+git addd <file>
+```
+
