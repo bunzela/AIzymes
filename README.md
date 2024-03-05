@@ -6,7 +6,8 @@ This will be the AIzymes Github. Lets use the readme to collect notes.
 > Track all versions of AIzyme_Functions in ./src/README.md
 
 > [!TIP]
-> Read AIzymes Manual.docx for detailed information
+> Read [AIzymes Manual.docx](https://github.com/bunzela/AIzymes/blob/main/AIzymes%20Manual.docx) for detailed information
+> 
 > Feel free to change the Manual, but always track changes!
 
 > [!TIP]
