@@ -2,7 +2,7 @@ Hi All,
 
 This will be the AIzymes Github. Lets use the readme to collect notes.
 
-> [!NOTE]
+> [!IMPORTANT]
 > Track all versions of AIzyme_Functions in ./src/README.md
 
 > [!TIP]
