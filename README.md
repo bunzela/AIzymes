@@ -5,6 +5,7 @@
 - BACKGROUND_JOB starting to be implemented but not yet completed
 - Add penalty if design results in a sequence that already exists? 
 
+# AIzymes
 Hi All,
 
 This will be the AIzymes Github. Lets use the readme to collect notes.
