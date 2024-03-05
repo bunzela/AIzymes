@@ -13,28 +13,15 @@ This will be the AIzymes Github. Lets use the readme to collect notes.
 > Track all versions of AIzyme_Functions in ./src/README.md
 
 > [!TIP]
-> Read AIzymes Manual.docx for detailed information
+> Read [AIzymes Manual.docx](https://github.com/bunzela/AIzymes/blob/main/AIzymes%20Manual.docx) for detailed information on AIzymes
+> 
 > Feel free to change the Manual, but always track changes!
+
+> [!TIP]
+> See [How_to_push_and_pull.txt](https://github.com/bunzela/AIzymes/blob/main/How_to_push_and_pull.txt) for a quick manual how to push and pull changes to GitHub.
 
 # Requirments
 AIzymes requires ESMfold through HuggingFace (https://huggingface.co/facebook/esmfold_v1)
 ```
 pip install --upgrade transformers py3Dmol accelerate
 ```
-
-# How to push/pull from HPC (in progress, please adjust)
-On the cluster, run:
-```
-ssh-keygen
-```
-Add the ssh key on this site
-```
-https://github.com/settings/keys
-```
-On the cluster, run:
-```
-git clone https://github.com/bunzela/AIzymes
-```
-
-what next?
-
