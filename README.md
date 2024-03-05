@@ -6,8 +6,6 @@
 - Add penalty if design results in a sequence that already exists? 
 
 # AIzymes
-Hi All,
-
 This will be the AIzymes Github. Lets use the readme to collect notes.
 
 > [!IMPORTANT]
