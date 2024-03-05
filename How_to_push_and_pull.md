@@ -3,7 +3,7 @@
 > [!IMPORTANT]
 > Ask Adrian for an access token.
 
-On the Grid, run the following command with your username and the access token as password:
+On the HPC cluster, run the following command with your username and the access token as password:
 ```
 git clone https://github.com/bunzela/AIzymes
 ```
