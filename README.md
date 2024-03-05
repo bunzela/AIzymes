@@ -1,3 +1,10 @@
+# To Do
+> [!IMPORTANT]
+> @Abbie, please adjust design/AIzyme_Run_Abbie_1.ipynb so that the paths point to the correct file in ./src
+- ProteinMPNN starting to be implemented but not yet completed
+- BACKGROUND_JOB starting to be implemented but not yet completed
+- Add penalty if design results in a sequence that already exists? 
+
 Hi All,
 
 This will be the AIzymes Github. Lets use the readme to collect notes.
@@ -31,9 +38,3 @@ git clone https://github.com/bunzela/AIzymes
 
 what next?
 
-# To Do
-> [!IMPORTANT]
-> @Abbie, please adjust design/AIzyme_Run_Abbie_1.ipynb so that the paths point to the correct file in ./src
-- ProteinMPNN starting to be implemented but not yet completed
-- BACKGROUND_JOB starting to be implemented but not yet completed
-- Add penalty if design results in a sequence that already exists? 
