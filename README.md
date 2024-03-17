@@ -1,5 +1,6 @@
 # To Do
 - Add propper usage instructions to each function
+- Modularize AIzymes. Ideally make individual modules for main parts (Design functions, main functions, helper functions, plotting functions, etc) and load with one master module
 - ProteinMPNN starting to be implemented but not yet completed
 - BACKGROUND_JOB starting to be implemented but not yet completed
 - Add penalty if design results in a sequence that already exists? 
