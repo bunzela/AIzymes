@@ -1,12 +1,5 @@
 # To Do
-
-> [!NOTE]
-> **@Abbie:** Please adjust `./design/AIzyme_Run_Abbie_1.ipynb` so that the paths point to the correct files, this should be:
->
-> For AIzyme_Functions: `./src/AIzyme_Functions_009.ipynb`
->
-> For the parent folder: `./design/Parent_1ohp`
-- Removed blocked_df
+- Add propper usage instructions to each function
 - ProteinMPNN starting to be implemented but not yet completed
 - BACKGROUND_JOB starting to be implemented but not yet completed
 - Add penalty if design results in a sequence that already exists? 
