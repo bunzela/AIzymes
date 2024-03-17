@@ -4,4 +4,4 @@ Every version should be clearly labeled with a number. Lets track major changes 
 
 | Version | Changes |
 |----------|----------|
-| AIzyme_Functions_009 | First uploaded version |
+| AIzymes_009 | First uploaded version |
