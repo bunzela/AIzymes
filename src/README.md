@@ -4,4 +4,4 @@ Every version should be clearly labeled with a number. Lets track major changes 
 
 | Version | Changes |
 |----------|----------|
-| AIzymes_009 | First uploaded version. <br> Adjusted catalytic score, now uses 6-3-2 weights|
+| AIzymes_009 | First uploaded version. <br> Adjusted catalytic score, now uses 6-3-2 weights <br> Added extra rows to keep track of scores from design and relax run seperately.|
