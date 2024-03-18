@@ -1,4 +1,8 @@
 # To Do
+> [!IMPORTANT]
+> @Abbie: establish scoring for electric fields. This should add an electrostatic_score to all_scores.csv. In addition, please make a seperate dataframes electric_fields.csv that contains the apparent per-residue electric field for each residue for all variants. We might use these information for ML training.
+> [!IMPORTANT]
+> @Lucas: establish Rosetta match
 - Add propper usage instructions to each function
 - Modularize AIzymes. Ideally make individual modules for main parts (Design functions, main functions, helper functions, plotting functions, etc) and load with one master module
 - ProteinMPNN starting to be implemented but not yet completed
