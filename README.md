@@ -1,6 +1,7 @@
 # To Do
 > [!IMPORTANT]
-> @Abbie: establish scoring for electric fields. This should add an electrostatic_score to all_scores.csv. In addition, please make a seperate dataframes electric_fields.csv that contains the apparent per-residue electric field for each residue for all variants. We might use these information for ML training.
+> @Abbie <br>
+> Establish scoring for electric fields. This should add an electrostatic_score to all_scores.csv. In addition, please make a seperate dataframes electric_fields.csv that contains the apparent per-residue electric field for each residue for all variants. We might use these information for ML training.
 > [!IMPORTANT]
 > @Lucas: establish Rosetta match
 - Add propper usage instructions to each function
