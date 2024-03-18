@@ -50,7 +50,7 @@ pip install --upgrade transformers py3Dmol accelerate torch
 ```
 
 
-To install everything necessary for AIzymes in a new conda environment (no ProteinMPNN):
+To install everything necessary for AIzymes in a new conda environment (no ProteinMPNN) from Abbie:
 ```
 conda create -n AIzymes python=3.9 matplotlib scipy jupyter pandas networkx
 conda activate AIzymes
