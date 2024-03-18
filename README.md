@@ -1,14 +1,23 @@
 # To Do
 > [!IMPORTANT]
 > @Abbie <br>
-> Establish scoring for electric fields. This should add an electrostatic_score to all_scores.csv. In addition, please make a seperate dataframes electric_fields.csv that contains the apparent per-residue electric field for each residue for all variants. We might use these information for ML training.
+> Generate a large dataset for Tudor for training <br>
+> Establish scoring for electric fields. This should add an electrostatic_score to all_scores.csv. In addition, please make a seperate dataframes electric_fields.csv that contains the apparent per-residue electric field for each residue for all variants. We might use these information for ML training. <br>
+> Establish MD for analysis
+
 > [!IMPORTANT]
-> @Lucas: establish Rosetta match
+> @Lucas: establish Rosetta match <br>
+> Generate a large dataset for Tudor for training <br>
+> Establish ProteinMPNN. Has been started to be implemented but not yet completed <br>
+
+> [!IMPORTANT]
+> @Tudor: Train ML model to guide mutagenesis in AI.zymes <br>
+
+- Add penalty if design results in a sequence that already exists? 
 - Add propper usage instructions to each function
 - Modularize AIzymes. Ideally make individual modules for main parts (Design functions, main functions, helper functions, plotting functions, etc) and load with one master module
-- ProteinMPNN starting to be implemented but not yet completed
 - BACKGROUND_JOB starting to be implemented but not yet completed
-- Add penalty if design results in a sequence that already exists? 
+
 
 # AIzymes
 This will be the AIzymes Github. Lets use the readme to collect notes.
