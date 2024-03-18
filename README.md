@@ -6,18 +6,19 @@
 > Establish MD for analysis
 
 > [!IMPORTANT]
-> @Lucas: establish Rosetta match <br>
+> @Lucas <br>
+> establish Rosetta match <br>
 > Generate a large dataset for Tudor for training <br>
 > Establish ProteinMPNN. Has been started to be implemented but not yet completed <br>
 
 > [!IMPORTANT]
-> @Tudor: Train ML model to guide mutagenesis in AI.zymes <br>
+> @Tudor <br>
+> Train ML model to guide mutagenesis in AI.zymes <br>
 
 - Add penalty if design results in a sequence that already exists? 
 - Add propper usage instructions to each function
 - Modularize AIzymes. Ideally make individual modules for main parts (Design functions, main functions, helper functions, plotting functions, etc) and load with one master module
 - BACKGROUND_JOB starting to be implemented but not yet completed
-
 
 # AIzymes
 This will be the AIzymes Github. Lets use the readme to collect notes.
