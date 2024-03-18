@@ -48,3 +48,11 @@ ProteinMPNN might be used in the future and can be installed like this:
 git clone https://github.com/dauparas/ProteinMPNN.git
 pip install --upgrade transformers py3Dmol accelerate torch
 ```
+
+
+To install everything necessary for AIzymes in a new conda environment (no ProteinMPNN):
+```
+conda create -n AIzymes python=3.9 matplotlib scipy jupyter pandas networkx
+conda activate AIzymes
+conda install conda-forge::biopython conda-forge::accelerate conda-forge::transformers
+```
