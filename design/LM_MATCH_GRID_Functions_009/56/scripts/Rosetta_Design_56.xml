@@ -1,0 +1,120 @@
+
+<ROSETTASCRIPTS>
+
+    <SCOREFXNS>
+
+        <ScoreFunction            name="score"                           weights="beta_nov16" >  
+            <Reweight             scoretype="atom_pair_constraint"       weight="4" />
+            <Reweight             scoretype="angle_constraint"           weight="2" />    
+            <Reweight             scoretype="dihedral_constraint"        weight="1" />        
+            <Reweight             scoretype="res_type_constraint"        weight="1" />              
+        </ScoreFunction>
+       
+        <ScoreFunction            name="score_unconst"                   weights="beta_nov16" >        
+            <Reweight             scoretype="atom_pair_constraint"       weight="0" />
+            <Reweight             scoretype="dihedral_constraint"        weight="0" />
+            <Reweight             scoretype="angle_constraint"           weight="0" />              
+        </ScoreFunction>
+
+        <ScoreFunction            name="score_final"                     weights="beta_nov16" >    
+            <Reweight             scoretype="atom_pair_constraint"       weight="4" />
+            <Reweight             scoretype="angle_constraint"           weight="2" />    
+            <Reweight             scoretype="dihedral_constraint"        weight="1" />               
+        </ScoreFunction>
+   
+   </SCOREFXNS>
+   
+    <RESIDUE_SELECTORS>
+   
+        <Index                    name="sel_design"
+                                  resnums="7,10,11,14,15,18,26,29,30,38,54,55,58,59,63,65,71,73,78,80,82,84,86,93,95,97,99,101,103,109,112,114,116,121" />
+
+        <Index                    name="sel_repack"
+                                  resnums="36,45,51,67" />
+
+        <Index                    name="sel_cat_0"
+                                  resnums="80" />
+
+        <Or                       name="sel_desrep"
+                                  selectors="sel_design,sel_repack" />
+
+        <Not                      name="sel_nothing"
+                                  selector="sel_desrep" />
+    </RESIDUE_SELECTORS>
+   
+    <TASKOPERATIONS>
+   
+        <OperateOnResidueSubset   name="tsk_design"                      selector="sel_design" >
+                                  <RestrictAbsentCanonicalAASRLT         aas="GPAVLIMFYWHKRQNEDST" />
+        </OperateOnResidueSubset>
+
+        <OperateOnResidueSubset   name="tsk_cat_0"                   selector="sel_cat_0" >
+                                  <RestrictAbsentCanonicalAASRLT         aas="DE" />
+        </OperateOnResidueSubset>
+
+       
+        <OperateOnResidueSubset   name="tsk_repack"                      selector="sel_repack" >
+                                  <RestrictToRepackingRLT />
+        </OperateOnResidueSubset>
+       
+        <OperateOnResidueSubset   name="tsk_nothing"                     selector="sel_nothing" >
+                                  <PreventRepackingRLT />
+        </OperateOnResidueSubset>
+       
+    </TASKOPERATIONS>
+
+    <FILTERS>
+   
+        <HbondsToResidue          name="flt_hbonds"
+                                  scorefxn="score"
+                                  partners="1"
+                                  residue="1X"
+                                  backbone="true"
+                                  sidechain="true"
+                                  from_other_chains="true"
+                                  from_same_chain="false"
+                                  confidence="0" />
+    </FILTERS>
+   
+    <MOVERS>
+       
+        <FavorSequenceProfile     name="mv_native"
+                                  weight="1.0"
+                                  use_native="true"
+                                  matrix="IDENTITY"
+                                  scorefxns="score" />  
+                               
+        <AddOrRemoveMatchCsts     name="mv_add_cst"
+                                  cst_instruction="add_new"
+                                  cstfile="/home/lmerlicek/AIzymes/design/Input/5TS_enzdes.cst" />
+
+        <FastDesign               name                   = "mv_design"
+                                  disable_design         = "false"
+                                  task_operations        = "tsk_design,tsk_repack,tsk_nothing,tsk_cat_0"
+                                  repeats                = "3"
+                                  ramp_down_constraints  = "false"
+                                  scorefxn               = "score" />
+                                  
+        <FastRelax                name                   = "mv_relax"
+                                  disable_design         = "true"
+                                  task_operations        = "tsk_design,tsk_repack,tsk_nothing,tsk_cat_0"
+                                  repeats                = "1"
+                                  ramp_down_constraints  = "false"
+                                  scorefxn               = "score_unconst" />  
+                                  
+        <InterfaceScoreCalculator name                   = "mv_inter"
+                                  chains                 = "X"
+                                  scorefxn               = "score_final" />
+                                 
+    </MOVERS>
+
+    <PROTOCOLS>
+        <Add mover_name="mv_native" />
+        <Add mover_name="mv_add_cst" />
+        <Add mover_name="mv_design" />
+        <Add mover_name="mv_relax" />
+        <Add mover_name="mv_inter" />
+    </PROTOCOLS>
+   
+</ROSETTASCRIPTS>
+

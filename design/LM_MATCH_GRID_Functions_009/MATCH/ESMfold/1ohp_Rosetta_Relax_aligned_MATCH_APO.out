@@ -1,0 +1,90 @@
+
+CPPTRAJ: Trajectory Analysis. V6.4.4 (AmberTools)
+    ___  ___  ___  ___
+     | \/ | \/ | \/ | 
+    _|_/\_|_/\_|_/\_|_
+
+| Date/time: 03/20/24 10:31:52
+| Available memory: 1.059 TB
+
+INPUT: Reading input from '/home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_Rosetta_Relax_aligned_MATCH_APO.in'
+  [parm /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/1ohp_Rosetta_Relax_MATCH_APO.pdb [protein]]
+	Reading '/home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/1ohp_Rosetta_Relax_MATCH_APO.pdb' as PDB File
+	Reading bond info from CONECT records.
+	Not reading bond info from LINK records.
+	Determining bond info from distances.
+Warning: Determining bond length parameters from element types for '1ohp_Rosetta_Relax_MATCH_APO.pdb'.
+  [parm /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_CPPTraj_Apo_MATCH.pdb [reference]]
+	Reading '/home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_CPPTraj_Apo_MATCH.pdb' as PDB File
+	Reading bond info from CONECT records.
+	Not reading bond info from LINK records.
+	Determining bond info from distances.
+Warning: Determining bond length parameters from element types for '1ohp_CPPTraj_Apo_MATCH.pdb'.
+  [reference /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_CPPTraj_Apo_MATCH.pdb parm [reference] [apo]]
+	Reading '/home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_CPPTraj_Apo_MATCH.pdb' as PDB
+	Setting active reference for distance-based masks: '1ohp_CPPTraj_Apo_MATCH.pdb'
+Warning: Active reference has only 500 atoms, parm '1ohp_Rosetta_Relax_MATCH_APO.pdb' has 946.
+Warning: Parm will only have reference coordinates for the first 500 atoms (distance-based masks only).
+  [trajin /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/1ohp_Rosetta_Relax_MATCH_APO.pdb parm [protein]]
+	Reading '/home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/1ohp_Rosetta_Relax_MATCH_APO.pdb' as PDB
+  [rmsd @CA ref [apo]]
+    RMSD: (@CA), reference is "[apo]:1" (@CA).
+	Best-fit RMSD will be calculated, coords will be rotated and translated.
+  [trajout /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/1ohp_Rosetta_Relax_aligned_MATCH_APO.pdb noter]
+	Writing '/home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/1ohp_Rosetta_Relax_aligned_MATCH_APO.pdb' as PDB
+---------- RUN BEGIN -------------------------------------------------
+
+PARAMETER FILES (2 total):
+ 0: [protein] 1ohp_Rosetta_Relax_MATCH_APO.pdb, 946 atoms, 125 res, box: None, 1 mol
+ 1: [reference] 1ohp_CPPTraj_Apo_MATCH.pdb, 500 atoms, 125 res, box: None, 1 mol
+
+INPUT TRAJECTORIES (1 total):
+ 0: '1ohp_Rosetta_Relax_MATCH_APO.pdb' is a PDB file, Parm 1ohp_Rosetta_Relax_MATCH_APO.pdb (reading 1 of 1)
+  Coordinate processing will occur on 1 frames.
+
+REFERENCE FRAMES (1 total):
+    0: [apo]:1
+	Active reference frame for distance-based masks is '[apo]:1'
+
+OUTPUT TRAJECTORIES (1 total):
+  '1ohp_Rosetta_Relax_aligned_MATCH_APO.pdb' (1 frames) is a PDB file
+
+BEGIN TRAJECTORY PROCESSING:
+.....................................................
+ACTION SETUP FOR PARM '1ohp_Rosetta_Relax_MATCH_APO.pdb' (1 actions):
+  0: [rmsd @CA ref [apo]]
+	Target mask: [@CA](125)
+	Reference topology: 1ohp_CPPTraj_Apo_MATCH.pdb
+	Reference mask: [@CA](125)
+.....................................................
+ACTIVE OUTPUT TRAJECTORIES (1):
+  /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/1ohp_Rosetta_Relax_aligned_MATCH_APO.pdb (coordinates)
+----- 1ohp_Rosetta_Relax_MATCH_APO.pdb (1-1, 1) -----
+100% Complete.
+
+Read 1 frames and processed 1 frames.
+TIME: Avg. throughput= 106.1346 frames / second.
+
+ACTION OUTPUT:
+TIME: Analyses took 0.0000 seconds.
+
+DATASETS (1 total):
+	RMSD_00003 "RMSD_00003" (double, rms), size is 1 (0.008 kB)
+    Total data set memory usage is at least 0.008 kB
+
+RUN TIMING:
+TIME:		Init               : 0.0000 s (  0.21%)
+TIME:		Trajectory Process : 0.0094 s ( 71.81%)
+TIME:		Action Post        : 0.0000 s (  0.01%)
+TIME:		Analysis           : 0.0000 s (  0.01%)
+TIME:		Data File Write    : 0.0000 s (  0.14%)
+TIME:		Other              : 0.0037 s (  0.28%)
+TIME:	Run Total 0.0131 s
+---------- RUN END ---------------------------------------------------
+TIME: Total execution time: 0.0334 seconds.
+--------------------------------------------------------------------------------
+To cite CPPTRAJ use:
+Daniel R. Roe and Thomas E. Cheatham, III, "PTRAJ and CPPTRAJ: Software for
+  Processing and Analysis of Molecular Dynamics Trajectory Data". J. Chem.
+  Theory Comput., 2013, 9 (7), pp 3084-3095.
+
