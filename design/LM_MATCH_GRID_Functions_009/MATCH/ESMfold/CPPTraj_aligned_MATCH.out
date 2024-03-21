@@ -1,0 +1,81 @@
+
+CPPTRAJ: Trajectory Analysis. V6.4.4 (AmberTools)
+    ___  ___  ___  ___
+     | \/ | \/ | \/ | 
+    _|_/\_|_/\_|_/\_|_
+
+| Date/time: 03/20/24 10:26:07
+| Available memory: 1.059 TB
+
+INPUT: Reading input from '/home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/CPPTraj_aligned_MATCH.in'
+  [parm /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_ESMfold_no_hydrogens_MATCH.pdb]
+	Reading '/home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_ESMfold_no_hydrogens_MATCH.pdb' as PDB File
+	Reading bond info from CONECT records.
+	Not reading bond info from LINK records.
+	Determining bond info from distances.
+Warning: Determining bond length parameters from element types for '1ohp_ESMfold_no_hydrogens_MATCH.pdb'.
+  [reference /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_CPPTraj_Apo_MATCH.pdb [apo]]
+	Reading '/home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_CPPTraj_Apo_MATCH.pdb' as PDB
+	Setting active reference for distance-based masks: '1ohp_CPPTraj_Apo_MATCH.pdb'
+  [trajin /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_ESMfold_no_hydrogens_MATCH.pdb]
+	Reading '/home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_ESMfold_no_hydrogens_MATCH.pdb' as PDB
+  [rmsd @CA ref [apo]]
+    RMSD: (@CA), reference is "[apo]:1" (@CA).
+	Best-fit RMSD will be calculated, coords will be rotated and translated.
+  [trajout /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_ESMfold_aligned_MATCH.pdb noter]
+	Writing '/home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_ESMfold_aligned_MATCH.pdb' as PDB
+---------- RUN BEGIN -------------------------------------------------
+
+PARAMETER FILES (1 total):
+ 0: 1ohp_ESMfold_no_hydrogens_MATCH.pdb, 500 atoms, 125 res, box: None, 1 mol
+
+INPUT TRAJECTORIES (1 total):
+ 0: '1ohp_ESMfold_no_hydrogens_MATCH.pdb' is a PDB file, Parm 1ohp_ESMfold_no_hydrogens_MATCH.pdb (reading 1 of 1)
+  Coordinate processing will occur on 1 frames.
+
+REFERENCE FRAMES (1 total):
+    0: [apo]:1
+	Active reference frame for distance-based masks is '[apo]:1'
+
+OUTPUT TRAJECTORIES (1 total):
+  '1ohp_ESMfold_aligned_MATCH.pdb' (1 frames) is a PDB file
+
+BEGIN TRAJECTORY PROCESSING:
+.....................................................
+ACTION SETUP FOR PARM '1ohp_ESMfold_no_hydrogens_MATCH.pdb' (1 actions):
+  0: [rmsd @CA ref [apo]]
+	Target mask: [@CA](125)
+	Reference topology: 1ohp_ESMfold_no_hydrogens_MATCH.pdb
+	Reference mask: [@CA](125)
+.....................................................
+ACTIVE OUTPUT TRAJECTORIES (1):
+  /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_ESMfold_aligned_MATCH.pdb (coordinates)
+----- 1ohp_ESMfold_no_hydrogens_MATCH.pdb (1-1, 1) -----
+100% Complete.
+
+Read 1 frames and processed 1 frames.
+TIME: Avg. throughput= 179.9532 frames / second.
+
+ACTION OUTPUT:
+TIME: Analyses took 0.0000 seconds.
+
+DATASETS (1 total):
+	RMSD_00002 "RMSD_00002" (double, rms), size is 1 (0.008 kB)
+    Total data set memory usage is at least 0.008 kB
+
+RUN TIMING:
+TIME:		Init               : 0.0000 s (  0.27%)
+TIME:		Trajectory Process : 0.0056 s ( 65.79%)
+TIME:		Action Post        : 0.0000 s (  0.01%)
+TIME:		Analysis           : 0.0000 s (  0.00%)
+TIME:		Data File Write    : 0.0000 s (  0.22%)
+TIME:		Other              : 0.0028 s (  0.34%)
+TIME:	Run Total 0.0084 s
+---------- RUN END ---------------------------------------------------
+TIME: Total execution time: 0.0207 seconds.
+--------------------------------------------------------------------------------
+To cite CPPTRAJ use:
+Daniel R. Roe and Thomas E. Cheatham, III, "PTRAJ and CPPTRAJ: Software for
+  Processing and Analysis of Molecular Dynamics Trajectory Data". J. Chem.
+  Theory Comput., 2013, 9 (7), pp 3084-3095.
+
