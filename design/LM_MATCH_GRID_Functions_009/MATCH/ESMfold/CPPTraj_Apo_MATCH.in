@@ -1,5 +1,0 @@
-parm    /home/lmerlicek/AIzymes/design/Input/1ohp.pdb
-trajin  /home/lmerlicek/AIzymes/design/Input/1ohp.pdb
-strip   :5TS
-strip   !@C,N,O,CA
-trajout /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_CPPTraj_Apo_MATCH.pdb
