@@ -1,0 +1,4 @@
+parm    /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_ESMfold_output_MATCH.pdb
+trajin  /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_ESMfold_output_MATCH.pdb
+strip   !@C,N,O,CA
+trajout /home/lmerlicek/AIzymes/design/LM_MATCH_GRID_Functions_009/MATCH/ESMfold/1ohp_ESMfold_no_hydrogens_MATCH.pdb
