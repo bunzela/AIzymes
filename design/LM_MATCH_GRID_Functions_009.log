@@ -7670,3 +7670,41 @@
 2024-03-25 17:56:21 - INFO - Run RosettaDesign for index 1940 based on index UM_20_D101_3_1ohp_Rosetta_Relax_aligned_MATCH_APO_5TS_enzdes_1.
 2024-03-25 17:56:21 - DEBUG - Your job 869412 ("MATCH_Rosetta_Design_1940") has been submitted
 2024-03-25 17:56:23 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 1847.
+2024-03-25 17:56:23 - DEBUG - Child index 1941 created for Parent.
+2024-03-25 17:56:23 - INFO - Run RosettaDesign for index 1941 based on index UM_20_D101_3_1ohp_Rosetta_Relax_aligned_MATCH_APO_5TS_enzdes_1.
+2024-03-25 17:56:24 - DEBUG - Your job 869413 ("MATCH_Rosetta_Design_1941") has been submitted
+2024-03-25 17:56:28 - DEBUG - Child index 1942 created for Parent.
+2024-03-25 17:56:29 - INFO - Run RosettaDesign for index 1942 based on index UM_20_D101_3_1ohp_Rosetta_Relax_aligned_MATCH_APO_5TS_enzdes_1.
+2024-03-25 17:56:29 - DEBUG - Your job 869414 ("MATCH_Rosetta_Design_1942") has been submitted
+2024-03-25 17:57:33 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 1806.
+2024-03-25 17:57:33 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 1833.
+2024-03-25 17:57:33 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 1841.
+2024-03-25 17:57:33 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 1846.
+2024-03-25 17:57:34 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 1848.
+2024-03-25 17:57:34 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 1849.
+2024-03-25 17:57:34 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 1852.
+2024-03-25 17:57:35 - DEBUG - Child index 1943 created for Parent.
+2024-03-25 17:57:36 - INFO - Run RosettaDesign for index 1943 based on index UM_20_D101_3_1ohp_Rosetta_Relax_aligned_MATCH_APO_5TS_enzdes_1.
+2024-03-25 17:57:36 - DEBUG - Your job 869416 ("MATCH_Rosetta_Design_1943") has been submitted
+2024-03-25 17:57:38 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 1845.
+2024-03-25 17:57:39 - DEBUG - Child index 1944 created for Parent.
+2024-03-25 17:57:39 - INFO - Run RosettaDesign for index 1944 based on index UM_20_D101_3_1ohp_Rosetta_Relax_aligned_MATCH_APO_5TS_enzdes_1.
+2024-03-25 17:57:39 - DEBUG - Your job 869417 ("MATCH_Rosetta_Design_1944") has been submitted
+2024-03-25 17:57:41 - DEBUG - Child index 1945 created for Parent.
+2024-03-25 17:57:42 - INFO - Run RosettaDesign for index 1945 based on index UM_20_D101_3_1ohp_Rosetta_Relax_aligned_MATCH_APO_5TS_enzdes_1.
+2024-03-25 17:57:42 - DEBUG - Your job 869418 ("MATCH_Rosetta_Design_1945") has been submitted
+2024-03-25 17:57:46 - DEBUG - Child index 1946 created for Parent.
+2024-03-25 17:57:47 - INFO - Run RosettaDesign for index 1946 based on index UM_20_D101_3_1ohp_Rosetta_Relax_aligned_MATCH_APO_5TS_enzdes_1.
+2024-03-25 17:57:47 - DEBUG - Your job 869420 ("MATCH_Rosetta_Design_1946") has been submitted
+2024-03-25 17:57:52 - DEBUG - Child index 1947 created for Parent.
+2024-03-25 17:57:53 - INFO - Run RosettaDesign for index 1947 based on index UM_20_D101_3_1ohp_Rosetta_Relax_aligned_MATCH_APO_5TS_enzdes_1.
+2024-03-25 17:57:53 - DEBUG - Your job 869421 ("MATCH_Rosetta_Design_1947") has been submitted
+2024-03-25 17:57:56 - DEBUG - Child index 1948 created for Parent.
+2024-03-25 17:57:56 - INFO - Run RosettaDesign for index 1948 based on index UM_20_D101_3_1ohp_Rosetta_Relax_aligned_MATCH_APO_5TS_enzdes_1.
+2024-03-25 17:57:56 - DEBUG - Your job 869422 ("MATCH_Rosetta_Design_1948") has been submitted
+2024-03-25 17:58:00 - DEBUG - Child index 1949 created for Parent.
+2024-03-25 17:58:00 - INFO - Run RosettaDesign for index 1949 based on index UM_20_D101_3_1ohp_Rosetta_Relax_aligned_MATCH_APO_5TS_enzdes_1.
+2024-03-25 17:58:00 - DEBUG - Your job 869423 ("MATCH_Rosetta_Design_1949") has been submitted
+2024-03-25 17:58:05 - DEBUG - Child index 1950 created for Parent.
+2024-03-25 17:58:05 - INFO - Run RosettaDesign for index 1950 based on index UM_5_E18_97_1ohp_Rosetta_Relax_aligned_MATCH_APO_5TS_enzdes_1.
+2024-03-25 17:58:06 - DEBUG - Your job 869424 ("MATCH_Rosetta_Design_1950") has been submitted

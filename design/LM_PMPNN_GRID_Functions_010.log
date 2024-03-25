@@ -1910,3 +1910,13 @@ The error message is: ('EOF in multi-line string', (1, 0))
 2024-03-25 17:55:15 - DEBUG - Your job 869410 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_57") has been submitted
 2024-03-25 17:55:16 - DEBUG - Starting new calculation for index 45.
 2024-03-25 17:55:16 - DEBUG - Child index 58 created for 45.
+2024-03-25 17:56:31 - INFO - Ran ProteinMPNN for index 45 and found a new sequence with index 58.
+2024-03-25 17:56:31 - INFO - Run ProteinMPNN for index 58 based on index 45.
+2024-03-25 17:56:31 - DEBUG - Your job 869415 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_58") has been submitted
+2024-03-25 17:56:33 - DEBUG - Starting new calculation for index 25.
+2024-03-25 17:56:33 - DEBUG - Child index 59 created for 25.
+2024-03-25 17:57:45 - INFO - Ran ProteinMPNN for index 25 and found a new sequence with index 59.
+2024-03-25 17:57:46 - INFO - Run ProteinMPNN for index 59 based on index 25.
+2024-03-25 17:57:46 - DEBUG - Your job 869419 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_59") has been submitted
+2024-03-25 17:57:47 - DEBUG - Starting new calculation for index 24.
+2024-03-25 17:57:47 - DEBUG - Child index 60 created for 24.
