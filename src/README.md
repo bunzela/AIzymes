@@ -5,3 +5,4 @@ Every version should be clearly labeled with a number. Lets track major changes 
 | Version | Changes |
 |----------|----------|
 | AIzymes_009 | First uploaded version. <br> Adjusted catalytic score, now uses 6-3-2 weights <br> Added extra rows to all_scores.csv to keep track of scores from design and relax run seperately. <br> Aligned ESMFold Structure after relaxing for PreMatchRelax.|
+| AIzymes_010 | Incorporated ProteinMPNN.|
