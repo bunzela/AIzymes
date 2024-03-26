@@ -1,0 +1,1573 @@
+2024-03-26 12:30:38 - INFO - Running AI.zymes setup.
+2024-03-26 12:30:38 - INFO - Content of /home/lmerlicek/AIzymes/design/LM_PMPNN_GRID_Functions_011 deleted.
+2024-03-26 12:30:38 - INFO - Happy AI.zymeing! :)
+2024-03-26 12:30:38 - WARNING - To ensure a smooth start, N_PARENT_JOBS should be at least 2 x MAX_JOBS.
+2024-03-26 12:30:38 - WARNING - N_PARENT_JOBS: 10, MAX_JOBS: 70.
+2024-03-26 12:30:39 - DEBUG - Child index 0 created for Parent.
+2024-03-26 12:30:39 - INFO - Run RosettaDesign for index 0 based on index 1ohp.
+2024-03-26 12:30:39 - DEBUG - Your job 873929 ("PMPNN_Rosetta_Design_0") has been submitted
+2024-03-26 12:30:40 - DEBUG - Child index 1 created for Parent.
+2024-03-26 12:30:40 - INFO - Run RosettaDesign for index 1 based on index 1ohp.
+2024-03-26 12:30:40 - DEBUG - Your job 873930 ("PMPNN_Rosetta_Design_1") has been submitted
+2024-03-26 12:30:41 - DEBUG - Child index 2 created for Parent.
+2024-03-26 12:30:42 - INFO - Run RosettaDesign for index 2 based on index 1ohp.
+2024-03-26 12:30:42 - DEBUG - Your job 873931 ("PMPNN_Rosetta_Design_2") has been submitted
+2024-03-26 12:30:43 - DEBUG - Child index 3 created for Parent.
+2024-03-26 12:30:43 - INFO - Run RosettaDesign for index 3 based on index 1ohp.
+2024-03-26 12:30:43 - DEBUG - Your job 873932 ("PMPNN_Rosetta_Design_3") has been submitted
+2024-03-26 12:30:44 - DEBUG - Child index 4 created for Parent.
+2024-03-26 12:30:44 - INFO - Run RosettaDesign for index 4 based on index 1ohp.
+2024-03-26 12:30:44 - DEBUG - Your job 873933 ("PMPNN_Rosetta_Design_4") has been submitted
+2024-03-26 12:30:45 - DEBUG - Child index 5 created for Parent.
+2024-03-26 12:30:46 - INFO - Run RosettaDesign for index 5 based on index 1ohp.
+2024-03-26 12:30:46 - DEBUG - Your job 873934 ("PMPNN_Rosetta_Design_5") has been submitted
+2024-03-26 12:30:47 - DEBUG - Child index 6 created for Parent.
+2024-03-26 12:30:47 - INFO - Run RosettaDesign for index 6 based on index 1ohp.
+2024-03-26 12:30:47 - DEBUG - Your job 873935 ("PMPNN_Rosetta_Design_6") has been submitted
+2024-03-26 12:30:48 - DEBUG - Child index 7 created for Parent.
+2024-03-26 12:30:48 - INFO - Run RosettaDesign for index 7 based on index 1ohp.
+2024-03-26 12:30:48 - DEBUG - Your job 873936 ("PMPNN_Rosetta_Design_7") has been submitted
+2024-03-26 12:30:49 - DEBUG - Child index 8 created for Parent.
+2024-03-26 12:30:49 - INFO - Run RosettaDesign for index 8 based on index 1ohp.
+2024-03-26 12:30:49 - DEBUG - Your job 873937 ("PMPNN_Rosetta_Design_8") has been submitted
+2024-03-26 12:30:51 - DEBUG - Child index 9 created for Parent.
+2024-03-26 12:30:51 - INFO - Run RosettaDesign for index 9 based on index 1ohp.
+2024-03-26 12:30:51 - DEBUG - Your job 873938 ("PMPNN_Rosetta_Design_9") has been submitted
+2024-03-26 12:54:40 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 5.
+2024-03-26 12:54:40 - DEBUG - Starting new calculation for index 5.
+2024-03-26 12:54:40 - INFO - Index 5 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 12:54:40 - INFO - Run ESMfold & Rosetta_Relax for index 5.
+2024-03-26 12:54:40 - DEBUG - Your job 874016 ("PMPNN_ESMfold_Rosetta_Relax_5") has been submitted
+2024-03-26 12:55:09 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 6.
+2024-03-26 12:55:09 - DEBUG - Starting new calculation for index 6.
+2024-03-26 12:55:09 - INFO - Index 6 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 12:55:09 - INFO - Run ESMfold & Rosetta_Relax for index 6.
+2024-03-26 12:55:09 - DEBUG - Your job 874017 ("PMPNN_ESMfold_Rosetta_Relax_6") has been submitted
+2024-03-26 12:55:12 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 1.
+2024-03-26 12:55:13 - DEBUG - Starting new calculation for index 1.
+2024-03-26 12:55:13 - INFO - Index 1 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 12:55:13 - INFO - Run ESMfold & Rosetta_Relax for index 1.
+2024-03-26 12:55:13 - DEBUG - Your job 874018 ("PMPNN_ESMfold_Rosetta_Relax_1") has been submitted
+2024-03-26 12:55:38 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 2.
+2024-03-26 12:55:38 - DEBUG - Starting new calculation for index 2.
+2024-03-26 12:55:38 - INFO - Index 2 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 12:55:38 - INFO - Run ESMfold & Rosetta_Relax for index 2.
+2024-03-26 12:55:39 - DEBUG - Your job 874022 ("PMPNN_ESMfold_Rosetta_Relax_2") has been submitted
+2024-03-26 12:55:52 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 0.
+2024-03-26 12:55:52 - DEBUG - Starting new calculation for index 0.
+2024-03-26 12:55:52 - INFO - Index 0 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 12:55:52 - INFO - Run ESMfold & Rosetta_Relax for index 0.
+2024-03-26 12:55:53 - DEBUG - Your job 874027 ("PMPNN_ESMfold_Rosetta_Relax_0") has been submitted
+2024-03-26 12:56:03 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 3.
+2024-03-26 12:56:03 - DEBUG - Starting new calculation for index 3.
+2024-03-26 12:56:03 - INFO - Index 3 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 12:56:03 - INFO - Run ESMfold & Rosetta_Relax for index 3.
+2024-03-26 12:56:03 - DEBUG - Your job 874030 ("PMPNN_ESMfold_Rosetta_Relax_3") has been submitted
+2024-03-26 12:56:07 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 4.
+2024-03-26 12:56:08 - DEBUG - Starting new calculation for index 4.
+2024-03-26 12:56:08 - INFO - Index 4 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 12:56:08 - INFO - Run ESMfold & Rosetta_Relax for index 4.
+2024-03-26 12:56:08 - DEBUG - Your job 874031 ("PMPNN_ESMfold_Rosetta_Relax_4") has been submitted
+2024-03-26 12:59:19 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 7.
+2024-03-26 12:59:19 - DEBUG - Starting new calculation for index 7.
+2024-03-26 12:59:19 - INFO - Index 7 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 12:59:19 - INFO - Run ESMfold & Rosetta_Relax for index 7.
+2024-03-26 12:59:19 - DEBUG - Your job 874046 ("PMPNN_ESMfold_Rosetta_Relax_7") has been submitted
+2024-03-26 13:00:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 8.
+2024-03-26 13:00:49 - DEBUG - Starting new calculation for index 8.
+2024-03-26 13:00:49 - INFO - Index 8 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 13:00:49 - INFO - Run ESMfold & Rosetta_Relax for index 8.
+2024-03-26 13:00:49 - DEBUG - Your job 874058 ("PMPNN_ESMfold_Rosetta_Relax_8") has been submitted
+2024-03-26 13:01:12 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 9.
+2024-03-26 13:01:12 - DEBUG - Starting new calculation for index 9.
+2024-03-26 13:01:12 - INFO - Index 9 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 13:01:12 - INFO - Run ESMfold & Rosetta_Relax for index 9.
+2024-03-26 13:01:12 - DEBUG - Your job 874059 ("PMPNN_ESMfold_Rosetta_Relax_9") has been submitted
+2024-03-26 13:04:52 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 2.
+2024-03-26 13:04:52 - DEBUG - Unblocked index 2.
+2024-03-26 13:04:52 - DEBUG - Starting new calculation for index 2.
+2024-03-26 13:04:52 - DEBUG - Child index 10 created for 2.
+2024-03-26 13:04:52 - INFO - Run RosettaDesign for index 10 based on index 2.
+2024-03-26 13:04:52 - DEBUG - Your job 874070 ("PMPNN_Rosetta_Design_10") has been submitted
+2024-03-26 13:04:54 - DEBUG - Starting new calculation for index 2.
+2024-03-26 13:04:54 - DEBUG - Child index 11 created for 2.
+2024-03-26 13:04:54 - INFO - Run RosettaDesign for index 11 based on index 2.
+2024-03-26 13:04:54 - DEBUG - Your job 874071 ("PMPNN_Rosetta_Design_11") has been submitted
+2024-03-26 13:04:55 - DEBUG - Starting new calculation for index 2.
+2024-03-26 13:04:55 - DEBUG - Child index 12 created for 2.
+2024-03-26 13:04:55 - INFO - Run RosettaDesign for index 12 based on index 2.
+2024-03-26 13:04:55 - DEBUG - Your job 874072 ("PMPNN_Rosetta_Design_12") has been submitted
+2024-03-26 13:04:56 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 0.
+2024-03-26 13:04:56 - DEBUG - Unblocked index 0.
+2024-03-26 13:04:56 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 3.
+2024-03-26 13:04:56 - DEBUG - Unblocked index 3.
+2024-03-26 13:04:56 - DEBUG - Starting new calculation for index 2.
+2024-03-26 13:04:56 - DEBUG - Child index 13 created for 2.
+2024-03-26 13:06:22 - INFO - Ran ProteinMPNN for index 2 and found a new sequence with index 13.
+2024-03-26 13:06:23 - INFO - Run ProteinMPNN for index 13 based on index 2.
+2024-03-26 13:06:23 - DEBUG - Your job 874075 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_13") has been submitted
+2024-03-26 13:06:24 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 1.
+2024-03-26 13:06:24 - DEBUG - Unblocked index 1.
+2024-03-26 13:06:24 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:06:24 - DEBUG - Child index 14 created for 1.
+2024-03-26 13:07:41 - INFO - Ran ProteinMPNN for index 1 and found a new sequence with index 14.
+2024-03-26 13:07:41 - INFO - Run ProteinMPNN for index 14 based on index 1.
+2024-03-26 13:07:41 - DEBUG - Your job 874076 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_14") has been submitted
+2024-03-26 13:07:42 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:07:42 - DEBUG - Child index 15 created for 1.
+2024-03-26 13:07:43 - INFO - Run RosettaDesign for index 15 based on index 1.
+2024-03-26 13:07:43 - DEBUG - Your job 874077 ("PMPNN_Rosetta_Design_15") has been submitted
+2024-03-26 13:07:44 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:07:44 - DEBUG - Child index 16 created for 1.
+2024-03-26 13:09:06 - INFO - Ran ProteinMPNN for index 1 and found a new sequence with index 16.
+2024-03-26 13:09:07 - INFO - Run ProteinMPNN for index 16 based on index 1.
+2024-03-26 13:09:07 - DEBUG - Your job 874082 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_16") has been submitted
+2024-03-26 13:09:08 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 5.
+2024-03-26 13:09:08 - DEBUG - Unblocked index 5.
+2024-03-26 13:09:08 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 6.
+2024-03-26 13:09:08 - DEBUG - Unblocked index 6.
+2024-03-26 13:09:08 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 9.
+2024-03-26 13:09:08 - DEBUG - Unblocked index 9.
+2024-03-26 13:09:08 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:09:08 - DEBUG - Child index 17 created for 1.
+2024-03-26 13:09:08 - INFO - Run RosettaDesign for index 17 based on index 1.
+2024-03-26 13:09:08 - DEBUG - Your job 874083 ("PMPNN_Rosetta_Design_17") has been submitted
+2024-03-26 13:09:09 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:09:09 - DEBUG - Child index 18 created for 1.
+2024-03-26 13:09:10 - INFO - Run RosettaDesign for index 18 based on index 1.
+2024-03-26 13:09:10 - DEBUG - Your job 874084 ("PMPNN_Rosetta_Design_18") has been submitted
+2024-03-26 13:09:11 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:09:11 - DEBUG - Child index 19 created for 1.
+2024-03-26 13:09:11 - INFO - Run RosettaDesign for index 19 based on index 1.
+2024-03-26 13:09:11 - DEBUG - Your job 874085 ("PMPNN_Rosetta_Design_19") has been submitted
+2024-03-26 13:09:12 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:09:12 - DEBUG - Child index 20 created for 1.
+2024-03-26 13:09:12 - INFO - Run RosettaDesign for index 20 based on index 1.
+2024-03-26 13:09:12 - DEBUG - Your job 874086 ("PMPNN_Rosetta_Design_20") has been submitted
+2024-03-26 13:09:13 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:09:13 - DEBUG - Child index 21 created for 1.
+2024-03-26 13:09:13 - INFO - Run RosettaDesign for index 21 based on index 1.
+2024-03-26 13:09:13 - DEBUG - Your job 874087 ("PMPNN_Rosetta_Design_21") has been submitted
+2024-03-26 13:09:14 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:09:14 - DEBUG - Child index 22 created for 1.
+2024-03-26 13:10:38 - INFO - Ran ProteinMPNN for index 1 and found a new sequence with index 22.
+2024-03-26 13:10:38 - INFO - Run ProteinMPNN for index 22 based on index 1.
+2024-03-26 13:10:38 - DEBUG - Your job 874092 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_22") has been submitted
+2024-03-26 13:10:39 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 7.
+2024-03-26 13:10:39 - DEBUG - Unblocked index 7.
+2024-03-26 13:10:39 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:10:39 - DEBUG - Child index 23 created for 1.
+2024-03-26 13:10:40 - INFO - Run RosettaDesign for index 23 based on index 1.
+2024-03-26 13:10:40 - DEBUG - Your job 874093 ("PMPNN_Rosetta_Design_23") has been submitted
+2024-03-26 13:10:41 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:10:41 - DEBUG - Child index 24 created for 1.
+2024-03-26 13:10:41 - INFO - Run RosettaDesign for index 24 based on index 1.
+2024-03-26 13:10:41 - DEBUG - Your job 874095 ("PMPNN_Rosetta_Design_24") has been submitted
+2024-03-26 13:10:42 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:10:42 - DEBUG - Child index 25 created for 1.
+2024-03-26 13:10:42 - INFO - Run RosettaDesign for index 25 based on index 1.
+2024-03-26 13:10:42 - DEBUG - Your job 874096 ("PMPNN_Rosetta_Design_25") has been submitted
+2024-03-26 13:10:43 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:10:43 - DEBUG - Child index 26 created for 1.
+2024-03-26 13:10:43 - INFO - Run RosettaDesign for index 26 based on index 1.
+2024-03-26 13:10:43 - DEBUG - Your job 874097 ("PMPNN_Rosetta_Design_26") has been submitted
+2024-03-26 13:10:44 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:10:44 - DEBUG - Child index 27 created for 1.
+2024-03-26 13:12:06 - INFO - Ran ProteinMPNN for index 1 and found a new sequence with index 27.
+2024-03-26 13:12:06 - INFO - Run ProteinMPNN for index 27 based on index 1.
+2024-03-26 13:12:06 - DEBUG - Your job 874101 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_27") has been submitted
+2024-03-26 13:12:07 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:12:08 - DEBUG - Child index 28 created for 1.
+2024-03-26 13:12:08 - INFO - Run RosettaDesign for index 28 based on index 1.
+2024-03-26 13:12:08 - DEBUG - Your job 874102 ("PMPNN_Rosetta_Design_28") has been submitted
+2024-03-26 13:12:09 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:12:09 - DEBUG - Child index 29 created for 1.
+2024-03-26 13:12:09 - INFO - Run RosettaDesign for index 29 based on index 1.
+2024-03-26 13:12:09 - DEBUG - Your job 874103 ("PMPNN_Rosetta_Design_29") has been submitted
+2024-03-26 13:12:10 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:12:10 - DEBUG - Child index 30 created for 1.
+2024-03-26 13:13:36 - INFO - Ran ProteinMPNN for index 1 and found a new sequence with index 30.
+2024-03-26 13:13:36 - INFO - Run ProteinMPNN for index 30 based on index 1.
+2024-03-26 13:13:36 - DEBUG - Your job 874109 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_30") has been submitted
+2024-03-26 13:13:37 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 4.
+2024-03-26 13:13:37 - DEBUG - Unblocked index 4.
+2024-03-26 13:13:38 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 13.
+2024-03-26 13:13:38 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:13:38 - DEBUG - Child index 31 created for 1.
+2024-03-26 13:13:38 - INFO - Run RosettaDesign for index 31 based on index 1.
+2024-03-26 13:13:38 - DEBUG - Your job 874110 ("PMPNN_Rosetta_Design_31") has been submitted
+2024-03-26 13:13:39 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:13:39 - DEBUG - Child index 32 created for 1.
+2024-03-26 13:13:39 - INFO - Run RosettaDesign for index 32 based on index 1.
+2024-03-26 13:13:39 - DEBUG - Your job 874111 ("PMPNN_Rosetta_Design_32") has been submitted
+2024-03-26 13:13:40 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:13:40 - DEBUG - Child index 33 created for 1.
+2024-03-26 13:13:40 - INFO - Run RosettaDesign for index 33 based on index 1.
+2024-03-26 13:13:40 - DEBUG - Your job 874112 ("PMPNN_Rosetta_Design_33") has been submitted
+2024-03-26 13:13:42 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:13:42 - DEBUG - Child index 34 created for 1.
+2024-03-26 13:13:42 - INFO - Run RosettaDesign for index 34 based on index 1.
+2024-03-26 13:13:42 - DEBUG - Your job 874113 ("PMPNN_Rosetta_Design_34") has been submitted
+2024-03-26 13:13:43 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:13:43 - DEBUG - Child index 35 created for 1.
+2024-03-26 13:13:43 - INFO - Run RosettaDesign for index 35 based on index 1.
+2024-03-26 13:13:43 - DEBUG - Your job 874114 ("PMPNN_Rosetta_Design_35") has been submitted
+2024-03-26 13:13:44 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:13:44 - DEBUG - Child index 36 created for 1.
+2024-03-26 13:13:44 - INFO - Run RosettaDesign for index 36 based on index 1.
+2024-03-26 13:13:44 - DEBUG - Your job 874115 ("PMPNN_Rosetta_Design_36") has been submitted
+2024-03-26 13:13:45 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:13:45 - DEBUG - Child index 37 created for 1.
+2024-03-26 13:13:45 - INFO - Run RosettaDesign for index 37 based on index 1.
+2024-03-26 13:13:45 - DEBUG - Your job 874116 ("PMPNN_Rosetta_Design_37") has been submitted
+2024-03-26 13:13:47 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:13:47 - DEBUG - Child index 38 created for 1.
+2024-03-26 13:13:47 - INFO - Run RosettaDesign for index 38 based on index 1.
+2024-03-26 13:13:47 - DEBUG - Your job 874117 ("PMPNN_Rosetta_Design_38") has been submitted
+2024-03-26 13:13:48 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:13:48 - DEBUG - Child index 39 created for 1.
+2024-03-26 13:13:48 - INFO - Run RosettaDesign for index 39 based on index 1.
+2024-03-26 13:13:48 - DEBUG - Your job 874119 ("PMPNN_Rosetta_Design_39") has been submitted
+2024-03-26 13:13:49 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:13:49 - DEBUG - Child index 40 created for 1.
+2024-03-26 13:13:49 - INFO - Run RosettaDesign for index 40 based on index 1.
+2024-03-26 13:13:49 - DEBUG - Your job 874120 ("PMPNN_Rosetta_Design_40") has been submitted
+2024-03-26 13:13:50 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:13:50 - DEBUG - Child index 41 created for 1.
+2024-03-26 13:13:50 - INFO - Run RosettaDesign for index 41 based on index 1.
+2024-03-26 13:13:50 - DEBUG - Your job 874122 ("PMPNN_Rosetta_Design_41") has been submitted
+2024-03-26 13:13:52 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:13:52 - DEBUG - Child index 42 created for 1.
+2024-03-26 13:15:18 - INFO - Ran ProteinMPNN for index 1 and found a new sequence with index 42.
+2024-03-26 13:15:18 - INFO - Run ProteinMPNN for index 42 based on index 1.
+2024-03-26 13:15:18 - DEBUG - Your job 874129 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_42") has been submitted
+2024-03-26 13:15:19 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 8.
+2024-03-26 13:15:19 - DEBUG - Unblocked index 8.
+2024-03-26 13:15:19 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:15:20 - DEBUG - Child index 43 created for 1.
+2024-03-26 13:15:20 - INFO - Run RosettaDesign for index 43 based on index 1.
+2024-03-26 13:15:20 - DEBUG - Your job 874130 ("PMPNN_Rosetta_Design_43") has been submitted
+2024-03-26 13:15:21 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:15:21 - DEBUG - Child index 44 created for 1.
+2024-03-26 13:15:21 - INFO - Run RosettaDesign for index 44 based on index 1.
+2024-03-26 13:15:21 - DEBUG - Your job 874131 ("PMPNN_Rosetta_Design_44") has been submitted
+2024-03-26 13:15:22 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:15:22 - DEBUG - Child index 45 created for 1.
+2024-03-26 13:16:57 - INFO - Ran ProteinMPNN for index 1 and found a new sequence with index 45.
+2024-03-26 13:16:57 - INFO - Run ProteinMPNN for index 45 based on index 1.
+2024-03-26 13:16:58 - DEBUG - Your job 874141 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_45") has been submitted
+2024-03-26 13:16:59 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 14.
+2024-03-26 13:16:59 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:16:59 - DEBUG - Child index 46 created for 14.
+2024-03-26 13:16:59 - INFO - Run RosettaDesign for index 46 based on index 14.
+2024-03-26 13:16:59 - DEBUG - Your job 874142 ("PMPNN_Rosetta_Design_46") has been submitted
+2024-03-26 13:17:00 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:17:00 - DEBUG - Child index 47 created for 14.
+2024-03-26 13:17:00 - INFO - Run RosettaDesign for index 47 based on index 14.
+2024-03-26 13:17:00 - DEBUG - Your job 874143 ("PMPNN_Rosetta_Design_47") has been submitted
+2024-03-26 13:17:01 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:17:01 - DEBUG - Child index 48 created for 14.
+2024-03-26 13:17:01 - INFO - Run RosettaDesign for index 48 based on index 14.
+2024-03-26 13:17:01 - DEBUG - Your job 874144 ("PMPNN_Rosetta_Design_48") has been submitted
+2024-03-26 13:17:03 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:17:03 - DEBUG - Child index 49 created for 14.
+2024-03-26 13:17:03 - INFO - Run RosettaDesign for index 49 based on index 14.
+2024-03-26 13:17:03 - DEBUG - Your job 874145 ("PMPNN_Rosetta_Design_49") has been submitted
+2024-03-26 13:17:04 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:17:04 - DEBUG - Child index 50 created for 14.
+2024-03-26 13:17:04 - INFO - Run RosettaDesign for index 50 based on index 14.
+2024-03-26 13:17:04 - DEBUG - Your job 874146 ("PMPNN_Rosetta_Design_50") has been submitted
+2024-03-26 13:17:05 - DEBUG - Starting new calculation for index 1.
+2024-03-26 13:17:05 - DEBUG - Child index 51 created for 1.
+2024-03-26 13:17:05 - INFO - Run RosettaDesign for index 51 based on index 1.
+2024-03-26 13:17:05 - DEBUG - Your job 874147 ("PMPNN_Rosetta_Design_51") has been submitted
+2024-03-26 13:17:06 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:17:06 - DEBUG - Child index 52 created for 14.
+2024-03-26 13:17:06 - INFO - Run RosettaDesign for index 52 based on index 14.
+2024-03-26 13:17:06 - DEBUG - Your job 874148 ("PMPNN_Rosetta_Design_52") has been submitted
+2024-03-26 13:17:07 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:17:07 - DEBUG - Child index 53 created for 14.
+2024-03-26 13:18:39 - INFO - Ran ProteinMPNN for index 14 and found a new sequence with index 53.
+2024-03-26 13:18:39 - INFO - Run ProteinMPNN for index 53 based on index 14.
+2024-03-26 13:18:39 - DEBUG - Your job 874158 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_53") has been submitted
+2024-03-26 13:18:40 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 16.
+2024-03-26 13:18:40 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 22.
+2024-03-26 13:18:40 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:18:40 - DEBUG - Child index 54 created for 14.
+2024-03-26 13:19:58 - INFO - Ran ProteinMPNN for index 14 and found a new sequence with index 54.
+2024-03-26 13:19:58 - INFO - Run ProteinMPNN for index 54 based on index 14.
+2024-03-26 13:19:58 - DEBUG - Your job 874161 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_54") has been submitted
+2024-03-26 13:19:59 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 27.
+2024-03-26 13:19:59 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:19:59 - DEBUG - Child index 55 created for 27.
+2024-03-26 13:20:00 - INFO - Run RosettaDesign for index 55 based on index 27.
+2024-03-26 13:20:00 - DEBUG - Your job 874162 ("PMPNN_Rosetta_Design_55") has been submitted
+2024-03-26 13:20:01 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:20:01 - DEBUG - Child index 56 created for 14.
+2024-03-26 13:21:30 - INFO - Ran ProteinMPNN for index 14 and found a new sequence with index 56.
+2024-03-26 13:21:30 - INFO - Run ProteinMPNN for index 56 based on index 14.
+2024-03-26 13:21:30 - DEBUG - Your job 874172 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_56") has been submitted
+2024-03-26 13:21:31 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 30.
+2024-03-26 13:21:31 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:21:31 - DEBUG - Child index 57 created for 27.
+2024-03-26 13:21:31 - INFO - Run RosettaDesign for index 57 based on index 27.
+2024-03-26 13:21:31 - DEBUG - Your job 874173 ("PMPNN_Rosetta_Design_57") has been submitted
+2024-03-26 13:21:32 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:21:32 - DEBUG - Child index 58 created for 27.
+2024-03-26 13:21:32 - INFO - Run RosettaDesign for index 58 based on index 27.
+2024-03-26 13:21:32 - DEBUG - Your job 874174 ("PMPNN_Rosetta_Design_58") has been submitted
+2024-03-26 13:21:33 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:21:33 - DEBUG - Child index 59 created for 27.
+2024-03-26 13:21:33 - INFO - Run RosettaDesign for index 59 based on index 27.
+2024-03-26 13:21:34 - DEBUG - Your job 874175 ("PMPNN_Rosetta_Design_59") has been submitted
+2024-03-26 13:21:35 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:21:35 - DEBUG - Child index 60 created for 27.
+2024-03-26 13:21:35 - INFO - Run RosettaDesign for index 60 based on index 27.
+2024-03-26 13:21:35 - DEBUG - Your job 874176 ("PMPNN_Rosetta_Design_60") has been submitted
+2024-03-26 13:21:36 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:21:36 - DEBUG - Child index 61 created for 27.
+2024-03-26 13:21:36 - INFO - Run RosettaDesign for index 61 based on index 27.
+2024-03-26 13:21:36 - DEBUG - Your job 874177 ("PMPNN_Rosetta_Design_61") has been submitted
+2024-03-26 13:21:37 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:21:37 - DEBUG - Child index 62 created for 27.
+2024-03-26 13:21:37 - INFO - Run RosettaDesign for index 62 based on index 27.
+2024-03-26 13:21:37 - DEBUG - Your job 874178 ("PMPNN_Rosetta_Design_62") has been submitted
+2024-03-26 13:21:38 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:21:38 - DEBUG - Child index 63 created for 27.
+2024-03-26 13:23:04 - INFO - Ran ProteinMPNN for index 27 and found a new sequence with index 63.
+2024-03-26 13:23:04 - INFO - Run ProteinMPNN for index 63 based on index 27.
+2024-03-26 13:23:04 - DEBUG - Your job 874184 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_63") has been submitted
+2024-03-26 13:23:05 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:23:05 - DEBUG - Child index 64 created for 27.
+2024-03-26 13:24:40 - INFO - Ran ProteinMPNN for index 27 and found a new sequence with index 64.
+2024-03-26 13:24:40 - INFO - Run ProteinMPNN for index 64 based on index 27.
+2024-03-26 13:24:40 - DEBUG - Your job 874195 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_64") has been submitted
+2024-03-26 13:24:41 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 42.
+2024-03-26 13:24:41 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:24:41 - DEBUG - Child index 65 created for 14.
+2024-03-26 13:24:41 - INFO - Run RosettaDesign for index 65 based on index 14.
+2024-03-26 13:24:41 - DEBUG - Your job 874196 ("PMPNN_Rosetta_Design_65") has been submitted
+2024-03-26 13:24:42 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:24:42 - DEBUG - Child index 66 created for 27.
+2024-03-26 13:24:42 - INFO - Run RosettaDesign for index 66 based on index 27.
+2024-03-26 13:24:42 - DEBUG - Your job 874197 ("PMPNN_Rosetta_Design_66") has been submitted
+2024-03-26 13:24:43 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:24:43 - DEBUG - Child index 67 created for 27.
+2024-03-26 13:24:44 - INFO - Run RosettaDesign for index 67 based on index 27.
+2024-03-26 13:24:44 - DEBUG - Your job 874199 ("PMPNN_Rosetta_Design_67") has been submitted
+2024-03-26 13:24:45 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:24:45 - DEBUG - Child index 68 created for 14.
+2024-03-26 13:24:45 - INFO - Run RosettaDesign for index 68 based on index 14.
+2024-03-26 13:24:45 - DEBUG - Your job 874200 ("PMPNN_Rosetta_Design_68") has been submitted
+2024-03-26 13:24:46 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:24:46 - DEBUG - Child index 69 created for 14.
+2024-03-26 13:24:46 - INFO - Run RosettaDesign for index 69 based on index 14.
+2024-03-26 13:24:46 - DEBUG - Your job 874201 ("PMPNN_Rosetta_Design_69") has been submitted
+2024-03-26 13:24:47 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:24:47 - DEBUG - Child index 70 created for 14.
+2024-03-26 13:24:47 - INFO - Run RosettaDesign for index 70 based on index 14.
+2024-03-26 13:24:47 - DEBUG - Your job 874203 ("PMPNN_Rosetta_Design_70") has been submitted
+2024-03-26 13:24:48 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:24:48 - DEBUG - Child index 71 created for 14.
+2024-03-26 13:24:49 - INFO - Run RosettaDesign for index 71 based on index 14.
+2024-03-26 13:24:49 - DEBUG - Your job 874204 ("PMPNN_Rosetta_Design_71") has been submitted
+2024-03-26 13:24:50 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:24:50 - DEBUG - Child index 72 created for 27.
+2024-03-26 13:26:35 - INFO - Ran ProteinMPNN for index 27 and found a new sequence with index 72.
+2024-03-26 13:26:35 - INFO - Run ProteinMPNN for index 72 based on index 27.
+2024-03-26 13:26:35 - DEBUG - Your job 874219 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_72") has been submitted
+2024-03-26 13:26:36 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 45.
+2024-03-26 13:26:36 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 53.
+2024-03-26 13:26:36 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:26:36 - DEBUG - Child index 73 created for 27.
+2024-03-26 13:26:36 - INFO - Run RosettaDesign for index 73 based on index 27.
+2024-03-26 13:26:36 - DEBUG - Your job 874220 ("PMPNN_Rosetta_Design_73") has been submitted
+2024-03-26 13:26:37 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:26:37 - DEBUG - Child index 74 created for 27.
+2024-03-26 13:26:37 - INFO - Run RosettaDesign for index 74 based on index 27.
+2024-03-26 13:26:38 - DEBUG - Your job 874221 ("PMPNN_Rosetta_Design_74") has been submitted
+2024-03-26 13:26:39 - DEBUG - Starting new calculation for index 53.
+2024-03-26 13:26:39 - DEBUG - Child index 75 created for 53.
+2024-03-26 13:27:58 - INFO - Ran ProteinMPNN for index 53 and found a new sequence with index 75.
+2024-03-26 13:27:58 - INFO - Run ProteinMPNN for index 75 based on index 53.
+2024-03-26 13:27:58 - DEBUG - Your job 874223 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_75") has been submitted
+2024-03-26 13:28:00 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 54.
+2024-03-26 13:28:00 - DEBUG - Starting new calculation for index 53.
+2024-03-26 13:28:00 - DEBUG - Child index 76 created for 53.
+2024-03-26 13:28:00 - INFO - Run RosettaDesign for index 76 based on index 53.
+2024-03-26 13:28:00 - DEBUG - Your job 874225 ("PMPNN_Rosetta_Design_76") has been submitted
+2024-03-26 13:28:02 - DEBUG - Starting new calculation for index 54.
+2024-03-26 13:28:02 - DEBUG - Child index 77 created for 54.
+2024-03-26 13:28:02 - INFO - Run RosettaDesign for index 77 based on index 54.
+2024-03-26 13:28:02 - DEBUG - Your job 874226 ("PMPNN_Rosetta_Design_77") has been submitted
+2024-03-26 13:28:03 - DEBUG - Starting new calculation for index 54.
+2024-03-26 13:28:03 - DEBUG - Child index 78 created for 54.
+2024-03-26 13:29:38 - INFO - Ran ProteinMPNN for index 54 and found a new sequence with index 78.
+2024-03-26 13:29:38 - INFO - Run ProteinMPNN for index 78 based on index 54.
+2024-03-26 13:29:38 - DEBUG - Your job 874235 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_78") has been submitted
+2024-03-26 13:29:40 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 56.
+2024-03-26 13:29:40 - DEBUG - Starting new calculation for index 53.
+2024-03-26 13:29:40 - DEBUG - Child index 79 created for 53.
+2024-03-26 13:29:40 - INFO - Run RosettaDesign for index 79 based on index 53.
+2024-03-26 13:29:40 - DEBUG - Your job 874236 ("PMPNN_Rosetta_Design_79") has been submitted
+2024-03-26 13:29:42 - DEBUG - Starting new calculation for index 53.
+2024-03-26 13:29:42 - DEBUG - Child index 80 created for 53.
+2024-03-26 13:31:04 - INFO - Ran ProteinMPNN for index 53 and found a new sequence with index 80.
+2024-03-26 13:31:04 - INFO - Run ProteinMPNN for index 80 based on index 53.
+2024-03-26 13:31:05 - DEBUG - Your job 874239 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_80") has been submitted
+2024-03-26 13:31:06 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 63.
+2024-03-26 13:31:06 - DEBUG - Starting new calculation for index 45.
+2024-03-26 13:31:06 - DEBUG - Child index 81 created for 45.
+2024-03-26 13:31:06 - INFO - Run RosettaDesign for index 81 based on index 45.
+2024-03-26 13:31:06 - DEBUG - Your job 874240 ("PMPNN_Rosetta_Design_81") has been submitted
+2024-03-26 13:31:07 - DEBUG - Starting new calculation for index 56.
+2024-03-26 13:31:07 - DEBUG - Child index 82 created for 56.
+2024-03-26 13:31:07 - INFO - Run RosettaDesign for index 82 based on index 56.
+2024-03-26 13:31:07 - DEBUG - Your job 874241 ("PMPNN_Rosetta_Design_82") has been submitted
+2024-03-26 13:31:08 - DEBUG - Starting new calculation for index 54.
+2024-03-26 13:31:08 - DEBUG - Child index 83 created for 54.
+2024-03-26 13:32:53 - INFO - Ran ProteinMPNN for index 54 and found a new sequence with index 83.
+2024-03-26 13:32:53 - INFO - Run ProteinMPNN for index 83 based on index 54.
+2024-03-26 13:32:53 - DEBUG - Your job 874244 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_83") has been submitted
+2024-03-26 13:32:54 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 10.
+2024-03-26 13:32:54 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 11.
+2024-03-26 13:32:55 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 12.
+2024-03-26 13:32:55 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 64.
+2024-03-26 13:32:55 - DEBUG - Starting new calculation for index 54.
+2024-03-26 13:32:55 - DEBUG - Child index 84 created for 54.
+2024-03-26 13:32:55 - INFO - Run RosettaDesign for index 84 based on index 54.
+2024-03-26 13:32:55 - DEBUG - Your job 874245 ("PMPNN_Rosetta_Design_84") has been submitted
+2024-03-26 13:32:56 - DEBUG - Starting new calculation for index 54.
+2024-03-26 13:32:56 - DEBUG - Child index 85 created for 54.
+2024-03-26 13:32:57 - INFO - Run RosettaDesign for index 85 based on index 54.
+2024-03-26 13:32:57 - DEBUG - Your job 874246 ("PMPNN_Rosetta_Design_85") has been submitted
+2024-03-26 13:32:58 - DEBUG - Starting new calculation for index 54.
+2024-03-26 13:32:58 - DEBUG - Child index 86 created for 54.
+2024-03-26 13:32:58 - INFO - Run RosettaDesign for index 86 based on index 54.
+2024-03-26 13:32:58 - DEBUG - Your job 874247 ("PMPNN_Rosetta_Design_86") has been submitted
+2024-03-26 13:32:59 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:32:59 - DEBUG - Child index 87 created for 14.
+2024-03-26 13:32:59 - INFO - Run RosettaDesign for index 87 based on index 14.
+2024-03-26 13:32:59 - DEBUG - Your job 874248 ("PMPNN_Rosetta_Design_87") has been submitted
+2024-03-26 13:33:00 - DEBUG - Starting new calculation for index 53.
+2024-03-26 13:33:00 - DEBUG - Child index 88 created for 53.
+2024-03-26 13:34:36 - INFO - Ran ProteinMPNN for index 53 and found a new sequence with index 88.
+2024-03-26 13:34:36 - INFO - Run ProteinMPNN for index 88 based on index 53.
+2024-03-26 13:34:36 - DEBUG - Your job 874250 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_88") has been submitted
+2024-03-26 13:34:37 - DEBUG - Starting new calculation for index 45.
+2024-03-26 13:34:37 - DEBUG - Child index 89 created for 45.
+2024-03-26 13:34:37 - INFO - Run RosettaDesign for index 89 based on index 45.
+2024-03-26 13:34:37 - DEBUG - Your job 874251 ("PMPNN_Rosetta_Design_89") has been submitted
+2024-03-26 13:34:38 - DEBUG - Starting new calculation for index 64.
+2024-03-26 13:34:39 - DEBUG - Child index 90 created for 64.
+2024-03-26 13:36:03 - INFO - Ran ProteinMPNN for index 64 and found a new sequence with index 90.
+2024-03-26 13:36:03 - INFO - Run ProteinMPNN for index 90 based on index 64.
+2024-03-26 13:36:03 - DEBUG - Your job 874254 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_90") has been submitted
+2024-03-26 13:36:04 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 15.
+2024-03-26 13:36:04 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 17.
+2024-03-26 13:36:05 - DEBUG - Starting new calculation for index 64.
+2024-03-26 13:36:05 - DEBUG - Child index 91 created for 64.
+2024-03-26 13:36:05 - INFO - Run RosettaDesign for index 91 based on index 64.
+2024-03-26 13:36:05 - DEBUG - Your job 874255 ("PMPNN_Rosetta_Design_91") has been submitted
+2024-03-26 13:36:06 - DEBUG - Starting new calculation for index 53.
+2024-03-26 13:36:06 - DEBUG - Child index 92 created for 53.
+2024-03-26 13:36:06 - INFO - Run RosettaDesign for index 92 based on index 53.
+2024-03-26 13:36:06 - DEBUG - Your job 874256 ("PMPNN_Rosetta_Design_92") has been submitted
+2024-03-26 13:36:07 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:36:07 - DEBUG - Child index 93 created for 14.
+2024-03-26 13:36:07 - INFO - Run RosettaDesign for index 93 based on index 14.
+2024-03-26 13:36:07 - DEBUG - Your job 874257 ("PMPNN_Rosetta_Design_93") has been submitted
+2024-03-26 13:36:08 - DEBUG - Starting new calculation for index 54.
+2024-03-26 13:36:08 - DEBUG - Child index 94 created for 54.
+2024-03-26 13:36:08 - INFO - Run RosettaDesign for index 94 based on index 54.
+2024-03-26 13:36:09 - DEBUG - Your job 874258 ("PMPNN_Rosetta_Design_94") has been submitted
+2024-03-26 13:36:10 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:36:10 - DEBUG - Child index 95 created for 27.
+2024-03-26 13:36:10 - INFO - Run RosettaDesign for index 95 based on index 27.
+2024-03-26 13:36:10 - DEBUG - Your job 874259 ("PMPNN_Rosetta_Design_95") has been submitted
+2024-03-26 13:36:11 - DEBUG - Starting new calculation for index 54.
+2024-03-26 13:36:11 - DEBUG - Child index 96 created for 54.
+2024-03-26 13:36:11 - INFO - Run RosettaDesign for index 96 based on index 54.
+2024-03-26 13:36:11 - DEBUG - Your job 874260 ("PMPNN_Rosetta_Design_96") has been submitted
+2024-03-26 13:36:12 - DEBUG - Starting new calculation for index 54.
+2024-03-26 13:36:12 - DEBUG - Child index 97 created for 54.
+2024-03-26 13:37:43 - INFO - Ran ProteinMPNN for index 54 and found a new sequence with index 97.
+2024-03-26 13:37:43 - INFO - Run ProteinMPNN for index 97 based on index 54.
+2024-03-26 13:37:43 - DEBUG - Your job 874268 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_97") has been submitted
+2024-03-26 13:37:44 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 18.
+2024-03-26 13:37:45 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 19.
+2024-03-26 13:37:45 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 20.
+2024-03-26 13:37:45 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 21.
+2024-03-26 13:37:45 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 24.
+2024-03-26 13:37:46 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 26.
+2024-03-26 13:37:46 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 35.
+2024-03-26 13:37:46 - DEBUG - Starting new calculation for index 53.
+2024-03-26 13:37:46 - DEBUG - Child index 98 created for 53.
+2024-03-26 13:37:47 - INFO - Run RosettaDesign for index 98 based on index 53.
+2024-03-26 13:37:47 - DEBUG - Your job 874269 ("PMPNN_Rosetta_Design_98") has been submitted
+2024-03-26 13:37:48 - DEBUG - Starting new calculation for index 53.
+2024-03-26 13:37:48 - DEBUG - Child index 99 created for 53.
+2024-03-26 13:37:48 - INFO - Run RosettaDesign for index 99 based on index 53.
+2024-03-26 13:37:48 - DEBUG - Your job 874270 ("PMPNN_Rosetta_Design_99") has been submitted
+2024-03-26 13:37:49 - DEBUG - Starting new calculation for index 53.
+2024-03-26 13:37:49 - DEBUG - Child index 100 created for 53.
+2024-03-26 13:39:07 - INFO - Ran ProteinMPNN for index 53 and found a new sequence with index 100.
+2024-03-26 13:39:07 - INFO - Run ProteinMPNN for index 100 based on index 53.
+2024-03-26 13:39:07 - DEBUG - Your job 874272 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_100") has been submitted
+2024-03-26 13:39:08 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 23.
+2024-03-26 13:39:08 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 25.
+2024-03-26 13:39:09 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 33.
+2024-03-26 13:39:09 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 78.
+2024-03-26 13:39:09 - DEBUG - Starting new calculation for index 45.
+2024-03-26 13:39:09 - DEBUG - Child index 101 created for 45.
+2024-03-26 13:40:43 - INFO - Ran ProteinMPNN for index 45 and found a new sequence with index 101.
+2024-03-26 13:40:43 - INFO - Run ProteinMPNN for index 101 based on index 45.
+2024-03-26 13:40:43 - DEBUG - Your job 874282 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_101") has been submitted
+2024-03-26 13:40:44 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 28.
+2024-03-26 13:40:44 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 29.
+2024-03-26 13:40:44 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 38.
+2024-03-26 13:40:45 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 40.
+2024-03-26 13:40:45 - DEBUG - Starting new calculation for index 64.
+2024-03-26 13:40:45 - DEBUG - Child index 102 created for 64.
+2024-03-26 13:42:21 - INFO - Ran ProteinMPNN for index 64 and found a new sequence with index 102.
+2024-03-26 13:42:21 - INFO - Run ProteinMPNN for index 102 based on index 64.
+2024-03-26 13:42:21 - DEBUG - Your job 874291 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_102") has been submitted
+2024-03-26 13:42:22 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 31.
+2024-03-26 13:42:22 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 32.
+2024-03-26 13:42:22 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 34.
+2024-03-26 13:42:23 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 36.
+2024-03-26 13:42:23 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 37.
+2024-03-26 13:42:23 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 39.
+2024-03-26 13:42:23 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 41.
+2024-03-26 13:42:23 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 43.
+2024-03-26 13:42:23 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 44.
+2024-03-26 13:42:24 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 47.
+2024-03-26 13:42:24 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 75.
+2024-03-26 13:42:24 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 88.
+2024-03-26 13:42:24 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:42:24 - DEBUG - Child index 103 created for 27.
+2024-03-26 13:42:24 - INFO - Run RosettaDesign for index 103 based on index 27.
+2024-03-26 13:42:24 - DEBUG - Your job 874293 ("PMPNN_Rosetta_Design_103") has been submitted
+2024-03-26 13:42:25 - DEBUG - Starting new calculation for index 53.
+2024-03-26 13:42:25 - DEBUG - Child index 104 created for 53.
+2024-03-26 13:43:47 - INFO - Ran ProteinMPNN for index 53 and found a new sequence with index 104.
+2024-03-26 13:43:47 - INFO - Run ProteinMPNN for index 104 based on index 53.
+2024-03-26 13:43:47 - DEBUG - Your job 874297 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_104") has been submitted
+2024-03-26 13:43:48 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 48.
+2024-03-26 13:43:48 - DEBUG - Starting new calculation for index 56.
+2024-03-26 13:43:48 - DEBUG - Child index 105 created for 56.
+2024-03-26 13:45:11 - INFO - Ran ProteinMPNN for index 56 and found a new sequence with index 105.
+2024-03-26 13:45:12 - INFO - Run ProteinMPNN for index 105 based on index 56.
+2024-03-26 13:45:12 - DEBUG - Your job 874301 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_105") has been submitted
+2024-03-26 13:45:13 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 51.
+2024-03-26 13:45:13 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 55.
+2024-03-26 13:45:13 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 72.
+2024-03-26 13:45:13 - DEBUG - Starting new calculation for index 27.
+2024-03-26 13:45:13 - DEBUG - Child index 106 created for 27.
+2024-03-26 13:45:13 - INFO - Run RosettaDesign for index 106 based on index 27.
+2024-03-26 13:45:13 - DEBUG - Your job 874303 ("PMPNN_Rosetta_Design_106") has been submitted
+2024-03-26 13:45:14 - DEBUG - Starting new calculation for index 56.
+2024-03-26 13:45:14 - DEBUG - Child index 107 created for 56.
+2024-03-26 13:45:14 - INFO - Run RosettaDesign for index 107 based on index 56.
+2024-03-26 13:45:15 - DEBUG - Your job 874304 ("PMPNN_Rosetta_Design_107") has been submitted
+2024-03-26 13:45:16 - DEBUG - Starting new calculation for index 56.
+2024-03-26 13:45:16 - DEBUG - Child index 108 created for 56.
+2024-03-26 13:45:16 - INFO - Run RosettaDesign for index 108 based on index 56.
+2024-03-26 13:45:16 - DEBUG - Your job 874305 ("PMPNN_Rosetta_Design_108") has been submitted
+2024-03-26 13:45:17 - DEBUG - Starting new calculation for index 56.
+2024-03-26 13:45:17 - DEBUG - Child index 109 created for 56.
+2024-03-26 13:45:17 - INFO - Run RosettaDesign for index 109 based on index 56.
+2024-03-26 13:45:17 - DEBUG - Your job 874307 ("PMPNN_Rosetta_Design_109") has been submitted
+2024-03-26 13:45:18 - DEBUG - Starting new calculation for index 56.
+2024-03-26 13:45:18 - DEBUG - Child index 110 created for 56.
+2024-03-26 13:46:47 - INFO - Ran ProteinMPNN for index 56 and found a new sequence with index 110.
+2024-03-26 13:46:47 - INFO - Run ProteinMPNN for index 110 based on index 56.
+2024-03-26 13:46:47 - DEBUG - Your job 874311 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_110") has been submitted
+2024-03-26 13:46:48 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 46.
+2024-03-26 13:46:48 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 49.
+2024-03-26 13:46:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 50.
+2024-03-26 13:46:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 52.
+2024-03-26 13:46:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 61.
+2024-03-26 13:46:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 80.
+2024-03-26 13:46:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 90.
+2024-03-26 13:46:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 97.
+2024-03-26 13:46:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 100.
+2024-03-26 13:46:49 - DEBUG - Starting new calculation for index 48.
+2024-03-26 13:46:49 - INFO - Index 48 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 13:46:49 - INFO - Run ESMfold & Rosetta_Relax for index 48.
+2024-03-26 13:46:49 - DEBUG - Your job 874313 ("PMPNN_ESMfold_Rosetta_Relax_48") has been submitted
+2024-03-26 13:46:51 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 60.
+2024-03-26 13:46:51 - DEBUG - Starting new calculation for index 88.
+2024-03-26 13:46:51 - DEBUG - Child index 111 created for 88.
+2024-03-26 13:46:51 - INFO - Run RosettaDesign for index 111 based on index 88.
+2024-03-26 13:46:51 - DEBUG - Your job 874314 ("PMPNN_Rosetta_Design_111") has been submitted
+2024-03-26 13:46:52 - DEBUG - Starting new calculation for index 47.
+2024-03-26 13:46:52 - INFO - Index 47 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 13:46:52 - INFO - Run ESMfold & Rosetta_Relax for index 47.
+2024-03-26 13:46:52 - DEBUG - Your job 874316 ("PMPNN_ESMfold_Rosetta_Relax_47") has been submitted
+2024-03-26 13:46:53 - DEBUG - Starting new calculation for index 63.
+2024-03-26 13:46:53 - DEBUG - Child index 112 created for 63.
+2024-03-26 13:48:32 - INFO - Ran ProteinMPNN for index 63 and found a new sequence with index 112.
+2024-03-26 13:48:32 - INFO - Run ProteinMPNN for index 112 based on index 63.
+2024-03-26 13:48:32 - DEBUG - Your job 874329 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_112") has been submitted
+2024-03-26 13:48:34 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 101.
+2024-03-26 13:48:34 - DEBUG - Starting new calculation for index 63.
+2024-03-26 13:48:34 - DEBUG - Child index 113 created for 63.
+2024-03-26 13:48:34 - INFO - Run RosettaDesign for index 113 based on index 63.
+2024-03-26 13:48:34 - DEBUG - Your job 874330 ("PMPNN_Rosetta_Design_113") has been submitted
+2024-03-26 13:48:35 - DEBUG - Starting new calculation for index 75.
+2024-03-26 13:48:35 - DEBUG - Child index 114 created for 75.
+2024-03-26 13:48:35 - INFO - Run RosettaDesign for index 114 based on index 75.
+2024-03-26 13:48:35 - DEBUG - Your job 874331 ("PMPNN_Rosetta_Design_114") has been submitted
+2024-03-26 13:48:36 - DEBUG - Starting new calculation for index 45.
+2024-03-26 13:48:36 - DEBUG - Child index 115 created for 45.
+2024-03-26 13:48:36 - INFO - Run RosettaDesign for index 115 based on index 45.
+2024-03-26 13:48:36 - DEBUG - Your job 874332 ("PMPNN_Rosetta_Design_115") has been submitted
+2024-03-26 13:48:38 - DEBUG - Starting new calculation for index 56.
+2024-03-26 13:48:38 - DEBUG - Child index 116 created for 56.
+2024-03-26 13:48:38 - INFO - Run RosettaDesign for index 116 based on index 56.
+2024-03-26 13:48:38 - DEBUG - Your job 874333 ("PMPNN_Rosetta_Design_116") has been submitted
+2024-03-26 13:48:39 - DEBUG - Starting new calculation for index 52.
+2024-03-26 13:48:39 - INFO - Index 52 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 13:48:39 - INFO - Run ESMfold & Rosetta_Relax for index 52.
+2024-03-26 13:48:39 - DEBUG - Your job 874334 ("PMPNN_ESMfold_Rosetta_Relax_52") has been submitted
+2024-03-26 13:48:40 - DEBUG - Starting new calculation for index 63.
+2024-03-26 13:48:40 - DEBUG - Child index 117 created for 63.
+2024-03-26 13:48:40 - INFO - Run RosettaDesign for index 117 based on index 63.
+2024-03-26 13:48:40 - DEBUG - Your job 874335 ("PMPNN_Rosetta_Design_117") has been submitted
+2024-03-26 13:48:41 - DEBUG - Starting new calculation for index 80.
+2024-03-26 13:48:41 - DEBUG - Child index 118 created for 80.
+2024-03-26 13:48:41 - INFO - Run RosettaDesign for index 118 based on index 80.
+2024-03-26 13:48:41 - DEBUG - Your job 874336 ("PMPNN_Rosetta_Design_118") has been submitted
+2024-03-26 13:48:43 - DEBUG - Starting new calculation for index 88.
+2024-03-26 13:48:43 - DEBUG - Child index 119 created for 88.
+2024-03-26 13:48:43 - INFO - Run RosettaDesign for index 119 based on index 88.
+2024-03-26 13:48:43 - DEBUG - Your job 874337 ("PMPNN_Rosetta_Design_119") has been submitted
+2024-03-26 13:48:44 - DEBUG - Starting new calculation for index 56.
+2024-03-26 13:48:44 - DEBUG - Child index 120 created for 56.
+2024-03-26 13:50:12 - INFO - Ran ProteinMPNN for index 56 and found a new sequence with index 120.
+2024-03-26 13:50:12 - INFO - Run ProteinMPNN for index 120 based on index 56.
+2024-03-26 13:50:12 - DEBUG - Your job 874343 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_120") has been submitted
+2024-03-26 13:50:13 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 59.
+2024-03-26 13:50:13 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 65.
+2024-03-26 13:50:13 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 68.
+2024-03-26 13:50:13 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 83.
+2024-03-26 13:50:14 - DEBUG - Starting new calculation for index 45.
+2024-03-26 13:50:14 - DEBUG - Child index 121 created for 45.
+2024-03-26 13:50:14 - INFO - Run RosettaDesign for index 121 based on index 45.
+2024-03-26 13:50:14 - DEBUG - Your job 874345 ("PMPNN_Rosetta_Design_121") has been submitted
+2024-03-26 13:50:15 - DEBUG - Starting new calculation for index 50.
+2024-03-26 13:50:15 - INFO - Index 50 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 13:50:15 - INFO - Run ESMfold & Rosetta_Relax for index 50.
+2024-03-26 13:50:15 - DEBUG - Your job 874346 ("PMPNN_ESMfold_Rosetta_Relax_50") has been submitted
+2024-03-26 13:50:16 - DEBUG - Starting new calculation for index 75.
+2024-03-26 13:50:16 - DEBUG - Child index 122 created for 75.
+2024-03-26 13:50:16 - INFO - Run RosettaDesign for index 122 based on index 75.
+2024-03-26 13:50:16 - DEBUG - Your job 874347 ("PMPNN_Rosetta_Design_122") has been submitted
+2024-03-26 13:50:17 - DEBUG - Starting new calculation for index 75.
+2024-03-26 13:50:17 - DEBUG - Child index 123 created for 75.
+2024-03-26 13:50:18 - INFO - Run RosettaDesign for index 123 based on index 75.
+2024-03-26 13:50:18 - DEBUG - Your job 874349 ("PMPNN_Rosetta_Design_123") has been submitted
+2024-03-26 13:50:19 - DEBUG - Starting new calculation for index 80.
+2024-03-26 13:50:19 - DEBUG - Child index 124 created for 80.
+2024-03-26 13:50:19 - INFO - Run RosettaDesign for index 124 based on index 80.
+2024-03-26 13:50:19 - DEBUG - Your job 874350 ("PMPNN_Rosetta_Design_124") has been submitted
+2024-03-26 13:50:20 - DEBUG - Starting new calculation for index 75.
+2024-03-26 13:50:20 - DEBUG - Child index 125 created for 75.
+2024-03-26 13:50:20 - INFO - Run RosettaDesign for index 125 based on index 75.
+2024-03-26 13:50:20 - DEBUG - Your job 874351 ("PMPNN_Rosetta_Design_125") has been submitted
+2024-03-26 13:50:21 - DEBUG - Starting new calculation for index 75.
+2024-03-26 13:50:21 - DEBUG - Child index 126 created for 75.
+2024-03-26 13:50:21 - INFO - Run RosettaDesign for index 126 based on index 75.
+2024-03-26 13:50:21 - DEBUG - Your job 874353 ("PMPNN_Rosetta_Design_126") has been submitted
+2024-03-26 13:50:23 - DEBUG - Starting new calculation for index 56.
+2024-03-26 13:50:23 - DEBUG - Child index 127 created for 56.
+2024-03-26 13:50:23 - INFO - Run RosettaDesign for index 127 based on index 56.
+2024-03-26 13:50:23 - DEBUG - Your job 874354 ("PMPNN_Rosetta_Design_127") has been submitted
+2024-03-26 13:50:24 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:50:24 - DEBUG - Child index 128 created for 14.
+2024-03-26 13:51:51 - INFO - Ran ProteinMPNN for index 14 and found a new sequence with index 128.
+2024-03-26 13:51:51 - INFO - Run ProteinMPNN for index 128 based on index 14.
+2024-03-26 13:51:51 - DEBUG - Your job 874360 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_128") has been submitted
+2024-03-26 13:51:52 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 58.
+2024-03-26 13:51:53 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 62.
+2024-03-26 13:51:53 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 70.
+2024-03-26 13:51:53 - DEBUG - Starting new calculation for index 14.
+2024-03-26 13:51:53 - DEBUG - Child index 129 created for 14.
+2024-03-26 13:51:53 - INFO - Run RosettaDesign for index 129 based on index 14.
+2024-03-26 13:51:53 - DEBUG - Your job 874361 ("PMPNN_Rosetta_Design_129") has been submitted
+2024-03-26 13:51:54 - DEBUG - Starting new calculation for index 56.
+2024-03-26 13:51:54 - DEBUG - Child index 130 created for 56.
+2024-03-26 13:51:55 - INFO - Run RosettaDesign for index 130 based on index 56.
+2024-03-26 13:51:55 - DEBUG - Your job 874362 ("PMPNN_Rosetta_Design_130") has been submitted
+2024-03-26 13:51:56 - DEBUG - Starting new calculation for index 72.
+2024-03-26 13:51:56 - DEBUG - Child index 131 created for 72.
+2024-03-26 13:51:56 - INFO - Run RosettaDesign for index 131 based on index 72.
+2024-03-26 13:51:56 - DEBUG - Your job 874363 ("PMPNN_Rosetta_Design_131") has been submitted
+2024-03-26 13:51:58 - DEBUG - Starting new calculation for index 75.
+2024-03-26 13:51:58 - DEBUG - Child index 132 created for 75.
+2024-03-26 13:53:35 - INFO - Ran ProteinMPNN for index 75 and found a new sequence with index 132.
+2024-03-26 13:53:35 - INFO - Run ProteinMPNN for index 132 based on index 75.
+2024-03-26 13:53:35 - DEBUG - Your job 874374 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_132") has been submitted
+2024-03-26 13:53:36 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 57.
+2024-03-26 13:53:36 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 66.
+2024-03-26 13:53:37 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 69.
+2024-03-26 13:53:37 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 74.
+2024-03-26 13:53:37 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 105.
+2024-03-26 13:53:37 - DEBUG - Starting new calculation for index 75.
+2024-03-26 13:53:37 - DEBUG - Child index 133 created for 75.
+2024-03-26 13:55:04 - INFO - Ran ProteinMPNN for index 75 and found a new sequence with index 133.
+2024-03-26 13:55:04 - INFO - Run ProteinMPNN for index 133 based on index 75.
+2024-03-26 13:55:05 - DEBUG - Your job 874380 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_133") has been submitted
+2024-03-26 13:55:06 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 67.
+2024-03-26 13:55:06 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 71.
+2024-03-26 13:55:06 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 79.
+2024-03-26 13:55:06 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 82.
+2024-03-26 13:55:06 - DEBUG - Starting new calculation for index 74.
+2024-03-26 13:55:06 - INFO - Index 74 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 13:55:06 - INFO - Run ESMfold & Rosetta_Relax for index 74.
+2024-03-26 13:55:06 - DEBUG - Your job 874382 ("PMPNN_ESMfold_Rosetta_Relax_74") has been submitted
+2024-03-26 13:55:07 - DEBUG - Starting new calculation for index 101.
+2024-03-26 13:55:07 - DEBUG - Child index 134 created for 101.
+2024-03-26 13:56:50 - INFO - Ran ProteinMPNN for index 101 and found a new sequence with index 134.
+2024-03-26 13:56:50 - INFO - Run ProteinMPNN for index 134 based on index 101.
+2024-03-26 13:56:50 - DEBUG - Your job 874394 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_134") has been submitted
+2024-03-26 13:56:51 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 47.
+2024-03-26 13:56:51 - DEBUG - Unblocked index 47.
+2024-03-26 13:56:52 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 52.
+2024-03-26 13:56:52 - DEBUG - Unblocked index 52.
+2024-03-26 13:56:52 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 73.
+2024-03-26 13:56:52 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 76.
+2024-03-26 13:56:52 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 77.
+2024-03-26 13:56:53 - DEBUG - Starting new calculation for index 76.
+2024-03-26 13:56:53 - INFO - Index 76 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 13:56:53 - INFO - Run ESMfold & Rosetta_Relax for index 76.
+2024-03-26 13:56:53 - DEBUG - Your job 874395 ("PMPNN_ESMfold_Rosetta_Relax_76") has been submitted
+2024-03-26 13:56:54 - DEBUG - Starting new calculation for index 79.
+2024-03-26 13:56:54 - INFO - Index 79 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 13:56:54 - INFO - Run ESMfold & Rosetta_Relax for index 79.
+2024-03-26 13:56:54 - DEBUG - Your job 874396 ("PMPNN_ESMfold_Rosetta_Relax_79") has been submitted
+2024-03-26 13:56:55 - DEBUG - Starting new calculation for index 65.
+2024-03-26 13:56:55 - INFO - Index 65 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 13:56:55 - INFO - Run ESMfold & Rosetta_Relax for index 65.
+2024-03-26 13:56:55 - DEBUG - Your job 874397 ("PMPNN_ESMfold_Rosetta_Relax_65") has been submitted
+2024-03-26 13:56:56 - DEBUG - Starting new calculation for index 64.
+2024-03-26 13:56:56 - DEBUG - Child index 135 created for 64.
+2024-03-26 13:56:56 - INFO - Run RosettaDesign for index 135 based on index 64.
+2024-03-26 13:56:56 - DEBUG - Your job 874398 ("PMPNN_Rosetta_Design_135") has been submitted
+2024-03-26 13:56:57 - DEBUG - Starting new calculation for index 100.
+2024-03-26 13:56:57 - DEBUG - Child index 136 created for 100.
+2024-03-26 13:56:58 - INFO - Run RosettaDesign for index 136 based on index 100.
+2024-03-26 13:56:58 - DEBUG - Your job 874399 ("PMPNN_Rosetta_Design_136") has been submitted
+2024-03-26 13:56:59 - DEBUG - Starting new calculation for index 75.
+2024-03-26 13:56:59 - DEBUG - Child index 137 created for 75.
+2024-03-26 13:56:59 - INFO - Run RosettaDesign for index 137 based on index 75.
+2024-03-26 13:56:59 - DEBUG - Your job 874400 ("PMPNN_Rosetta_Design_137") has been submitted
+2024-03-26 13:57:00 - DEBUG - Starting new calculation for index 45.
+2024-03-26 13:57:00 - DEBUG - Child index 138 created for 45.
+2024-03-26 13:58:21 - INFO - Ran ProteinMPNN for index 45 and found a new sequence with index 138.
+2024-03-26 13:58:22 - INFO - Run ProteinMPNN for index 138 based on index 45.
+2024-03-26 13:58:22 - DEBUG - Your job 874402 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_138") has been submitted
+2024-03-26 13:58:23 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 48.
+2024-03-26 13:58:23 - DEBUG - Unblocked index 48.
+2024-03-26 13:58:23 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 50.
+2024-03-26 13:58:23 - DEBUG - Unblocked index 50.
+2024-03-26 13:58:23 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 86.
+2024-03-26 13:58:23 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 104.
+2024-03-26 13:58:23 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 110.
+2024-03-26 13:58:24 - DEBUG - Starting new calculation for index 63.
+2024-03-26 13:58:24 - DEBUG - Child index 139 created for 63.
+2024-03-26 13:58:24 - INFO - Run RosettaDesign for index 139 based on index 63.
+2024-03-26 13:58:24 - DEBUG - Your job 874403 ("PMPNN_Rosetta_Design_139") has been submitted
+2024-03-26 13:58:25 - DEBUG - Starting new calculation for index 53.
+2024-03-26 13:58:25 - DEBUG - Child index 140 created for 53.
+2024-03-26 13:59:47 - INFO - Ran ProteinMPNN for index 53 and found a new sequence with index 140.
+2024-03-26 13:59:47 - INFO - Run ProteinMPNN for index 140 based on index 53.
+2024-03-26 13:59:48 - DEBUG - Your job 874406 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_140") has been submitted
+2024-03-26 13:59:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 102.
+2024-03-26 13:59:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 128.
+2024-03-26 13:59:49 - DEBUG - Starting new calculation for index 69.
+2024-03-26 13:59:49 - INFO - Index 69 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 13:59:49 - INFO - Run ESMfold & Rosetta_Relax for index 69.
+2024-03-26 13:59:49 - DEBUG - Your job 874407 ("PMPNN_ESMfold_Rosetta_Relax_69") has been submitted
+2024-03-26 13:59:50 - DEBUG - Starting new calculation for index 72.
+2024-03-26 13:59:50 - DEBUG - Child index 141 created for 72.
+2024-03-26 13:59:50 - INFO - Run RosettaDesign for index 141 based on index 72.
+2024-03-26 13:59:50 - DEBUG - Your job 874408 ("PMPNN_Rosetta_Design_141") has been submitted
+2024-03-26 13:59:51 - DEBUG - Starting new calculation for index 100.
+2024-03-26 13:59:51 - DEBUG - Child index 142 created for 100.
+2024-03-26 13:59:51 - INFO - Run RosettaDesign for index 142 based on index 100.
+2024-03-26 13:59:51 - DEBUG - Your job 874409 ("PMPNN_Rosetta_Design_142") has been submitted
+2024-03-26 13:59:53 - DEBUG - Starting new calculation for index 82.
+2024-03-26 13:59:53 - INFO - Index 82 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 13:59:53 - INFO - Run ESMfold & Rosetta_Relax for index 82.
+2024-03-26 13:59:53 - DEBUG - Your job 874410 ("PMPNN_ESMfold_Rosetta_Relax_82") has been submitted
+2024-03-26 13:59:54 - DEBUG - Starting new calculation for index 80.
+2024-03-26 13:59:54 - DEBUG - Child index 143 created for 80.
+2024-03-26 13:59:54 - INFO - Run RosettaDesign for index 143 based on index 80.
+2024-03-26 13:59:54 - DEBUG - Your job 874411 ("PMPNN_Rosetta_Design_143") has been submitted
+2024-03-26 13:59:55 - DEBUG - Starting new calculation for index 53.
+2024-03-26 13:59:55 - DEBUG - Child index 144 created for 53.
+2024-03-26 13:59:55 - INFO - Run RosettaDesign for index 144 based on index 53.
+2024-03-26 13:59:55 - DEBUG - Your job 874412 ("PMPNN_Rosetta_Design_144") has been submitted
+2024-03-26 13:59:56 - DEBUG - Starting new calculation for index 90.
+2024-03-26 13:59:56 - DEBUG - Child index 145 created for 90.
+2024-03-26 14:01:25 - INFO - Ran ProteinMPNN for index 90 and found a new sequence with index 145.
+2024-03-26 14:01:25 - INFO - Run ProteinMPNN for index 145 based on index 90.
+2024-03-26 14:01:25 - DEBUG - Your job 874415 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_145") has been submitted
+2024-03-26 14:01:27 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 81.
+2024-03-26 14:01:28 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 84.
+2024-03-26 14:01:28 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 92.
+2024-03-26 14:01:29 - DEBUG - Starting new calculation for index 62.
+2024-03-26 14:01:29 - INFO - Index 62 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:01:29 - INFO - Run ESMfold & Rosetta_Relax for index 62.
+2024-03-26 14:01:29 - DEBUG - Your job 874416 ("PMPNN_ESMfold_Rosetta_Relax_62") has been submitted
+2024-03-26 14:01:30 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 85.
+2024-03-26 14:01:31 - DEBUG - Starting new calculation for index 64.
+2024-03-26 14:01:31 - DEBUG - Child index 146 created for 64.
+2024-03-26 14:01:31 - INFO - Run RosettaDesign for index 146 based on index 64.
+2024-03-26 14:01:31 - DEBUG - Your job 874417 ("PMPNN_Rosetta_Design_146") has been submitted
+2024-03-26 14:01:33 - DEBUG - Starting new calculation for index 47.
+2024-03-26 14:01:34 - DEBUG - Child index 147 created for 47.
+2024-03-26 14:01:34 - INFO - Run RosettaDesign for index 147 based on index 47.
+2024-03-26 14:01:34 - DEBUG - Your job 874418 ("PMPNN_Rosetta_Design_147") has been submitted
+2024-03-26 14:01:35 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 93.
+2024-03-26 14:01:35 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 95.
+2024-03-26 14:01:35 - DEBUG - Starting new calculation for index 75.
+2024-03-26 14:01:35 - DEBUG - Child index 148 created for 75.
+2024-03-26 14:01:36 - INFO - Run RosettaDesign for index 148 based on index 75.
+2024-03-26 14:01:36 - DEBUG - Your job 874419 ("PMPNN_Rosetta_Design_148") has been submitted
+2024-03-26 14:01:37 - DEBUG - Starting new calculation for index 47.
+2024-03-26 14:01:37 - DEBUG - Child index 149 created for 47.
+2024-03-26 14:03:04 - INFO - Ran ProteinMPNN for index 47 and found a new sequence with index 149.
+2024-03-26 14:03:04 - INFO - Run ProteinMPNN for index 149 based on index 47.
+2024-03-26 14:03:05 - DEBUG - Your job 874426 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_149") has been submitted
+2024-03-26 14:03:06 - DEBUG - Starting new calculation for index 75.
+2024-03-26 14:03:06 - DEBUG - Child index 150 created for 75.
+2024-03-26 14:04:28 - INFO - Ran ProteinMPNN for index 75 and found a new sequence with index 150.
+2024-03-26 14:04:28 - INFO - Run ProteinMPNN for index 150 based on index 75.
+2024-03-26 14:04:28 - DEBUG - Your job 874428 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_150") has been submitted
+2024-03-26 14:04:29 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 87.
+2024-03-26 14:04:30 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 91.
+2024-03-26 14:04:30 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 132.
+2024-03-26 14:04:30 - DEBUG - Starting new calculation for index 27.
+2024-03-26 14:04:30 - DEBUG - Child index 151 created for 27.
+2024-03-26 14:04:31 - INFO - Run RosettaDesign for index 151 based on index 27.
+2024-03-26 14:04:31 - DEBUG - Your job 874429 ("PMPNN_Rosetta_Design_151") has been submitted
+2024-03-26 14:04:32 - DEBUG - Starting new calculation for index 84.
+2024-03-26 14:04:32 - INFO - Index 84 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:04:32 - INFO - Run ESMfold & Rosetta_Relax for index 84.
+2024-03-26 14:04:32 - DEBUG - Your job 874430 ("PMPNN_ESMfold_Rosetta_Relax_84") has been submitted
+2024-03-26 14:04:34 - DEBUG - Starting new calculation for index 64.
+2024-03-26 14:04:34 - DEBUG - Child index 152 created for 64.
+2024-03-26 14:04:35 - INFO - Run RosettaDesign for index 152 based on index 64.
+2024-03-26 14:04:35 - DEBUG - Your job 874431 ("PMPNN_Rosetta_Design_152") has been submitted
+2024-03-26 14:04:36 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 96.
+2024-03-26 14:04:36 - DEBUG - Starting new calculation for index 47.
+2024-03-26 14:04:36 - DEBUG - Child index 153 created for 47.
+2024-03-26 14:04:36 - INFO - Run RosettaDesign for index 153 based on index 47.
+2024-03-26 14:04:36 - DEBUG - Your job 874432 ("PMPNN_Rosetta_Design_153") has been submitted
+2024-03-26 14:04:37 - DEBUG - Starting new calculation for index 92.
+2024-03-26 14:04:37 - INFO - Index 92 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:04:38 - INFO - Run ESMfold & Rosetta_Relax for index 92.
+2024-03-26 14:04:38 - DEBUG - Your job 874433 ("PMPNN_ESMfold_Rosetta_Relax_92") has been submitted
+2024-03-26 14:04:39 - DEBUG - Starting new calculation for index 53.
+2024-03-26 14:04:39 - DEBUG - Child index 154 created for 53.
+2024-03-26 14:04:39 - INFO - Run RosettaDesign for index 154 based on index 53.
+2024-03-26 14:04:39 - DEBUG - Your job 874434 ("PMPNN_Rosetta_Design_154") has been submitted
+2024-03-26 14:04:40 - DEBUG - Starting new calculation for index 47.
+2024-03-26 14:04:40 - DEBUG - Child index 155 created for 47.
+2024-03-26 14:06:18 - INFO - Ran ProteinMPNN for index 47 and found a new sequence with index 155.
+2024-03-26 14:06:18 - INFO - Run ProteinMPNN for index 155 based on index 47.
+2024-03-26 14:06:18 - DEBUG - Your job 874439 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_155") has been submitted
+2024-03-26 14:06:20 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 74.
+2024-03-26 14:06:20 - DEBUG - Unblocked index 74.
+2024-03-26 14:06:20 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 89.
+2024-03-26 14:06:20 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 94.
+2024-03-26 14:06:21 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 98.
+2024-03-26 14:06:21 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 112.
+2024-03-26 14:06:21 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 120.
+2024-03-26 14:06:22 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 133.
+2024-03-26 14:06:23 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 138.
+2024-03-26 14:06:23 - DEBUG - Starting new calculation for index 47.
+2024-03-26 14:06:23 - DEBUG - Child index 156 created for 47.
+2024-03-26 14:06:23 - INFO - Run RosettaDesign for index 156 based on index 47.
+2024-03-26 14:06:23 - DEBUG - Your job 874440 ("PMPNN_Rosetta_Design_156") has been submitted
+2024-03-26 14:06:24 - DEBUG - Starting new calculation for index 93.
+2024-03-26 14:06:24 - INFO - Index 93 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:06:25 - INFO - Run ESMfold & Rosetta_Relax for index 93.
+2024-03-26 14:06:25 - DEBUG - Your job 874441 ("PMPNN_ESMfold_Rosetta_Relax_93") has been submitted
+2024-03-26 14:06:27 - DEBUG - Starting new calculation for index 47.
+2024-03-26 14:06:27 - DEBUG - Child index 157 created for 47.
+2024-03-26 14:06:28 - INFO - Run RosettaDesign for index 157 based on index 47.
+2024-03-26 14:06:28 - DEBUG - Your job 874442 ("PMPNN_Rosetta_Design_157") has been submitted
+2024-03-26 14:06:29 - DEBUG - Starting new calculation for index 86.
+2024-03-26 14:06:29 - INFO - Index 86 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:06:30 - INFO - Run ESMfold & Rosetta_Relax for index 86.
+2024-03-26 14:06:30 - DEBUG - Your job 874443 ("PMPNN_ESMfold_Rosetta_Relax_86") has been submitted
+2024-03-26 14:06:31 - DEBUG - Starting new calculation for index 49.
+2024-03-26 14:06:31 - INFO - Index 49 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:06:31 - INFO - Run ESMfold & Rosetta_Relax for index 49.
+2024-03-26 14:06:31 - DEBUG - Your job 874444 ("PMPNN_ESMfold_Rosetta_Relax_49") has been submitted
+2024-03-26 14:06:33 - DEBUG - Starting new calculation for index 67.
+2024-03-26 14:06:33 - INFO - Index 67 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:06:33 - INFO - Run ESMfold & Rosetta_Relax for index 67.
+2024-03-26 14:06:33 - DEBUG - Your job 874445 ("PMPNN_ESMfold_Rosetta_Relax_67") has been submitted
+2024-03-26 14:06:35 - DEBUG - Starting new calculation for index 27.
+2024-03-26 14:06:36 - DEBUG - Child index 158 created for 27.
+2024-03-26 14:06:36 - INFO - Run RosettaDesign for index 158 based on index 27.
+2024-03-26 14:06:36 - DEBUG - Your job 874446 ("PMPNN_Rosetta_Design_158") has been submitted
+2024-03-26 14:06:37 - DEBUG - Starting new calculation for index 94.
+2024-03-26 14:06:37 - INFO - Index 94 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:06:37 - INFO - Run ESMfold & Rosetta_Relax for index 94.
+2024-03-26 14:06:37 - DEBUG - Your job 874447 ("PMPNN_ESMfold_Rosetta_Relax_94") has been submitted
+2024-03-26 14:06:39 - DEBUG - Starting new calculation for index 102.
+2024-03-26 14:06:39 - DEBUG - Child index 159 created for 102.
+2024-03-26 14:08:13 - INFO - Ran ProteinMPNN for index 102 and found a new sequence with index 159.
+2024-03-26 14:08:13 - INFO - Run ProteinMPNN for index 159 based on index 102.
+2024-03-26 14:08:13 - DEBUG - Your job 874452 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_159") has been submitted
+2024-03-26 14:08:15 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 79.
+2024-03-26 14:08:15 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 99.
+2024-03-26 14:08:17 - DEBUG - Starting new calculation for index 99.
+2024-03-26 14:08:17 - INFO - Index 99 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:08:17 - INFO - Run ESMfold & Rosetta_Relax for index 99.
+2024-03-26 14:08:17 - DEBUG - Your job 874453 ("PMPNN_ESMfold_Rosetta_Relax_99") has been submitted
+2024-03-26 14:08:18 - DEBUG - Starting new calculation for index 47.
+2024-03-26 14:08:19 - DEBUG - Child index 160 created for 47.
+2024-03-26 14:08:19 - INFO - Run RosettaDesign for index 160 based on index 47.
+2024-03-26 14:08:19 - DEBUG - Your job 874454 ("PMPNN_Rosetta_Design_160") has been submitted
+2024-03-26 14:08:20 - DEBUG - Starting new calculation for index 72.
+2024-03-26 14:08:20 - DEBUG - Child index 161 created for 72.
+2024-03-26 14:08:21 - INFO - Run RosettaDesign for index 161 based on index 72.
+2024-03-26 14:08:21 - DEBUG - Your job 874455 ("PMPNN_Rosetta_Design_161") has been submitted
+2024-03-26 14:08:22 - DEBUG - Starting new calculation for index 38.
+2024-03-26 14:08:22 - INFO - Index 38 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:08:23 - INFO - Run ESMfold & Rosetta_Relax for index 38.
+2024-03-26 14:08:23 - DEBUG - Your job 874456 ("PMPNN_ESMfold_Rosetta_Relax_38") has been submitted
+2024-03-26 14:08:24 - DEBUG - Starting new calculation for index 66.
+2024-03-26 14:08:24 - INFO - Index 66 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:08:24 - INFO - Run ESMfold & Rosetta_Relax for index 66.
+2024-03-26 14:08:24 - DEBUG - Your job 874458 ("PMPNN_ESMfold_Rosetta_Relax_66") has been submitted
+2024-03-26 14:08:25 - DEBUG - Starting new calculation for index 102.
+2024-03-26 14:08:25 - DEBUG - Child index 162 created for 102.
+2024-03-26 14:08:26 - INFO - Run RosettaDesign for index 162 based on index 102.
+2024-03-26 14:08:26 - DEBUG - Your job 874459 ("PMPNN_Rosetta_Design_162") has been submitted
+2024-03-26 14:08:27 - DEBUG - Starting new calculation for index 56.
+2024-03-26 14:08:27 - DEBUG - Child index 163 created for 56.
+2024-03-26 14:10:00 - INFO - Ran ProteinMPNN for index 56 and found a new sequence with index 163.
+2024-03-26 14:10:00 - INFO - Run ProteinMPNN for index 163 based on index 56.
+2024-03-26 14:10:00 - DEBUG - Your job 874465 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_163") has been submitted
+2024-03-26 14:10:02 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 65.
+2024-03-26 14:10:02 - DEBUG - Unblocked index 65.
+2024-03-26 14:10:03 - DEBUG - Starting new calculation for index 65.
+2024-03-26 14:10:03 - DEBUG - Child index 164 created for 65.
+2024-03-26 14:10:03 - INFO - Run RosettaDesign for index 164 based on index 65.
+2024-03-26 14:10:03 - DEBUG - Your job 874466 ("PMPNN_Rosetta_Design_164") has been submitted
+2024-03-26 14:10:05 - DEBUG - Starting new calculation for index 128.
+2024-03-26 14:10:05 - DEBUG - Child index 165 created for 128.
+2024-03-26 14:10:05 - INFO - Run RosettaDesign for index 165 based on index 128.
+2024-03-26 14:10:05 - DEBUG - Your job 874467 ("PMPNN_Rosetta_Design_165") has been submitted
+2024-03-26 14:10:07 - DEBUG - Starting new calculation for index 100.
+2024-03-26 14:10:07 - DEBUG - Child index 166 created for 100.
+2024-03-26 14:10:07 - INFO - Run RosettaDesign for index 166 based on index 100.
+2024-03-26 14:10:07 - DEBUG - Your job 874469 ("PMPNN_Rosetta_Design_166") has been submitted
+2024-03-26 14:10:08 - DEBUG - Starting new calculation for index 80.
+2024-03-26 14:10:08 - DEBUG - Child index 167 created for 80.
+2024-03-26 14:10:08 - INFO - Run RosettaDesign for index 167 based on index 80.
+2024-03-26 14:10:08 - DEBUG - Your job 874470 ("PMPNN_Rosetta_Design_167") has been submitted
+2024-03-26 14:12:12 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 103.
+2024-03-26 14:12:12 - DEBUG - Starting new calculation for index 98.
+2024-03-26 14:12:12 - INFO - Index 98 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:12:12 - INFO - Run ESMfold & Rosetta_Relax for index 98.
+2024-03-26 14:12:12 - DEBUG - Your job 874477 ("PMPNN_ESMfold_Rosetta_Relax_98") has been submitted
+2024-03-26 14:13:15 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 62.
+2024-03-26 14:13:15 - DEBUG - Unblocked index 62.
+2024-03-26 14:13:16 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 76.
+2024-03-26 14:13:16 - DEBUG - Unblocked index 76.
+2024-03-26 14:13:16 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 108.
+2024-03-26 14:13:17 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 113.
+2024-03-26 14:13:17 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 119.
+2024-03-26 14:13:18 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 134.
+2024-03-26 14:13:18 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 145.
+2024-03-26 14:13:19 - DEBUG - Starting new calculation for index 76.
+2024-03-26 14:13:19 - DEBUG - Child index 168 created for 76.
+2024-03-26 14:14:53 - INFO - Ran ProteinMPNN for index 76 and found a new sequence with index 168.
+2024-03-26 14:14:53 - INFO - Run ProteinMPNN for index 168 based on index 76.
+2024-03-26 14:14:53 - DEBUG - Your job 874483 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_168") has been submitted
+2024-03-26 14:14:55 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 106.
+2024-03-26 14:14:55 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 107.
+2024-03-26 14:14:55 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 109.
+2024-03-26 14:14:55 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 115.
+2024-03-26 14:14:56 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 122.
+2024-03-26 14:14:56 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 127.
+2024-03-26 14:14:56 - DEBUG - Starting new calculation for index 109.
+2024-03-26 14:14:56 - INFO - Index 109 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:14:56 - INFO - Run ESMfold & Rosetta_Relax for index 109.
+2024-03-26 14:14:56 - DEBUG - Your job 874484 ("PMPNN_ESMfold_Rosetta_Relax_109") has been submitted
+2024-03-26 14:14:58 - DEBUG - Starting new calculation for index 47.
+2024-03-26 14:14:58 - DEBUG - Child index 169 created for 47.
+2024-03-26 14:14:58 - INFO - Run RosettaDesign for index 169 based on index 47.
+2024-03-26 14:14:58 - DEBUG - Your job 874485 ("PMPNN_Rosetta_Design_169") has been submitted
+2024-03-26 14:15:00 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 94.
+2024-03-26 14:15:00 - DEBUG - Unblocked index 94.
+2024-03-26 14:15:00 - DEBUG - Starting new calculation for index 76.
+2024-03-26 14:15:00 - DEBUG - Child index 170 created for 76.
+2024-03-26 14:15:00 - INFO - Run RosettaDesign for index 170 based on index 76.
+2024-03-26 14:15:00 - DEBUG - Your job 874486 ("PMPNN_Rosetta_Design_170") has been submitted
+2024-03-26 14:15:01 - DEBUG - Starting new calculation for index 76.
+2024-03-26 14:15:01 - DEBUG - Child index 171 created for 76.
+2024-03-26 14:15:01 - INFO - Run RosettaDesign for index 171 based on index 76.
+2024-03-26 14:15:01 - DEBUG - Your job 874488 ("PMPNN_Rosetta_Design_171") has been submitted
+2024-03-26 14:15:03 - DEBUG - Starting new calculation for index 103.
+2024-03-26 14:15:03 - INFO - Index 103 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:15:03 - INFO - Run ESMfold & Rosetta_Relax for index 103.
+2024-03-26 14:15:03 - DEBUG - Your job 874489 ("PMPNN_ESMfold_Rosetta_Relax_103") has been submitted
+2024-03-26 14:15:04 - DEBUG - Starting new calculation for index 53.
+2024-03-26 14:15:04 - DEBUG - Child index 172 created for 53.
+2024-03-26 14:16:57 - INFO - Ran ProteinMPNN for index 53 and found a new sequence with index 172.
+2024-03-26 14:16:57 - INFO - Run ProteinMPNN for index 172 based on index 53.
+2024-03-26 14:16:57 - DEBUG - Your job 874503 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_172") has been submitted
+2024-03-26 14:16:58 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 69.
+2024-03-26 14:16:58 - DEBUG - Unblocked index 69.
+2024-03-26 14:16:58 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 111.
+2024-03-26 14:16:58 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 114.
+2024-03-26 14:16:59 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 116.
+2024-03-26 14:16:59 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 117.
+2024-03-26 14:16:59 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 118.
+2024-03-26 14:16:59 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 124.
+2024-03-26 14:16:59 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 129.
+2024-03-26 14:17:00 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 130.
+2024-03-26 14:17:00 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 131.
+2024-03-26 14:17:00 - DEBUG - Starting new calculation for index 117.
+2024-03-26 14:17:00 - INFO - Index 117 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:17:00 - INFO - Run ESMfold & Rosetta_Relax for index 117.
+2024-03-26 14:17:00 - DEBUG - Your job 874505 ("PMPNN_ESMfold_Rosetta_Relax_117") has been submitted
+2024-03-26 14:17:01 - DEBUG - Starting new calculation for index 76.
+2024-03-26 14:17:01 - DEBUG - Child index 173 created for 76.
+2024-03-26 14:18:25 - INFO - Ran ProteinMPNN for index 76 and found a new sequence with index 173.
+2024-03-26 14:18:25 - INFO - Run ProteinMPNN for index 173 based on index 76.
+2024-03-26 14:18:25 - DEBUG - Your job 874508 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_173") has been submitted
+2024-03-26 14:18:26 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 66.
+2024-03-26 14:18:26 - DEBUG - Unblocked index 66.
+2024-03-26 14:18:26 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 92.
+2024-03-26 14:18:26 - DEBUG - Unblocked index 92.
+2024-03-26 14:18:27 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 99.
+2024-03-26 14:18:27 - DEBUG - Unblocked index 99.
+2024-03-26 14:18:27 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 163.
+2024-03-26 14:18:27 - DEBUG - Starting new calculation for index 102.
+2024-03-26 14:18:27 - DEBUG - Child index 174 created for 102.
+2024-03-26 14:20:09 - INFO - Ran ProteinMPNN for index 102 and found a new sequence with index 174.
+2024-03-26 14:20:09 - INFO - Run ProteinMPNN for index 174 based on index 102.
+2024-03-26 14:20:09 - DEBUG - Your job 874519 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_174") has been submitted
+2024-03-26 14:20:11 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 38.
+2024-03-26 14:20:11 - DEBUG - Unblocked index 38.
+2024-03-26 14:20:11 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 84.
+2024-03-26 14:20:11 - DEBUG - Unblocked index 84.
+2024-03-26 14:20:11 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 123.
+2024-03-26 14:20:11 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 125.
+2024-03-26 14:20:11 - DEBUG - Starting new calculation for index 100.
+2024-03-26 14:20:12 - DEBUG - Child index 175 created for 100.
+2024-03-26 14:21:59 - INFO - Ran ProteinMPNN for index 100 and found a new sequence with index 175.
+2024-03-26 14:22:00 - INFO - Run ProteinMPNN for index 175 based on index 100.
+2024-03-26 14:22:00 - DEBUG - Your job 874533 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_175") has been submitted
+2024-03-26 14:22:02 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 103.
+2024-03-26 14:22:02 - DEBUG - Unblocked index 103.
+2024-03-26 14:22:02 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 121.
+2024-03-26 14:22:03 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 126.
+2024-03-26 14:22:04 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 136.
+2024-03-26 14:22:04 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 137.
+2024-03-26 14:22:05 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 150.
+2024-03-26 14:22:05 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 159.
+2024-03-26 14:22:05 - DEBUG - Starting new calculation for index 107.
+2024-03-26 14:22:05 - INFO - Index 107 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:22:06 - INFO - Run ESMfold & Rosetta_Relax for index 107.
+2024-03-26 14:22:06 - DEBUG - Your job 874535 ("PMPNN_ESMfold_Rosetta_Relax_107") has been submitted
+2024-03-26 14:22:08 - DEBUG - Starting new calculation for index 64.
+2024-03-26 14:22:08 - DEBUG - Child index 176 created for 64.
+2024-03-26 14:23:48 - INFO - Ran ProteinMPNN for index 64 and found a new sequence with index 176.
+2024-03-26 14:23:48 - INFO - Run ProteinMPNN for index 176 based on index 64.
+2024-03-26 14:23:48 - DEBUG - Your job 874546 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_176") has been submitted
+2024-03-26 14:23:49 - DEBUG - Starting new calculation for index 47.
+2024-03-26 14:23:49 - DEBUG - Child index 177 created for 47.
+2024-03-26 14:25:12 - INFO - Ran ProteinMPNN for index 47 and found a new sequence with index 177.
+2024-03-26 14:25:12 - INFO - Run ProteinMPNN for index 177 based on index 47.
+2024-03-26 14:25:13 - DEBUG - Your job 874549 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_177") has been submitted
+2024-03-26 14:25:14 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 141.
+2024-03-26 14:25:14 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 142.
+2024-03-26 14:25:14 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 143.
+2024-03-26 14:25:15 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 144.
+2024-03-26 14:25:15 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 172.
+2024-03-26 14:25:15 - DEBUG - Starting new calculation for index 144.
+2024-03-26 14:25:15 - INFO - Index 144 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:25:15 - INFO - Run ESMfold & Rosetta_Relax for index 144.
+2024-03-26 14:25:15 - DEBUG - Your job 874550 ("PMPNN_ESMfold_Rosetta_Relax_144") has been submitted
+2024-03-26 14:25:16 - DEBUG - Starting new calculation for index 84.
+2024-03-26 14:25:16 - DEBUG - Child index 178 created for 84.
+2024-03-26 14:26:47 - INFO - Ran ProteinMPNN for index 84 and found a new sequence with index 178.
+2024-03-26 14:26:47 - INFO - Run ProteinMPNN for index 178 based on index 84.
+2024-03-26 14:26:47 - DEBUG - Your job 874553 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_178") has been submitted
+2024-03-26 14:26:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 49.
+2024-03-26 14:26:49 - DEBUG - Unblocked index 49.
+2024-03-26 14:26:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 98.
+2024-03-26 14:26:49 - DEBUG - Unblocked index 98.
+2024-03-26 14:26:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 109.
+2024-03-26 14:26:49 - DEBUG - Unblocked index 109.
+2024-03-26 14:26:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 135.
+2024-03-26 14:26:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 168.
+2024-03-26 14:26:50 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 173.
+2024-03-26 14:26:50 - DEBUG - Starting new calculation for index 173.
+2024-03-26 14:26:50 - DEBUG - Child index 179 created for 173.
+2024-03-26 14:26:50 - INFO - Run RosettaDesign for index 179 based on index 173.
+2024-03-26 14:26:50 - DEBUG - Your job 874554 ("PMPNN_Rosetta_Design_179") has been submitted
+2024-03-26 14:26:51 - DEBUG - Starting new calculation for index 84.
+2024-03-26 14:26:51 - DEBUG - Child index 180 created for 84.
+2024-03-26 14:28:25 - INFO - Ran ProteinMPNN for index 84 and found a new sequence with index 180.
+2024-03-26 14:28:25 - INFO - Run ProteinMPNN for index 180 based on index 84.
+2024-03-26 14:28:25 - DEBUG - Your job 874561 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_180") has been submitted
+2024-03-26 14:28:26 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 139.
+2024-03-26 14:28:26 - DEBUG - Starting new calculation for index 99.
+2024-03-26 14:28:26 - DEBUG - Child index 181 created for 99.
+2024-03-26 14:28:27 - INFO - Run RosettaDesign for index 181 based on index 99.
+2024-03-26 14:28:27 - DEBUG - Your job 874562 ("PMPNN_Rosetta_Design_181") has been submitted
+2024-03-26 14:28:28 - DEBUG - Starting new calculation for index 99.
+2024-03-26 14:28:28 - DEBUG - Child index 182 created for 99.
+2024-03-26 14:29:54 - INFO - Ran ProteinMPNN for index 99 and found a new sequence with index 182.
+2024-03-26 14:29:54 - INFO - Run ProteinMPNN for index 182 based on index 99.
+2024-03-26 14:29:54 - DEBUG - Your job 874567 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_182") has been submitted
+2024-03-26 14:29:55 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 86.
+2024-03-26 14:29:55 - DEBUG - Unblocked index 86.
+2024-03-26 14:29:56 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 146.
+2024-03-26 14:29:56 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 151.
+2024-03-26 14:29:56 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 152.
+2024-03-26 14:29:56 - DEBUG - Starting new calculation for index 99.
+2024-03-26 14:29:56 - DEBUG - Child index 183 created for 99.
+2024-03-26 14:29:56 - INFO - Run RosettaDesign for index 183 based on index 99.
+2024-03-26 14:29:56 - DEBUG - Your job 874568 ("PMPNN_Rosetta_Design_183") has been submitted
+2024-03-26 14:29:57 - DEBUG - Starting new calculation for index 99.
+2024-03-26 14:29:57 - DEBUG - Child index 184 created for 99.
+2024-03-26 14:29:58 - INFO - Run RosettaDesign for index 184 based on index 99.
+2024-03-26 14:29:58 - DEBUG - Your job 874569 ("PMPNN_Rosetta_Design_184") has been submitted
+2024-03-26 14:29:59 - DEBUG - Starting new calculation for index 92.
+2024-03-26 14:29:59 - DEBUG - Child index 185 created for 92.
+2024-03-26 14:29:59 - INFO - Run RosettaDesign for index 185 based on index 92.
+2024-03-26 14:29:59 - DEBUG - Your job 874570 ("PMPNN_Rosetta_Design_185") has been submitted
+2024-03-26 14:30:00 - DEBUG - Starting new calculation for index 99.
+2024-03-26 14:30:00 - DEBUG - Child index 186 created for 99.
+2024-03-26 14:30:00 - INFO - Run RosettaDesign for index 186 based on index 99.
+2024-03-26 14:30:00 - DEBUG - Your job 874571 ("PMPNN_Rosetta_Design_186") has been submitted
+2024-03-26 14:30:01 - DEBUG - Starting new calculation for index 76.
+2024-03-26 14:30:01 - DEBUG - Child index 187 created for 76.
+2024-03-26 14:30:01 - INFO - Run RosettaDesign for index 187 based on index 76.
+2024-03-26 14:30:01 - DEBUG - Your job 874572 ("PMPNN_Rosetta_Design_187") has been submitted
+2024-03-26 14:30:03 - DEBUG - Starting new calculation for index 99.
+2024-03-26 14:30:03 - DEBUG - Child index 188 created for 99.
+2024-03-26 14:31:27 - INFO - Ran ProteinMPNN for index 99 and found a new sequence with index 188.
+2024-03-26 14:31:27 - INFO - Run ProteinMPNN for index 188 based on index 99.
+2024-03-26 14:31:27 - DEBUG - Your job 874574 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_188") has been submitted
+2024-03-26 14:31:28 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 107.
+2024-03-26 14:31:28 - DEBUG - Unblocked index 107.
+2024-03-26 14:31:29 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 148.
+2024-03-26 14:31:29 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 153.
+2024-03-26 14:31:29 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 175.
+2024-03-26 14:31:29 - DEBUG - Starting new calculation for index 99.
+2024-03-26 14:31:29 - DEBUG - Child index 189 created for 99.
+2024-03-26 14:31:29 - INFO - Run RosettaDesign for index 189 based on index 99.
+2024-03-26 14:31:29 - DEBUG - Your job 874575 ("PMPNN_Rosetta_Design_189") has been submitted
+2024-03-26 14:31:31 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 147.
+2024-03-26 14:31:31 - DEBUG - Starting new calculation for index 168.
+2024-03-26 14:31:31 - DEBUG - Child index 190 created for 168.
+2024-03-26 14:33:46 - INFO - Ran ProteinMPNN for index 168 and found a new sequence with index 190.
+2024-03-26 14:33:47 - INFO - Run ProteinMPNN for index 190 based on index 168.
+2024-03-26 14:33:47 - DEBUG - Your job 874580 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_190") has been submitted
+2024-03-26 14:33:48 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 67.
+2024-03-26 14:33:48 - DEBUG - Unblocked index 67.
+2024-03-26 14:33:48 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 117.
+2024-03-26 14:33:48 - DEBUG - Unblocked index 117.
+2024-03-26 14:33:48 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 144.
+2024-03-26 14:33:48 - DEBUG - Unblocked index 144.
+2024-03-26 14:33:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 156.
+2024-03-26 14:33:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 157.
+2024-03-26 14:33:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 158.
+2024-03-26 14:33:49 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 178.
+2024-03-26 14:33:49 - DEBUG - Starting new calculation for index 91.
+2024-03-26 14:33:49 - INFO - Index 91 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:33:49 - INFO - Run ESMfold & Rosetta_Relax for index 91.
+2024-03-26 14:33:50 - DEBUG - Your job 874582 ("PMPNN_ESMfold_Rosetta_Relax_91") has been submitted
+2024-03-26 14:33:51 - DEBUG - Starting new calculation for index 109.
+2024-03-26 14:33:51 - DEBUG - Child index 191 created for 109.
+2024-03-26 14:33:51 - INFO - Run RosettaDesign for index 191 based on index 109.
+2024-03-26 14:33:51 - DEBUG - Your job 874583 ("PMPNN_Rosetta_Design_191") has been submitted
+2024-03-26 14:33:52 - DEBUG - Starting new calculation for index 107.
+2024-03-26 14:33:52 - DEBUG - Child index 192 created for 107.
+2024-03-26 14:35:11 - INFO - Ran ProteinMPNN for index 107 and found a new sequence with index 192.
+2024-03-26 14:35:11 - INFO - Run ProteinMPNN for index 192 based on index 107.
+2024-03-26 14:35:11 - DEBUG - Your job 874585 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_192") has been submitted
+2024-03-26 14:35:12 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 155.
+2024-03-26 14:35:13 - DEBUG - Starting new calculation for index 153.
+2024-03-26 14:35:13 - INFO - Index 153 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:35:13 - INFO - Run ESMfold & Rosetta_Relax for index 153.
+2024-03-26 14:35:13 - DEBUG - Your job 874587 ("PMPNN_ESMfold_Rosetta_Relax_153") has been submitted
+2024-03-26 14:35:14 - DEBUG - Starting new calculation for index 77.
+2024-03-26 14:35:14 - INFO - Index 77 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:35:14 - INFO - Run ESMfold & Rosetta_Relax for index 77.
+2024-03-26 14:35:14 - DEBUG - Your job 874588 ("PMPNN_ESMfold_Rosetta_Relax_77") has been submitted
+2024-03-26 14:35:15 - DEBUG - Starting new calculation for index 65.
+2024-03-26 14:35:15 - DEBUG - Child index 193 created for 65.
+2024-03-26 14:35:15 - INFO - Run RosettaDesign for index 193 based on index 65.
+2024-03-26 14:35:15 - DEBUG - Your job 874589 ("PMPNN_Rosetta_Design_193") has been submitted
+2024-03-26 14:35:16 - DEBUG - Starting new calculation for index 62.
+2024-03-26 14:35:16 - DEBUG - Child index 194 created for 62.
+2024-03-26 14:35:16 - INFO - Run RosettaDesign for index 194 based on index 62.
+2024-03-26 14:35:16 - DEBUG - Your job 874591 ("PMPNN_Rosetta_Design_194") has been submitted
+2024-03-26 14:35:18 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 161.
+2024-03-26 14:35:18 - DEBUG - Starting new calculation for index 76.
+2024-03-26 14:35:18 - DEBUG - Child index 195 created for 76.
+2024-03-26 14:35:18 - INFO - Run RosettaDesign for index 195 based on index 76.
+2024-03-26 14:35:18 - DEBUG - Your job 874592 ("PMPNN_Rosetta_Design_195") has been submitted
+2024-03-26 14:35:19 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 82.
+2024-03-26 14:35:19 - DEBUG - Unblocked index 82.
+2024-03-26 14:35:19 - DEBUG - Starting new calculation for index 94.
+2024-03-26 14:35:19 - DEBUG - Child index 196 created for 94.
+2024-03-26 14:35:20 - INFO - Run RosettaDesign for index 196 based on index 94.
+2024-03-26 14:35:20 - DEBUG - Your job 874593 ("PMPNN_Rosetta_Design_196") has been submitted
+2024-03-26 14:35:21 - DEBUG - Starting new calculation for index 173.
+2024-03-26 14:35:21 - DEBUG - Child index 197 created for 173.
+2024-03-26 14:36:58 - INFO - Ran ProteinMPNN for index 173 and found a new sequence with index 197.
+2024-03-26 14:36:59 - INFO - Run ProteinMPNN for index 197 based on index 173.
+2024-03-26 14:36:59 - DEBUG - Your job 874600 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_197") has been submitted
+2024-03-26 14:37:01 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 174.
+2024-03-26 14:37:01 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 180.
+2024-03-26 14:37:01 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 182.
+2024-03-26 14:37:01 - DEBUG - Starting new calculation for index 96.
+2024-03-26 14:37:01 - INFO - Index 96 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:37:01 - INFO - Run ESMfold & Rosetta_Relax for index 96.
+2024-03-26 14:37:01 - DEBUG - Your job 874602 ("PMPNN_ESMfold_Rosetta_Relax_96") has been submitted
+2024-03-26 14:37:02 - DEBUG - Starting new calculation for index 99.
+2024-03-26 14:37:02 - DEBUG - Child index 198 created for 99.
+2024-03-26 14:38:36 - INFO - Ran ProteinMPNN for index 99 and found a new sequence with index 198.
+2024-03-26 14:38:36 - INFO - Run ProteinMPNN for index 198 based on index 99.
+2024-03-26 14:38:36 - DEBUG - Your job 874612 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_198") has been submitted
+2024-03-26 14:38:37 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 140.
+2024-03-26 14:38:37 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 160.
+2024-03-26 14:38:38 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 162.
+2024-03-26 14:38:38 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 165.
+2024-03-26 14:38:38 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 167.
+2024-03-26 14:38:38 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 188.
+2024-03-26 14:38:38 - DEBUG - Starting new calculation for index 99.
+2024-03-26 14:38:38 - DEBUG - Child index 199 created for 99.
+2024-03-26 14:40:00 - INFO - Ran ProteinMPNN for index 99 and found a new sequence with index 199.
+2024-03-26 14:40:00 - INFO - Run ProteinMPNN for index 199 based on index 99.
+2024-03-26 14:40:00 - DEBUG - Your job 874618 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_199") has been submitted
+2024-03-26 14:40:01 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 164.
+2024-03-26 14:40:01 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 166.
+2024-03-26 14:40:01 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 171.
+2024-03-26 14:40:01 - DEBUG - Starting new calculation for index 99.
+2024-03-26 14:40:01 - DEBUG - Child index 200 created for 99.
+2024-03-26 14:40:02 - INFO - Run RosettaDesign for index 200 based on index 99.
+2024-03-26 14:40:02 - DEBUG - Your job 874619 ("PMPNN_Rosetta_Design_200") has been submitted
+2024-03-26 14:40:03 - DEBUG - Starting new calculation for index 69.
+2024-03-26 14:40:03 - DEBUG - Child index 201 created for 69.
+2024-03-26 14:41:27 - INFO - Ran ProteinMPNN for index 69 and found a new sequence with index 201.
+2024-03-26 14:41:27 - INFO - Run ProteinMPNN for index 201 based on index 69.
+2024-03-26 14:41:28 - DEBUG - Your job 874623 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_201") has been submitted
+2024-03-26 14:41:29 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 177.
+2024-03-26 14:41:29 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 190.
+2024-03-26 14:41:29 - DEBUG - Starting new calculation for index 65.
+2024-03-26 14:41:29 - DEBUG - Child index 202 created for 65.
+2024-03-26 14:41:30 - INFO - Run RosettaDesign for index 202 based on index 65.
+2024-03-26 14:41:30 - DEBUG - Your job 874624 ("PMPNN_Rosetta_Design_202") has been submitted
+2024-03-26 14:41:31 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 176.
+2024-03-26 14:41:31 - DEBUG - Starting new calculation for index 155.
+2024-03-26 14:41:31 - DEBUG - Child index 203 created for 155.
+2024-03-26 14:41:32 - INFO - Run RosettaDesign for index 203 based on index 155.
+2024-03-26 14:41:32 - DEBUG - Your job 874625 ("PMPNN_Rosetta_Design_203") has been submitted
+2024-03-26 14:41:33 - DEBUG - Starting new calculation for index 182.
+2024-03-26 14:41:33 - DEBUG - Child index 204 created for 182.
+2024-03-26 14:42:57 - INFO - Ran ProteinMPNN for index 182 and found a new sequence with index 204.
+2024-03-26 14:42:58 - INFO - Run ProteinMPNN for index 204 based on index 182.
+2024-03-26 14:42:58 - DEBUG - Your job 874629 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_204") has been submitted
+2024-03-26 14:42:59 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 170.
+2024-03-26 14:42:59 - DEBUG - Starting new calculation for index 116.
+2024-03-26 14:42:59 - INFO - Index 116 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:43:00 - INFO - Run ESMfold & Rosetta_Relax for index 116.
+2024-03-26 14:43:00 - DEBUG - Your job 874630 ("PMPNN_ESMfold_Rosetta_Relax_116") has been submitted
+2024-03-26 14:43:01 - DEBUG - Starting new calculation for index 162.
+2024-03-26 14:43:01 - INFO - Index 162 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:43:01 - INFO - Run ESMfold & Rosetta_Relax for index 162.
+2024-03-26 14:43:02 - DEBUG - Your job 874631 ("PMPNN_ESMfold_Rosetta_Relax_162") has been submitted
+2024-03-26 14:43:04 - DEBUG - Starting new calculation for index 188.
+2024-03-26 14:43:04 - DEBUG - Child index 205 created for 188.
+2024-03-26 14:43:04 - INFO - Run RosettaDesign for index 205 based on index 188.
+2024-03-26 14:43:04 - DEBUG - Your job 874632 ("PMPNN_Rosetta_Design_205") has been submitted
+2024-03-26 14:43:06 - DEBUG - Starting new calculation for index 168.
+2024-03-26 14:43:06 - DEBUG - Child index 206 created for 168.
+2024-03-26 14:43:06 - INFO - Run RosettaDesign for index 206 based on index 168.
+2024-03-26 14:43:06 - DEBUG - Your job 874633 ("PMPNN_Rosetta_Design_206") has been submitted
+2024-03-26 14:43:07 - DEBUG - Starting new calculation for index 109.
+2024-03-26 14:43:07 - DEBUG - Child index 207 created for 109.
+2024-03-26 14:44:39 - INFO - Ran ProteinMPNN for index 109 and found a new sequence with index 207.
+2024-03-26 14:44:39 - INFO - Run ProteinMPNN for index 207 based on index 109.
+2024-03-26 14:44:39 - DEBUG - Your job 874639 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_207") has been submitted
+2024-03-26 14:44:41 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 77.
+2024-03-26 14:44:41 - DEBUG - Unblocked index 77.
+2024-03-26 14:44:41 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 93.
+2024-03-26 14:44:41 - DEBUG - Unblocked index 93.
+2024-03-26 14:44:41 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 149.
+2024-03-26 14:44:41 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 153.
+2024-03-26 14:44:41 - DEBUG - Unblocked index 153.
+2024-03-26 14:44:42 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 169.
+2024-03-26 14:44:42 - DEBUG - Starting new calculation for index 65.
+2024-03-26 14:44:42 - DEBUG - Child index 208 created for 65.
+2024-03-26 14:44:42 - INFO - Run RosettaDesign for index 208 based on index 65.
+2024-03-26 14:44:42 - DEBUG - Your job 874640 ("PMPNN_Rosetta_Design_208") has been submitted
+2024-03-26 14:44:43 - DEBUG - Starting new calculation for index 182.
+2024-03-26 14:44:43 - DEBUG - Child index 209 created for 182.
+2024-03-26 14:44:44 - INFO - Run RosettaDesign for index 209 based on index 182.
+2024-03-26 14:44:44 - DEBUG - Your job 874642 ("PMPNN_Rosetta_Design_209") has been submitted
+2024-03-26 14:44:46 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 198.
+2024-03-26 14:44:47 - DEBUG - Starting new calculation for index 109.
+2024-03-26 14:44:47 - DEBUG - Child index 210 created for 109.
+2024-03-26 14:46:22 - INFO - Ran ProteinMPNN for index 109 and found a new sequence with index 210.
+2024-03-26 14:46:22 - INFO - Run ProteinMPNN for index 210 based on index 109.
+2024-03-26 14:46:23 - DEBUG - Your job 874649 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_210") has been submitted
+2024-03-26 14:46:24 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 96.
+2024-03-26 14:46:24 - DEBUG - Unblocked index 96.
+2024-03-26 14:46:24 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 154.
+2024-03-26 14:46:25 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 197.
+2024-03-26 14:46:25 - DEBUG - Starting new calculation for index 171.
+2024-03-26 14:46:25 - INFO - Index 171 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:46:25 - INFO - Run ESMfold & Rosetta_Relax for index 171.
+2024-03-26 14:46:25 - DEBUG - Your job 874650 ("PMPNN_ESMfold_Rosetta_Relax_171") has been submitted
+2024-03-26 14:46:26 - DEBUG - Starting new calculation for index 93.
+2024-03-26 14:46:26 - DEBUG - Child index 211 created for 93.
+2024-03-26 14:46:26 - INFO - Run RosettaDesign for index 211 based on index 93.
+2024-03-26 14:46:26 - DEBUG - Your job 874651 ("PMPNN_Rosetta_Design_211") has been submitted
+2024-03-26 14:46:28 - DEBUG - Starting new calculation for index 182.
+2024-03-26 14:46:28 - DEBUG - Child index 212 created for 182.
+2024-03-26 14:46:28 - INFO - Run RosettaDesign for index 212 based on index 182.
+2024-03-26 14:46:28 - DEBUG - Your job 874652 ("PMPNN_Rosetta_Design_212") has been submitted
+2024-03-26 14:46:30 - DEBUG - Starting new calculation for index 99.
+2024-03-26 14:46:30 - DEBUG - Child index 213 created for 99.
+2024-03-26 14:46:30 - INFO - Run RosettaDesign for index 213 based on index 99.
+2024-03-26 14:46:30 - DEBUG - Your job 874654 ("PMPNN_Rosetta_Design_213") has been submitted
+2024-03-26 14:46:31 - DEBUG - Starting new calculation for index 109.
+2024-03-26 14:46:31 - DEBUG - Child index 214 created for 109.
+2024-03-26 14:46:32 - INFO - Run RosettaDesign for index 214 based on index 109.
+2024-03-26 14:46:32 - DEBUG - Your job 874655 ("PMPNN_Rosetta_Design_214") has been submitted
+2024-03-26 14:46:33 - DEBUG - Starting new calculation for index 144.
+2024-03-26 14:46:33 - DEBUG - Child index 215 created for 144.
+2024-03-26 14:48:05 - INFO - Ran ProteinMPNN for index 144 and found a new sequence with index 215.
+2024-03-26 14:48:05 - INFO - Run ProteinMPNN for index 215 based on index 144.
+2024-03-26 14:48:06 - DEBUG - Your job 874662 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_215") has been submitted
+2024-03-26 14:48:07 - DEBUG - Starting new calculation for index 94.
+2024-03-26 14:48:07 - DEBUG - Child index 216 created for 94.
+2024-03-26 14:48:08 - INFO - Run RosettaDesign for index 216 based on index 94.
+2024-03-26 14:48:08 - DEBUG - Your job 874663 ("PMPNN_Rosetta_Design_216") has been submitted
+2024-03-26 14:48:09 - DEBUG - Starting new calculation for index 170.
+2024-03-26 14:48:09 - INFO - Index 170 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:48:09 - INFO - Run ESMfold & Rosetta_Relax for index 170.
+2024-03-26 14:48:09 - DEBUG - Your job 874664 ("PMPNN_ESMfold_Rosetta_Relax_170") has been submitted
+2024-03-26 14:48:10 - DEBUG - Starting new calculation for index 173.
+2024-03-26 14:48:11 - DEBUG - Child index 217 created for 173.
+2024-03-26 14:48:11 - INFO - Run RosettaDesign for index 217 based on index 173.
+2024-03-26 14:48:11 - DEBUG - Your job 874666 ("PMPNN_Rosetta_Design_217") has been submitted
+2024-03-26 14:48:12 - DEBUG - Starting new calculation for index 197.
+2024-03-26 14:48:12 - DEBUG - Child index 218 created for 197.
+2024-03-26 14:49:37 - INFO - Ran ProteinMPNN for index 197 and found a new sequence with index 218.
+2024-03-26 14:49:38 - INFO - Run ProteinMPNN for index 218 based on index 197.
+2024-03-26 14:49:38 - DEBUG - Your job 874671 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_218") has been submitted
+2024-03-26 14:49:40 - DEBUG - Starting new calculation for index 100.
+2024-03-26 14:49:40 - DEBUG - Child index 219 created for 100.
+2024-03-26 14:51:12 - INFO - Ran ProteinMPNN for index 100 and found a new sequence with index 219.
+2024-03-26 14:51:13 - INFO - Run ProteinMPNN for index 219 based on index 100.
+2024-03-26 14:51:13 - DEBUG - Your job 874676 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_219") has been submitted
+2024-03-26 14:51:14 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 91.
+2024-03-26 14:51:14 - DEBUG - Unblocked index 91.
+2024-03-26 14:51:14 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 201.
+2024-03-26 14:51:14 - DEBUG - Starting new calculation for index 108.
+2024-03-26 14:51:14 - INFO - Index 108 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:51:15 - INFO - Run ESMfold & Rosetta_Relax for index 108.
+2024-03-26 14:51:15 - DEBUG - Your job 874678 ("PMPNN_ESMfold_Rosetta_Relax_108") has been submitted
+2024-03-26 14:51:17 - DEBUG - Starting new calculation for index 177.
+2024-03-26 14:51:17 - DEBUG - Child index 220 created for 177.
+2024-03-26 14:51:17 - INFO - Run RosettaDesign for index 220 based on index 177.
+2024-03-26 14:51:17 - DEBUG - Your job 874679 ("PMPNN_Rosetta_Design_220") has been submitted
+2024-03-26 14:51:18 - DEBUG - Starting new calculation for index 198.
+2024-03-26 14:51:18 - DEBUG - Child index 221 created for 198.
+2024-03-26 14:51:18 - INFO - Run RosettaDesign for index 221 based on index 198.
+2024-03-26 14:51:19 - DEBUG - Your job 874680 ("PMPNN_Rosetta_Design_221") has been submitted
+2024-03-26 14:51:21 - DEBUG - Starting new calculation for index 197.
+2024-03-26 14:51:21 - DEBUG - Child index 222 created for 197.
+2024-03-26 14:51:21 - INFO - Run RosettaDesign for index 222 based on index 197.
+2024-03-26 14:51:21 - DEBUG - Your job 874681 ("PMPNN_Rosetta_Design_222") has been submitted
+2024-03-26 14:51:23 - DEBUG - Starting new calculation for index 160.
+2024-03-26 14:51:23 - INFO - Index 160 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:51:24 - INFO - Run ESMfold & Rosetta_Relax for index 160.
+2024-03-26 14:51:25 - DEBUG - Your job 874682 ("PMPNN_ESMfold_Rosetta_Relax_160") has been submitted
+2024-03-26 14:51:26 - DEBUG - Starting new calculation for index 198.
+2024-03-26 14:51:26 - DEBUG - Child index 223 created for 198.
+2024-03-26 14:51:26 - INFO - Run RosettaDesign for index 223 based on index 198.
+2024-03-26 14:51:27 - DEBUG - Your job 874683 ("PMPNN_Rosetta_Design_223") has been submitted
+2024-03-26 14:51:28 - DEBUG - Starting new calculation for index 201.
+2024-03-26 14:51:28 - DEBUG - Child index 224 created for 201.
+2024-03-26 14:51:28 - INFO - Run RosettaDesign for index 224 based on index 201.
+2024-03-26 14:51:28 - DEBUG - Your job 874684 ("PMPNN_Rosetta_Design_224") has been submitted
+2024-03-26 14:51:29 - DEBUG - Starting new calculation for index 69.
+2024-03-26 14:51:29 - DEBUG - Child index 225 created for 69.
+2024-03-26 14:51:29 - INFO - Run RosettaDesign for index 225 based on index 69.
+2024-03-26 14:51:29 - DEBUG - Your job 874686 ("PMPNN_Rosetta_Design_225") has been submitted
+2024-03-26 14:51:31 - DEBUG - Starting new calculation for index 182.
+2024-03-26 14:51:31 - DEBUG - Child index 226 created for 182.
+2024-03-26 14:51:31 - INFO - Run RosettaDesign for index 226 based on index 182.
+2024-03-26 14:51:31 - DEBUG - Your job 874687 ("PMPNN_Rosetta_Design_226") has been submitted
+2024-03-26 14:51:33 - DEBUG - Starting new calculation for index 177.
+2024-03-26 14:51:33 - DEBUG - Child index 227 created for 177.
+2024-03-26 14:52:58 - INFO - Ran ProteinMPNN for index 177 and found a new sequence with index 227.
+2024-03-26 14:52:58 - INFO - Run ProteinMPNN for index 227 based on index 177.
+2024-03-26 14:52:58 - DEBUG - Your job 874692 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_227") has been submitted
+2024-03-26 14:53:00 - DEBUG - Starting new calculation for index 99.
+2024-03-26 14:53:01 - DEBUG - Child index 228 created for 99.
+2024-03-26 14:53:01 - INFO - Run RosettaDesign for index 228 based on index 99.
+2024-03-26 14:53:01 - DEBUG - Your job 874693 ("PMPNN_Rosetta_Design_228") has been submitted
+2024-03-26 14:53:02 - DEBUG - Starting new calculation for index 131.
+2024-03-26 14:53:02 - INFO - Index 131 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:53:02 - INFO - Run ESMfold & Rosetta_Relax for index 131.
+2024-03-26 14:53:02 - DEBUG - Your job 874694 ("PMPNN_ESMfold_Rosetta_Relax_131") has been submitted
+2024-03-26 14:53:04 - DEBUG - Starting new calculation for index 107.
+2024-03-26 14:53:04 - DEBUG - Child index 229 created for 107.
+2024-03-26 14:53:04 - INFO - Run RosettaDesign for index 229 based on index 107.
+2024-03-26 14:53:04 - DEBUG - Your job 874695 ("PMPNN_Rosetta_Design_229") has been submitted
+2024-03-26 14:53:05 - DEBUG - Starting new calculation for index 76.
+2024-03-26 14:53:05 - DEBUG - Child index 230 created for 76.
+2024-03-26 14:54:37 - INFO - Ran ProteinMPNN for index 76 and found a new sequence with index 230.
+2024-03-26 14:54:37 - INFO - Run ProteinMPNN for index 230 based on index 76.
+2024-03-26 14:54:37 - DEBUG - Your job 874702 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_230") has been submitted
+2024-03-26 14:54:39 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 181.
+2024-03-26 14:54:39 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 192.
+2024-03-26 14:54:39 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 207.
+2024-03-26 14:54:39 - DEBUG - Starting new calculation for index 173.
+2024-03-26 14:54:39 - DEBUG - Child index 231 created for 173.
+2024-03-26 14:56:09 - INFO - Ran ProteinMPNN for index 173 and found a new sequence with index 231.
+2024-03-26 14:56:10 - INFO - Run ProteinMPNN for index 231 based on index 173.
+2024-03-26 14:56:10 - DEBUG - Your job 874706 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_231") has been submitted
+2024-03-26 14:56:12 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 179.
+2024-03-26 14:56:14 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 215.
+2024-03-26 14:56:14 - DEBUG - Starting new calculation for index 114.
+2024-03-26 14:56:14 - INFO - Index 114 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 14:56:15 - INFO - Run ESMfold & Rosetta_Relax for index 114.
+2024-03-26 14:56:15 - DEBUG - Your job 874708 ("PMPNN_ESMfold_Rosetta_Relax_114") has been submitted
+2024-03-26 14:56:16 - DEBUG - Starting new calculation for index 93.
+2024-03-26 14:56:16 - DEBUG - Child index 232 created for 93.
+2024-03-26 14:56:16 - INFO - Run RosettaDesign for index 232 based on index 93.
+2024-03-26 14:56:16 - DEBUG - Your job 874709 ("PMPNN_Rosetta_Design_232") has been submitted
+2024-03-26 14:56:18 - DEBUG - Starting new calculation for index 197.
+2024-03-26 14:56:18 - DEBUG - Child index 233 created for 197.
+2024-03-26 14:56:19 - INFO - Run RosettaDesign for index 233 based on index 197.
+2024-03-26 14:56:19 - DEBUG - Your job 874710 ("PMPNN_Rosetta_Design_233") has been submitted
+2024-03-26 14:56:21 - DEBUG - Starting new calculation for index 207.
+2024-03-26 14:56:21 - DEBUG - Child index 234 created for 207.
+2024-03-26 14:56:21 - INFO - Run RosettaDesign for index 234 based on index 207.
+2024-03-26 14:56:21 - DEBUG - Your job 874711 ("PMPNN_Rosetta_Design_234") has been submitted
+2024-03-26 14:56:22 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 204.
+2024-03-26 16:21:25 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 108.
+2024-03-26 16:21:25 - DEBUG - Unblocked index 108.
+2024-03-26 16:21:25 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 114.
+2024-03-26 16:21:25 - DEBUG - Unblocked index 114.
+2024-03-26 16:21:25 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 116.
+2024-03-26 16:21:25 - DEBUG - Unblocked index 116.
+2024-03-26 16:21:25 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 131.
+2024-03-26 16:21:25 - DEBUG - Unblocked index 131.
+2024-03-26 16:21:26 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 160.
+2024-03-26 16:21:26 - DEBUG - Unblocked index 160.
+2024-03-26 16:21:26 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 162.
+2024-03-26 16:21:26 - DEBUG - Unblocked index 162.
+2024-03-26 16:21:26 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 170.
+2024-03-26 16:21:26 - DEBUG - Unblocked index 170.
+2024-03-26 16:21:26 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 171.
+2024-03-26 16:21:26 - DEBUG - Unblocked index 171.
+2024-03-26 16:21:27 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 183.
+2024-03-26 16:21:27 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 184.
+2024-03-26 16:21:27 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 185.
+2024-03-26 16:21:27 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 186.
+2024-03-26 16:21:27 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 187.
+2024-03-26 16:21:27 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 189.
+2024-03-26 16:21:27 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 191.
+2024-03-26 16:21:28 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 193.
+2024-03-26 16:21:28 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 194.
+2024-03-26 16:21:28 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 195.
+2024-03-26 16:21:28 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 196.
+2024-03-26 16:21:28 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 199.
+2024-03-26 16:21:28 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 200.
+2024-03-26 16:21:29 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 202.
+2024-03-26 16:21:29 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 203.
+2024-03-26 16:21:29 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 204.
+2024-03-26 16:21:29 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 205.
+2024-03-26 16:21:29 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 206.
+2024-03-26 16:21:29 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 208.
+2024-03-26 16:21:30 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 209.
+2024-03-26 16:21:30 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 210.
+2024-03-26 16:21:30 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 211.
+2024-03-26 16:21:30 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 212.
+2024-03-26 16:21:30 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 213.
+2024-03-26 16:21:30 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 214.
+2024-03-26 16:21:31 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 216.
+2024-03-26 16:21:31 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 217.
+2024-03-26 16:21:31 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 218.
+2024-03-26 16:21:31 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 219.
+2024-03-26 16:21:31 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 220.
+2024-03-26 16:21:31 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 221.
+2024-03-26 16:21:31 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 222.
+2024-03-26 16:21:32 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 223.
+2024-03-26 16:21:32 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 224.
+2024-03-26 16:21:32 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 225.
+2024-03-26 16:21:32 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 226.
+2024-03-26 16:21:32 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 227.
+2024-03-26 16:21:32 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 228.
+2024-03-26 16:21:33 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 229.
+2024-03-26 16:21:33 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 230.
+2024-03-26 16:21:33 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 231.
+2024-03-26 16:21:33 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 232.
+2024-03-26 16:21:33 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 233.
+2024-03-26 16:21:33 - INFO - Updated total_score, interface_delta_X, and catalytic_score of index 234.
+2024-03-26 16:21:34 - DEBUG - Starting new calculation for index 109.
+2024-03-26 16:21:34 - DEBUG - Child index 235 created for 109.
+2024-03-26 16:23:03 - INFO - Ran ProteinMPNN for index 109 and found a new sequence with index 235.
+2024-03-26 16:23:03 - INFO - Run ProteinMPNN for index 235 based on index 109.
+2024-03-26 16:23:04 - DEBUG - Your job 875044 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_235") has been submitted
+2024-03-26 16:23:05 - DEBUG - Starting new calculation for index 230.
+2024-03-26 16:23:05 - DEBUG - Child index 236 created for 230.
+2024-03-26 16:24:52 - INFO - Ran ProteinMPNN for index 230 and found a new sequence with index 236.
+2024-03-26 16:24:52 - INFO - Run ProteinMPNN for index 236 based on index 230.
+2024-03-26 16:24:52 - DEBUG - Your job 875061 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_236") has been submitted
+2024-03-26 16:24:53 - DEBUG - Starting new calculation for index 226.
+2024-03-26 16:24:53 - INFO - Index 226 has no relaxed structure, starting ESMfold_Rosetta_Relax.
+2024-03-26 16:24:53 - INFO - Run ESMfold & Rosetta_Relax for index 226.
+2024-03-26 16:24:53 - DEBUG - Your job 875062 ("PMPNN_ESMfold_Rosetta_Relax_226") has been submitted
+2024-03-26 16:24:55 - DEBUG - Starting new calculation for index 199.
+2024-03-26 16:24:55 - DEBUG - Child index 237 created for 199.
+2024-03-26 16:24:55 - INFO - Run RosettaDesign for index 237 based on index 199.
+2024-03-26 16:24:55 - DEBUG - Your job 875063 ("PMPNN_Rosetta_Design_237") has been submitted
+2024-03-26 16:24:56 - DEBUG - Starting new calculation for index 197.
+2024-03-26 16:24:56 - DEBUG - Child index 238 created for 197.
+2024-03-26 16:24:56 - INFO - Run RosettaDesign for index 238 based on index 197.
+2024-03-26 16:24:56 - DEBUG - Your job 875064 ("PMPNN_Rosetta_Design_238") has been submitted
+2024-03-26 16:24:57 - DEBUG - Starting new calculation for index 144.
+2024-03-26 16:24:57 - DEBUG - Child index 239 created for 144.
+2024-03-26 16:24:57 - INFO - Run RosettaDesign for index 239 based on index 144.
+2024-03-26 16:24:57 - DEBUG - Your job 875065 ("PMPNN_Rosetta_Design_239") has been submitted
+2024-03-26 16:24:58 - DEBUG - Starting new calculation for index 108.
+2024-03-26 16:24:58 - DEBUG - Child index 240 created for 108.
+2024-03-26 16:26:35 - INFO - Ran ProteinMPNN for index 108 and found a new sequence with index 240.
+2024-03-26 16:26:35 - INFO - Run ProteinMPNN for index 240 based on index 108.
+2024-03-26 16:26:36 - DEBUG - Your job 875072 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_240") has been submitted
+2024-03-26 16:26:37 - DEBUG - Starting new calculation for index 231.
+2024-03-26 16:26:37 - DEBUG - Child index 241 created for 231.
+2024-03-26 16:28:03 - INFO - Ran ProteinMPNN for index 231 and found a new sequence with index 241.
+2024-03-26 16:28:03 - INFO - Run ProteinMPNN for index 241 based on index 231.
+2024-03-26 16:28:03 - DEBUG - Your job 875077 ("PMPNN_ProteinMPNN_ESMfold_Rosetta_Relax_241") has been submitted
+2024-03-26 16:28:04 - DEBUG - Starting new calculation for index 182.
+2024-03-26 16:28:04 - DEBUG - Child index 242 created for 182.
+2024-03-26 16:28:05 - INFO - Run RosettaDesign for index 242 based on index 182.
+2024-03-26 16:28:05 - DEBUG - Your job 875078 ("PMPNN_Rosetta_Design_242") has been submitted
+2024-03-26 16:28:06 - DEBUG - Starting new calculation for index 177.
+2024-03-26 16:28:06 - DEBUG - Child index 243 created for 177.
