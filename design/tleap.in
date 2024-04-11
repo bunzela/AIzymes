@@ -2,7 +2,7 @@ source leaprc.protein.ff19SB
     source leaprc.gaff
     loadamberprep   Input/5TS.prepi
     loadamberparams Input/5TS.frcmod
-    mol = loadpdb /home/abbie/AIzymes/design/Design_AL/30/1ohp_Rosetta_Design_30_noHclean.pdb
-    saveamberparm mol /home/abbie/AIzymes/design/Design_AL/30/1ohp_Rosetta_Design_30.parm7 /home/abbie/AIzymes/design/Design_AL/30/1ohp_Rosetta_Design_30.rst7
+    mol = loadpdb /user/work/qz22231/AIzymes_git/AIzymes/design/Design_AL/17/1ohp_Rosetta_Design_17_noHclean.pdb
+    saveamberparm mol /user/work/qz22231/AIzymes_git/AIzymes/design/Design_AL/17/1ohp_Rosetta_Design_17.parm7 /user/work/qz22231/AIzymes_git/AIzymes/design/Design_AL/17/1ohp_Rosetta_Design_17.rst7
     quit
     
