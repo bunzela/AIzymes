@@ -1,9 +1,12 @@
-*.pdb
-design/LM_MATCH_GRID_Functions_009
-design/LM_MATCH_GRID_Functions_009.log
-design/LM_PMPNN_GRID_Functions_010
-design/LM_MATCH_GRID_Functions_010.log
-design/LM_PMPNN_GRID_Functions_011
-design/LM_MATCH_GRID_Functions_011.log
-design/Design_AL
-design/Design_AL.log
+# Ignore everything in the design/ directory
+design/*
+
+# But exclude these specific directories and all .ipynb files from being ignored
+!design/Input/
+!design/LigandMPNN/
+!design/Parent_1ohp/
+!design/ProteinMPNN/
+!*.ipynb
+
+# Ignore all log files
+*.log
