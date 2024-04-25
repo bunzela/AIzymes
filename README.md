@@ -34,7 +34,7 @@ This will be the AIzymes Github. Lets use the readme to collect notes.
 > [!TIP]
 > See [How_to_push_and_pull.txt](https://github.com/bunzela/AIzymes/blob/main/How_to_push_and_pull.txt) for a quick manual how to push and pull changes to GitHub.
 
-# Requirments
+# Requirements
 Download and install Rosetta from the following link, and set ROSETTA_PATH to point to rosetta_XXX/main/source/
 ```
 https://www.rosettacommons.org/software/license-and-download
@@ -50,9 +50,7 @@ pip install --upgrade transformers py3Dmol accelerate torch
 ```
 
 
-To install everything necessary for AIzymes in a new conda environment (no ProteinMPNN) from Abbie:
+To install everything necessary for AIzymes (except Rosetta) in a new conda environment (no ProteinMPNN) from Abbie:
 ```
-conda create -n AIzymes python=3.9 matplotlib scipy jupyter pandas networkx
-conda activate AIzymes
-conda install conda-forge::biopython conda-forge::accelerate conda-forge::transformers
+conda env create -f environment.yml
 ```
