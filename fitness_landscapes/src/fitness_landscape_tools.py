@@ -1,18 +1,18 @@
 #from generative.vae import Args, VDJ_dataset, GMVAE
 #from fitness.trainers import TrainerGeneral
 #from fitness.ff import MLP
-import shap
+#import shap
 import torch
 import os
 import pandas as pd
-from sklearn.model_selection import train_test_split
+#from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE
-from umap import UMAP
+#from sklearn.manifold import TSNE
+#from umap import UMAP
 import re
 import torch
 import torch.nn.functional as F
-import torch.utils.data as data
+#import torch.utils.data as data
 import numpy as np
 import pandas as pd
 from itertools import chain
