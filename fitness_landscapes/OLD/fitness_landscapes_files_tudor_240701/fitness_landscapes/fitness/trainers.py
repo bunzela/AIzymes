@@ -6,7 +6,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 import torch.nn as nn
 
-from fitness.losses import bt_loss
+from src.losses import bt_loss
 
 class FitnessTrainer:
     def __init__(self):
