@@ -8,55 +8,42 @@ from src.losses import bt_loss
 from sklearn.model_selection import train_test_split
 from src.ff import MLP
 import torch
+from src.tools import setup_torch
 
 print("Trainers loaded.")
 
 class df_to_dataset(torch.utils.data.Dataset):
 
-    def __init__(self, df, scores, labels, embeddings):
+    def __init__(self, df):
 
         self.df = df
-        self.scores = scores
-        self.labels = labels
-        self.embeddings = embeddings
-
     def __len__(self):
         return len(self.df)
 
     def __getitem__(self, item):
 
-        sequence = str(self.df['sequence'].iloc[item])
-
-        out = {'sequence': sequence}
-
+        out = {}
         for key in self.df.keys():
-            if key == 'sequence': continue
-            print(key)
-            out.update({key: torch.tensor(self.df[key].iloc[item]).unsqueeze(-1)})
+            if isinstance(self.df[key].iloc[item], str):
+                out[key] = self.df[key].iloc[item]
+            else:
+                out[key] = torch.tensor(self.df[key].iloc[item], dtype=torch.float)
 
-        for key in self.labels:
-            out.update({key: self.df[key].iloc[item]})
-
-        for key in self.embeddings:
-            out.update({key: self.df[key].iloc[item]})
-                
         return out
 
-def train_model(dataset,
-                training_method = "tmp",
-                embedding       = "tmp",
-                load_self       = False):
-        
+def train_model(dataset):
+
     train_df, test_df = train_test_split(dataset.df, test_size = 0.1)
 
-    train_dl = torch.utils.data.DataLoader(df_to_dataset(train_df, dataset.scores, dataset.labels, dataset.embeddings), batch_size = 64)
-    test_dl = torch.utils.data.DataLoader(df_to_dataset(test_df, dataset.scores, dataset.labels, dataset.embeddings), batch_size = len(test_df))
+    train_dl = torch.utils.data.DataLoader(df_to_dataset(train_df), batch_size = 64)
+    test_dl = torch.utils.data.DataLoader(df_to_dataset(test_df), batch_size = len(test_df))
     
     output = {'loss': [], 'score': [], 'dataset': [], 'features': [], 'pearsonr': [], 'pval': []}
-    scores_pred = ['norm_total_score']
-    feature = 'onehot'
+    score = 'norm_total_score'
+    feature = 'onehot_plm_pca'
     loss = 'bt'
-    input_size = 64 + 1280
+    input_size = len(train_df[feature])
+    input_size = 64    
     encoding = 'onehot_flatten'
 
     epochs = 10 #Seems decent ATM - most valid losses increase past this
@@ -67,12 +54,14 @@ def train_model(dataset,
     optimizer = torch.optim.Adam
     vals = next(iter(test_dl))
 
-    trainer = TrainerGeneral(model, optimizer, dataset.device, 
+    trainer = TrainerGeneral(model, optimizer, 
                             encoding = encoding, loss = loss, features = feature, 
-                            scores = scores_pred, epochs = epochs)
+                            score = score, epochs = epochs)
     
     models = trainer.train(train_dl, test_dl)
- 
+    
+    torch.cuda.empty_cache()
+
     return "done"   
 
     
@@ -83,9 +72,6 @@ def train_model(dataset,
     output['features'].append(feature_name)
     output['pearsonr'].append(pears)
     output['pval'].append(pvals)
-    
-def junk():
-
 
     mc = trainer.predict_mc_dropout(vals, scores_pred, forward_passes = 50)
     pears = pearsonr(mc['y'], mc['mean']).statistic
@@ -93,10 +79,10 @@ def junk():
     
 class FitnessTrainer:
     def __init__(self):
-        self.models = {}
-        self.optimizers = {}
+        self.model = None
+        self.optimizer = None
         self.history = {'train_epoch': [], 'train_loss_per_epoch': [], 'validation_epoch': [], 'validation_loss_per_epoch': []}
-        self.scores = []
+        self.score = None
         self.device = None
         self.loss_fn = None
 
@@ -138,12 +124,11 @@ class FitnessTrainer:
     
 class TrainerGeneral(FitnessTrainer):
     def __init__(self, model, optim,
-                       device,
                        lr = 0.001,
                        epochs = 20,
                        loss = 'bt',
                        encoding = 'onehot',
-                       scores = ['norm_interface_score', 'norm_total_score'],
+                       score = 'norm_interface_score',
                        features = None,
                        verbose = True,
                        checkpoint_path = './checkpoint',
@@ -152,22 +137,24 @@ class TrainerGeneral(FitnessTrainer):
 
         super().__init__()
 
+        #initialize torch
+        self.device, self.dtype, self.SMOKE_TEST = setup_torch()
+
         self.epochs = epochs
-        self.scores = scores
-        self.device = device
+        self.score = score
         self.features = features
         self.encoding = encoding
         self.verbose = verbose
 
-        for score in self.scores:
-            self.models[score] = model.to(device)
-            self.optimizers[score] = optim(self.models[score].parameters(), lr = lr)
+        self.model = model.to(self.device)
+        self.optimizer = optim(self.model.parameters(), lr = lr)
+
+        print("test")
 
         if loss == 'bt':
             self.loss_fn = bt_loss
         else:
             self.loss_fn = F.mse_loss
-
 
         self.checkpoint_path = checkpoint_path
         if self.checkpoint_path is not None and os.path.isdir(self.checkpoint_path) is False:
@@ -176,54 +163,52 @@ class TrainerGeneral(FitnessTrainer):
         self.validate_epoch = validate_epoch
 
     def train(self, train_dl, valid_dl):
-        for score in self.scores:
+
+        if self.verbose:
+            print(f'### Training regression model to predict: {self.score} ###')
+
+        for epoch in range(1, self.epochs + 1):
+
+            self.model.train()
+
+            losses_per_epoch = []
+            for iter, batch in enumerate(train_dl):
+
+                y = batch[self.score].to(self.device)
+
+                self.optimizer.zero_grad()
+                y_hat = self.predict(batch)
+
+                loss = self.loss_fn(y_hat, y)
+                loss.backward()
+
+                self.optimizer.step()
+
+                losses_per_epoch.append(loss.item())
+
+            self.history['train_epoch'].append(epoch)
+            self.history['train_loss_per_epoch'].append(np.mean(losses_per_epoch))
+
             if self.verbose:
-                print(f'### Training regression model to predict: {score} ###')
+                print(f"[Train] epoch:{epoch} \t loss:{np.mean(losses_per_epoch):.4f}")
 
-            for epoch in range(1, self.epochs + 1):
-
-                self.models[score].train()
-
-                losses_per_epoch = []
-                for iter, batch in enumerate(train_dl):
-
-                    print(batch.keys())
-                    
-                    y = batch[score].to(device)
-
-                    self.optimizers[score].zero_grad()
-                    y_hat = self.predict(batch, score)
-
-                    loss = self.loss_fn(y_hat, y)
-                    loss.backward()
-
-                    self.optimizers[score].step()
-
-                    losses_per_epoch.append(loss.item())
-
-                self.history['train_epoch'].append(epoch)
-                self.history['train_loss_per_epoch'].append(np.mean(losses_per_epoch))
+            if epoch % self.validate_epoch == 0:
+                valid_loss = self.validate(valid_dl, self.score)
+                self.history['validation_epoch'].append(epoch)
+                self.history['validation_loss_per_epoch'].append(valid_loss)
 
                 if self.verbose:
-                    print(f"[Train] epoch:{epoch} \t loss:{np.mean(losses_per_epoch):.4f}")
-
-                if epoch % self.validate_epoch == 0:
-                    valid_loss = self.validate(valid_dl, score)
-                    self.history['validation_epoch'].append(epoch)
-                    self.history['validation_loss_per_epoch'].append(valid_loss)
-
-                    if self.verbose:
-                        print(f"[Validation] epoch:{epoch} \t loss:{valid_loss:.4f}")
+                    print(f"[Validation] epoch:{epoch} \t loss:{valid_loss:.4f}")
 
 
-                if self.checkpoint_path is not None:
-                    if epoch % self.checkpoint_epoch == 0:
-                        torch.save({
-                            'epoch': epoch,
-                            'model_state_dict': self.models[score].state_dict(),
-                            'optimizer_state_dict': self.optimizers[score].state_dict(),
-                            'loss': np.mean(losses_per_epoch),
-                        }, os.path.join(self.checkpoint_path, f'model_{score}_checkpoint_{epoch}.pt'))
+            if self.checkpoint_path is not None:
+                if epoch % self.checkpoint_epoch == 0:
+                    torch.save({
+                        'epoch': epoch,
+                        'model_state_dict': self.models[self.score].state_dict(),
+                        'optimizer_state_dict': self.optimizers[self.score].state_dict(),
+                        'loss': np.mean(losses_per_epoch),
+                    }, os.path.join(self.checkpoint_path, f'model_{self.score}_checkpoint_{epoch}.pt'))
 
         return self.models
 
@@ -255,10 +240,10 @@ class TrainerGeneral(FitnessTrainer):
 
         return enc
 
-    def predict(self, input, score):
+    def predict(self, input):
         enc = self.encode_inputs(input)
 
-        return self.models[score](enc)
+        return self.model(enc)
 
     def predict_mc_dropout(self, input, score, forward_passes = 50):
         enc = self.encode_inputs(input)
@@ -300,8 +285,8 @@ class TrainerGeneral(FitnessTrainer):
 
         with torch.no_grad():
             for iter, batch in enumerate(valid_dl):
-                y = batch[score].to(device)
-                y_hat = self.predict(batch, score)
+                y = batch[score].to(self.device)
+                y_hat = self.predict(batch)
 
                 valid_losses.append(self.loss_fn(y_hat, y).item())
 
