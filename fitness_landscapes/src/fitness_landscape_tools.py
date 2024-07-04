@@ -1,11 +1,9 @@
 #from generative.vae import Args, VDJ_dataset, GMVAE
-#from fitness.trainers import TrainerGeneral
-#from fitness.ff import MLP
+
 #import shap
 import torch
 import os
 import pandas as pd
-#from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 #from sklearn.manifold import TSNE
 #from umap import UMAP
@@ -34,24 +32,6 @@ class fitness_landscape(torch.utils.data.Dataset):
         #make folder
         os.makedirs(output_folder, exist_ok=True)
 
-    def train_model(self,
-                    training_method = "tmp",
-                    embedding       = "tmp",
-                    load_self       = False):
-        
-        #reload model 
-        if load_self: self.load_self_from_file()
-
-        #set variables      
-        self.training_method = training_method
-        self.embedding       = embedding
-
-        print(f'XXXX')
-
-        self.save_self_to_file()
-
-        return self.df
-    
     def load_dataset(self,
                      df_path = './data/all_scores_pooled_cut.csv',
                      scores          = ['interface_score', 'total_score', 'interface_potential', 'total_potential'],
@@ -84,9 +64,6 @@ class fitness_landscape(torch.utils.data.Dataset):
                         pca_dim        = 50,
                         load_self      = False):
   
-        #reload model 
-        if load_self: self.load_self_from_file()
-
         #set variables      
         self.embeddings      = embeddings
         self.pooling_method  = pooling_method
@@ -125,7 +102,7 @@ class fitness_landscape(torch.utils.data.Dataset):
         proj = pca.fit_transform(embeddings)
         embeddings = [proj[i] for i in range(proj.shape[0])]                                                    
 
-        self.df['plm-pca'] = embeddings
+        self.df['plm_pca'] = embeddings
 
         return self.df
 
@@ -231,7 +208,29 @@ class fitness_landscape(torch.utils.data.Dataset):
         with open(f'{self.output_folder}/self.pkl', 'wb') as f:
             pickle.dump(self.__dict__, f)
 
-    def load_self_from_file(self):
-        with open(f'{self.output_folder}/self.pkl', 'rb') as f:
+    def load_self_from_file(self, folder):
+        with open(f'{folder}/self.pkl', 'rb') as f:
             self.__dict__.update(pickle.load(f))
         print(f'All variables loaded from {self.output_folder}/self.pkl')
+
+        return self.df
+    
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, item):
+
+        sequence = str(self.df['sequence'].iloc[item])
+
+        out = {'protein_sequence': sequence}
+
+        for key in self.scores:
+            out.update({key: torch.tensor(self.df[key].iloc[item]).unsqueeze(-1)})
+
+        for key in self.labels:
+            out.update({key: self.df[key].iloc[item]})
+
+        for key in self.embeddings:
+            out.update({key: self.df[key].iloc[item]})
+                
+        return out
