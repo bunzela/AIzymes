@@ -85,8 +85,6 @@ class fitness_landscape():
 
         self.save_self_to_file()
 
-        torch.cuda.empty_cache()
-
         return self.df
 
     def setup_torch(self):
@@ -127,19 +125,18 @@ class fitness_landscape():
     
     def pool_output(self, output):
 
-        #last hidden state. removed class token. only embedd residues. average accross all residues
         if self.pooling_method == 'average':
             output = torch.mean(output.last_hidden_state[:, 1:-1, :].squeeze(0), axis = 1)
 
-        #results in one embedding for whole sequence. Standard option, double check what this is doing
         elif self.pooling_method == 'pooler':
             output = output.pooler_output[0]
 
-        #class token from last hidden state
+        elif self.pooling_method == 'last':
+            output = output.last_hidden_state[0,-1,:]
+
         elif self.pooling_method == 'first':
             output = output.last_hidden_state[0,0,:]
-
-        #last hidden state. removed class token. only embedd residues.        
+        
         elif self.pooling_method == 'concatenate':
             output = output.last_hidden_state[:, 1:-1, :].squeeze(0)
             output = output.reshape(-1)

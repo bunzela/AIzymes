@@ -1,13 +1,96 @@
 from abc import abstractmethod
 import os
-
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
 import torch.nn as nn
-
 from src.losses import bt_loss
+from sklearn.model_selection import train_test_split
+from src.ff import MLP
+import torch
 
+print("Trainers loaded.")
+
+class df_to_dataset(torch.utils.data.Dataset):
+
+    def __init__(self, df, scores, labels, embeddings):
+
+        self.df = df
+        self.scores = scores
+        self.labels = labels
+        self.embeddings = embeddings
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, item):
+
+        sequence = str(self.df['sequence'].iloc[item])
+
+        out = {'sequence': sequence}
+
+        for key in self.df.keys():
+            if key == 'sequence': continue
+            print(key)
+            out.update({key: torch.tensor(self.df[key].iloc[item]).unsqueeze(-1)})
+
+        for key in self.labels:
+            out.update({key: self.df[key].iloc[item]})
+
+        for key in self.embeddings:
+            out.update({key: self.df[key].iloc[item]})
+                
+        return out
+
+def train_model(dataset,
+                training_method = "tmp",
+                embedding       = "tmp",
+                load_self       = False):
+        
+    train_df, test_df = train_test_split(dataset.df, test_size = 0.1)
+
+    train_dl = torch.utils.data.DataLoader(df_to_dataset(train_df, dataset.scores, dataset.labels, dataset.embeddings), batch_size = 64)
+    test_dl = torch.utils.data.DataLoader(df_to_dataset(test_df, dataset.scores, dataset.labels, dataset.embeddings), batch_size = len(test_df))
+    
+    output = {'loss': [], 'score': [], 'dataset': [], 'features': [], 'pearsonr': [], 'pval': []}
+    scores_pred = ['norm_total_score']
+    feature = 'onehot'
+    loss = 'bt'
+    input_size = 64 + 1280
+    encoding = 'onehot_flatten'
+
+    epochs = 10 #Seems decent ATM - most valid losses increase past this
+    n_layers = 2
+    n_features = [64,1]
+    dropout_prob = 0.3
+    model = MLP(input_size, n_layers, n_features, dropout_prob)
+    optimizer = torch.optim.Adam
+    vals = next(iter(test_dl))
+
+    trainer = TrainerGeneral(model, optimizer, dataset.device, 
+                            encoding = encoding, loss = loss, features = feature, 
+                            scores = scores_pred, epochs = epochs)
+    
+    models = trainer.train(train_dl, test_dl)
+ 
+    return "done"   
+
+    
+    output['loss'].append(loss)
+    output['score'].append(score)
+    output['dataset'].append(data)
+    feature_name = '_'.join(feature)
+    output['features'].append(feature_name)
+    output['pearsonr'].append(pears)
+    output['pval'].append(pvals)
+    
+def junk():
+
+
+    mc = trainer.predict_mc_dropout(vals, scores_pred, forward_passes = 50)
+    pears = pearsonr(mc['y'], mc['mean']).statistic
+    pvals = pearsonr(mc['y'], mc['mean']).pvalue
+    
 class FitnessTrainer:
     def __init__(self):
         self.models = {}
@@ -98,11 +181,14 @@ class TrainerGeneral(FitnessTrainer):
                 print(f'### Training regression model to predict: {score} ###')
 
             for epoch in range(1, self.epochs + 1):
+
                 self.models[score].train()
 
                 losses_per_epoch = []
                 for iter, batch in enumerate(train_dl):
 
+                    print(batch.keys())
+                    
                     y = batch[score].to(device)
 
                     self.optimizers[score].zero_grad()
