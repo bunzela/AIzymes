@@ -229,7 +229,7 @@ class TrainerGeneral(FitnessTrainer):
             if m.__class__.__name__.startswith('Dropout'):
                 m.train()
 
-    
+#multi input multi output
 def train_mimo(train_ds, 
                test_ds, 
                device,
