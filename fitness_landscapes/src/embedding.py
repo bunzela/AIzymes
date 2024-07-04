@@ -17,11 +17,12 @@ from itertools import chain
 from transformers import EsmTokenizer, EsmModel, AutoTokenizer, EsmForMaskedLM
 from tqdm import tqdm
 import pickle
+from src.tools import setup_torch, reset_cuda
 
 print("Fitness Landscape Tools loaded.")
 
 
-class fitness_landscape():
+class make_dataset():
 
     def __init__(self, 
                  output_folder   = './AIzymes_resi14'):
@@ -59,7 +60,7 @@ class fitness_landscape():
         return self.df
     
     def make_embeddings(self,
-                        embeddings     = ['onehot','plm','plm_pca'],
+                        embeddings     = ['onehot','plm','plm_pca','onehot_plm_pca'],
                         pooling_method = 'concatenate',
                         pca_dim        = 50,
                         load_self      = False):
@@ -70,16 +71,16 @@ class fitness_landscape():
         self.pca_dim         = pca_dim
         
         #initialize torch
-        self.device, self.dtype, self.SMOKE_TEST = self.setup_torch()
+        self.device, self.dtype, self.SMOKE_TEST = setup_torch()
 
         if 'onehot' in self.embeddings:
             self.df = self.onehot_sequences()
         if 'plm' in self.embeddings:
             self.df = self.plm_sequences()
-            if 'plm_pca' in self.embeddings:
-                if 'plm' not in self.embeddings: 
-                    print(f'Error! Embedding "plm" needed to create "plm_pca"')
-                self.df = self.plm_pca()
+        if 'plm_pca' in self.embeddings:
+            self.df = self.plm_pca()
+        if 'onehot_plm_pca' in self.embeddings:
+            self.df = self.onehot_plm_pca()   
 
         print(f'Embeddings done for {", ".join(self.embeddings)}')
 
@@ -89,16 +90,24 @@ class fitness_landscape():
 
         return self.df
 
-    def setup_torch(self):
-        torch.manual_seed(29)
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        dtype = torch.double
-        SMOKE_TEST = os.environ.get("SMOKE_TEST")
+    def onehot_plm_pca(self):
 
-        return device, dtype, SMOKE_TEST
+        if 'plm_pca' not in self.embeddings: 
+             print(f'Error! Embedding "plm_pca" needed to create "onehot_plm_pca"')
+        if 'onehot' not in self.embeddings: 
+            print(f'Error! Embedding "onehot" needed to create "onehot_plm_pca"')
+    
+        self.df['onehot'] = self.df['onehot'].apply(lambda x: list(x) if isinstance(x, (list, np.ndarray)) else [])
+        self.df['plm_pca'] = self.df['plm_pca'].apply(lambda x: list(x) if isinstance(x, (list, np.ndarray)) else [])
+        self.df['onehot_plm_pca'] = self.df.apply(lambda row: row['onehot'] + row['plm_pca'], axis=1)
 
+        return self.df
+       
     def plm_pca(self):
                   
+        if 'plm' not in self.embeddings: 
+            print(f'Error! Embedding "plm" needed to create "plm_pca"')
+
         pca = PCA(n_components = self.pca_dim)
         embeddings = np.stack(self.df['plm'])
         proj = pca.fit_transform(embeddings)
@@ -115,7 +124,8 @@ class fitness_landscape():
         self.plm.to(self.device)
 
         embeddings = []
-        for sequence, _ in zip(self.sequences, tqdm(range(len(self.sequences)))): #uses tqdm to display progress bar, output not used in code
+        print(len(self.sequences))
+        for sequence, _ in zip(self.sequences, tqdm(range(len(self.sequences)-1))): #uses tqdm to display progress bar, output not used in code
             sequence = sequence.upper()
             tokenized_sequence = self.tokenizer(sequence, return_tensors= 'pt').to(self.device)
             output = self.plm(**tokenized_sequence)
@@ -158,8 +168,7 @@ class fitness_landscape():
 
         sequences = [F.one_hot(torch.Tensor([seq_to_ids[residue] for residue in sequence]).to(torch.int64), num_classes = n_residues).int() for sequence in self.sequences]
         sequences = [F.pad(sequence, (0,0,0,self.max_len - sequence.size(0))) for sequence in sequences]
-        sequences = [sequence.tolist() for sequence in sequences]
-
+        sequences = [np.array(sequence).flatten().tolist() for sequence in sequences]
         self.df['onehot'] = sequences
 
         return self.df
