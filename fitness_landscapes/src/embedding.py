@@ -55,8 +55,6 @@ class make_dataset():
         #run normalization
         self.df = self.normalize_scores()
 
-        self.save_self_to_file()
-
         return self.df
     
     def make_embeddings(self,
@@ -124,8 +122,7 @@ class make_dataset():
         self.plm.to(self.device)
 
         embeddings = []
-        print(len(self.sequences))
-        for sequence, _ in zip(self.sequences, tqdm(range(len(self.sequences)-1))): #uses tqdm to display progress bar, output not used in code
+        for sequence, _ in zip(self.sequences, tqdm(range(len(self.sequences)))): #uses tqdm to display progress bar, output not used in code
             sequence = sequence.upper()
             tokenized_sequence = self.tokenizer(sequence, return_tensors= 'pt').to(self.device)
             output = self.plm(**tokenized_sequence)

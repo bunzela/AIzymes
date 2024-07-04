@@ -9,6 +9,8 @@ from sklearn.model_selection import train_test_split
 from src.ff import MLP
 import torch
 from src.tools import setup_torch
+import numpy as np
+from scipy.stats import pearsonr, spearmanr
 
 print("Trainers loaded.")
 
@@ -38,44 +40,44 @@ def train_model(dataset):
     train_dl = torch.utils.data.DataLoader(df_to_dataset(train_df), batch_size = 64)
     test_dl = torch.utils.data.DataLoader(df_to_dataset(test_df), batch_size = len(test_df))
     
-    output = {'loss': [], 'score': [], 'dataset': [], 'features': [], 'pearsonr': [], 'pval': []}
+    output = {'loss': [], 'score': [], 'features': [], 'pearsonr': [], 'pval': []}
     score = 'norm_total_score'
-    feature = 'onehot_plm_pca'
+    features = None
     loss = 'bt'
-    input_size = len(train_df[feature])
-    input_size = 64    
-    encoding = 'onehot_flatten'
-
+    encoding = 'onehot_plm_pca'
+    input_size = len(train_df[encoding].iloc[0])
+    
     epochs = 10 #Seems decent ATM - most valid losses increase past this
-    n_layers = 2
     n_features = [64,1]
+    n_layers = len(n_features)
     dropout_prob = 0.3
-    model = MLP(input_size, n_layers, n_features, dropout_prob)
+    input_model = MLP(input_size, n_layers, n_features, dropout_prob)
+
     optimizer = torch.optim.Adam
-    vals = next(iter(test_dl))
 
-    trainer = TrainerGeneral(model, optimizer, 
-                            encoding = encoding, loss = loss, features = feature, 
-                            score = score, epochs = epochs)
+    trainer = TrainerGeneral(input_model, optimizer, 
+                            encoding = encoding, 
+                            features = features, 
+                            score = score, 
+                            epochs = epochs)
     
-    models = trainer.train(train_dl, test_dl)
-    
-    torch.cuda.empty_cache()
-
-    return "done"   
-
+    model, history = trainer.train(train_dl, test_dl)
     
     output['loss'].append(loss)
     output['score'].append(score)
-    output['dataset'].append(data)
-    feature_name = '_'.join(feature)
-    output['features'].append(feature_name)
-    output['pearsonr'].append(pears)
-    output['pval'].append(pvals)
 
-    mc = trainer.predict_mc_dropout(vals, scores_pred, forward_passes = 50)
-    pears = pearsonr(mc['y'], mc['mean']).statistic
-    pvals = pearsonr(mc['y'], mc['mean']).pvalue
+    if features != None:
+        output['features'].append('_'.join(features))
+
+    #mc = trainer.predict_mc_dropout(next(iter(test_dl)), score, forward_passes = 50)
+    #pears = pearsonr(mc['y'], mc['mean']).statistic
+    #pvals = pearsonr(mc['y'], mc['mean']).pvalue
+    #output['pearsonr'].append(pears)
+    #output['pval'].append(pvals)
+
+    torch.cuda.empty_cache()
+
+    return output, model, history
     
 class FitnessTrainer:
     def __init__(self):
@@ -85,48 +87,11 @@ class FitnessTrainer:
         self.score = None
         self.device = None
         self.loss_fn = None
-
-    @abstractmethod
-    def train(self):
-        pass
-
-    @abstractmethod
-    def predict(self):
-        pass
-
-    @abstractmethod
-    def evaluate(self):
-        pass
-
-    @abstractmethod
-    def plot_training_metrics(self):
-        pass
-
-    @abstractmethod
-    def save_history(self):
-        pass
-
-    @abstractmethod
-    def update_history(self):
-        pass
-
-    @abstractmethod
-    def save_model_checkpoint(self):
-        pass
-
-    @abstractmethod
-    def load_model_checkpoint(self):
-        pass
-
-    @abstractmethod
-    def encode_inputs(self, input):
-        pass
     
 class TrainerGeneral(FitnessTrainer):
     def __init__(self, model, optim,
                        lr = 0.001,
                        epochs = 20,
-                       loss = 'bt',
                        encoding = 'onehot',
                        score = 'norm_interface_score',
                        features = None,
@@ -148,13 +113,7 @@ class TrainerGeneral(FitnessTrainer):
 
         self.model = model.to(self.device)
         self.optimizer = optim(self.model.parameters(), lr = lr)
-
-        print("test")
-
-        if loss == 'bt':
-            self.loss_fn = bt_loss
-        else:
-            self.loss_fn = F.mse_loss
+        self.loss_fn = F.mse_loss
 
         self.checkpoint_path = checkpoint_path
         if self.checkpoint_path is not None and os.path.isdir(self.checkpoint_path) is False:
@@ -172,13 +131,17 @@ class TrainerGeneral(FitnessTrainer):
             self.model.train()
 
             losses_per_epoch = []
+
             for iter, batch in enumerate(train_dl):
 
                 y = batch[self.score].to(self.device)
 
                 self.optimizer.zero_grad()
                 y_hat = self.predict(batch)
-
+                y_hat = [i[0] for i in y_hat]
+                
+                print(y, y_hat)
+                
                 loss = self.loss_fn(y_hat, y)
                 loss.backward()
 
@@ -205,14 +168,16 @@ class TrainerGeneral(FitnessTrainer):
                 if epoch % self.checkpoint_epoch == 0:
                     torch.save({
                         'epoch': epoch,
-                        'model_state_dict': self.models[self.score].state_dict(),
-                        'optimizer_state_dict': self.optimizers[self.score].state_dict(),
+                        'model_state_dict': self.model.state_dict(),
+                        'optimizer_state_dict': self.optimizer.state_dict(),
                         'loss': np.mean(losses_per_epoch),
                     }, os.path.join(self.checkpoint_path, f'model_{self.score}_checkpoint_{epoch}.pt'))
 
-        return self.models
+        return self.model, self.history
 
     def encode_inputs(self, input):
+        
+        ''' OLD PROBABLY JUNK
         if self.encoding == 'onehot_flatten':
             enc = input['onehot'].reshape(input['onehot'].shape[0], -1) #Flattens one-hot
 
@@ -235,6 +200,9 @@ class TrainerGeneral(FitnessTrainer):
             enc = torch.cat(feat_list, axis = -1)
         else:
             raise ValueError(f'Unrecognized encoding argument {self.encoding}!')
+        '''
+
+        enc = input[self.encoding]
 
         enc = enc.to(self.device)
 
@@ -251,9 +219,9 @@ class TrainerGeneral(FitnessTrainer):
         dropout_predictions = np.empty((0, enc.shape[0], 1))
 
         for i in range(forward_passes):
-            self.models[score].eval()
-            self.enable_dropout(self.models[score])
-            predictions = self.models[score](enc).detach().numpy()
+            self.model.eval()
+            self.enable_dropout(self.model)
+            predictions = self.model(enc).detach().cpu().numpy()
             dropout_predictions = np.vstack((dropout_predictions,
                                              predictions[np.newaxis, :, :]))
 
@@ -269,8 +237,8 @@ class TrainerGeneral(FitnessTrainer):
 
     def predict_numpy(self, input, score):
         enc = self.encode_inputs(input)
-        self.models[score].eval()
-        predictions = self.models[score](enc).detach().numpy()
+        self.model.eval()
+        predictions = self.model(enc).detach().numpy()
         y = input[score].cpu().numpy()
 
         return {'y_hat': np.squeeze(predictions, axis = -1),
@@ -280,7 +248,7 @@ class TrainerGeneral(FitnessTrainer):
 
     def validate(self, valid_dl, score):
 
-        self.models[score].eval()
+        self.model.eval()
         valid_losses = []
 
         with torch.no_grad():
