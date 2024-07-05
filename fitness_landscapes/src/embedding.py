@@ -61,12 +61,13 @@ class make_dataset():
                         embeddings     = ['onehot','plm','plm_pca','onehot_plm_pca'],
                         pooling_method = 'concatenate',
                         pca_dim        = 50,
-                        load_self      = False):
+                        esm2_model     = "facebook/esm2_t33_650M_UR50D"):
   
         #set variables      
         self.embeddings      = embeddings
         self.pooling_method  = pooling_method
         self.pca_dim         = pca_dim
+        self.esm2_model      = esm2_model
         
         #initialize torch
         self.device, self.dtype, self.SMOKE_TEST = setup_torch()
@@ -117,8 +118,8 @@ class make_dataset():
 
     def plm_sequences(self):
 
-        self.plm = EsmModel.from_pretrained("facebook/esm2_t33_650M_UR50D") #Will update to the better ones/ more parameters
-        self.tokenizer = AutoTokenizer.from_pretrained("facebook/esm2_t33_650M_UR50D")
+        self.plm = EsmModel.from_pretrained(self.esm2_model) 
+        self.tokenizer = AutoTokenizer.from_pretrained(self.esm2_model)
         self.plm.to(self.device)
 
         embeddings = []
@@ -179,7 +180,6 @@ class make_dataset():
             score_df = df.groupby('sequence')[self.scores].mean().reset_index()
             label_df = df.drop_duplicates('sequence')[self.labels + ['sequence']]
             df = pd.merge(score_df, label_df, on='sequence')
-
         if self.cat_resi != None:
             df = df[df['cat_resi'] == self.cat_resi]
 
