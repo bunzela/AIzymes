@@ -10,7 +10,9 @@ from src.ff import MLP
 import torch
 from src.tools import setup_torch
 import numpy as np
-from scipy.stats import pearsonr, spearmanr
+from scipy.stats import pearsonr, linregress
+from tqdm import tqdm
+import pickle
 
 print("Trainers loaded.")
 
@@ -33,21 +35,24 @@ class df_to_dataset(torch.utils.data.Dataset):
 
         return out
 
-def train_model(dataset):
+def train_model(dataset,
+                encoding = 'onehot_plm_pca',
+                epochs = 10,
+                verbose = True,
+                output_folder = "./"):
+
+    output = {}
 
     train_df, test_df = train_test_split(dataset.df, test_size = 0.1)
 
     train_dl = torch.utils.data.DataLoader(df_to_dataset(train_df), batch_size = 64)
     test_dl = torch.utils.data.DataLoader(df_to_dataset(test_df), batch_size = len(test_df))
     
-    output = {'loss': [], 'score': [], 'features': [], 'pearsonr': [], 'pval': []}
     score = 'norm_total_score'
     features = None
-    loss = 'bt'
-    encoding = 'onehot_plm_pca'
-    input_size = len(train_df[encoding].iloc[0])
     
-    epochs = 10 #Seems decent ATM - most valid losses increase past this
+    input_size = len(train_df[encoding].iloc[0])
+
     n_features = [64,1]
     n_layers = len(n_features)
     dropout_prob = 0.3
@@ -59,31 +64,47 @@ def train_model(dataset):
                             encoding = encoding, 
                             features = features, 
                             score = score, 
-                            epochs = epochs)
+                            epochs = epochs,
+                            verbose = verbose)
     
-    model, history = trainer.train(train_dl, test_dl)
-    
-    output['loss'].append(loss)
-    output['score'].append(score)
+    output['model'], output['train_epoch'], output['train_loss_per_epoch'], output['train_mae_per_epoch'], output['test_epoch'], output['test_loss_per_epoch'], output['test_mae_per_epoch'] = trainer.train(train_dl, test_dl)
 
-    if features != None:
-        output['features'].append('_'.join(features))
+    if features != None: output['features'].append('_'.join(features))
 
-    #mc = trainer.predict_mc_dropout(next(iter(test_dl)), score, forward_passes = 50)
-    #pears = pearsonr(mc['y'], mc['mean']).statistic
-    #pvals = pearsonr(mc['y'], mc['mean']).pvalue
-    #output['pearsonr'].append(pears)
-    #output['pval'].append(pvals)
+    output['yyhat'] = trainer.predict_mc_dropout(test_dl, score, forward_passes = 50)
+    pears = pearsonr(output['yyhat']['y'], output['yyhat']['yhat']).statistic
+    pvals = pearsonr(output['yyhat']['y'], output['yyhat']['yhat']).pvalue
+    slope, intercept, r_value, p_value, std_err = linregress(output['yyhat']['y'], output['yyhat']['yhat'])
+    output['pearsonr']  = pears
+    output['pval']      = pvals
+    output['slope']     = slope
+    output['intercept'] = intercept
+    output['r_value']   = r_value
+    output['p_value']   = p_value
+    output['std_err']   = std_err
+    output['encoding']  = encoding
+    output['score']     = score
+    output['epochs']    = epochs
+
+    #Save results to file
+    title = f"score_{output['score']}__encoding_{output['encoding']}__epochs_{output['epochs']}"
+    with open(f'{output_folder}/{title}.pkl', 'wb') as file:
+        pickle.dump(output, file)
 
     torch.cuda.empty_cache()
 
-    return output, model, history
+    return output
     
 class FitnessTrainer:
     def __init__(self):
         self.model = None
         self.optimizer = None
-        self.history = {'train_epoch': [], 'train_loss_per_epoch': [], 'validation_epoch': [], 'validation_loss_per_epoch': []}
+        self.history = {'train_epoch': [], 
+                        'train_loss_per_epoch': [],
+                        'train_mae_per_epoch': [],
+                        'test_epoch': [], 
+                        'test_loss_per_epoch': [],
+                        'test_mae_per_epoch': []}      
         self.score = None
         self.device = None
         self.loss_fn = None
@@ -126,22 +147,19 @@ class TrainerGeneral(FitnessTrainer):
         if self.verbose:
             print(f'### Training regression model to predict: {self.score} ###')
 
-        for epoch in range(1, self.epochs + 1):
+        for epoch, _ in zip(range(1, self.epochs + 1), tqdm(range(self.epochs + 1))): #uses tqdm to display progress bar, output not used in code
 
             self.model.train()
 
             losses_per_epoch = []
+            mae_per_epoch = []
 
             for iter, batch in enumerate(train_dl):
 
                 y = batch[self.score].to(self.device)
 
                 self.optimizer.zero_grad()
-                y_hat = self.predict(batch)
-                y_hat = [i[0] for i in y_hat]
-                
-                print(y, y_hat)
-                
+                y_hat = self.predict(batch).squeeze()
                 loss = self.loss_fn(y_hat, y)
                 loss.backward()
 
@@ -149,20 +167,24 @@ class TrainerGeneral(FitnessTrainer):
 
                 losses_per_epoch.append(loss.item())
 
+                mae = F.mse_loss(y_hat, y).item()
+                mae_per_epoch.append(mae)
+
             self.history['train_epoch'].append(epoch)
             self.history['train_loss_per_epoch'].append(np.mean(losses_per_epoch))
+            self.history['train_mae_per_epoch'].append(np.mean(mae_per_epoch))
 
             if self.verbose:
-                print(f"[Train] epoch:{epoch} \t loss:{np.mean(losses_per_epoch):.4f}")
+                print(f"[train] epoch:{epoch} \t loss:{np.mean(losses_per_epoch):.4f} \t mae:{np.mean(mae_per_epoch):.4f}")
 
             if epoch % self.validate_epoch == 0:
-                valid_loss = self.validate(valid_dl, self.score)
-                self.history['validation_epoch'].append(epoch)
-                self.history['validation_loss_per_epoch'].append(valid_loss)
+                valid_loss, valid_mae = self.validate(valid_dl, self.score)
+                self.history['test_epoch'].append(epoch)
+                self.history['test_loss_per_epoch'].append(valid_loss)
+                self.history['test_mae_per_epoch'].append(valid_mae)
 
                 if self.verbose:
-                    print(f"[Validation] epoch:{epoch} \t loss:{valid_loss:.4f}")
-
+                    print(f"[test]  epoch:{epoch} \t loss:{valid_loss:.4f} \t mae:{valid_mae:.4f}")
 
             if self.checkpoint_path is not None:
                 if epoch % self.checkpoint_epoch == 0:
@@ -173,7 +195,7 @@ class TrainerGeneral(FitnessTrainer):
                         'loss': np.mean(losses_per_epoch),
                     }, os.path.join(self.checkpoint_path, f'model_{self.score}_checkpoint_{epoch}.pt'))
 
-        return self.model, self.history
+        return self.model, self.history['train_epoch'], self.history['train_loss_per_epoch'], self.history['train_mae_per_epoch'], self.history['test_epoch'], self.history['test_loss_per_epoch'], self.history['test_mae_per_epoch']
 
     def encode_inputs(self, input):
         
@@ -214,26 +236,31 @@ class TrainerGeneral(FitnessTrainer):
         return self.model(enc)
 
     def predict_mc_dropout(self, input, score, forward_passes = 50):
-        enc = self.encode_inputs(input)
 
-        dropout_predictions = np.empty((0, enc.shape[0], 1))
+        yyhat = {'yhat': [], 'dyhat' : [], 'y' : []}
+        
+        for batch in input:
 
-        for i in range(forward_passes):
-            self.model.eval()
-            self.enable_dropout(self.model)
-            predictions = self.model(enc).detach().cpu().numpy()
-            dropout_predictions = np.vstack((dropout_predictions,
-                                             predictions[np.newaxis, :, :]))
+            enc = self.encode_inputs(batch)
 
+            dropout_predictions = np.empty((0, enc.shape[0], 1))
 
-        mean = np.mean(dropout_predictions, axis=0)
-        std = np.std(dropout_predictions, axis=0)
-        y = input[score].cpu().numpy()
+            for i in range(forward_passes):
+                self.model.eval()
+                self.enable_dropout(self.model)
+                predictions = self.model(enc).detach().cpu().numpy()
+                dropout_predictions = np.vstack((dropout_predictions,
+                                                predictions[np.newaxis, :, :]))
 
-        return {'y_hat': np.squeeze(dropout_predictions, axis = -1),
-                'mean': np.squeeze(mean, axis = -1),
-                'std': np.squeeze(std, axis = -1),
-                'y': np.squeeze(y, axis = -1)}
+            yyhat['yhat'].append(np.mean(dropout_predictions, axis=0))
+            yyhat['dyhat'].append(np.std(dropout_predictions, axis=0))
+            yyhat['y'].append(batch[score])
+
+        yyhat['yhat']  = [i[0] for i in yyhat['yhat'][0]]
+        yyhat['dyhat'] = [i[0] for i in yyhat['dyhat'][0]]
+        yyhat['y']      = [i.item() for i in yyhat['y'][0]]
+
+        return yyhat
 
     def predict_numpy(self, input, score):
         enc = self.encode_inputs(input)
@@ -250,15 +277,19 @@ class TrainerGeneral(FitnessTrainer):
 
         self.model.eval()
         valid_losses = []
+        mae_per_epoch = []
 
         with torch.no_grad():
             for iter, batch in enumerate(valid_dl):
                 y = batch[score].to(self.device)
-                y_hat = self.predict(batch)
+                y_hat = self.predict(batch).squeeze()
 
                 valid_losses.append(self.loss_fn(y_hat, y).item())
 
-        return np.mean(valid_losses)
+                mae = F.l1_loss(y_hat, y).item()
+                mae_per_epoch.append(mae)
+
+        return np.mean(valid_losses), np.mean(mae_per_epoch)
 
 
     def enable_dropout(self, model):
