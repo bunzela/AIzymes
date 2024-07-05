@@ -16,6 +16,7 @@ import logging
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.ticker as ticker
 from sklearn.metrics import mean_squared_error
+import os 
 
 # Set the logging level to suppress warnings
 logging.getLogger("transformers").setLevel(logging.ERROR)
@@ -66,7 +67,7 @@ class PLM_trainer():
 
     def load_dataset(self,
                      df_path = './data/all_scores_pooled_cut.csv',
-                     scores          = ['interface_score', 'total_score', 'interface_potential', 'total_potential'],
+                     score           = 'total_score',
                      labels          = ['score_taken_from', 'design_method', 'cat_resn', 'cat_resi', 'parent_index', 'generation', 'mutations'],
                      cat_resi        = 14,
                      select_unique   = True,
@@ -75,7 +76,7 @@ class PLM_trainer():
 
         # Set variables
         self.df_path         = df_path
-        self.scores          = scores
+        self.score           = score
         self.labels          = labels
         self.cat_resi        = cat_resi
         self.select_unique   = select_unique
@@ -91,15 +92,14 @@ class PLM_trainer():
         self.train_df, self.test_df = train_test_split(self.df, test_size=test_size, random_state=42)
 
     def normalize_scores(self, df):
-        for score in self.scores:
-            score_list = df[score].to_numpy().astype(np.float32)
-            if self.normalize == 'minmax':
-                df[f'norm_{score}'] = self.min_max(score_list)
-            if self.normalize == 'both':
-                score_list = self.min_max(score_list)
-                df[f'norm_{score}'] = self.z_score(score_list)
-            if self.normalize == 'z_score':
-                df[f'norm_{score}'] = self.z_score(score_list)
+        score_list = df[self.score].to_numpy().astype(np.float32)
+        if self.normalize == 'minmax':
+            df[f'norm_{self.score}'] = self.min_max(score_list)
+        if self.normalize == 'both':
+            score_list = self.min_max(score_list)
+            df[f'norm_{self.score}'] = self.z_score(score_list)
+        if self.normalize == 'z_score':
+            df[f'norm_{self.score}'] = self.z_score(score_list)
                     
         print('### Data normalized. ###')
 
@@ -111,7 +111,7 @@ class PLM_trainer():
         df = df[df['sequence'].notnull()]
         
         if self.select_unique:
-            score_df = df.groupby('sequence')[self.scores].mean().reset_index()
+            score_df = df.groupby('sequence')[[self.score]].mean().reset_index()
             label_df = df.drop_duplicates('sequence')[self.labels + ['sequence']]
             df = pd.merge(score_df, label_df, on='sequence')
         if self.cat_resi is not None:
@@ -129,25 +129,31 @@ class PLM_trainer():
                   epochs          = 3,
                   esm2_model_name = None,
                   p_loss          = 0.1):
-  
+
         self.epochs          = epochs
         self.esm2_model_name = esm2_model_name
         self.p_loss          = p_loss
 
         if esm2_model_name is not None:
-            self.plm_model_name = esm2_model_name
+            self.plm_model_name = esm2_model_name    
             self.tokenize_esm2_model(p_loss)
 
+        if os.path.isfile(f'{self.output_folder}/plm_self_{self.file_title()}.pkl'):
+
+            print(f'{self.output_folder}/plm_self_{self.file_title()}.pkl exists! Stopping calculation')
+
+            return
+                              
         self.trainer()
 
-        print(f'PLM {self.plm_model_name} trained for {", ".join(self.scores)}')
+        print(f'PLM {self.plm_model_name} trained for norm_{self.score}')
 
         self.eval_test_train()
         self.save_self_to_file()
         self.plot_learning()
 
         torch.cuda.empty_cache()
-
+    
     def trainer(self):
         self.train_loss = []
         self.test_loss = []
@@ -156,11 +162,10 @@ class PLM_trainer():
         self.device, self.dtype, self.SMOKE_TEST = setup_torch()
 
         # Load and preprocess data
-        self.score = self.scores[0]
         train_sequences = self.train_df['sequence'].tolist()
-        train_activities = self.train_df[self.score].tolist()
+        train_activities = self.train_df[f'norm_{self.score}'].tolist()
         test_sequences = self.test_df['sequence'].tolist()
-        test_activities = self.test_df[self.score].tolist()
+        test_activities = self.test_df[f'norm_{self.score}'].tolist()
 
         train_dataset = ProteinDataset(train_sequences, train_activities, self.tokenizer)
         train_dataloader = DataLoader(train_dataset, batch_size=16, shuffle=True)
@@ -212,7 +217,7 @@ class PLM_trainer():
     def evaluate(self):
         self.model.eval()
         test_sequences = self.test_df['sequence'].tolist()
-        test_activities = self.test_df[self.score].tolist()
+        test_activities = self.test_df[f'norm_{self.score}'].tolist()
 
         test_dataset = ProteinDataset(test_sequences, test_activities, self.tokenizer, max_length=128)
         test_dataloader = DataLoader(test_dataset, batch_size=32, shuffle=False)
@@ -254,11 +259,17 @@ class PLM_trainer():
         with open(f'{self.output_folder}/plm_self_{self.file_title()}.pkl', 'wb') as f:
             pickle.dump(self.__dict__, f)
 
-    def load_self_from_file(self, epochs, esm2_model_name, cat_resi, p_loss):
+    def load_self_from_file(self, epochs, esm2_model_name, cat_resi, p_loss, df_path):
         self.epochs = epochs
         self.esm2_model_name = esm2_model_name
         self.cat_resi = cat_resi
         self.p_loss = p_loss
+        self.df_path = df_path
+
+        if not os.path.isfile(f'{self.output_folder}/plm_self_{self.file_title()}.pkl'):
+            print(f'### {self.output_folder}/plm_self_{self.file_title()}.pkl does not exist. ###' )
+            return
+        
         with open(f'{self.output_folder}/plm_self_{self.file_title()}.pkl', 'rb') as f:
             self.__dict__.update(pickle.load(f))
         print(f'All variables loaded from {self.output_folder}/plm_self_{self.file_title()}.pkl')
@@ -270,9 +281,9 @@ class PLM_trainer():
         self.model.eval()
 
         train_sequences = self.train_df['sequence'].tolist()
-        train_activities = self.train_df[self.score].tolist()
+        train_activities = self.train_df[f'norm_{self.score}'].tolist()
         test_sequences = self.test_df['sequence'].tolist()
-        test_activities = self.test_df[self.score].tolist()
+        test_activities = self.test_df[f'norm_{self.score}'].tolist()
 
         train_dataset = ProteinDataset(train_sequences, train_activities, self.tokenizer)
         train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=False)
@@ -309,61 +320,77 @@ class PLM_trainer():
 
     def plot_learning(self):
        
-        fig = plt.figure(figsize=(15, 8))
-        gs = fig.add_gridspec(3, 3)
+        if not os.path.isfile(f'{self.output_folder}/plm_self_{self.file_title()}.pkl'):
+            print(f'### {self.output_folder}/plm_self_{self.file_title()}.pkl does not exist. ###' )
+            return
+        
+        fig = plt.figure(figsize=(10, 5))
+        gs = fig.add_gridspec(1, 2)
         ax1 = fig.add_subplot(gs[:, 0])
         ax2 = fig.add_subplot(gs[:, 1])
-        ax3 = fig.add_subplot(gs[0, 2:])
-        ax4 = fig.add_subplot(gs[1, 2:])
-        ax5 = fig.add_subplot(gs[2, 2:])
+
+        c_test = "b"
+        c_train = "r"
 
         # Left panel: y vs y_hat scatter plot for test and train datasets
-        ax1.scatter(self.train_activities, self.train_preds, label='Train', alpha=0.5, c="k")
-        line = self.train_slope * np.array(self.test_activities + self.train_activities) + self.train_intercept
-        ax1.plot(self.test_activities + self.train_activities, line, label=f'R2={self.train_r_value**2:.2f}, p={self.train_p_value:.2g}, rmse={self.train_rmse:.2g}', c="k")
+        min_val = min(min(self.train_activities), min(self.train_preds), min(self.test_activities), min(self.test_preds))
+        max_val = max(max(self.train_activities), max(self.train_preds), max(self.test_activities), max(self.test_preds))
         
-        ax1.scatter(self.test_activities, self.test_preds, label='Test', alpha=0.5, c="b")
-        line = self.test_slope * np.array(self.test_activities + self.train_activities) + self.test_intercept
-        ax1.plot(self.test_activities + self.train_activities, line, label=f'R2={self.test_r_value**2:.2f}, p={self.test_p_value:.2g}, rmse={self.test_rmse:.2g}', c="b")
+        ax1.plot([min_val, max_val], [min_val, max_val], 'k', zorder=100)
+
+        ax1.scatter(self.train_activities, self.train_preds, label='Train', alpha=0.5, c=c_train)
+        line = self.train_slope * np.array([min_val, max_val]) + self.train_intercept
+        ax1.plot([min_val, max_val], line, label=f'R2={self.train_r_value**2:.2f}, p={self.train_p_value:.2g}, rmse={self.train_rmse:.2g}', c=c_train, zorder=10)
         
+        ax1.scatter(self.test_activities, self.test_preds, label='Test', alpha=0.5, c=c_test)
+        line = self.test_slope * np.array([min_val, max_val]) + self.test_intercept
+        ax1.plot([min_val, max_val], line, label=f'R2={self.test_r_value**2:.2f}, p={self.test_p_value:.2g}, rmse={self.test_rmse:.2g}', c=c_test, zorder=20)
+        
+        ax1.set_xlim([min_val, max_val])
+        ax1.set_ylim([min_val, max_val])       
         ax1.set_xlabel('True Activity')
         ax1.set_ylabel('Predicted Activity')
         ax1.set_title('True vs Predicted Activity')
         ax1.legend()
 
         # Middle panel: Loss vs. Epoch plot
-        ax2.plot(self.train_loss, label='train_loss', c="k")
-        ax2.plot(self.test_loss, label='test_loss', c="b")
+        ax2.plot(range(1,len(self.train_loss)+1,1), self.train_loss, label='train_loss', c=c_train, zorder=1)
+        ax2.plot(range(1,len(self.train_loss)+1,1), self.test_loss,  label='test_loss', c=c_test  , zorder=2)
         ax2.set_xlabel('Epoch')
         ax2.set_ylabel('Loss')
+        ax2.set_xlim(0,len(self.train_loss))
+        ax2.set_ylim(bottom=0)
         ax2.set_title('Loss vs. Epoch')
         ax2.legend()
-        ax2.set_xlim(left=0)
-        ax2.set_ylim(bottom=0)
-
-        # Right panel top: Loss vs. Epoch plot for 0 to 1
-        ax3.plot(self.train_loss, label='train_loss', c="k")
-        ax3.plot(self.test_loss, label='test_loss', c="b")
-        ax3.set_title('Loss vs. Epoch')
-        ax3.legend()
-        ax3.set_xlim(left=0)
-        ax3.set_ylim(10, 100)
-
-        # Right panel middle: Loss vs. Epoch plot for 1 to 10
-        ax4.plot(self.train_loss, label='train_loss', c="k")
-        ax4.plot(self.test_loss, label='test_loss', c="b")
-        ax4.set_ylabel('Loss')
-        ax4.set_xlim(left=0)
-        ax4.set_ylim(1, 10)
-
-        # Right panel bottom: Loss vs. Epoch plot for 10 to 100
-        ax5.plot(self.train_loss, label='train_loss', c="k")
-        ax5.plot(self.test_loss, label='test_loss', c="b")
-        ax5.set_xlabel('Epoch')
-        ax5.set_xlim(left=0)
-        ax5.set_ylim(0, 1)
 
         plt.suptitle(self.file_title().replace('_', ' '))
         plt.tight_layout()
         plt.savefig(f"{self.output_folder}/{self.file_title()}.png")
         plt.show()
+
+        # Collect data
+        filename = f"{self.output_folder}/results.pkl"  
+        df = pd.DataFrame()
+        df['file_title'] = self.file_title
+
+        if os.path.isfile(filename):
+            df = pd.read_pickle(filename)
+
+        data = {
+            'file_title': self.file_title,
+            'test_r_value': self.test_r_value,
+            'test_p_value': self.test_p_value,
+            'test_rmse': self.test_rmse,
+            'esm2_model_name': self.esm2_model_name,
+            'cat_resi': self.cat_resi,
+            'epochs': self.epochs,
+            'p_loss': self.p_loss,
+            'df_path': self.df_path
+        }
+
+        if self.file_title in df['file_title'].values:
+            df.loc[df['file_title'] == self.file_title, :] = pd.DataFrame([data])
+        else:
+            new_df = pd.DataFrame([data])
+            df = pd.concat([df, new_df], ignore_index=True)
+        df.to_pickle(filename)
