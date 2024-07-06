@@ -302,7 +302,7 @@ class PLM_trainer():
                 'rmse': np.sqrt(mean_squared_error(test_act, test_pred))
             }
 
-    def plot_learning(self):
+    def plot_learning(self,top_p=0.8):
         if not os.path.isfile(f'{self.output_folder}/plm_self_{self.file_title()}.pkl'):
             print(f'### {self.output_folder}/plm_self_{self.file_title()}.pkl does not exist. ###')
             return
@@ -314,19 +314,39 @@ class PLM_trainer():
         c_train = "r"
 
         for i, score in enumerate(self.scores):
+
+            # get min and max vals of the dataset
             min_val = min(np.min(self.train_activities[:, i]), np.min(self.train_preds[:, i]), np.min(self.test_activities[:, i]), np.min(self.test_preds[:, i]))
             max_val = max(np.max(self.train_activities[:, i]), np.max(self.train_preds[:, i]), np.max(self.test_activities[:, i]), np.max(self.test_preds[:, i]))
+
+            # Filter the {top} of the training data
+            top_n_train = int(len(self.train_activities) * top_p)
+            top_n_test = int(len(self.test_activities) * top_p)
+
+            train_idx = np.argsort(self.train_activities[:, i])[-top_n_train:]
+            test_idx = np.argsort(self.test_activities[:, i])[-top_n_test:]
             
+            train_filtered_activities = self.train_activities[train_idx, i]
+            train_filtered_preds = self.train_preds[train_idx, i]
+            test_filtered_activities = self.test_activities[test_idx, i]
+            test_filtered_preds = self.test_preds[test_idx, i]
+ 
+            # Recalculate RMSE for the top {top}
+            self.train_metrics[score][f"train_rmse_top{top_p}"] = np.sqrt(mean_squared_error(train_filtered_activities, train_filtered_preds))
+            self.test_metrics[score][f"test_rmse_top{top_p}"] = np.sqrt(mean_squared_error(test_filtered_activities, test_filtered_preds))
+
             # Top row: Scatter plot for test and train datasets
             axs[0, i].plot([min_val, max_val], [min_val, max_val], 'k', alpha=0.5, zorder=100)
 
             axs[0, i].scatter(self.train_activities[:, i], self.train_preds[:, i], alpha=0.5, c=c_train)
             line = self.train_metrics[score]['slope'] * np.array([min_val, max_val]) + self.train_metrics[score]['intercept']
-            axs[0, i].plot([min_val, max_val], line, label=f'train R2={self.train_metrics[score]["r_value"]**2:.2f}, rmse={self.train_metrics[score]["rmse"]:.2g}', c=c_train, zorder=10)
-            
+            axs[0, i].plot([min_val, max_val], line, c=c_train, zorder=10, 
+                           label=f'train R2={self.train_metrics[score]["r_value"]**2:.2f}, rmse_top{int(top_p*100)}={self.train_metrics[score][f"train_rmse_top{top_p}"]:.2f}')
+
             axs[0, i].scatter(self.test_activities[:, i], self.test_preds[:, i], alpha=0.5, c=c_test)
             line = self.test_metrics[score]['slope'] * np.array([min_val, max_val]) + self.test_metrics[score]['intercept']
-            axs[0, i].plot([min_val, max_val], line, label=f'test R2={self.test_metrics[score]["r_value"]**2:.2f}, rmse={self.test_metrics[score]["rmse"]:.2g}', c=c_test, zorder=20)
+            axs[0, i].plot([min_val, max_val], line, c=c_test, zorder=20, 
+                           label=f'test R2={self.test_metrics[score]["r_value"]**2:.2f}, rmse_top{int(top_p*100)}={self.test_metrics[score][f"test_rmse_top{top_p}"]:.2f}')
             
             axs[0, i].set_xlim([min_val, max_val])
             axs[0, i].set_ylim([min_val, max_val])       
@@ -371,6 +391,7 @@ class PLM_trainer():
             data[f'test_r_value_{score}'] = self.test_metrics[score]['r_value']
             data[f'test_p_value_{score}'] = self.test_metrics[score]['p_value']
             data[f'test_rmse_{score}'] = self.test_metrics[score]['rmse']
+            data[f'test_rmse_top{top_p}_{score}'] = self.test_metrics[score][f"test_rmse_top{top_p}"]
 
         # Convert data to a DataFrame
         new_data = pd.DataFrame([data])
@@ -383,18 +404,18 @@ class PLM_trainer():
 
         df.to_pickle(filename)
 
-def plot_summary(output_folder,scores=None,models=None):
+def plot_summary(output_folder,scores=None,models=None,top_p=0.8):
 
     filename=f"{output_folder}/results.pkl"
     df = pd.read_pickle(filename)
     df = df.dropna()
 
     if scores == None:
-        scores = ['_'.join(col.split('_')[2:]) for col in df.columns if col.startswith('test_rmse_')]
+        scores = ['_'.join(col.split('_')[2:]) for col in df.columns if col.startswith(f'test_rmse_top{top_p}')]
     if models == None:
         models = sorted(set(df['esm2_model_name']))
     p_losses = sorted(set(df['p_loss']))
-
+    
     fig, axs = plt.subplots(1, len(scores), figsize=(4 * len(scores), 4))
     if len(scores) == 1: axs = np.array([[axs[0]], [axs[1]]])  # Ensure axs is always 2D
 
@@ -414,7 +435,7 @@ def plot_summary(output_folder,scores=None,models=None):
 
         # Create a heatmap
         sns.heatmap(results, annot=True, fmt=".2f", cmap="Blues_r", xticklabels=[model.split('/')[-1][:-6] for model in models], yticklabels=p_losses, ax=axs[i], cbar=False)
-        axs[i].set_title(f'{score} RMSE')
+        axs[i].set_title(f'{score} RMSE top{int(top_p*100)}')
         axs[i].set_ylabel('p_loss')
 
     plt.suptitle('One model trained combined for all scores')
@@ -427,7 +448,7 @@ def plot_summary(output_folder,scores=None,models=None):
     df = df[df.isna().any(axis=1)]
 
     if scores == None:
-        scores = ['_'.join(col.split('_')[2:]) for col in df.columns if col.startswith('test_rmse_')]
+        scores = ['_'.join(col.split('_')[2:]) for col in df.columns if col.startswith(f'test_rmse_top{top_p}_')]
     if models == None:
         models = sorted(set(df['esm2_model_name']))
     p_losses = sorted(set(df['p_loss']))
@@ -453,7 +474,7 @@ def plot_summary(output_folder,scores=None,models=None):
 
         # Create a heatmap
         sns.heatmap(results, annot=True, fmt=".2f", cmap="Blues_r", xticklabels=[model.split('/')[-1][:-6] for model in models], yticklabels=p_losses, ax=axs[i], cbar=False)
-        axs[i].set_title(f'{score} RMSE')
+        axs[i].set_title(f'{score} RMSE top{int(top_p*100)}')
         axs[i].set_ylabel('p_loss')
 
     plt.suptitle('Models trained individually for each score')
