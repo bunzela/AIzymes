@@ -68,8 +68,9 @@ class PLM_trainer():
                      labels=['score_taken_from', 'design_method', 'cat_resn', 'cat_resi', 'parent_index', 'generation', 'mutations'], 
                      cat_resi=14, 
                      select_unique=True,
-                    normalize='both', 
-                    test_size=0.2):
+                     normalize='both', 
+                     test_size=0.2,
+                     scores_invert= ['total_score','interface_score','total_potential','interface_potential']):
         
         self.df_path = df_path
         self.scores = scores
@@ -77,11 +78,11 @@ class PLM_trainer():
         self.cat_resi = cat_resi
         self.select_unique = select_unique
         self.normalize = normalize
+        self.scores_invert = scores_invert
 
         self.df, self.lengths, self.max_len, self.sequences = self.read_datasets_csv()
         self.df = self.normalize_scores(self.df)
         self.train_df, self.test_df = train_test_split(self.df, test_size=test_size, random_state=42)
-
 
     def normalize_scores(self, df):
 
@@ -94,6 +95,11 @@ class PLM_trainer():
                 df[f'norm_{score}'] = self.z_score(score_list)
             elif self.normalize == 'z_score':
                 df[f'norm_{score}'] = self.z_score(score_list)
+        
+        for score_invert in self.scores_invert:
+            if f'norm_{score_invert}' in df.columns:
+                df[f'norm_{score_invert}'] = -df[f'norm_{score_invert}']
+
         print('### Data normalized. ###')
         
         return df
@@ -351,7 +357,7 @@ class PLM_trainer():
         else:
             df = pd.DataFrame()
             df['file_title'] = None
-            
+
         data = {
             'file_title': self.file_title,
             'esm2_model_name': self.esm2_model_name,
@@ -370,7 +376,6 @@ class PLM_trainer():
         new_data = pd.DataFrame([data])
 
         # Check if file_title already exists in the DataFrame
-    
         if self.file_title in df['file_title'].values:
             df.loc[df['file_title'] == self.file_title, :] = new_data.values
         else:
@@ -382,6 +387,7 @@ def plot_summary(output_folder,scores=None,models=None):
 
     filename=f"{output_folder}/results.pkl"
     df = pd.read_pickle(filename)
+    df = df.dropna()
 
     if scores == None:
         scores = ['_'.join(col.split('_')[2:]) for col in df.columns if col.startswith('test_rmse_')]
@@ -411,5 +417,46 @@ def plot_summary(output_folder,scores=None,models=None):
         axs[i].set_title(f'{score} RMSE')
         axs[i].set_ylabel('p_loss')
 
+    plt.suptitle('One model trained combined for all scores')
     plt.tight_layout()
+    plt.subplots_adjust(top=0.8)  # Adjust to make room for the suptitle
+    plt.show()
+
+    filename=f"{output_folder}/results.pkl"
+    df = pd.read_pickle(filename)
+    df = df[df.isna().any(axis=1)]
+
+    if scores == None:
+        scores = ['_'.join(col.split('_')[2:]) for col in df.columns if col.startswith('test_rmse_')]
+    if models == None:
+        models = sorted(set(df['esm2_model_name']))
+    p_losses = sorted(set(df['p_loss']))
+
+    fig, axs = plt.subplots(1, len(scores), figsize=(4 * len(scores), 4))
+    if len(scores) == 1: axs = np.array([[axs[0]], [axs[1]]])  # Ensure axs is always 2D
+
+    for i, score in enumerate(scores):
+
+        results = np.zeros((len(p_losses), len(models)))
+
+        for model_idx, model in enumerate(models):
+            for p_loss_idx, p_loss in enumerate(p_losses):
+
+                # Filter the DataFrame for the specific model and p_loss               
+                filtered_df = df[(df['esm2_model_name'] == model) & (df['p_loss'] == p_loss)]
+                filtered_df = filtered_df.dropna(subset=[f'test_rmse_{score}'])
+
+                if not filtered_df.empty:
+                    results[p_loss_idx, model_idx] = filtered_df[f'test_rmse_{score}'].values[0]
+                else:
+                    results[p_loss_idx, model_idx] = np.nan
+
+        # Create a heatmap
+        sns.heatmap(results, annot=True, fmt=".2f", cmap="Blues_r", xticklabels=[model.split('/')[-1][:-6] for model in models], yticklabels=p_losses, ax=axs[i], cbar=False)
+        axs[i].set_title(f'{score} RMSE')
+        axs[i].set_ylabel('p_loss')
+
+    plt.suptitle('Models trained individually for each score')
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.8)  # Adjust to make room for the suptitle
     plt.show()
