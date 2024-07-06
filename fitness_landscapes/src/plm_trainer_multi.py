@@ -350,7 +350,8 @@ class PLM_trainer():
             df = pd.read_pickle(filename)
         else:
             df = pd.DataFrame()
-
+            df['file_title'] = None
+            
         data = {
             'file_title': self.file_title,
             'esm2_model_name': self.esm2_model_name,
@@ -369,6 +370,7 @@ class PLM_trainer():
         new_data = pd.DataFrame([data])
 
         # Check if file_title already exists in the DataFrame
+    
         if self.file_title in df['file_title'].values:
             df.loc[df['file_title'] == self.file_title, :] = new_data.values
         else:
