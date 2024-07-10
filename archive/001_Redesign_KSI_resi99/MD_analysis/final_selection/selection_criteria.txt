@@ -1,0 +1,37 @@
+7427: Position 95: ILE (AS) (one (upper) prox tyr)
+10,10 cat res rot
+small extension in BP
+good apo-holo match
+
+7058: standard AS
+25,20 cat res rot
+double H-bond in dist Tyr pair
+large extension in BP
+some shrinkage in holo
+
+8610: Position 112: VAL (AS) 
+Position 30: TRP
+Position 103: PHE
+5,10 cat res rot
+double H-bond in dist Tyr pair (potentially with W30)
+small extension in BP
+ILE 38 folds in when apo
+
+9867: Position 55: PHE (AS) (one (front) dist tyr)
+Position 7: LEU
+0,20 cat res rot
+good BP
+TRP 58 folds in when apo
+
+6816: Position 116: PHE (AS) (one (lower) prox tyr)
+0,15 cat res rot
+extension in BP
+slight fold of TRP 58 apo-holo
+
+8941:Position 112: PHE (AS) (double Hbond tyr pair)
+Position 7: LEU, Position 121: PHE
+0,20 cat res rot
+great BP
+PHE 63 and TRP58 fold holo-apo
+
+Selected for cat res geometry, AS diversity, Hbonds and BP in this order
