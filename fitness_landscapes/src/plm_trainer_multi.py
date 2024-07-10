@@ -434,7 +434,8 @@ def plot_summary(output_folder,scores=None,models=None,top_p=0.8):
                     results[p_loss_idx, model_idx] = np.nan
 
         # Create a heatmap
-        sns.heatmap(results, annot=True, fmt=".2f", cmap="Blues_r", xticklabels=[model.split('/')[-1][:-6] for model in models], yticklabels=p_losses, ax=axs[i], cbar=False)
+        sns.heatmap(results, annot=True, fmt=".2f", cmap="Blues_r", xticklabels=[model.split('/')[-1][:-6] for model in models], yticklabels=p_losses, ax=axs[i], 
+                    vmin=0.18, vmax=0.33, cbar=False)
         axs[i].set_title(f'{score} RMSE top{int(top_p*100)}')
         axs[i].set_ylabel('p_loss')
 
@@ -473,7 +474,8 @@ def plot_summary(output_folder,scores=None,models=None,top_p=0.8):
                     results[p_loss_idx, model_idx] = np.nan
 
         # Create a heatmap
-        sns.heatmap(results, annot=True, fmt=".2f", cmap="Blues_r", xticklabels=[model.split('/')[-1][:-6] for model in models], yticklabels=p_losses, ax=axs[i], cbar=False)
+        sns.heatmap(results, annot=True, fmt=".2f", cmap="Blues_r", xticklabels=[model.split('/')[-1][:-6] for model in models], yticklabels=p_losses, ax=axs[i], 
+                    vmin=0.18, vmax=0.33, cbar=False)
         axs[i].set_title(f'{score} RMSE top{int(top_p*100)}')
         axs[i].set_ylabel('p_loss')
 
