@@ -16,7 +16,7 @@ from scoring_efields_001      import *
 # -------------------------------------------------------------------------------------------------------------------------
 
 def start_controller(self): 
-  
+    
     while not os.path.exists(os.path.join(self.FOLDER_HOME, str(self.MAX_DESIGNS))): #Run until MAX_DESIGNS are made
        
         # Update scores
