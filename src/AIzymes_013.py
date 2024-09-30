@@ -1,8 +1,6 @@
 # -------------------------------------------------------------------------------------------------------------------------
 # Import AIzymes modules --------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------
-import sys, os
-if os.path.join(os.getcwd(), 'src') not in sys.path: sys.path.append(os.path.join(os.getcwd(), 'src'))
     
 from main_running_001         import *
 from main_startup_001         import *
@@ -63,7 +61,8 @@ Attention: - HAB removed Protein / LigandMPNN from run_ESMfold_RosettaRelax as t
           
 To DO      - Plotting does not yet work
            - Protein / LigandMPNN
-
+           - Boltzmann selection can throw error if MAX_JOBS = N_PARENT_JOBS! Needs to be checked
+           - MAX_DESIGNS not propperly checked. Use len(all_scores_df) >= MAX_DESIGNS!
 
 AIzymes initiated.
 ''')

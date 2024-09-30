@@ -42,7 +42,7 @@ def initialize_controller(self, FOLDER_HOME):
     self.all_scores_df = pd.read_csv(self.ALL_SCORES_CSV)
 
     if self.UNBLOCK_ALL: 
-        print(self.UNBLOCK_ALL)
+        print(f'Unblocking all')
         self.all_scores_df["blocked"] = False
    
     # Sleep a bit to make me feel secure. More sleep = less anxiety :)
