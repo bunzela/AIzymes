@@ -94,3 +94,9 @@ AIzymes initiated.
                 setattr(self, key, value)
                 
         start_controller(self)
+        
+    def plot(self):
+        
+        #TO DO
+        
+        return
