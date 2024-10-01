@@ -7,6 +7,11 @@ def set_system(self):
         self.rosetta_ext = "linuxgccrelease"
         self.bash_args = ""
         
+    elif self.SYSTEM == 'EULER':     
+        
+        self.rosetta_ext = "serialization.linuxgccrelease"
+        self.bash_args = ""
+        
     elif self.SYSTEM == 'BLUEPEBBLE':     
         
         self.rosetta_ext = "serialization.linuxgccrelease"
@@ -23,8 +28,7 @@ def set_system(self):
         self.bash_args = "OMP_NUM_THREADS=1"
         
     else:
-        
-        logging.error(f"{self.SYSTEM} not recognized!")
+
         print(f"{self.SYSTEM} not recognized!")
         sys.exit()
         
