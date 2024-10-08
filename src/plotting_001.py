@@ -1,3 +1,38 @@
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.optimize import curve_fit
+from scipy.stats import pearsonr
+#import networkx as nx
+from sklearn.decomposition import PCA
+#import umap
+#import torch
+#import esm
+
+# NOTES:
+# Use self to access shared variables
+# functions that use self must contain self, e.g.: plot_scores(self) 
+# Only put super important variables into self! (for now please add nothing)
+
+# Coding STRATEGY:
+# Add plot_scores to class in AIzymes_013.py (must have a different name!)
+# To initialze everything in the main script, do:
+
+"""
+import sys, os
+if os.path.join(os.getcwd(), '../../src') not in sys.path: sys.path.append(os.path.join(os.getcwd(), '../../src'))
+from AIzymes_013 import *
+AIzymes = AIzymes_MAIN()
+AIzymes.initialize(FOLDER_HOME = 'AB_refactor_standard_013', LOG="debug", PRINT_VAR=False) #LOG="debug/info"
+"""
+# For you, please have a look at --> pandas data frames
+# This also loads self.all_scores_df
+# For plotting, make a copy of this, or do: self.plot_scores_df Do not modify self.all_scores_df
+# In the end, plotting will be done by executing: AIzymes.plot()
+
+
+
 def plot_scores(combined_score_min=0, combined_score_max=1, combined_score_bin=0.01,
                 interface_score_min=0, interface_score_max=1, interface_score_bin=0.01,
                 total_score_min=0, total_score_max=1, total_score_bin=0.01,
@@ -39,17 +74,19 @@ def plot_scores(combined_score_min=0, combined_score_max=1, combined_score_bin=0
                      total_score_min, total_score_max, total_score_bin)
     plot_catalytic_score(axs[0,3], catalytic_scores, \
                          catalytic_score_min, catalytic_score_max, catalytic_score_bin)
-    plot_efield_score(axs[2,0], efield_scores, \
-                        catalytic_score_min, catalytic_score_max, catalytic_score_bin)
     
     plot_boltzmann_histogram(axs[1,0], combined_scores, all_scores_df, \
                              combined_score_min, combined_score_max, combined_score_bin)
     plot_combined_score_v_index(axs[1,1], combined_scores, all_scores_df)
     plot_combined_score_v_generation_violin(axs[1,2], combined_scores, all_scores_df)
     plot_mutations_v_generation_violin(axs[1,3], all_scores_df, mut_min, mut_max)
+        
+    plot_efield_score(axs[2,0], efield_scores, \
+                        catalytic_score_min, catalytic_score_max, catalytic_score_bin)
     plot_score_v_generation_violin(axs[2,1], 'total_score', all_scores_df)
     plot_score_v_generation_violin(axs[2,2], 'interface_score', all_scores_df)
     plot_score_v_generation_violin(axs[2,3], 'efield_score', all_scores_df)
+    
     plt.tight_layout()
     plt.show()
     

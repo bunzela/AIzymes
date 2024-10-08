@@ -16,6 +16,88 @@ warnings.simplefilter('ignore', PDBConstructionWarning)
 from Bio import BiopythonParserWarning
 warnings.simplefilter('ignore', BiopythonParserWarning)
 
+from setup_system_001         import *
+
+def one_to_three_letter_aa(one_letter_aa):
+    
+    # Dictionary mapping one-letter amino acid codes to three-letter codes in all caps
+    aa_dict = {
+        'A': 'ALA', 'R': 'ARG', 'N': 'ASN', 'D': 'ASP', 'C': 'CYS',
+        'E': 'GLU', 'Q': 'GLN', 'G': 'GLY', 'H': 'HIS', 'I': 'ILE',
+        'L': 'LEU', 'K': 'LYS', 'M': 'MET', 'F': 'PHE', 'P': 'PRO',
+        'S': 'SER', 'T': 'THR', 'W': 'TRP', 'Y': 'TYR', 'V': 'VAL'
+    }
+    
+    # Convert it to the three-letter code in all caps
+    return aa_dict[one_letter_aa]
+
+def run_command(command, cwd=None, capture_output=False):
+    """Wrapper to execute .py files in runtime with arguments, and print error messages if they occur.
+    
+    Parameters:
+    - command: The command to run as a list of strings.
+    - cwd: Optional; The directory to execute the command in.
+    - capture_output: Optional; If True, capture stdout and stderr. Defaults to False (This is to conserve memory).
+    """
+    try:
+        # If capture_output is True, capture stdout and stderr
+        if capture_output:
+            result = subprocess.run(command, capture_output=True, text=True, check=True, cwd=cwd)
+        else:
+            # If capture_output is False, suppress all output by redirecting to os.devnull
+            with open(os.devnull, 'w') as fnull:
+                result = subprocess.run(command, stdout=fnull, stderr=fnull, text=True, check=True, cwd=cwd)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Command '{e.cmd}' failed with return code {e.returncode}")
+        logging.error(e.stderr)
+        #maybe rerun command here in case of efields
+        raise
+    except Exception as e:
+        logging.error(f"An error occurred while running command: {command}")
+        raise
+        
+def get_PDB_in(self, index):
+    
+    """Based on index, find the input PDB files for the AIzymes modules
+    
+    Paramters:
+    - index: The indix of the current design
+    
+    Output:
+    - PDBfile_Design_in: Input file for RosettaDesign
+    - PDBfile_Relax_in: Input file for RosettaRelax 
+    - PDBfile_Relax_ligand_in: Input file for Ligand to be used in RosettaRelax
+    """
+    
+    parent_index  = self.all_scores_df.loc[index, 'parent_index']
+    design_method = self.all_scores_df.loc[index, 'design_method']
+    
+    # PDBfile_Relax_ligand_in
+    if design_method == "ProteinMPNN":        
+        if parent_index == "Parent":
+            # Take ligand for relax run from Parent strucutre
+            PDBfile_Relax_ligand_in = f"{self.FOLDER_PARENT}/{self.WT}"
+        else:
+            # Take ligand for relax run from parent_index RosettaRelaxed structure
+            PDBfile_Relax_ligand_in  = f'{self.FOLDER_HOME}/{parent_index}/{self.WT}_RosettaRelax_{parent_index}'  
+
+    else:
+        # Take ligand for relax run from designed structure
+        PDBfile_Relax_ligand_in  = f'{self.FOLDER_HOME}/{index}/{self.WT}_{design_method}_{index}'    
+        
+    # PDBfile_Relax_in 
+    PDBfile_Relax_in = f'{self.FOLDER_HOME}/{index}/{self.WT}_ESMfold_{index}'  
+    
+    # PDBfile_Design_in
+    if parent_index == "Parent":
+        PDBfile_Design_in = f'{self.FOLDER_PARENT}/{self.WT}'
+    else:
+        PDBfile_Design_in = f'{self.FOLDER_HOME}/{parent_index}/{self.WT}_RosettaRelax_{parent_index}'
+        
+    
+    return PDBfile_Design_in, PDBfile_Relax_in, PDBfile_Relax_ligand_in
+
 def load_main_variables(self, FOLDER_HOME):
     
     self.VARIABLES_JSON  = f'{FOLDER_HOME}/variables.json'
@@ -33,39 +115,9 @@ def save_main_variables(self):
     with open(self.VARIABLES_JSON, 'w') as f: json.dump(variables, f, indent=4)
         
 def submit_job(self, index, job, ram=16, bash=False):        
-      
-    if self.SYSTEM == 'GRID':
-        submission_script = f"""#!/bin/bash
-#$ -V
-#$ -cwd
-#$ -N {self.SUBMIT_PREFIX}_{job}_{index}
-#$ -hard -l mf={ram}G
-#$ -o {self.FOLDER_HOME}/{index}/scripts/{job}_{index}.out
-#$ -e {self.FOLDER_HOME}/{index}/scripts/{job}_{index}.err
-"""
-    if self.SYSTEM == 'BLUEPEBBLE':
-        submission_script = f"""#!/bin/bash
-#SBATCH --account={self.BLUEPEBBLE_ACCOUNT}
-#SBATCH --partition=short
-#SBATCH --mem=40GB
-#SBATCH --ntasks-per-node=1
-#SBATCH --time=2:00:00    
-#SBATCH --nodes=1          
-#SBATCH --job-name={self.SUBMIT_PREFIX}_{job}_{index}
-#SBATCH --output={self.FOLDER_HOME}/{index}/scripts/AI_{job}_{index}.out
-#SBATCH --error={self.FOLDER_HOME}/{index}/scripts/AI_{job}_{index}.err
-"""
-        
-    if self.SYSTEM == 'BACKGROUND_JOB':
-        if not os.path.isfile(f'{self.FOLDER_HOME}/n_running_jobs.dat'):
-            with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'w') as f: f.write('0')
-        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'r'): jobs = int(f.read())
-        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'w'): f.write(jobs+1)
-        submission_script = ""
-
-    if self.SYSTEM == 'ABBIE_LOCAL':
-        submission_script = ""
-        
+              
+    submission_script = submit_head(self, index, job, ram)
+    
     submission_script += f"""
 # Output folder
 cd {self.FOLDER_HOME}/{index}
@@ -129,13 +181,14 @@ echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
                 process = subprocess.Popen(f'bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh &', 
                                            shell=True, stdout=stdout_log_file, stderr=stderr_log_file)
         
-def extract_sequence_from_pdb(pdb_path):
+def sequence_from_pdb(pdb_in):
     
-    with open(pdb_path, "r") as pdb_file:
-        for record in SeqIO.parse(pdb_file, "pdb-atom"):
+    with open(f"{pdb_in}.pdb", "r") as f:
+        for record in SeqIO.parse(f, "pdb-atom"):
             seq = str(record.seq)
-    return seq
     
+    return seq
+
 def generate_remark_from_all_scores_df(self, index):
 
     remark = ''
@@ -147,15 +200,13 @@ def generate_remark_from_all_scores_df(self, index):
         remarks.append(f'REMARK 666 MATCH TEMPLATE X {self.LIGAND}    0 MATCH MOTIF A {cat_resn}{str(cat_resi).rjust(5)}  {idx}  1')
     return "\n".join(remarks)
 
-def save_cat_res_into_all_scores_df(self, index, PDB_file_path, from_parent_struct=False):
+def save_cat_res_into_all_scores_df(self, index, PDB_file_path, save_resn=True):
     
     '''Finds the indices and names of the catalytic residue from <PDB_file_path> 
        Saves indices and residues into <all_scores_df> in row <index> as lists.
        To make sure these are saved and loaded as list, ";".join() and .split(";") should be used
        If information is read from an input structure for design do not save cat_resn'''
-      
-    time.sleep(0.1)
-    
+
     with open(PDB_file_path, 'r') as f: 
         PDB = f.readlines()
     
@@ -178,8 +229,8 @@ def save_cat_res_into_all_scores_df(self, index, PDB_file_path, from_parent_stru
                 break
     self.all_scores_df.at[index, 'cat_resi'] = ";".join(cat_resis)
     
-    # Only save the cat_resn if this comes from the designed structure, not from the input structure for design
-    if not from_parent_struct:
+    # Save resn only if enabled
+    if save_resn:
         self.all_scores_df['cat_resn'] = self.all_scores_df['cat_resn'].astype(str)
         self.all_scores_df.at[index, 'cat_resn'] = ";".join(cat_resns)
 

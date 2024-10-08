@@ -6,8 +6,7 @@ import pickle as pkl
 
 def generate_AMBER_files(self, filename_in:str, filename_out:str):
     
-    '''Uses tleap to create a .parm7 and .rst7 file from a pdb. Requires ambertools and pdb-tools 
-    (pip installable from  https://www.bonvinlab.org/pdb-tools/).
+    '''Uses tleap to create a .parm7 and .rst7 file from a pdb. Requires ambertools.
     Also requires 5TS.prepi and 5TS.frcmod in the INPUT folder
     TODO: Add script to generate these if not present.
     
@@ -37,6 +36,7 @@ def generate_AMBER_files(self, filename_in:str, filename_out:str):
                    stdout=open(f"{filename_out}_tleap.out", "w"))
 
 def calc_efields_score(self, pdb_path, cat_resi):
+    
     '''Executes the FieldTools.py script to calculate the electric field across the C-H bond of 5TS.
     Requires a field_target.dat in the Input folder. Currently hard-coded based on 5TS
     TODO: Make this function agnostic to contents of field_target
