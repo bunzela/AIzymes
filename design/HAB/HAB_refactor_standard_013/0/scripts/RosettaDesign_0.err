@@ -1,0 +1,2 @@
+/home/bunzelh/miniconda3/envs/py37/lib/python3.7/site-packages/Bio/SeqIO/PdbIO.py:304: BiopythonParserWarning: 'HEADER' line not found; can't determine PDB ID.
+  "'HEADER' line not found; can't determine PDB ID.", BiopythonParserWarning
