@@ -17,14 +17,7 @@ from scoring_efields_001      import *
 
 def start_controller(self): 
     
-<<<<<<< HEAD
     while len(self.all_scores_df['index']) < int(self.MAX_DESIGNS): #Run until MAX_DESIGNS are made
-=======
-    while not os.path.exists(os.path.join(self.FOLDER_HOME, str(self.MAX_DESIGNS))): #Run until MAX_DESIGNS are made
-       
-        # Update scores
-        update_scores(self)
->>>>>>> 5c737f120964d77d7e3de7727e8dc03e1a5380a9
             
         # Check how many jobs are currently running
         num_running_jobs = check_running_jobs(self)
