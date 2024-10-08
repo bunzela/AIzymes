@@ -61,8 +61,8 @@ def get_PDB_in(self, index):
     
     """Based on index, find the input PDB files for the AIzymes modules
     
-    Paramters:
-    - index: The indix of the current design
+    Parameters:
+    - index: The index of the current design
     
     Output:
     - PDBfile_Design_in: Input file for RosettaDesign
