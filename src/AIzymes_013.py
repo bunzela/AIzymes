@@ -56,7 +56,21 @@ class AIzymes_MAIN():
         # Run aizymes_setup
         aizymes_setup(self)
         
+<<<<<<< HEAD
         print('''AIzymes initiated.
+=======
+        print('''
+Attention: - HAB removed Protein / LigandMPNN from run_ESMfold_RosettaRelax as this breaks the logic of the programm
+           - All operations are now started through run_design (accepts a list of commands to be run in sequence!)
+           - All system-specific definitions moved to set_system.
+          
+To DO      - Plotting does not yet work
+           - Protein / LigandMPNN
+           - Boltzmann selection can throw error if MAX_JOBS = N_PARENT_JOBS! Needs to be checked
+           - MAX_DESIGNS not propperly checked. Use len(all_scores_df) >= MAX_DESIGNS!
+
+AIzymes initiated.
+>>>>>>> 5c737f120964d77d7e3de7727e8dc03e1a5380a9
 ''')
         
   
