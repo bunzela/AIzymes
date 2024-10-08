@@ -30,11 +30,6 @@ def set_system(self):
         self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
         self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
         
-    elif self.SYSTEM == 'EULER':     
-        
-        self.rosetta_ext = "serialization.linuxgccrelease"
-        self.bash_args = ""
-        
     elif self.SYSTEM == 'BLUEPEBBLE':     
         
         self.rosetta_ext       = "serialization.linuxgccrelease"
