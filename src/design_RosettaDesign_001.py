@@ -3,11 +3,8 @@ import logging
 from helper_001               import *
 
 def prepare_RosettaDesign(self, 
-                          parent_index, 
                           new_index,
-                          input_suffix,
-                          cmd,
-                          parent_done):
+                          cmd):
     """
     Designs protein structure in {new_index} based on {parent_index} using RosettaDesign.
     
@@ -16,32 +13,25 @@ def prepare_RosettaDesign(self,
     - new_index (str):    Index assigned to the resulting design.
     - input_suffix (str): Suffix of the input structure to be used for design.
     
-    Optional parameters:
-    - parent_done (bool): True if RosettaDesign to be run based on the parent input structure (intital design prior to running AIzymes).
-
     Returns:
     - cmd (str): Command to be exected by run_design using submit_job.
     """
-         
+    
     # Options for EXPLORE, accelerated script for testing
     if self.EXPLORE:
         ex = ""
     else:
         ex = "-ex1 -ex2"
-
-    if parent_done:
-        PDB_input  = f'{self.FOLDER_HOME}/{parent_index}/{self.WT}_{input_suffix}_{parent_index}.pdb'
-        PDB_output = f'{self.WT}_{input_suffix}_{parent_index}_0001.pdb'
-    else:
-        PDB_input  = f'{self.FOLDER_PARENT}/{parent_index}.pdb'
-        PDB_output = f'{parent_index}_0001.pdb'
     
-    save_cat_res_into_all_scores_df(self, new_index, PDB_input, from_parent_struct=True)
+    PDB_input ,_ ,_ = get_PDB_in(self, new_index)
+    
+    # HAB thinks this is not necessary! Check???
+    #save_cat_res_into_all_scores_df(self, new_index, PDB_input, from_parent_struct=True)
     
     cmd += f"""
 {self.ROSETTA_PATH}/bin/rosetta_scripts.{self.rosetta_ext}\
-    -s                                        {PDB_input} \
-    -in:file:native                           {PDB_input} \
+    -s                                        {PDB_input}.pdb \
+    -in:file:native                           {PDB_input}.pdb \
     -run:preserve_header                      true \
     -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params \
     -enzdes:cstfile                           {self.FOLDER_INPUT}/{self.CST_NAME}.cst \
@@ -52,8 +42,13 @@ def prepare_RosettaDesign(self,
     -ignore_zero_occupancy                    false  \
     -corrections::beta_nov16                  true \
     -overwrite {ex}
-    
-mv {PDB_output} {self.WT}_RosettaDesign_{new_index}.pdb 
+        
+mv {os.path.basename(PDB_input)}_0001.pdb {self.WT}_RosettaDesign_{new_index}.pdb 
+
+{self.bash_args} python {self.FOLDER_PARENT}/extract_sequence_from_pdb.py \
+--pdb_in {self.WT}_RosettaDesign_{new_index}.pdb \
+--sequence_out {self.WT}_{new_index}.seq
+
 """
                 
     # Create XML script for Rosetta Design  
