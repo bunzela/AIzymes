@@ -9,6 +9,7 @@ from design_LigandMPNN_001    import *
 from design_RosettaDesign_001 import *
 from design_ESMfold_001       import *
 from design_RosettaRelax_001  import *
+from design_MDMin_001         import *
 
 
 def get_ram(design_steps):
