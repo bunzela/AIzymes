@@ -2,7 +2,7 @@ source leaprc.protein.ff19SB
     source leaprc.gaff
     loadamberprep   /home/bunzelh/AIzymes/design/HAB/Input/5TS.prepi
     loadamberparams /home/bunzelh/AIzymes/design/HAB/Input/5TS.frcmod
-    mol = loadpdb /home/bunzelh/AIzymes/design/HAB/AB_refactor_standard_013/4/efield/7vuu_RosettaRelax_4_noHclean.pdb
-    saveamberparm mol /home/bunzelh/AIzymes/design/HAB/AB_refactor_standard_013/4/efield/7vuu_RosettaRelax_4.parm7 /home/bunzelh/AIzymes/design/HAB/AB_refactor_standard_013/4/efield/7vuu_RosettaRelax_4.rst7
+    mol = loadpdb /home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/7/efield/7vuu_RosettaDesign_7_noHclean.pdb
+    saveamberparm mol /home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/7/efield/7vuu_RosettaDesign_7.parm7 /home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/7/efield/7vuu_RosettaDesign_7.rst7
     quit
     

@@ -305,4 +305,145 @@ protocols.denovo_design.movers.FastDesign: 52	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,
 protocols.denovo_design.movers.FastDesign: 53	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 54	FALSE	FALSE	
 protocols.denovo_design.movers.FastDesign: 55	FALSE	FALSE	
-protocols.d
+protocols.denovo_design.movers.FastDesign: 56	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 57	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 58	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 59	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 60	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 61	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 62	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 63	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 64	FALSE	FALSE	
+protocols.relax.FastRelax: CMD: repeat  59.3403  0  0  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  59.3403  0  0  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -80.7307  0  0  0.03245
+core.pack.pack_rotamers: built 3806 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -107.361  0  0  0.03245
+protocols.relax.FastRelax: CMD: scale:fa_rep  -97.3119  0  0  0.0506
+protocols.relax.FastRelax: CMD: min  -220.797  0.860705  0.860705  0.0506
+protocols.relax.FastRelax: CMD: coord_cst_weight  -220.797  0.860705  0.860705  0.0506
+protocols.relax.FastRelax: CMD: scale:fa_rep  -177.821  0.860705  0.860705  0.154
+core.pack.pack_rotamers: built 2561 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -180.614  0.860705  0.860705  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -172.659  0.860705  0.860705  0.17765
+protocols.relax.FastRelax: CMD: min  -191.93  0.79472  0.79472  0.17765
+protocols.relax.FastRelax: CMD: coord_cst_weight  -191.93  0.79472  0.79472  0.17765
+protocols.relax.FastRelax: CMD: scale:fa_rep  -170.608  0.79472  0.79472  0.3124
+core.pack.pack_rotamers: built 2413 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -170.608  0.79472  0.79472  0.3124
+protocols.relax.FastRelax: CMD: scale:fa_rep  -164.951  0.79472  0.79472  0.34815
+protocols.relax.FastRelax: CMD: min  -171.125  0.760081  0.760081  0.34815
+protocols.relax.FastRelax: CMD: coord_cst_weight  -171.125  0.760081  0.760081  0.34815
+protocols.relax.FastRelax: CMD: scale:fa_rep  -149.272  0.760081  0.760081  0.55
+core.pack.pack_rotamers: built 2296 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -149.303  0.760081  0.760081  0.55
+protocols.relax.FastRelax: CMD: min  -190.148  1.04341  1.04341  0.55
+protocols.relax.FastRelax: MRP: 0  -190.148  -190.148  1.04341  1.04341  
+protocols.relax.FastRelax: CMD: accept_to_best  -190.148  1.04341  1.04341  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -190.148  1.04341  1.04341  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.denovo_design.movers.FastDesign: 
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000    -345.681    -345.681
+ fa_rep                       0.550      63.458      34.902
+ fa_sol                       1.000     307.568     307.568
+ fa_intra_atr_xover4          1.000     -23.584     -23.584
+ fa_intra_rep_xover4          0.550      16.839       9.262
+ fa_intra_sol_xover4          1.000      22.308      22.308
+ lk_ball                      0.920     163.221     150.163
+ lk_ball_iso                 -0.380     418.816    -159.150
+ lk_ball_bridge              -0.330       2.398      -0.791
+ lk_ball_bridge_uncpl        -0.330      16.583      -5.472
+ fa_elec                      1.000    -116.783    -116.783
+ fa_intra_elec                1.000     -28.997     -28.997
+ pro_close                    1.250       0.317       0.397
+ hbond_sr_bb                  1.000     -33.111     -33.111
+ hbond_lr_bb                  1.000      -3.935      -3.935
+ hbond_bb_sc                  1.000     -16.992     -16.992
+ hbond_sc                     1.000      -3.401      -3.401
+ dslf_fa13                    1.250       0.000       0.000
+ atom_pair_constraint         1.000       0.345       0.345
+ angle_constraint             1.000       0.021       0.021
+ dihedral_constraint          1.000       0.167       0.167
+ omega                        0.480      15.099       7.248
+ fa_dun_dev                   0.690      11.753       8.109
+ fa_dun_rot                   0.760      34.975      26.581
+ fa_dun_semi                  0.780     101.525      79.190
+ p_aa_pp                      0.610     -31.844     -19.425
+ hxl_tors                     1.000      11.511      11.511
+ ref                          1.000     -30.712     -30.712
+ rama_prepro                  0.500      -1.766      -0.883
+ res_type_constraint          1.000     -59.000     -59.000
+---------------------------------------------------
+ Total weighted score:                     -190.148
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FastRelax - mv_relax=======================
+protocols.relax.FastRelax: CMD: repeat  -131.681  1.04341  0  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -131.681  1.04341  0  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -165.186  1.04341  0  0.022
+core.pack.pack_rotamers: built 243 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -167.944  1.04341  0  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -167.028  1.04341  0  0.02805
+protocols.relax.FastRelax: CMD: min  -199.748  1.22389  0.593579  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -199.748  1.22389  0.593579  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122.276  1.22389  0.593579  0.14575
+core.pack.pack_rotamers: built 170 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -126.663  1.22389  0.593579  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -121.933  1.22389  0.593579  0.154
+protocols.relax.FastRelax: CMD: min  -163.264  1.11489  0.333368  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -163.264  1.11489  0.333368  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -138.217  1.11489  0.333368  0.30745
+core.pack.pack_rotamers: built 151 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -138.273  1.11489  0.333368  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -136.309  1.11489  0.333368  0.31955
+protocols.relax.FastRelax: CMD: min  -145.328  1.10547  0.252972  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -145.328  1.10547  0.252972  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -123.844  1.10547  0.252972  0.55
+core.pack.pack_rotamers: built 126 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -123.844  1.10547  0.252972  0.55
+protocols.relax.FastRelax: CMD: min  -133.98  1.17984  0.265194  0.55
+protocols.relax.FastRelax: MRP: 0  -133.98  -133.98  1.17984  0.265194  
+protocols.relax.FastRelax: CMD: accept_to_best  -133.98  1.17984  0.265194  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -133.98  1.17984  0.265194  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER InterfaceScoreCalculator - mv_inter=======================
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.693167 -0.68748 0.216545 -0.663559 0.72597 0.180714 -0.281442 -0.0184254 -0.959401 6.2296 1.72956 -7.51449  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.693167 -0.68748 0.216545 -0.663559 0.72597 0.180714 -0.281442 -0.0184254 -0.959401 6.78021 0.898917 -7.59733  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.693167 -0.68748 0.216545 -0.663559 0.72597 0.180714 -0.281442 -0.0184254 -0.959401 6.78021 0.898917 -7.59733  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.693167 -0.68748 0.216545 -0.663559 0.72597 0.180714 -0.281442 -0.0184254 -0.959401 -268.527 416.218 33.8227  
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+protocols.jd2.JobDistributor: 7vuu_0001 reported success in 94 seconds
+protocols.jd2.JobDistributor: no more batches to process... 
+protocols.jd2.JobDistributor: 1 jobs considered, 1 jobs attempted in 94 seconds
+protocols.jd2.JobDistributor: [ WARNING ] The following options have been set, but have not yet been used:
+	-enzdes:cst_opt 
+
+basic.citation_manager.CitationManager: 
+The following Rosetta modules were used during this run of Rosetta, and should be cited:
+
+rosetta_scripts Application's citation(s):
+Fleishman SJ, Leaver-Fay A, Corn JE, Strauch E-M, Khare SD, Koga N, Ashworth J, Murphy P, Richter F, Lemmon G, Meiler J, and Baker D.  (2011).  RosettaScripts: A Scripting Language Interface to the Rosetta Macromolecular Modeling Suite.  PLoS ONE 6(6):e20161.  doi: 10.1371/journal.pone.0020161.
+
+FastDesign Mover's citation(s):
+*Bhardwaj G, *Mulligan VK, *Bahl G, Gilmore JM, Harvey PJ, Cheneval O, Buchko GW, Pulavarti SVSRK, Kaas Q, Eletsky A, Huang P-S, Johnsen PS, Greisen P Jr., Rocklin GJ, Song Y, Linsky TW, Watkins A, Rettie SA, Xu X, Carter LP, Bonneau R, Olson JM, Coutsias E, Correnti CE, Szyperski T, Craik DJ, and Baker D.  (2016).  Accurate de novo design of hyperstable constrained peptides.  Nature 538(7625):329-35.  doi: 10.1038/nature19791.  (*Co-primary authors.)
+
+Maguire JB, Haddox HK, Strickland D, Halabiya SF, Coventry B, Griffin JR, Pulavarti SVSRK, Cummins M, Thieker DF, Klavins E, Szyperski T, DiMaio F, Baker D, and Kuhlman B.  (2020).  Perturbing the energy landscape for improved packing during computational protein design..  Proteins "in press".  doi: 10.1002/prot.26030.
+
+FastRelax Mover's citation(s):
+Khatib F, Cooper S, Tyka MD, Xu K, Makedon I, Popovic Z, Baker D, and Players F.  (2011).  Algorithm discovery by protein folding game players.  Proc Natl Acad Sci USA 108(47):18949-53.  doi: 10.1073/pnas.1115898108.
+
+Maguire JB, Haddox HK, Strickland D, Halabiya SF, Coventry B, Griffin JR, Pulavarti SVSRK, Cummins M, Thieker DF, Klavins E, Szyperski T, DiMaio F, Baker D, and Kuhlman B.  (2020).  Perturbing the energy landscape for improved packing during computational protein design..  Proteins "in press".  doi: 10.1002/prot.26030.
+
+InterfaceScoreCalculator Mover's citation(s):
+Lemmon G, and Meiler J.  (2012).  Rosetta Ligand docking with flexible XML protocols.  Methods Mol Biol 819:143-55.  doi: 10.1007/978-1-61779-465-0_10.
+
+
