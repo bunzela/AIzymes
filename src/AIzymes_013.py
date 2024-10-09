@@ -45,7 +45,8 @@ class AIzymes_MAIN():
       EXPLORE           = False,
       FIELD_TOOLS       = 'src/FieldTools.py',
       LOG               = 'debug',
-      PARENT_DES_MED    = 'RosettaDesign'
+      PARENT_DES_MED    = 'RosettaDesign',
+      BLUEPEBBLE_ACCOUNT= 'ptch000721'
       ):
                    
         # Automatically assign all parameters to instance variables
