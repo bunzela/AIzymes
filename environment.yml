@@ -15,5 +15,7 @@ dependencies:
   - accelerate 
   - transformers
   - ambertools
-  - pip:
-    - pdb-tools
+  
+  # NOT NEEDED ANYOMRE
+  #- pip:
+  #  - pdb-tools
