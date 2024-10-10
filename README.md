@@ -1,7 +1,7 @@
 # To Do
 > [!IMPORTANT]
 > @Abbie <br>
-> Please indicate here what you are currently working on
+> Currently working on an MDMin design option to run between ESMfold and RosettaRelax. Updates for this are on branch MD_minimise 
 
 > [!IMPORTANT]
 > @Vivian <br>
