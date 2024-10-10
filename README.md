@@ -5,7 +5,9 @@
 
 > [!IMPORTANT]
 > @Vivian <br>
-> Please indicate here what you are currently working on
+> Finalize the plot functions (tree plot and umap)
+> Optimization of cst_weight to increase total score and smooth hamming distance over generations
+> Test whether starting a new design run from a previous design brings some improvement
 
 
 # AIzymes
