@@ -427,8 +427,6 @@ class PLM_trainer():
 
     def plot_learning(self, top_p=0.8):
 
-        matplotlib.use('Agg') 
-
         if not os.path.isfile(f'{self.output_folder}/plm_self_{self.file_title()}.pkl'):
             print(f'### {self.output_folder}/plm_self_{self.file_title()}.pkl does not exist. ###')
             return
