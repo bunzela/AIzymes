@@ -18,7 +18,6 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.ticker as ticker
 from src.tools import reset_cuda, setup_torch
 import matplotlib
-matplotlib.use('TkAgg')
 
 # Set the logging level to suppress warnings
 logging.getLogger("transformers").setLevel(logging.ERROR)
@@ -72,19 +71,35 @@ class PLM_trainer():
                      select_unique=True,
                      normalize='both', 
                      test_size=0.2,
-                     scores_invert= ['total_score','interface_score','total_potential','interface_potential']):
+                     scores_invert= ['total_score','interface_score','total_potential','interface_potential'],
+                     stratify_nan=True,
+                     print_testtrain = True):
         
-        self.df_path = df_path
-        self.scores = scores
-        self.labels = labels
-        self.cat_resi = cat_resi
-        self.select_unique = select_unique
-        self.normalize = normalize
-        self.scores_invert = scores_invert
+        self.df_path         = df_path
+        self.scores          = scores
+        self.labels          = labels
+        self.cat_resi        = cat_resi
+        self.select_unique   = select_unique
+        self.normalize       = normalize
+        self.scores_invert   = scores_invert
+        self.stratify_nan    = stratify_nan
+        self.print_testtrain = print_testtrain
 
         self.df, self.lengths, self.max_len, self.sequences = self.read_datasets_csv()
         self.df = self.normalize_scores(self.df)
-        self.train_df, self.test_df = train_test_split(self.df, test_size=test_size, random_state=42)
+
+        # Split the dataset, stratifying based on NaN presence
+        if self.stratify_nan:
+            nan_mask = self.df[self.scores].isna().any(axis=1).astype(int)  # 1 if any NaN, else 0
+        else:
+            nan_mask = None
+        self.train_df, self.test_df = train_test_split(self.df, test_size=test_size, random_state=42, stratify=nan_mask)
+
+        if print_testtrain:
+            print("train_df")
+            display(self.train_df)
+            print("test_df")
+            display(self.test_df)
 
     def normalize_scores(self, df):
 
@@ -126,19 +141,25 @@ class PLM_trainer():
 
         return df, lengths, max_len, sequences
     
-    def train_PLM(self, epochs=3, esm2_model_name=None, p_loss=0.1):
+    def train_PLM(self, epochs=3, esm2_model_name=None, p_loss=0.1, liveplot = False, overwrite=False):
         
         self.epochs = epochs
         self.esm2_model_name = esm2_model_name
         self.p_loss = p_loss
+        self.liveplot = liveplot
+        self.overwrite = overwrite
 
         if esm2_model_name is not None:
             self.plm_model_name = esm2_model_name
             self.tokenize_esm2_model(p_loss)
 
-        if os.path.isfile(f'{self.output_folder}/plm_self_{self.file_title()}.pkl'):
-            print(f'{self.output_folder}/plm_self_{self.file_title()}.pkl exists! Stopping calculation')
-            return
+        if not self.overwrite:
+            if os.path.isfile(f'{self.output_folder}/plm_self_{self.file_title()}.pkl'):
+                print(f'{self.output_folder}/plm_self_{self.file_title()}.pkl exists! Stopping calculation')
+                return
+
+        if liveplot:
+            matplotlib.use('TkAgg')
 
         self.trainer()
         print(f'PLM {self.plm_model_name} trained for {", ".join([f"norm_{score}" for score in self.scores])}')
@@ -149,7 +170,30 @@ class PLM_trainer():
         # Save the model
         torch.save(self.model.state_dict(), f'{self.output_folder}/model_{self.file_title()}.pt')
         torch.cuda.empty_cache()
- 
+
+    def loss_fn_with_nan_handling(self, predictions, targets):
+        """
+        Custom loss function to handle NaNs.
+        It computes the loss only for non-NaN values.
+        
+        :param predictions: Model output predictions
+        :param targets: Ground truth target values
+        :return: Loss value computed only for non-NaN values
+        """
+        # Create a mask to identify non-NaN values in targets
+        mask = ~torch.isnan(targets)
+        
+        # Apply the mask to both predictions and targets
+        masked_predictions = predictions[mask]
+        masked_targets = targets[mask]
+
+        # Compute the loss only for non-NaN values
+        if masked_predictions.numel() > 0:  # Ensure there are valid (non-NaN) values
+            loss = nn.MSELoss()(masked_predictions, masked_targets)
+        else:
+            loss = torch.tensor(0.0, requires_grad=True)  # Return zero loss if no valid values
+        return loss
+    
     def trainer(self):
         self.train_loss = []
         self.test_loss = []
@@ -165,30 +209,30 @@ class PLM_trainer():
         test_dataset = ProteinDataset(test_sequences, test_activities, self.tokenizer)
         test_dataloader = DataLoader(test_dataset, batch_size=16, shuffle=False)
 
-        loss_fn = nn.MSELoss()
         optimizer = optim.Adam(self.model.parameters(), lr=5e-5)
         self.model.to(self.device)
 
-        # Set up live plot with two subplots
-        plt.ion()  # Turn on interactive mode
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+        if self.liveplot:
+            # Set up live plot with two subplots
+            plt.ion()  # Turn on interactive mode
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
 
-        # Loss plot
-        train_loss_line, = ax1.plot([], [], label='Train Loss', color='r')
-        test_loss_line, = ax1.plot([], [], label='Test Loss', color='b')
-        ax1.set_xlabel('Epoch')
-        ax1.set_ylabel('Loss')
-        ax1.legend()
-        ax1.set_xlim(0, self.epochs)
-        ax1.set_ylim(0, 1)  # Adjust based on initial expectations
+            # Loss plot
+            train_loss_line, = ax1.plot([], [], label='Train Loss', color='r')
+            test_loss_line, = ax1.plot([], [], label='Test Loss', color='b')
+            ax1.set_xlabel('Epoch')
+            ax1.set_ylabel('Loss')
+            ax1.legend()
+            ax1.set_xlim(0, self.epochs)
+            ax1.set_ylim(0, 1)  # Adjust based on initial expectations
 
-        # Predicted vs Actual plot
-        scatter_train = ax2.scatter([], [], color='r', label='Train Predictions')
-        scatter_test = ax2.scatter([], [], color='b', label='Test Predictions')
-        ax2.set_xlabel('True Activity')
-        ax2.set_ylabel('Predicted Activity')
-        ax2.legend()
-        ax2.plot([0, 1], [0, 1], transform=ax2.transAxes, color='gray', linestyle='--')  # Diagonal for perfect predictions
+            # Predicted vs Actual plot
+            scatter_train = ax2.scatter([], [], color='r', label='Train Predictions')
+            scatter_test = ax2.scatter([], [], color='b', label='Test Predictions')
+            ax2.set_xlabel('True Activity')
+            ax2.set_ylabel('Predicted Activity')
+            ax2.legend()
+            ax2.plot([0, 1], [0, 1], transform=ax2.transAxes, color='gray', linestyle='--')  # Diagonal for perfect predictions
 
         for epoch in tqdm(range(self.epochs)):
             self.model.train()
@@ -203,7 +247,7 @@ class PLM_trainer():
 
                 optimizer.zero_grad()
                 outputs = self.model(input_ids=input_ids, attention_mask=attention_mask)
-                loss = loss_fn(outputs, activities)
+                loss = self.loss_fn_with_nan_handling(outputs, activities)
                 loss.backward()
                 optimizer.step()
 
@@ -225,7 +269,7 @@ class PLM_trainer():
                     activities = batch['activities'].to(self.device)
 
                     outputs = self.model(input_ids=input_ids, attention_mask=attention_mask)
-                    loss = loss_fn(outputs, activities)
+                    loss = self.loss_fn_with_nan_handling(outputs, activities)
                     total_test_loss += loss.item()
 
                     test_preds.extend(outputs.cpu().numpy())
@@ -235,35 +279,37 @@ class PLM_trainer():
             self.test_loss.append(avg_test_loss)
 
             # Update the loss plot
-            train_loss_line.set_xdata(range(1, len(self.train_loss) + 1))
-            train_loss_line.set_ydata(self.train_loss)
-            test_loss_line.set_xdata(range(1, len(self.test_loss) + 1))
-            test_loss_line.set_ydata(self.test_loss)
+            if self.liveplot:
+                train_loss_line.set_xdata(range(1, len(self.train_loss) + 1))
+                train_loss_line.set_ydata(self.train_loss)
+                test_loss_line.set_xdata(range(1, len(self.test_loss) + 1))
+                test_loss_line.set_ydata(self.test_loss)
 
-            # Adjust the y-limits dynamically based on the loss values
-            ax1.set_ylim(0, max(max(self.train_loss), max(self.test_loss)) * 1.1)
+                # Adjust the y-limits dynamically based on the loss values
+                ax1.set_ylim(0, max(max(self.train_loss), max(self.test_loss)) * 1.1)
 
-            # Update the Predicted vs Actual plot
-            ax2.clear()  # Clear previous points
-            ax2.scatter(train_acts, train_preds, color='r', alpha=0.5, label='Train Predictions')
-            ax2.scatter(test_acts, test_preds, color='b', alpha=0.5, label='Test Predictions')
-            ax2.set_xlabel('True Activity')
-            ax2.set_ylabel('Predicted Activity')
-            ax2.legend()
-            ax2.plot([min(test_acts), max(test_acts)], [min(test_acts), max(test_acts)], color='gray', linestyle='--')  # Diagonal line
+                # Update the Predicted vs Actual plot
+                ax2.clear()  # Clear previous points
+                ax2.scatter(train_acts, train_preds, color='r', alpha=0.5, label='Train Predictions')
+                ax2.scatter(test_acts, test_preds, color='b', alpha=0.5, label='Test Predictions')
+                ax2.set_xlabel('True Activity')
+                ax2.set_ylabel('Predicted Activity')
+                ax2.legend()
+                ax2.plot([np.min(test_acts), np.max(test_acts)], [np.min(test_acts), np.max(test_acts)], color='gray', linestyle='--')  # Diagonal line
 
-            # Redraw both plots
-            fig.canvas.draw()
-            fig.canvas.flush_events()
-            plt.pause(0.001)  # Allow plot to update
+                # Redraw both plots
+                fig.canvas.draw()
+                fig.canvas.flush_events()
+                plt.pause(0.001)  # Allow plot to update
 
             if self.verbose:
                 print(f"Epoch {epoch + 1}/{self.epochs} completed.\ttrain loss: {avg_train_loss:.2f}.\ttest loss: {avg_test_loss:.2f}")
 
-        # Turn off interactive mode once training is done
-        plt.ioff()
-        plt.show()
-        
+        if self.liveplot:
+            # Turn off interactive mode once training is done
+            plt.ioff()
+            plt.show()
+
     def tokenize_esm2_model(self, p_loss):
         
         self.esm_model = EsmModel.from_pretrained(self.esm2_model_name)
@@ -271,10 +317,10 @@ class PLM_trainer():
         self.model = ProteinRegressor(self.esm_model, p_loss, num_features=len(self.scores))
 
     def min_max(self, scores):
-        return (scores - scores.min()) / (scores.max() - scores.min())
+        return (scores - np.nanmin(scores)) / (np.nanmax(scores) - np.nanmin(scores))
     
     def z_score(self, scores):
-        return (scores - scores.mean()) / scores.std()
+        return (scores - np.nanmean(scores)) / np.nanstd(scores)
     
     def file_title(self):
         return f'model_{self.esm2_model_name.split("/")[-1][:-6]}_scores_{"_".join(self.scores)}_cat_{self.cat_resi}_epochs_{self.epochs}_ploss_{self.p_loss}'
@@ -340,30 +386,49 @@ class PLM_trainer():
         self.test_metrics = {}
 
         for i, score in enumerate(self.scores):
-            train_act = train_activities[:, i]
+            train_act = self.train_activities[:, i]
             train_pred = self.train_preds[:, i]
-            test_act = test_activities[:, i]
+            test_act = self.test_activities[:, i]
             test_pred = self.test_preds[:, i]
 
-            self.train_metrics[score] = {
-                'slope': stats.linregress(train_act, train_pred).slope,
-                'intercept': stats.linregress(train_act, train_pred).intercept,
-                'r_value': stats.linregress(train_act, train_pred).rvalue,
-                'p_value': stats.linregress(train_act, train_pred).pvalue,
-                'std_err': stats.linregress(train_act, train_pred).stderr,
-                'rmse': np.sqrt(mean_squared_error(train_act, train_pred))
-            }
+            # Filter out NaNs from both predictions and ground truth
+            train_mask = ~np.isnan(train_act) & ~np.isnan(train_pred)
+            test_mask = ~np.isnan(test_act) & ~np.isnan(test_pred)
 
-            self.test_metrics[score] = {
-                'slope': stats.linregress(test_act, test_pred).slope,
-                'intercept': stats.linregress(test_act, test_pred).intercept,
-                'r_value': stats.linregress(test_act, test_pred).rvalue,
-                'p_value': stats.linregress(test_act, test_pred).pvalue,
-                'std_err': stats.linregress(test_act, test_pred).stderr,
-                'rmse': np.sqrt(mean_squared_error(test_act, test_pred))
-            }
+            filtered_train_act = train_act[train_mask]
+            filtered_train_pred = train_pred[train_mask]
+            filtered_test_act = test_act[test_mask]
+            filtered_test_pred = test_pred[test_mask]
 
-    def plot_learning(self,top_p=0.8):
+            # Check if the filtered arrays are non-empty before calculating metrics
+            if filtered_train_act.size > 0 and filtered_train_pred.size > 0:
+                self.train_metrics[score] = {
+                    'slope': stats.linregress(filtered_train_act, filtered_train_pred).slope,
+                    'intercept': stats.linregress(filtered_train_act, filtered_train_pred).intercept,
+                    'r_value': stats.linregress(filtered_train_act, filtered_train_pred).rvalue,
+                    'p_value': stats.linregress(filtered_train_act, filtered_train_pred).pvalue,
+                    'std_err': stats.linregress(filtered_train_act, filtered_train_pred).stderr,
+                    'rmse': np.sqrt(mean_squared_error(filtered_train_act, filtered_train_pred))
+                }
+            else:
+                print(f"Skipping metrics calculation for train score {score} due to empty data.")
+
+            if filtered_test_act.size > 0 and filtered_test_pred.size > 0:
+                self.test_metrics[score] = {
+                    'slope': stats.linregress(filtered_test_act, filtered_test_pred).slope,
+                    'intercept': stats.linregress(filtered_test_act, filtered_test_pred).intercept,
+                    'r_value': stats.linregress(filtered_test_act, filtered_test_pred).rvalue,
+                    'p_value': stats.linregress(filtered_test_act, filtered_test_pred).pvalue,
+                    'std_err': stats.linregress(filtered_test_act, filtered_test_pred).stderr,
+                    'rmse': np.sqrt(mean_squared_error(filtered_test_act, filtered_test_pred))
+                }
+            else:
+                print(f"Skipping metrics calculation for test score {score} due to empty data.")
+
+    def plot_learning(self, top_p=0.8):
+
+        matplotlib.use('Agg') 
+
         if not os.path.isfile(f'{self.output_folder}/plm_self_{self.file_title()}.pkl'):
             print(f'### {self.output_folder}/plm_self_{self.file_title()}.pkl does not exist. ###')
             return
@@ -376,25 +441,43 @@ class PLM_trainer():
 
         for i, score in enumerate(self.scores):
 
-            # get min and max vals of the dataset
-            min_val = min(np.min(self.train_activities[:, i]), np.min(self.train_preds[:, i]), np.min(self.test_activities[:, i]), np.min(self.test_preds[:, i]))
-            max_val = max(np.max(self.train_activities[:, i]), np.max(self.train_preds[:, i]), np.max(self.test_activities[:, i]), np.max(self.test_preds[:, i]))
+            # Get min and max values of the dataset
+            min_val = min(np.nanmin(self.train_activities[:, i]), np.nanmin(self.train_preds[:, i]),
+                        np.nanmin(self.test_activities[:, i]), np.nanmin(self.test_preds[:, i]))
+            max_val = max(np.nanmax(self.train_activities[:, i]), np.nanmax(self.train_preds[:, i]),
+                        np.nanmax(self.test_activities[:, i]), np.nanmax(self.test_preds[:, i]))
 
-            # Filter the {top} of the training data
+            # Filter the top {top} of the training data
             top_n_train = int(len(self.train_activities) * top_p)
             top_n_test = int(len(self.test_activities) * top_p)
 
             train_idx = np.argsort(self.train_activities[:, i])[-top_n_train:]
             test_idx = np.argsort(self.test_activities[:, i])[-top_n_test:]
-            
+
             train_filtered_activities = self.train_activities[train_idx, i]
             train_filtered_preds = self.train_preds[train_idx, i]
             test_filtered_activities = self.test_activities[test_idx, i]
             test_filtered_preds = self.test_preds[test_idx, i]
- 
+
+            # Remove NaNs from filtered activities and predictions
+            valid_train_idx = ~np.isnan(train_filtered_activities) & ~np.isnan(train_filtered_preds)
+            valid_test_idx = ~np.isnan(test_filtered_activities) & ~np.isnan(test_filtered_preds)
+
+            train_filtered_activities = train_filtered_activities[valid_train_idx]
+            train_filtered_preds = train_filtered_preds[valid_train_idx]
+            test_filtered_activities = test_filtered_activities[valid_test_idx]
+            test_filtered_preds = test_filtered_preds[valid_test_idx]
+
             # Recalculate RMSE for the top {top}
-            self.train_metrics[score][f"train_rmse_top{top_p}"] = np.sqrt(mean_squared_error(train_filtered_activities, train_filtered_preds))
-            self.test_metrics[score][f"test_rmse_top{top_p}"] = np.sqrt(mean_squared_error(test_filtered_activities, test_filtered_preds))
+            if len(train_filtered_activities) > 0 and len(train_filtered_preds) > 0:
+                self.train_metrics[score][f"train_rmse_top{top_p}"] = np.sqrt(mean_squared_error(train_filtered_activities, train_filtered_preds))
+            else:
+                print(f"Skipping train RMSE calculation for {score} due to empty data.")
+
+            if len(test_filtered_activities) > 0 and len(test_filtered_preds) > 0:
+                self.test_metrics[score][f"test_rmse_top{top_p}"] = np.sqrt(mean_squared_error(test_filtered_activities, test_filtered_preds))
+            else:
+                print(f"Skipping test RMSE calculation for {score} due to empty data.")
 
             # Top row: Scatter plot for test and train datasets
             axs[0, i].plot([min_val, max_val], [min_val, max_val], 'k', alpha=0.5, zorder=100)
@@ -402,13 +485,13 @@ class PLM_trainer():
             axs[0, i].scatter(self.train_activities[:, i], self.train_preds[:, i], alpha=0.5, c=c_train)
             line = self.train_metrics[score]['slope'] * np.array([min_val, max_val]) + self.train_metrics[score]['intercept']
             axs[0, i].plot([min_val, max_val], line, c=c_train, zorder=10, 
-                           label=f'train R2={self.train_metrics[score]["r_value"]**2:.2f}, rmse_top{int(top_p*100)}={self.train_metrics[score][f"train_rmse_top{top_p}"]:.2f}')
+                        label=f'train R2={self.train_metrics[score]["r_value"]**2:.2f}, rmse_top{int(top_p*100)}={self.train_metrics[score][f"train_rmse_top{top_p}"]:.2f}')
 
             axs[0, i].scatter(self.test_activities[:, i], self.test_preds[:, i], alpha=0.5, c=c_test)
             line = self.test_metrics[score]['slope'] * np.array([min_val, max_val]) + self.test_metrics[score]['intercept']
             axs[0, i].plot([min_val, max_val], line, c=c_test, zorder=20, 
-                           label=f'test R2={self.test_metrics[score]["r_value"]**2:.2f}, rmse_top{int(top_p*100)}={self.test_metrics[score][f"test_rmse_top{top_p}"]:.2f}')
-            
+                        label=f'test R2={self.test_metrics[score]["r_value"]**2:.2f}, rmse_top{int(top_p*100)}={self.test_metrics[score][f"test_rmse_top{top_p}"]:.2f}')
+
             axs[0, i].set_xlim([min_val, max_val])
             axs[0, i].set_ylim([min_val, max_val])       
             axs[0, i].set_xlabel('True Activity')
