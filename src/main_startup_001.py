@@ -44,7 +44,8 @@ def initialize_controller(self, FOLDER_HOME):
 
     if self.UNBLOCK_ALL: 
         print(f'Unblocking all')
-        self.all_scores_df["blocked"] = False
+        self.all_scores_df["blocked_ESMfold"] = False
+        self.all_scores_df["blocked_RosettaRelax"] = False
    
     # Sleep a bit to make me feel secure. More sleep = less anxiety :)
     time.sleep(0.1)
@@ -97,7 +98,7 @@ def initialize_variables(self):
     set_system(self)    
         
     if not os.path.isdir(self.FOLDER_INPUT):
-        print("ERROR! Input folder missing!")
+        print(f"ERROR! Input folder missing! Should be {self.FOLDER_INPUT}")
         sys.exit()
         
 def initialize_logging(self):
@@ -201,6 +202,6 @@ def make_empty_all_scores_df(self):
                                               'relax_interface_score', 'relax_total_score', 'relax_catalytic_score', 'relax_efield_score', \
                                               'design_interface_score', 'design_total_score', 'design_catalytic_score', \
                                               'design_efield_score', 'generation', 'mutations', 'design_method', 'score_taken_from', \
-                                              'blocked_ESMfold', 'blocked_RosettaRelax', 'cat_resi', 'cat_resn'])
+                                              'blocked_ESMfold', 'blocked_RosettaRelax', 'cat_resi', 'cat_resn'], dtype=object)
     
     save_all_scores_df(self)

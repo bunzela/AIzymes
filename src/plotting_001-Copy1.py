@@ -10,13 +10,17 @@ from sklearn.decomposition import PCA
 #import torch
 #import esm
 
-
-
-#Import the values from the ALL_SCORES_CSV file and save them in the plot_scores_df dataframe
-#plot_scores_df = pd.read_csv(self.ALL_SCORES_CSV).dropna()
-#plot_scores_df['sequence'] = plot_scores_df['sequence'].astype(str)
-#plot_scores_df['design_method'] = plot_scores_df['design_method'].astype(str)
-#plot_scores_df['score_taken_from'] = plot_scores_df['score_taken_from'].astype(str)
+#Define the dictionary containing all the HIGHSCORE and NEG_BEST values for the different scores
+HIGHSCORE_NEGBEST_values_dict = {
+    'HIGHSCORE.combined_score': 1.0,
+    'NEGBEST.combined_score': 0.0,
+    'HIGHSCORE.total_score': 10.0,
+    'NEGBEST.total_score': -150,
+    'HIGHSCORE.interface_score': -30.0,
+    'NEGBEST.interface_score': -15.0,
+    'HIGHSCORE.efield_score': 250.0,
+    'NEGBEST.efield_score': 0.0,
+}
 
 #Define Normalize Score function
 def normalize_scores(self, unblocked_all_scores_df, include_catalytic_score=False, print_norm=False, norm_all=False, extension="score"):
@@ -357,7 +361,12 @@ def plot_scores(self,combined_score_min=0, combined_score_max=1, combined_score_
                 catalytic_score_min=0, catalytic_score_max=1, catalytic_score_bin=0.01
                 ):
     
-    global plot_scores_df
+    #Import the values from the ALL_SCORES_CSV file and save them in the plot_scores_df dataframe
+    plot_allscores= pd.read_csv('/home/vdegiorgi/AIzymes/design/VD/241008_VD_pos_control/all_scores.csv')
+    plot_scores_df = plot_allscores.dropna()
+    plot_scores_df['sequence'] = plot_scores_df['sequence'].astype(str)
+    plot_scores_df['design_method'] = plot_scores_df['design_method'].astype(str)
+    plot_scores_df['score_taken_from'] = plot_scores_df['score_taken_from'].astype(str)
     
     mut_min=0
     mut_max=len(self.DESIGN.split(","))+1 
@@ -412,25 +421,6 @@ def plot_scores(self,combined_score_min=0, combined_score_max=1, combined_score_
     
     plt.tight_layout()
     plt.show()
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
 
 #######################################################     TO BE WORKED ON    #######################################################
