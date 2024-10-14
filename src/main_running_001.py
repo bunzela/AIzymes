@@ -159,10 +159,27 @@ def update_scores(self):
         else:
             
             continue # Do NOT update score, job is not done.
-    
+        
         # Do not update score if files do not exist!
         if not os.path.isfile(pdb_path): continue
         if not os.path.isfile(seq_path): continue
+        # --------------------------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------------------------------------------------------------------------------------
+        # Check if fields.pkl file exists. This should normally be there. If it is missing, something went wrong!
+        # Ther might be a better solution for this. This is just a temporary fix!
+        # --------------------------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------------------------------------------------------------------------------------
+        efield_directory, efield_filename = os.path.split(pdb_path)   
+        efield_filename, _ = os.path.splitext(efield_filename)
+        efield_filename = f'{efield_directory}/efield/{efield_filename}'
+        if not os.path.isfile(f"{efield_filename}_fields.pkl"): continue
+        # --------------------------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------------------------------------------------------------------------------------
+        # --------------------------------------------------------------------------------------------------------------------------------
+        
+        
         # Load scores
         with open(score_file_path, "r") as f:
             scores = f.readlines()
@@ -512,8 +529,8 @@ def create_new_index(self, parent_index):
                                 'luca': luca,
                                 'blocked_ESMfold': False,
                                 'blocked_RosettaRelax': False,
-                                }, index = [0])
-    
+                                }, index = [0] , dtype=object)  
+        
     self.all_scores_df = pd.concat([self.all_scores_df, new_index_df], ignore_index=True)
 
     save_all_scores_df(self)

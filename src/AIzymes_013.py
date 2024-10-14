@@ -4,6 +4,7 @@
     
 from main_running_001         import *
 from main_startup_001         import *
+from plotting_001             import *
 
 # Imports used elsewhere --------------------------------------------------------------------------------------------------
 #from main_design_001          import *
@@ -15,7 +16,6 @@ from main_startup_001         import *
 #from design_RosettaRelax_001  import *
 #from helper_001               import *
 #from scoring_efields_001      import *
-#from plotting_001             import *
 #from setup_system_001         import *
 # -------------------------------------------------------------------------------------------------------------------------
 
@@ -87,8 +87,32 @@ class AIzymes_MAIN():
                 
         start_controller(self)
         
-    def plot(self):
-        
-        #TO DO
+    def plot(self, main_plots=True, tree_plot=True, landscape_plot=True,
+        NORM = {'interface_score': [10, 35],
+                                   'total_score': [200, 500], 
+                                    'catalytic_score': [-40, 0], 
+                                    'efield_score': [10, 220]},
+        HIGHSCORE_NEGBEST = {
+    'HIGHSCORE.combined_score': 1.0,
+    'NEGBEST.combined_score': 0.0,
+    'HIGHSCORE.total_score': 10.0,
+    'NEGBEST.total_score': -150,
+    'HIGHSCORE.interface_score': -30.0,
+    'NEGBEST.interface_score': -15.0,
+    'HIGHSCORE.efield_score': 250.0,
+    'NEGBEST.efield_score': 0.0,
+}):
+  
+        # Automatically assign all parameters to instance variables
+        for key, value in locals().items():
+            if key not in ['self']:
+                setattr(self, key, value)
+                
+        if main_plots:
+            plot_scores(self)
+        if tree_plot:
+            plot_tree(self)
+        if landscape_plot:
+            plot_landscape(self)
         
         return

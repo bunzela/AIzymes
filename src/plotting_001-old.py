@@ -1,439 +1,14 @@
-import os
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-from scipy.optimize import curve_fit
-from scipy.stats import pearsonr
-#import networkx as nx
-from sklearn.decomposition import PCA
-#import umap
-#import torch
-#import esm
+# NOTES:
+# Use self to access shared variables
+# functions that use self must contain self, e.g.: plot_scores(self) 
+# Only put super important variables into self! (for now please add nothing)
 
+# Coding STRATEGY:
+# Add plot_scores to class in AIzymes_013.py (must have a different name!)
 
+# This also loads self.all_scores_df
+# In the end, plotting will be done by executing: AIzymes.plot()
 
-#Import the values from the ALL_SCORES_CSV file and save them in the plot_scores_df dataframe
-#plot_scores_df = pd.read_csv(self.ALL_SCORES_CSV).dropna()
-#plot_scores_df['sequence'] = plot_scores_df['sequence'].astype(str)
-#plot_scores_df['design_method'] = plot_scores_df['design_method'].astype(str)
-#plot_scores_df['score_taken_from'] = plot_scores_df['score_taken_from'].astype(str)
-
-#Define Normalize Score function
-def normalize_scores(self, unblocked_all_scores_df, include_catalytic_score=False, print_norm=False, norm_all=False, extension="score"):
-    
-    def neg_norm_array(array, score_type):
-
-        if len(array) > 1:  ##check that it's not only one value
-            
-            array    = -array
-            
-            if norm_all:
-                if print_norm:
-                    print(score_type,NORM[score_type],end=" ")
-                array = (array-NORM[score_type][0])/(NORM[score_type][1]-NORM[score_type][0])
-                array[array < 0] = 0.0
-                if np.any(array > 1.0): print("\nNORMALIZATION ERROR!",score_type,"has a value >1!") 
-            else:
-                if print_norm:
-                    print(score_type,[np.mean(array),np.std(array)],end=" ")
-                # Normalize using mean and standard deviation
-                if np.std(array) == 0:
-                    array = np.where(np.isnan(array), array, 0.0)  # Handle case where all values are the same
-                else:
-                    array = (array - np.mean(array)) / np.std(array)
-
-            return array
-        
-        else:
-            # do not normalize if array only contains 1 value
-            return [1]
-         
-    catalytic_scores    = unblocked_all_scores_df[f"catalytic_{extension}"]
-    catalytic_scores    = neg_norm_array(catalytic_scores, f"catalytic_{extension}")   
-    
-    total_scores        = unblocked_all_scores_df[f"total_{extension}"]
-    total_scores        = neg_norm_array(total_scores, f"total_{extension}")   
-    
-    interface_scores    = unblocked_all_scores_df[f"interface_{extension}"]
-    interface_scores    = neg_norm_array(interface_scores, f"interface_{extension}")  
-    
-    efield_scores    = unblocked_all_scores_df[f"efield_{extension}"]   ### to be worked on
-    efield_scores    = neg_norm_array(-1*efield_scores, f"efield_{extension}")   ### to be worked on, with MINUS here
-    
-    if len(total_scores) == 0:
-        combined_scores = []
-    else:
-        if include_catalytic_score:
-            combined_scores     = np.stack((total_scores, interface_scores, efield_scores, catalytic_scores))
-        else:
-            combined_scores     = np.stack((total_scores, interface_scores, efield_scores))
-        combined_scores     = np.mean(combined_scores, axis=0)
-        
-    if print_norm:
-        if combined_scores.size > 0:
-            print("HIGHSCORE:","{:.2f}".format(np.amax(combined_scores)),end=" ")
-            print("Designs:",len(combined_scores),end=" ")
-            full_path = os.path.join(self.FOLDER_HOME, self.FOLDER_PARENT)
-            PARENTS = [i for i in os.listdir(full_path) if i.endswith(".pdb") and os.path.isfile(os.path.join(full_path, i))]
-            print("Parents:",len(PARENTS))
-        
-    return catalytic_scores, total_scores, interface_scores, efield_scores, combined_scores
-
-
-#Define the hamming distance function and other required functions
-def hamming_distance(seq1, seq2):
-    #Ensures that seq2 is a string
-    if not isinstance(seq2, str):
-        return None
-     #Ensures that the current and predecessor sequence length is equal
-    if len(seq1) != len(seq2):
-        raise ValueError("Sequences must be of equal length")
-    #Returns the number of differences between the current sequence and the parent sequence.
-    return sum(ch1 != ch2 for ch1, ch2 in zip(seq1, seq2))
-
-def exponential_func(x, A, k, c):
-    return c-A*np.exp(-k * x)
-
-
-#Define all the required plots for the main plot figure output
-def plot_combined_score(ax, combined_scores, combined_score_min, combined_score_max, combined_score_bin):
-    ax.hist(combined_scores, bins=np.arange(combined_score_min,combined_score_max+combined_score_bin,combined_score_bin))
-    #Add the two values HIGHSCORE and NEG_BEST as reference values for the top ever design and the best ever negative control value.
-    ax.axvline(HIGHSCORE_NEGBEST_values_dict['HIGHSCORE.combined_score'], color='b', label='Highest Score')
-    ax.axvline(HIGHSCORE_NEGBEST_values_dict['NEGBEST.combined_score'], color='r', label='Negative Best')
-    ax.set_xlim(combined_score_min,combined_score_max)
-    ax.set_title('Histogram of Combined Score')
-    ax.set_xlabel('Combined Score')
-    ax.set_ylabel('Frequency')
-
-def plot_interface_score(ax, interface_scores, interface_score_min, interface_score_max, interface_score_bin):
-    ax.hist(interface_scores, density=True,
-            bins=np.arange(interface_score_min,interface_score_max+interface_score_bin,interface_score_bin))
-    ax.set_xlim(interface_score_min,interface_score_max)
-    ax.set_title('Histogram of Interface Score')
-    ax.set_xlabel('Interface Score')
-    ax.set_ylabel('Frequency')
-
-def plot_total_score(ax, total_scores, total_score_min, total_score_max, total_score_bin):
-    ax.hist(total_scores, density=True,
-            bins=np.arange(total_score_min,total_score_max+total_score_bin,total_score_bin))
-    ax.set_xlim(total_score_min,total_score_max)
-    ax.set_title('Histogram of Total Score')
-    ax.set_xlabel('Total Score')
-    ax.set_ylabel('Frequency')
-
-def plot_catalytic_score(ax, catalytic_scores, total_score_min, total_score_max, total_score_bin):
-    ax.hist(catalytic_scores, density=True, bins=np.arange(total_score_min,total_score_max+total_score_bin,total_score_bin))
-    ax.set_xlim(total_score_min,total_score_max)
-    ax.set_title('Histogram of Catalytic Score')
-    ax.set_xlabel('Catalytic Score')
-    ax.set_ylabel('Frequency')
-    
-def plot_efield_score(ax, efield_scores, total_score_min, total_score_max, total_score_bin):
-    ax.hist(efield_scores, density=True, bins=np.arange(total_score_min,total_score_max+total_score_bin,total_score_bin))
-    ax.set_xlim(total_score_min,total_score_max)
-    ax.set_title('Histogram of Efield Score')
-    ax.set_xlabel('Efield Score')
-    ax.set_ylabel('Frequency')
-    
-def plot_boltzmann_histogram(self, ax, combined_scores, plot_scores_df, score_min, score_max, score_bin):
-    #Generation of the combined potentials values
-    _, _, _, _, combined_potentials = normalize_scores(self,plot_scores_df, print_norm=False, norm_all=False, extension="score")
-    #Definition of the kbt value which is used as the Boltzmann weight. The value is not constant throughout the simulation but decays with time (increasing index). The dacay rate is defined in the second line of the code.
-    if isinstance(self.KBT_BOLTZMANN, (float, int)):
-        kbt_boltzmann = self.KBT_BOLTZMANN
-    else:
-        if len(self.KBT_BOLTZMANN) == 2:
-            kbt_boltzmann = max(self.KBT_BOLTZMANN[0] * np.exp(-self.KBT_BOLTZMANN[1]*plot_scores_df['index'].max()), 0.05)
-    
-    #Calculates the weights using the Boltzmann formula which are then going to be used for the generation of the boltzmann_scores
-    boltzmann_factors = np.exp(combined_potentials / (kbt_boltzmann)) 
-    print(f"Min/Max boltzmann factors: {min(boltzmann_factors)}, {max(boltzmann_factors)}")
-    probabilities = boltzmann_factors / sum(boltzmann_factors) 
-    
-    #Lists of values sampled from the combined potential either randomly (random_scores) or using weights (boltzmann_scores)
-    random_scores = np.random.choice(combined_potentials, size=10000, replace=True)
-    boltzmann_scores = np.random.choice(combined_potentials, size=10000, replace=True, p=probabilities)
-
-    #Definition of the first plot using random sampling for the Boltzmann distribution
-    ax.hist(random_scores, density=True, alpha=0.7, label='Random Sampling', \
-            bins=np.arange(score_min-2,score_max+1+score_bin,score_bin))
-    ax.text(0.05, 0.95, "normalized only to \n this dataset")
-    ax.set_xlabel('Potential')
-    ax.set_ylabel('Density (Normal)')
-    ax.set_title(f'kbT = {kbt_boltzmann:.1e}')
-    
-    #Definition of a twin axis for the second histogram using the Boltzmann sampling with the weights for the Boltzmann distribution
-    ax_dup = ax.twinx()
-    ax_dup.hist(boltzmann_scores, density=True, alpha=0.7, color='orange', label='Boltzmann Sampling', \
-                bins=np.arange(score_min-2,score_max+1+score_bin,score_bin))
-    ax.set_xlim(score_min-2,score_max+1)
-    ax_dup.set_ylabel('Density (Boltzmann)')
-    ax_dup.tick_params(axis='y', labelcolor='orange')
-    
-def plot_combined_score_v_index(self, ax, combined_scores, plot_scores_df):
-    #Creates a scatter plot of the combined scores versus the index.
-    combined_scores = pd.Series(combined_scores)
-    ax.scatter(plot_scores_df['index'], combined_scores, c='lightgrey', s=5) 
-    
-    #Add the two values HIGHSCORE and NEG_BEST as reference values for the top ever design and the best ever negative control value.
-    ax.axhline(HIGHSCORE_NEGBEST_values_dict['HIGHSCORE.combined_score'], color='b', label='Highest Score', alpha = 0.5)
-    ax.axhline(HIGHSCORE_NEGBEST_values_dict['NEGBEST.combined_score'], color='r', label='Negative Best', alpha = 0.5)
-    
-    #Imports values from the PARENT files and creates a x-line on the plot indicating ????
-    full_path = os.path.join(self.FOLDER_HOME, self.FOLDER_PARENT)
-    PARENTS = [i for i in os.listdir(full_path) if i.endswith(".pdb") and os.path.isfile(os.path.join(full_path, i))]
-    ax.axvline(self.N_PARENT_JOBS*len(PARENTS), color='k')
-    
-    #Calculates the moving average in a window of 20 of the combined scores and creates a line plot with the moving average values.
-    moving_avg = combined_scores.rolling(window=20).mean()
-    ax.plot(range(len(moving_avg)),moving_avg,c="k")
-    
-    #Sets plot details
-    ax.set_ylim(0,1)
-    ax.set_xlim(0,self.MAX_DESIGNS)
-    ax.set_title('Combined score vs Index')
-    ax.set_xlabel('Index')
-    ax.set_ylabel('Combined Score')
-    ax.legend(loc='best')
-    
-def plot_combined_score_v_generation_violin(ax, combined_scores, plot_scores_df):
-    #Defines the values for generating the violin plot
-    plot_scores_df['tmp'] = combined_scores
-    plot_scores_df = plot_scores_df.dropna(subset=['tmp'])
-    max_gen = int(plot_scores_df['generation'].max())
-    generations = np.arange(0, max_gen + 1)
-    violin_data = [plot_scores_df[plot_scores_df['generation'] == gen]['tmp'].dropna().values for gen in generations]
-        
-    # Creates the violin plots
-    parts = ax.violinplot(violin_data, positions=generations, showmeans=False, showmedians=True)
-    
-    # Customizing the color of violin plots
-    for pc in parts['bodies']:
-        pc.set_facecolor('green')
-        pc.set_edgecolor('black')
-        pc.set_alpha(0.7)
-    
-    # Customizing the color of the median lines
-    for partname in ('cbars', 'cmins', 'cmaxes'):
-        vp = parts.get(partname)
-        if vp:
-            vp.set_edgecolor('tomato')
-            vp.set_linewidth(0.5)
-    
-    vp = parts.get('cmedians')
-    if vp:
-        vp.set_edgecolor('tomato')
-        vp.set_linewidth(2.0)
-    
-    # Fit the data to the exponential function
-    #weights = np.linspace(1, 0.1, len(generations))
-    #weights = np.ones(len(generations))
-    #weights[:1] = 0.3
-    #mean_scores = [np.mean(data) for data in violin_data]
-    #popt, pcov = curve_fit(exponential_func, generations, mean_scores, p0=(1, 0.1, 0.7), sigma=weights, maxfev=2000)
-    
-    # Plot the fitted curve
-    #fitted_curve = exponential_func(generations, *popt)
-    #ax.plot(generations, fitted_curve, 'r--', label=f'Fit: A*exp(-kt) - c\nA={popt[0]:.2f}, k={popt[1]:.2f}, c={popt[2]:.2f}')
-    
-    #Add the two values HIGHSCORE and NEG_BEST as reference values for the top ever design and the best ever negative control value.
-    ax.axhline(HIGHSCORE_NEGBEST_values_dict['HIGHSCORE.combined_score'], color='b', label='Highest Score', alpha = 0.5)
-    ax.axhline(HIGHSCORE_NEGBEST_values_dict['NEGBEST.combined_score'], color='r', label='Negative Best', alpha = 0.5)
-
-    #Sets plot details
-    ax.set_ylim(0, 1)
-    ax.set_title('Combined Score vs Generations')
-    ax.set_xlabel('Generation')
-    ax.set_ylabel('Combined Score')
-    ax.yaxis.grid(True, linestyle='--', which='major', color='grey', alpha=0.7)
-    ax.legend(loc='best')
-    every_second_generation = generations[::2]
-    ax.set_xticks(every_second_generation)
-    ax.set_xticklabels(every_second_generation)
-    
-def plot_score_v_generation_violin(ax, score_type, plot_scores_df):
-    #Prepare data for the violin plot generation
-    plot_scores_df = plot_scores_df.dropna(subset=[score_type])
-    max_gen = int(plot_scores_df['generation'].max())
-    generations = np.arange(0, max_gen + 1)
-    violin_data = [plot_scores_df[plot_scores_df['generation'] == gen][score_type].dropna().values for gen in generations]
-    # Create violin plots
-    parts = ax.violinplot(violin_data, positions=generations, showmeans=False, showmedians=True)
-    # Customizing the color of violin plots
-    for pc in parts['bodies']:
-        pc.set_facecolor('green')
-        pc.set_edgecolor('black')
-        pc.set_alpha(0.7)
-    # Customizing the color of the median lines
-    for partname in ('cbars', 'cmins', 'cmaxes'):
-        vp = parts.get(partname)
-        if vp:
-            vp.set_edgecolor('tomato')
-            vp.set_linewidth(0.5)
-    
-    vp = parts.get('cmedians')
-    if vp:
-        vp.set_edgecolor('tomato')
-        vp.set_linewidth(2.0)
- 
-    # Fit the data to the exponential function
-    # weights = np.ones(len(generations))
-    # mean_scores = [np.mean(data) for data in violin_data]
-    # popt, pcov = curve_fit(exponential_func, generations, mean_scores, p0=(1, 0.1, 0.7), sigma=weights, maxfev=10000)
-    
-    # # Plot the fitted curve
-    # fitted_curve = exponential_func(generations, *popt)
-    # ax.plot(generations, fitted_curve, 'r--', label=f'Fit: A*exp(-kt) - c\nA={popt[0]:.2f}, k={popt[1]:.2f}, c={popt[2]:.2f}')
-    
-    #Add the two values HIGHSCORE and NEG_BEST as reference values for the top ever design and the best ever negative control value.
-    ax.axhline(HIGHSCORE_NEGBEST_values_dict[f'HIGHSCORE.{score_type}'], color='b', label='Highest Score', alpha=0.5)
-    ax.axhline(HIGHSCORE_NEGBEST_values_dict[f'NEGBEST.{score_type}'], color='r', label='Negative Best', alpha=0.5)
-
-    # Select every fourth generation for ticks
-
-    #Set the plot details
-    ax.set_title(f'{score_type.replace("_", " ").title()} vs Generations')
-    ax.set_xlabel('Generation')
-    ax.set_ylabel(f'{score_type.replace("_", " ").title()}')
-    ax.yaxis.grid(True, linestyle='--', which='major', color='grey', alpha=0.7)
-    ax.legend(loc='best')
-    every_fourth_generation = generations[::4]
-    ax.set_xticks(every_fourth_generation)
-    ax.set_xticklabels(every_fourth_generation)
-
-    
-def plot_mutations_v_generation_violin(self, ax, plot_scores_df, mut_min, mut_max):
-    #Prepare data for the violin plot generation
-    plot_scores_df = plot_scores_df.dropna(subset=['mutations'])
-    max_gen = int(plot_scores_df['generation'].max())
-    generations = np.arange(0, max_gen + 1)
-    violin_data = [plot_scores_df[plot_scores_df['generation'] == gen]['mutations'].dropna().values for gen in generations]
-    # Creates violin plots
-    parts = ax.violinplot(violin_data, positions=generations, showmeans=False, showmedians=True)
-    ax.axhline(len(self.DESIGN.split(",")), color='r', label='Design Length')
-    # Customizing the color of violin plots
-    for pc in parts['bodies']:
-        pc.set_facecolor('green')
-        pc.set_edgecolor('black')
-        pc.set_alpha(0.7)
-    # Customizing the color of the median lines
-    for partname in ('cbars', 'cmins', 'cmaxes'):
-        vp = parts.get(partname)
-        if vp:
-            vp.set_edgecolor('tomato')
-            vp.set_linewidth(0.5)
-    vp = parts.get('cmedians')
-    if vp:
-        vp.set_edgecolor('tomato')
-        vp.set_linewidth(2.0)
-
-    # Fit the data to the exponential function
-    # mean_mutations = [np.mean(data) for data in violin_data]
-    # weights = np.ones(len(generations))  # Uniform weights, adjust as needed
-    # popt, pcov = curve_fit(exponential_func, generations, mean_mutations, p0=(1, 0.1, 0.7), sigma=weights, maxfev=2000)
-    
-    # # Plot the fitted curve
-    # fitted_curve = exponential_func(generations, *popt)
-    # ax.plot(generations, fitted_curve, 'r--', label=f'Fit: A*exp(-kt) + c\nA={popt[0]:.2f}, k={popt[1]:.2f}, c={popt[2]:.2f}')
-    
-    #Sets plot details
-    ax.set_ylim(mut_min, mut_max)
-    ax.set_title('Mutations vs Generations')
-    ax.set_xlabel('Generation')
-    ax.set_ylabel('Number of Mutations')
-    ax.yaxis.grid(True, linestyle='--', which='major', color='grey', alpha=0.7)
-    ax.legend(loc='lower right')
-    every_second_generation = generations[::2]
-    ax.set_xticks(every_second_generation)
-    ax.set_xticklabels(every_second_generation)
-    
-
-
-#Define the main plotting function plot_scores which calls all the plot function defined above and displays them.
-def plot_scores(self,combined_score_min=0, combined_score_max=1, combined_score_bin=0.01, 
-                interface_score_min=0, interface_score_max=1, interface_score_bin=0.01,
-                total_score_min=0, total_score_max=1, total_score_bin=0.01,
-                catalytic_score_min=0, catalytic_score_max=1, catalytic_score_bin=0.01
-                ):
-    
-    global plot_scores_df
-    
-    mut_min=0
-    mut_max=len(self.DESIGN.split(","))+1 
-
-    # Condition to check if the ALL_SCORES_CSV file exists, otherwise it returns the function.
-    if not os.path.isfile('/home/vdegiorgi/AIzymes/design/VD/241008_VD_pos_control/all_scores.csv'): return
-    
-    #Checkpoint to see whether enough designs are completed, at least 3 are needed to generate the plots.
-    if len(plot_scores_df) < 3: return
-    
-    #to integrate??
-    if (self.ProteinMPNN_PROB > 0 or self.LMPNN_PROB > 0):
-        #first not nan sequence from all_scores_df
-        mut_max = len(plot_scores_df[plot_scores_df['sequence'] != 'nan']['sequence'].iloc[0])    
-        
-    # Plot data: this creates a figure with the 12 subplots. The data for the subplots are taken from the dataframe with all the scores retrieved from the csv file.
-    fig, axs = plt.subplots(3, 4, figsize=(15, 9))
-    
-    #Drops the columns where there are no values (NaN)
-    plot_scores_df = plot_scores_df.dropna(subset=['total_score'])
-    
-    #Defines the scores variables by running the normalize_scores function.
-    catalytic_scores, total_scores, interface_scores, efield_scores, combined_scores = normalize_scores(self, plot_scores_df, print_norm=True, norm_all=False)
-    
-    #It generates the different plots with the different scores. Their position in the figure with all subplots is defined by the axs index.
-    plot_combined_score(axs[0,0], combined_scores, combined_score_min, combined_score_max, combined_score_bin)
-    
-    plot_interface_score(axs[0,1], interface_scores, interface_score_min, interface_score_max, interface_score_bin)
-    
-    plot_total_score(axs[0,2], total_scores,  total_score_min, total_score_max, total_score_bin)
-    
-    plot_catalytic_score(axs[0,3], catalytic_scores, catalytic_score_min, catalytic_score_max, catalytic_score_bin)
-    
-    plot_efield_score(axs[1,0], efield_scores, catalytic_score_min, catalytic_score_max, catalytic_score_bin)
-
-    plot_boltzmann_histogram(self, axs[1,1], combined_scores, plot_scores_df, combined_score_min, combined_score_max, combined_score_bin)
-    
-    plot_combined_score_v_index(self, axs[1,2], combined_scores, plot_scores_df)
-
-    plot_combined_score_v_generation_violin(axs[1,3], combined_scores, plot_scores_df)
-    
-    plot_mutations_v_generation_violin(self, axs[2,0], plot_scores_df, mut_min, mut_max)
-
-    plot_score_v_generation_violin(axs[2,1], 'total_score', plot_scores_df)
-    
-    plot_score_v_generation_violin(axs[2,2], 'interface_score', plot_scores_df)
-    
-    plot_score_v_generation_violin(axs[2,3], 'efield_score', plot_scores_df)
-    
-    #Additional plot types to interchange (still need to be defined)
-    #plot_interface_score_v_total_score(axs[-,-],plot_scores_df, total_score_min, total_score_max, interface_score_min, interface_score_max)
-    
-    plt.tight_layout()
-    plt.show()
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-#######################################################     TO BE WORKED ON    #######################################################
 
 def plot_summary():
     all_scores_df = pd.read_csv(ALL_SCORES_CSV)
@@ -770,6 +345,26 @@ def plot_stacked_histogram_by_generation(ax, all_scores_df):
 
     ax.set_xlim(-32.5, -13.5)
 
+
+
+def plot_interface_score_v_total_score(ax, all_scores_df, 
+                                       total_score_min, total_score_max, interface_score_min, interface_score_max):
+
+    ax.scatter(all_scores_df['total_score'], all_scores_df['interface_score'],
+            c=all_scores_df['index'], cmap='coolwarm_r', s=5)
+    correlation,_ = pearsonr(all_scores_df['total_score'], all_scores_df['interface_score'])
+    xmin = all_scores_df['total_score'].min()
+    xmax = all_scores_df['total_score'].max()
+    z = np.polyfit(all_scores_df['total_score'], all_scores_df['interface_score'], 1)
+    p = np.poly1d(z)
+    x_trendline = np.linspace(xmin, xmax, 100) 
+    ax.plot(x_trendline, p(x_trendline), "k")
+    ax.set_title(f'Pearson r: {correlation:.2f}')
+    ax.set_xlim(total_score_min,total_score_max)
+    ax.set_ylim(interface_score_min,interface_score_max)
+    ax.set_xlabel('Total Score')
+    ax.set_ylabel('Interface Score')
+
 def plot_delta_scores():
     all_scores_df = pd.read_csv(ALL_SCORES_CSV)
     all_scores_df = all_scores_df.dropna(subset=['total_score'])
@@ -926,6 +521,84 @@ def plot_tree_lin(leaf_nodes=None):
     ax.set_xticks([])
     ax.axis('equal')
     ax.grid(False)
+    plt.show()
+
+def plot_tree_nx_all():
+    PARENT = '/net/bs-gridfs/export/grid/scratch/lmerlicek/design/Input/1ohp.pdb'
+    from networkx.drawing.nx_agraph import graphviz_layout
+
+    all_scores_df = pd.read_csv(ALL_SCORES_CSV)
+    _, _, interface_potentials, _, combined_potentials = normalize_scores(all_scores_df, print_norm=False, norm_all=False, extension="potential")
+    all_scores_df["interface_potential"] = interface_potentials
+    G = nx.DiGraph()
+
+    for _, row in all_scores_df.iterrows():
+        index = int(float(row['index'])) + 1
+        if not isinstance(row['sequence'], str):
+            continue
+        G.add_node(index, sequence=row['sequence'], interface_potential=row['interface_potential'], gen=int(row['generation']) + 1)
+        if row['parent_index'] != "Parent":
+            parent_idx = int(float(row['parent_index'])) + 1
+            parent_sequence = all_scores_df.loc[all_scores_df.index == parent_idx - 1, 'sequence'].values[0]
+            current_sequence = row['sequence']
+            # Calculate Hamming distance
+            distance = hamming_distance(parent_sequence, current_sequence)
+            # Add edge with Hamming distance as an attribute
+            G.add_edge(parent_idx, index, hamming_distance=distance)
+
+    G_undirected = G.to_undirected()
+    
+    # Create a new root node
+    G.add_node(0, sequence='root', interface_potential=0, gen=0)
+    
+    # Connect the new root node to all nodes of generation 1
+    for node in G.nodes:
+        if G.nodes[node]['gen'] == 1:
+            parent_sequence = extract_sequence_from_pdb(PARENT)
+            current_sequence = G.nodes[node]['sequence']
+            distance = hamming_distance(parent_sequence, current_sequence)
+            G.add_edge(0, node, hamming_distance=distance)
+
+    # Use graphviz_layout to get the positions for a circular layout
+    pos = graphviz_layout(G, prog="twopi", args="")
+
+    # Normalize scores from 0 to 1
+    scores = {node: all_scores_df.loc[all_scores_df['index'] == int(node)-1, 'interface_score'].values[0] for node in G.nodes if node != 0}
+    min_score = min(scores.values())
+    max_score = max(scores.values())
+    normalized_scores = {node: (score - min_score) / (max_score - min_score) for node, score in scores.items()}
+
+    # Get node colors based on index
+    node_colors = [plt.cm.viridis(int(node) / len(G.nodes)) for node in G.nodes]
+
+    # Mark generation 0 nodes with red
+    gen_0_nodes = [node for node in G.nodes if G.nodes[node]['gen'] == 0]
+    for node in gen_0_nodes:
+        node_colors[list(G.nodes).index(node)] = 'red'
+
+    # Normalize Hamming distances for edge colors
+    hamming_distances = [G.edges[edge]['hamming_distance'] for edge in G.edges]
+    # Normalize the Hamming distances
+    min_hamming = min(hamming_distances)
+    max_hamming = max(hamming_distances)
+    normalized_hamming = [(dist - min_hamming) / (max_hamming - min_hamming) for dist in hamming_distances]
+
+    # Plot the graph
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=300)
+    nx.draw_networkx_nodes(G, pos, ax=ax, node_size=5, node_color=node_colors, linewidths=0.01)
+    
+    # Draw edges with custom color based on normalized Hamming distance
+    edge_colors = ['blue' if norm_dist == 0 else plt.cm.RdYlGn(norm_dist) for norm_dist in normalized_hamming]
+    nx.draw_networkx_edges(G, pos, ax=ax, width=0.2, edge_color=edge_colors, style='-', arrows=False)
+
+    # Create a colorbar as a legend for Hamming distances
+    sm = plt.cm.ScalarMappable(cmap=plt.cm.RdYlGn, norm=plt.Normalize(vmin=min_hamming, vmax=max_hamming))
+    sm.set_array([])
+    cbar = plt.colorbar(sm, ax=ax)
+    cbar.set_label('Hamming Distance')
+
+    ax.set_title("Colored by Index, Gen 0 in Red, Edges by Hamming Distance")
+    ax.axis("equal")
     plt.show()
 
 def calculate_rank_order(matrix):
