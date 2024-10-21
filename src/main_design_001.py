@@ -24,6 +24,8 @@ def get_ram(design_steps):
             new_ram = 10
         elif design_step == "RosettaRelax": 
             new_ram = 10
+        elif design_step == "MDMin": 
+            new_ram = 10
         elif design_step == "ESMfold":
             new_ram = 40
         else:
@@ -36,7 +38,7 @@ def get_ram(design_steps):
 
 def run_design(self, 
                index,
-               design_steps,
+               design_steps :list,
                bash = False
               ):
     
@@ -64,6 +66,10 @@ def run_design(self,
             
             cmd = prepare_RosettaRelax(self, index, cmd)
             logging.debug(f"Run RosettaRelax for index {index}.")
+        
+        elif design_step == "MDMin":
+            cmd = prepare_MDMin(self, index, cmd)
+            logging.debug(f"Run MD minimise for index {index}.")
             
         elif design_step == "ESMfold":
             
@@ -71,7 +77,6 @@ def run_design(self,
             logging.debug(f"Run ESMfold for index {index}.")
             
         else:
-            
             logging.error(f"{design_step} is not defined!")
             sys.exit()
      
