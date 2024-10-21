@@ -162,10 +162,16 @@ sander -O -i {filename}/scripts/MDmin_{index}.in \
           -c {PDBfile_out}.rst7 -p {PDBfile_out}.parm7 \
           -o {PDBfile_out}_MD.log -x {PDBfile_out}_MD.nc -r {PDBfile_out}_MD_out.rst7 -inf {PDBfile_out}_MD_out.mdinf
 
-cpptraj -p {PDBfile_out}.parm7 -y {PDBfile_out}_MD_out.rst7 -x {self.WT}_MDMin_{index}.pdb
+cpptraj -p {PDBfile_out}.parm7 -y {PDBfile_out}_MD_out.rst7 -x {PDBfile_out}_MD_out.pdb
 
 # Clean the output file
-sed -i '/        H  /d' {self.WT}_MDMin_{index}.pdb
+sed -i '/        H  /d' {PDBfile_out}_MD_out.pdb
+    """
+    remark = generate_remark_from_all_scores_df(self, index)
+
+    cmd += f"""
+cat '{remark}' > {self.WT}_MDMin_{index}.pdb
+cat {PDBfile_out}_MD_out.pdb >> {self.WT}_MDMin_{index}.pdb
     """
 
     return cmd
