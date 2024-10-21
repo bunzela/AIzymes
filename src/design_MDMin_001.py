@@ -88,7 +88,7 @@ sed -i -e 's/^ATOM  /HETATM/' -e '/^TER/d' {PDBfile_out}_lig.pdb
     remark = generate_remark_from_all_scores_df(self, index)
     with open(f'{PDBfile_out}_input.pdb', 'w') as f: f.write(remark+"\n")
     cmd += f"""# Assemble structure
-cat {PDBfile_out}_aligned.pdb >> {PDBfile_out}_input.pdb
+cat {PDBfile_out}_aligned.pdb > {PDBfile_out}_input.pdb
 cat {PDBfile_out}_lig.pdb     >> {PDBfile_out}_input.pdb
 sed -i '/TER/d' {PDBfile_out}_input.pdb
     """
@@ -121,6 +121,9 @@ sed -i '/TER/d' {PDBfile_out}_input.pdb
                     
 # Tidy up the output file
 sed -i -e '/[0-9]H/d' -e '/H[0-9]/d' -e '/CONECT/Q' {PDBfile_out}_wRosetta_sidechains.pdb
+
+#Remove Rosetta output 
+rm {self.WT}_{index}_input_0001.pdb
 """
 
     with open(f"{PDBfile_out}_tleap.in", "w") as f:
@@ -158,6 +161,7 @@ initial minimization
 
     cmd += f"""
 # Run MD
+echo Starting MD
 sander -O -i {filename}/scripts/MDmin_{index}.in \
           -c {PDBfile_out}.rst7 -p {PDBfile_out}.parm7 \
           -o {PDBfile_out}_MD.log -x {PDBfile_out}_MD.nc -r {PDBfile_out}_MD_out.rst7 -inf {PDBfile_out}_MD_out.mdinf
@@ -170,7 +174,7 @@ sed -i '/        H  /d' {PDBfile_out}_MD_out.pdb
     remark = generate_remark_from_all_scores_df(self, index)
 
     cmd += f"""
-cat '{remark}' > {self.WT}_MDMin_{index}.pdb
+echo '{remark}' > {self.WT}_MDMin_{index}.pdb
 cat {PDBfile_out}_MD_out.pdb >> {self.WT}_MDMin_{index}.pdb
     """
 
