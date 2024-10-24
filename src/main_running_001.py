@@ -143,7 +143,7 @@ def update_scores(self):
             # Set paths
             score_file_path = f"{self.FOLDER_HOME}/{int(index)}/score_RosettaDesign.sc" 
             pdb_path = f"{self.FOLDER_HOME}/{int(index)}/{self.WT}_RosettaDesign_{int(index)}.pdb"
-                        
+            
         elif os.path.exists(seq_path): # Update just cat_resn (needed for ProteinMPNN and LigandMPNN)
             
             with open(seq_path, "r") as f:
@@ -163,23 +163,14 @@ def update_scores(self):
         # Do not update score if files do not exist!
         if not os.path.isfile(pdb_path): continue
         if not os.path.isfile(seq_path): continue
-        # --------------------------------------------------------------------------------------------------------------------------------
-        # --------------------------------------------------------------------------------------------------------------------------------
-        # --------------------------------------------------------------------------------------------------------------------------------
         # Check if fields.pkl file exists. This should normally be there. If it is missing, something went wrong!
-        # Ther might be a better solution for this. This is just a temporary fix!
-        # --------------------------------------------------------------------------------------------------------------------------------
-        # --------------------------------------------------------------------------------------------------------------------------------
-        # --------------------------------------------------------------------------------------------------------------------------------
-        efield_directory, efield_filename = os.path.split(pdb_path)   
-        efield_filename, _ = os.path.splitext(efield_filename)
-        efield_filename = f'{efield_directory}/efield/{efield_filename}'
-        if not os.path.isfile(f"{efield_filename}_fields.pkl"): continue
-        # --------------------------------------------------------------------------------------------------------------------------------
-        # --------------------------------------------------------------------------------------------------------------------------------
-        # --------------------------------------------------------------------------------------------------------------------------------
-        
-        
+        # This is wrong, innit?  fields.pkl is made later???
+        #if self.all_scores_df.at[index, 'parent_index'] != 'Parent': # No fields calculated for Parent!
+        #    efield_directory, efield_filename = os.path.split(pdb_path)   
+        #    efield_filename, _ = os.path.splitext(efield_filename)
+        #    efield_filename = f'{efield_directory}/efield/{efield_filename}'
+        #    if not os.path.isfile(f"{efield_filename}_fields.pkl"): continue
+   
         # Load scores
         with open(score_file_path, "r") as f:
             scores = f.readlines()
@@ -254,66 +245,6 @@ def update_scores(self):
         self.all_scores_df.at[index, 'mutations'] = int(mutations)
 
     save_all_scores_df(self)
-
-def normalize_scores(self, unblocked_all_scores_df, include_catalytic_score=False, print_norm=False, norm_all=False, extension="score"):
-    
-    def neg_norm_array(array, score_type):
-
-        if len(array) > 1:  ##check that it's not only one value
-            
-            array    = -array
-            
-            if norm_all:
-                if print_norm:
-                    print(score_type,NORM[score_type],end=" ")
-                array = (array-NORM[score_type][0])/(NORM[score_type][1]-NORM[score_type][0])
-                array[array < 0] = 0.0
-                if np.any(array > 1.0): print("\nNORMALIZATION ERROR!",score_type,"has a value >1!") 
-            else:
-                if print_norm:
-                    print(score_type,[np.mean(array),np.std(array)],end=" ")
-                # Normalize using mean and standard deviation
-                if np.std(array) == 0:
-                    array = np.where(np.isnan(array), array, 0.0)  # Handle case where all values are the same
-                else:
-                    array = (array - np.mean(array)) / np.std(array)
-
-            return array
-        
-        else:
-            # do not normalize if array only contains 1 value
-            return [1]
-         
-    catalytic_scores    = unblocked_all_scores_df[f"catalytic_{extension}"]
-    catalytic_scores    = neg_norm_array(catalytic_scores, f"catalytic_{extension}")   
-    
-    total_scores        = unblocked_all_scores_df[f"total_{extension}"]
-    total_scores        = neg_norm_array(total_scores, f"total_{extension}")   
-    
-    interface_scores    = unblocked_all_scores_df[f"interface_{extension}"]
-    interface_scores    = neg_norm_array(interface_scores, f"interface_{extension}")  
-    
-    efield_scores    = unblocked_all_scores_df[f"efield_{extension}"]   ### to be worked on
-    efield_scores    = neg_norm_array(-1*efield_scores, f"efield_{extension}")   ### to be worked on, with MINUS here
-    
-    if len(total_scores) == 0:
-        combined_scores = []
-    else:
-        if include_catalytic_score:
-            combined_scores     = np.stack((total_scores, interface_scores, efield_scores, catalytic_scores))
-        else:
-            combined_scores     = np.stack((total_scores, interface_scores, efield_scores))
-        combined_scores     = np.mean(combined_scores, axis=0)
-        
-          
-    if print_norm:
-        if combined_scores.size > 0:
-            print("HIGHSCORE:","{:.2f}".format(np.amax(combined_scores)),end=" ")
-            print("Designs:",len(combined_scores),end=" ")
-            PARENTS = [i for i in os.listdir(f'{FOLDER_HOME}/{FOLDER_PARENT}') if i[-4:] == ".pdb"]
-            print("Parents:",len(PARENTS))
-        
-    return catalytic_scores, total_scores, interface_scores, efield_scores, combined_scores
         
 def boltzmann_selection(self):
         
@@ -327,6 +258,11 @@ def boltzmann_selection(self):
              
     # Complet ESMfold and RosettaRelax
     filtered_indices = unblocked_all_scores_df[unblocked_all_scores_df['score_taken_from'] != 'RosettaRelax'] # Remove Relaxed Indeces
+    
+    # Before running the Boltzmann selection, check if files should be run immediatly
+    #  |-- if a design was made (seq exist)
+    #    |-- select index is there is no ESMfold
+    #      |-- select index is there is no RosettaRelax
     
     for index, row in filtered_indices.iterrows():
         
@@ -382,19 +318,25 @@ def boltzmann_selection(self):
         elif len(self.KBT_BOLTZMANN) > 2:
             logging.error(f"KBT_BOLTZMANN must either be a single value or list of two values.")
             logging.error(f"KBT_BOLTZMANN is {self.KBT_BOLTZMANN}")
-        else:
+        elif len(self.KBT_BOLTZMANN) == 2:
             # Ramp down kbT_boltzmann over time (i.e., with increaseing indices)
             # datapoints = legth of all_scores_df - number of parents generated
             num_pdb_files = len([file for file in os.listdir(self.FOLDER_PARENT) if file.endswith('.pdb')])
             datapoints = max(self.all_scores_df['index'].max() + 1 - num_pdb_files*self.N_PARENT_JOBS, 0)
             kbt_boltzmann = float(max(self.KBT_BOLTZMANN[0] * np.exp(-self.KBT_BOLTZMANN[1]*datapoints), 0.05))
         
+        # Some issue with numpy exp when calculating boltzman factors.
+        combined_potentials_list = [float(x) for x in combined_potentials]
+        combined_potentials = np.array(combined_potentials_list)
+
         boltzmann_factors = np.exp(combined_potentials / kbt_boltzmann)
         probabilities = boltzmann_factors / sum(boltzmann_factors)
         
         if len(unblocked_all_scores_df) > 0:
             selected_index = int(np.random.choice(unblocked_all_scores_df["index"].to_numpy(), p=probabilities))
         else:
+            logging.debug(f'Boltzmann selection tries to select a variant for design, but all are blocked. Waiting 20 seconds')
+            time.sleep(20)
             return None
         
     else:
