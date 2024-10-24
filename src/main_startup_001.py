@@ -54,6 +54,7 @@ def prepare_input_files(self):
     
     os.makedirs(self.FOLDER_HOME, exist_ok=True)    
     os.makedirs(self.FOLDER_PARENT, exist_ok=True)
+    os.makedirs(self.FOLDER_PLOT, exist_ok=True)
 
     # Creates general input scripts used by various programs 
     make_main_scripts(self)
@@ -93,7 +94,8 @@ def initialize_variables(self):
     self.LOG_FILE        = f'{self.FOLDER_HOME}/logfile.log'
     self.ALL_SCORES_CSV  = f'{self.FOLDER_HOME}/all_scores.csv'
     self.VARIABLES_JSON  = f'{self.FOLDER_HOME}/variables.json'
-
+    self.FOLDER_PLOT     = f'{self.FOLDER_HOME}/plots' 
+        
     # Define system-specific settings
     set_system(self)    
         

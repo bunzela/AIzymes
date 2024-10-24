@@ -18,6 +18,77 @@ warnings.simplefilter('ignore', BiopythonParserWarning)
 
 from setup_system_001         import *
 
+def normalize_scores(self, 
+                     unblocked_all_scores_df, 
+                     include_catalytic_score=False, 
+                     print_norm=False, 
+                     norm_all=False, 
+                     extension="score"):
+    
+    def neg_norm_array(array, score_type):
+
+        if len(array) > 1:  ##check that it's not only one value
+            
+            array    = -array
+            
+            if norm_all:
+                if print_norm:
+                    print(score_type,self.NORM[score_type],end=" ")
+                array = (array-self.NORM[score_type][0])/(self.NORM[score_type][1]-self.NORM[score_type][0])
+                
+                # COMMENTED OUT BY HAB. I think this is useless and bad!
+                #array[array < 0] = 0.0
+                
+                if np.any(array > 1.0):
+                    print(f"\nNORMALIZATION ERROR! {score_type} has a value >1! Max value is {max(array)}") 
+                if np.any(array < 0.0):
+                    print(f"\nNORMALIZATION ERROR! {score_type} has a value <0! Min value is {min(array)}")
+            else:
+                if print_norm:
+                    print(score_type,[np.mean(array),np.std(array)],end=" ")
+                # Normalize using mean and standard deviation
+                if np.std(array) == 0:
+                    array = np.where(np.isnan(array), array, 0.0)  # Handle case where all values are the same
+                else:
+                    array = (array - np.mean(array)) / np.std(array)
+
+            return array
+        
+        else:
+            # do not normalize if array only contains 1 value
+            return [1]
+         
+    catalytic_scores    = unblocked_all_scores_df[f"catalytic_{extension}"]
+    catalytic_scores    = neg_norm_array(catalytic_scores, f"catalytic_{extension}")   
+    
+    total_scores        = unblocked_all_scores_df[f"total_{extension}"]
+    total_scores        = neg_norm_array(total_scores, f"total_{extension}")   
+    
+    interface_scores    = unblocked_all_scores_df[f"interface_{extension}"]
+    interface_scores    = neg_norm_array(interface_scores, f"interface_{extension}")  
+    
+    efield_scores    = unblocked_all_scores_df[f"efield_{extension}"]   ### to be worked on
+    efield_scores    = neg_norm_array(-1*efield_scores, f"efield_{extension}")   ### to be worked on, with MINUS here
+    
+    if len(total_scores) == 0:
+        combined_scores = []
+    else:
+        if include_catalytic_score:
+            combined_scores     = np.stack((total_scores, interface_scores, efield_scores, catalytic_scores))
+        else:
+            combined_scores     = np.stack((total_scores, interface_scores, efield_scores))
+        combined_scores     = np.mean(combined_scores, axis=0)
+        
+          
+    if print_norm:
+        if combined_scores.size > 0:
+            print("HIGHSCORE:","{:.2f}".format(np.amax(combined_scores)),end=" ")
+            print("Designs:",len(combined_scores),end=" ")
+            parents = [i for i in os.listdir(self.FOLDER_PARENT) if i[-4:] == ".pdb"]
+            print("Parents:",len(parents))
+        
+    return catalytic_scores, total_scores, interface_scores, efield_scores, combined_scores
+
 def one_to_three_letter_aa(one_letter_aa):
     
     # Dictionary mapping one-letter amino acid codes to three-letter codes in all caps
@@ -572,10 +643,16 @@ def wait_for_file(file_path, timeout=5):
         time.sleep(0.1)  # Wait for 0.1 seconds before checking again
     return False
 
+#Define the hamming distance function and other required functions
 def hamming_distance(seq1, seq2):
-    """Calculate the Hamming distance between two strings."""
+    #Ensures that seq2 is a string
     if not isinstance(seq2, str):
         return None
+     #Ensures that the current and predecessor sequence length is equal
     if len(seq1) != len(seq2):
         raise ValueError("Sequences must be of equal length")
+    #Returns the number of differences between the current sequence and the parent sequence.
     return sum(ch1 != ch2 for ch1, ch2 in zip(seq1, seq2))
+
+def exponential_func(x, A, k, c):
+    return c-A*np.exp(-k * x)
