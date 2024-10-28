@@ -176,7 +176,7 @@ sed -i '/        H  /d' {PDBfile_out}_MD_out.pdb
     cmd += f"""
 echo '{remark}' > {self.WT}_MDMin_{index}.pdb
 cat {PDBfile_out}_MD_out.pdb >> {self.WT}_MDMin_{index}.pdb
-sed -i -e 's/^\(ATOM.\{{17\}}\) /\1A/' {self.WT}_MDMin_{index}.pdb
+sed -i -e 's/^\(ATOM.\{{17\}}\) /\\1A/' {self.WT}_MDMin_{index}.pdb
 sed -i -e 's/5TS A/5TS X/' {self.WT}_MDMin_{index}.pdb
     """
 

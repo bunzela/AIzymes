@@ -171,10 +171,10 @@ def update_scores(self):
         # --------------------------------------------------------------------------------------------------------------------------------
         # --------------------------------------------------------------------------------------------------------------------------------
         # --------------------------------------------------------------------------------------------------------------------------------
-        efield_directory, efield_filename = os.path.split(pdb_path)   
-        efield_filename, _ = os.path.splitext(efield_filename)
-        efield_filename = f'{efield_directory}/efield/{efield_filename}'
-        if not os.path.isfile(f"{efield_filename}_fields.pkl"): continue
+        #efield_directory, efield_filename = os.path.split(pdb_path)   
+        #efield_filename, _ = os.path.splitext(efield_filename)
+        #efield_filename = f'{efield_directory}/efield/{efield_filename}'
+        #if not os.path.isfile(f"{efield_filename}_fields.pkl"): continue
         # --------------------------------------------------------------------------------------------------------------------------------
         # --------------------------------------------------------------------------------------------------------------------------------
         # --------------------------------------------------------------------------------------------------------------------------------
@@ -473,6 +473,11 @@ def start_calculation(self, parent_index):
         logging.info(f"Index {parent_index} has no relaxed structure, starting RosettaRelax.")
         self.all_scores_df.at[parent_index, "blocked_RosettaRelax"] = True 
         run_design(self, parent_index, ["RosettaRelax"])
+
+    # elif not f"{self.WT}_RosettaRelax_{parent_index}.pdb" in os.listdir(os.path.join(self.FOLDER_HOME, str(parent_index))):
+    #     logging.info(f"Index {parent_index} has no relaxed structure, starting MDMin and RosettaRelax.")
+    #     self.all_scores_df.at[parent_index, "blocked_RosettaRelax"] = True 
+    #     run_design(self, parent_index, ["MDMin", "RosettaRelax"])
 
     # If all OK, start Design
     else:
