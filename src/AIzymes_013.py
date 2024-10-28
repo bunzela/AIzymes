@@ -88,32 +88,32 @@ class AIzymes_MAIN():
                 
         start_controller(self)
         
-    def plot(self, main_plots=True, tree_plot=True, landscape_plot=True,
+    def plot(self, main_plots=True, tree_plot=True, landscape_plot=True, print_vals=True,
         NORM = {'interface_score': [10, 35],
-                                   'total_score': [200, 500], 
-                                    'catalytic_score': [-40, 0], 
-                                    'efield_score': [10, 220]},
-        HIGHSCORE_NEGBEST = {
-    'HIGHSCORE.combined_score': 1.0,
-    'NEGBEST.combined_score': 0.0,
-    'HIGHSCORE.total_score': 10.0,
-    'NEGBEST.total_score': -150,
-    'HIGHSCORE.interface_score': -30.0,
-    'NEGBEST.interface_score': -15.0,
-    'HIGHSCORE.efield_score': 250.0,
-    'NEGBEST.efield_score': 0.0,
-}):
-  
+                'total_score': [200, 500], 
+                'catalytic_score': [-40, 0], 
+                'efield_score': [10, 220]},
+        HIGHSCORE_NEGBEST = {'HIGHSCORE_combined_score': 0.916,
+                             'NEGBEST_combined_score': 0.777,
+                             'HIGHSCORE_total_score': 0.995,
+                             'NEGBEST_total_score': 0.894 ,
+                             'HIGHSCORE_interface_score': 0.954,
+                             'NEGBEST_interface_score': 0.838 ,
+                             'HIGHSCORE_efield_score': 0.999,
+                             'NEGBEST_efield_score': 0.818}):
+
         # Automatically assign all parameters to instance variables
         for key, value in locals().items():
             if key not in ['self']:
                 setattr(self, key, value)
                 
         if main_plots:
-            plot_scores(self)
+            plot_scores(self, print_vals=print_vals)
+         
         if tree_plot:
-            plot_tree(self)
+            tree_plotting_function(self)
+            
         if landscape_plot:
-            plot_landscape(self)
-        
+            landscape_plotting_function(self)
+
         return
