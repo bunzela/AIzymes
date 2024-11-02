@@ -92,14 +92,14 @@ class AIzymes_MAIN():
                 'total_score': [200, 500], 
                 'catalytic_score': [-40, 0], 
                 'efield_score': [10, 220]},
-        HIGHSCORE_NEGBEST = {'HIGHSCORE_combined_score': 0.916,
-                             'NEGBEST_combined_score': 0.777,
-                             'HIGHSCORE_total_score': 0.995,
-                             'NEGBEST_total_score': 0.894 ,
-                             'HIGHSCORE_interface_score': 0.954,
-                             'NEGBEST_interface_score': 0.838 ,
-                             'HIGHSCORE_efield_score': 0.999,
-                             'NEGBEST_efield_score': 0.818}):
+        HIGHSCORE_NEGBEST = {'HIGHSCORE_combined_score': 0.814,
+                             'NEGBEST_combined_score': 0.503,
+                             'HIGHSCORE_total_score': 0.954,
+                             'NEGBEST_total_score': 0.209 ,
+                             'HIGHSCORE_interface_score': 0.994,
+                             'NEGBEST_interface_score': 0.935 ,
+                             'HIGHSCORE_efield_score': 0.970,
+                             'NEGBEST_efield_score': 0.807}):
 
         # Automatically assign all parameters to instance variables
         for key, value in locals().items():
