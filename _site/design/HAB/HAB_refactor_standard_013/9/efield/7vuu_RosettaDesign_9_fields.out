@@ -1,0 +1,10 @@
+-nc              Trajectory file      :  /home/bunzelh/AIzymes/design/HAB/HAB_refactor_standard_013/9/efield/7vuu_RosettaDesign_9.rst7
+-parm            Parameter file       :  /home/bunzelh/AIzymes/design/HAB/HAB_refactor_standard_013/9/efield/7vuu_RosettaDesign_9.parm7
+-out             Output file          :  /home/bunzelh/AIzymes/design/HAB/HAB_refactor_standard_013/9/efield/7vuu_RosettaDesign_9_fields.pkl
+-target          Field target         :  /home/bunzelh/AIzymes/design/HAB/Input/field_target.dat
+-arg_solvent     Non-protein residues :  WAT
+-exclude_atoms   Atoms excluded       : Full residue defined in the first Atom for each Target.
+
+Field calculation RUNNING :  2024-10-08 10:57:11.299213
+
+Field calculation DONE :  2024-10-08 10:57:11.334711

@@ -1,0 +1,11 @@
+index,sequence,parent_index,interface_score,total_score,catalytic_score,efield_score,interface_potential,total_potential,catalytic_potential,efield_potential,relax_interface_score,relax_total_score,relax_catalytic_score,relax_efield_score,design_interface_score,design_total_score,design_catalytic_score,design_efield_score,generation,mutations,design_method,score_taken_from,blocked_ESMfold,blocked_RosettaRelax,cat_resi,cat_resn,kbt_boltzmann,luca
+0,,Parent,,,,,,,,,,,,,,,,,0,,ProteinMPNN,,False,False,8,,0.5,7vuu
+1,,Parent,,,,,,,,,,,,,,,,,0,,ProteinMPNN,,False,False,8,,0.5,7vuu
+2,,Parent,,,,,,,,,,,,,,,,,0,,ProteinMPNN,,False,False,8,,0.5,7vuu
+3,,Parent,,,,,,,,,,,,,,,,,0,,ProteinMPNN,,False,False,8,,0.5,7vuu
+4,,Parent,,,,,,,,,,,,,,,,,0,,ProteinMPNN,,False,False,8,,0.5,7vuu
+5,,Parent,,,,,,,,,,,,,,,,,0,,ProteinMPNN,,False,False,8,,0.5,7vuu
+6,,Parent,,,,,,,,,,,,,,,,,0,,ProteinMPNN,,False,False,8,,0.5,7vuu
+7,,Parent,,,,,,,,,,,,,,,,,0,,ProteinMPNN,,False,False,8,,0.5,7vuu
+8,,Parent,,,,,,,,,,,,,,,,,0,,ProteinMPNN,,False,False,8,,0.5,7vuu
+9,,Parent,,,,,,,,,,,,,,,,,0,,ProteinMPNN,,False,False,8,,0.5,7vuu
