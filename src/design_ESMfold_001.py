@@ -12,11 +12,11 @@ def prepare_ESMfold(self,
     Predicts structure of sequence in {index} using ESMfold.
     
     Parameters:
-    - index (str): The index of the protein variant to be predicted.
-    - cmd (str): Growing list of commands to be exected by run_design using submit_job.
+    index (str): The index of the protein variant to be predicted.
+    cmd (str): Growing list of commands to be exected by run_design using submit_job.
 
     Returns:
-    - cmd (str): Command to be exected by run_design using submit_job.
+    cmd (str): Command to be exected by run_design using submit_job.
     """
         
     # Giving the ESMfold algorihm the needed inputs
