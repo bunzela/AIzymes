@@ -1,3 +1,18 @@
+
+"""
+Main Design Module
+
+Coordinates various design steps, managing the workflow of Rosetta, ProteinMPNN, and other modules
+within the AIzymes project.
+
+Functions:
+    - get_ram: Determines RAM allocation for design steps.
+    - run_design: Runs the selected design steps based on configuration.
+
+Modules Required:
+    - helper_001, design_match_001, design_ProteinMPNN_001, design_LigandMPNN_001,
+      design_RosettaDesign_001, design_ESMfold_001, design_RosettaRelax_001
+"""
 import logging
 import sys
 

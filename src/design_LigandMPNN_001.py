@@ -1,3 +1,15 @@
+
+"""
+NOTE: NOT WORKING YET!
+
+Integrates LigandMPNN for generating protein sequences adapted to specific ligand contexts.
+
+Functions:
+    prepare_LigandMPNN: Executes LigandMPNN steps to adapt protein designs with ligand binding considerations.
+
+Modules Required:
+    helper_001
+"""
 def prepare_LigandMPNN(self, 
                        parent_index, 
                        new_index,

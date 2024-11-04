@@ -1,3 +1,20 @@
+"""
+AIzymes Project Main Workflow
+
+This script defines the main AIzymes workflow, including setup, initialization, control, and plotting functions.
+It manages the primary processes and configurations required to execute AIzymes functionalities.
+
+Classes:
+    AIzymes_MAIN: Manages the main workflow for AIzymes, including setup, initialization, and various control functions.
+
+Functions:
+    __init__(): Initializes an instance of the AIzymes_MAIN class.
+    setup(): Sets up the AIzymes project environment with specified parameters.
+    initialize(): Initializes AIzymes with provided configurations.
+    controller(): Controls the AIzymes project based on scoring and normalization parameters.
+    plot(): Generates various plots based on AIzymes data.
+"""
+
 # -------------------------------------------------------------------------------------------------------------------------
 # Import AIzymes modules --------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------
@@ -39,7 +56,7 @@ class AIzymes_MAIN:
         """
         Sets up the AIzymes project environment with specified parameters.
 
-        Parameters:
+        Args:
             FOLDER_HOME (str): Path to the main folder.
             FOLDER_PARENT (str): Path to the parent folder.
             CST_NAME (str): Constraint name.
@@ -79,7 +96,7 @@ class AIzymes_MAIN:
         """
         Initializes AIzymes with given parameters.
 
-        Parameters:
+        Args:
             FOLDER_HOME (str): Path to the main folder.
             UNBLOCK_ALL (bool): Flag to unblock all processes.
             PRINT_VAR (bool): Flag to print variables.
@@ -96,7 +113,7 @@ class AIzymes_MAIN:
         """
         Controls the AIzymes project based on scoring and normalization parameters.
 
-        Parameters:
+        Args:
             HIGHSCORE (float): High score threshold for evaluation.
             NORM (dict): Normalization values for different scores.
         """
@@ -118,7 +135,7 @@ class AIzymes_MAIN:
         """
         Generates plots based on AIzymes data, including main, tree, and landscape plots.
 
-        Parameters:
+        Args:
             main_plots (bool): Flag to generate main plots.
             tree_plot (bool): Flag to generate tree plot.
             landscape_plot (bool): Flag to generate landscape plot.
