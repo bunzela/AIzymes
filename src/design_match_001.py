@@ -1,3 +1,16 @@
+
+"""
+Design Match Module
+
+Provides functionalities for matching protein designs with specific constraints
+and requirements in the AIzymes workflow.
+
+Functions:
+    - prepare_LigandMPNN: Executes the LigandMPNN pipeline for protein-ligand structure adaptation.
+
+Modules Required:
+    - helper_001
+"""
 def run_RosettaMatch(run_apo = False, EXPLORE=False, submit=False, bash=True):
         
     prepare_input_files()

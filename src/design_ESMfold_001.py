@@ -1,3 +1,11 @@
+"""
+Design ESMfold Module
+
+Manages the structure prediction of protein sequences using ESMfold within the AIzymes project.
+
+Functions:
+    - prepare_ESMfold: Prepares commands for ESMfold job submission.
+"""
 import logging
 import os
 import shutil 

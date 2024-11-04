@@ -1,3 +1,14 @@
+
+"""
+Handles RosettaDesign steps to optimize protein design scores and enhance stability
+within the AIzymes project.
+
+Functions:
+    prepare_RosettaDesign: Prepares RosettaDesign commands for job submission.
+
+Modules Required:
+    helper_001
+"""
 import logging
 
 from helper_001               import *
@@ -8,13 +19,13 @@ def prepare_RosettaDesign(self,
     """
     Designs protein structure in {new_index} based on {parent_index} using RosettaDesign.
     
-    Parameters:
-    - parent_index (str): Index of the parent protein variant to be designed.
-    - new_index (str):    Index assigned to the resulting design.
-    - input_suffix (str): Suffix of the input structure to be used for design.
+    Args:
+    parent_index (str): Index of the parent protein variant to be designed.
+    new_index (str):    Index assigned to the resulting design.
+    input_suffix (str): Suffix of the input structure to be used for design.
     
     Returns:
-    - cmd (str): Command to be exected by run_design using submit_job.
+    cmd (str): Command to be exected by run_design using submit_job.
     """
     
     # Options for EXPLORE, accelerated script for testing

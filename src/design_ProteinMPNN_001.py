@@ -1,3 +1,17 @@
+
+"""
+Manages ProteinMPNN design steps to generate protein sequences tailored for specific
+functional and structural properties in the AIzymes project.
+
+This function assumes the ProteinMPNN toolkit is available and properly set up in the specified location.
+It involves multiple subprocess calls to Python scripts for processing protein structures and generating new sequences.
+
+Functions:
+    prepare_ProteinMPNN: Sets up commands for ProteinMPNN job submission.
+
+Modules Required:
+    helper_001
+"""
 import os
 import logging
 import shutil
@@ -13,16 +27,12 @@ def prepare_ProteinMPNN(self, new_index, cmd):
     Executes the ProteinMPNN pipeline for a given protein structure and generates
     new protein sequences with potentially higher functional scores.
 
-    Parameters:
-    - new_index (str): The index of the designed variant.
-    - cmd (str): Growing list of commands to be exected by run_design using submit_job.
+    Args:
+    new_index (str): The index of the designed variant.
+    cmd (str): Growing list of commands to be exected by run_design using submit_job.
 
     Returns:
-    - cmd (str): Command to be exected by run_design using submit_job
-
-    Note:
-    This function assumes the ProteinMPNN toolkit is available and properly set up in the specified location.
-    It involves multiple subprocess calls to Python scripts for processing protein structures and generating new sequences.
+    cmd (str): Command to be exected by run_design using submit_job
     """
     
     ProteinMPNN_check(self)
