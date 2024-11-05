@@ -1,3 +1,25 @@
+"""
+main_running_001.py
+
+This module contains the main control functions for managing the AIzymes workflow, including job submission,
+score updating, and Boltzmann selection. The functions in this file are responsible for the high-level management
+of the design process, interacting with the AIzymes_MAIN class to initiate, control, and evaluate design variants.
+
+Classes:
+    None
+
+Functions:
+    start_controller(self)
+    check_running_jobs(self)
+    update_potential(self, score_type, index)
+    update_scores(self)
+    boltzmann_selection(self)
+    check_parent_done(self)
+    start_parent_design(self)
+    start_calculation(self, parent_index)
+    create_new_index(self, parent_index)
+"""
+
 import os
 import time
 import subprocess
@@ -15,12 +37,19 @@ from scoring_efields_001      import *
 # Keep the controller as clean as possible!!! All complex operations are performed on the next level! ---------------------
 # -------------------------------------------------------------------------------------------------------------------------
 
-def start_controller(self): 
-  
-    while not os.path.exists(os.path.join(self.FOLDER_HOME, str(self.MAX_DESIGNS))): #Run until MAX_DESIGNS are made
-       
-        # Update scores
-        update_scores(self)
+
+def start_controller(self):
+    """
+    Runs the main loop to manage the design process until the maximum number of designs is reached.
+
+    Continues submitting jobs, monitoring running processes, and updating scores based on Boltzmann selection
+    until `MAX_DESIGNS` is achieved. The function pauses or starts new designs based on system resources.
+
+    Parameters:
+        self: An instance of the AIzymes_MAIN class with setup attributes and properties.
+    """
+    
+    while len(self.all_scores_df['index']) < int(self.MAX_DESIGNS): #Run until MAX_DESIGNS are made
             
         # Check how many jobs are currently running
         num_running_jobs = check_running_jobs(self)
@@ -31,6 +60,9 @@ def start_controller(self):
             time.sleep(20)
             
         else:
+                   
+            # Update scores
+            update_scores(self)
                         
             # Check if parent designs are done, if not, start design
             parent_done = check_parent_done(self)
@@ -43,20 +75,30 @@ def start_controller(self):
                 
                 # Boltzmann Selection
                 selected_index = boltzmann_selection(self)
-
+                
                 # Decide Fate of selected index
                 if selected_index is not None:
                     start_calculation(self, selected_index)
     
         # Sleep a bit for safety
         time.sleep(0.1)
-    
+
     update_scores(self)
     
-    print(f"Stopped because {os.path.join(FOLDER_HOME, str(MAX_DESIGNS))} exists.")
+    print(f"Stopped because {len(self.all_scores_df['index'])}/{self.MAX_DESIGNS} designs have been made.")
+
 
 def check_running_jobs(self):
-    
+    """
+    Checks the current number of running jobs based on the system type.
+
+    Depending on the value of `SYSTEM`, this function counts the active jobs in GRID, BLUEPEBBLE, BACKGROUND_JOB,
+    or ABBIE_LOCAL systems.
+
+    Returns:
+        int: Number of running jobs for the specific system.
+    """
+   
     if self.SYSTEM == 'GRID':
         jobs = subprocess.check_output(["qstat", "-u", self.USERNAME]).decode("utf-8").split("\n")
         jobs = [job for job in jobs if self.SUBMIT_PREFIX in job]
@@ -74,20 +116,18 @@ def check_running_jobs(self):
     if self.SYSTEM == 'ABBIE_LOCAL':
         return 0
 
+
 def update_potential(self, score_type, index):
-    
-    '''Creates a <score_type>_potential.dat file in FOLDER_HOME/<index> 
-    
-    If latest score comes from Rosetta Relax - then the score for variant <index>
-    will be added to the <score_type>_potential.dat of the parent index 
-    and the <score_type>_potential value of the dataframe for the parent 
-    will be updated with the average of the parent and child scores. 
-    
+    """
+    Updates the potential file for a given score type at the specified variant index.
+
+    Creates or appends to a `<score_type>_potential.dat` file in `FOLDER_HOME/<index>`, calculating and
+    updating potentials for the parent variant if necessary.
+
     Parameters:
-    - score_type(str): Type of score to update, one of these options: total, interface, catalytic, efield
-    - index (int): variant index to update
-    
-    '''
+        score_type (str): Type of score to update (e.g., total, interface, catalytic, efield).
+        index (int): Variant index to update potential data.
+    """
     
     score = self.all_scores_df.at[index, f'{score_type}_score']
     score_taken_from = self.all_scores_df.at[index, 'score_taken_from']    
@@ -106,8 +146,18 @@ def update_potential(self, score_type, index):
     with open(parent_filename, "r") as f:  potentials = f.readlines() # Reads in potential values 
     self.all_scores_df.at[parent_index, f'{score_type}_potential'] = np.average([float(i) for i in potentials])
         
+
 def update_scores(self):
-        
+    """
+    Updates various scores, including total, interface, catalytic, and efield scores for each design variant.
+
+    This function iterates over design variants, updating scores based on files generated by different processes.
+    It also updates sequence information, tracks mutations, and saves the updated DataFrame.
+
+    Parameters:
+        self: An instance of the AIzymes_MAIN class with setup attributes and properties.
+    """
+
     logging.debug("Updating scores")
         
     for _, row in self.all_scores_df.iterrows():
@@ -116,28 +166,51 @@ def update_scores(self):
         index = int(row['index'])
         parent_index = row['parent_index']         
         
-        if os.path.exists(f"{self.FOLDER_HOME}/{int(index)}/score_RosettaRelax.sc"): # Score based on RosettaRelax
-            
-            # Do NOT update score to prevent repeated scoring!
-            if row['score_taken_from'] == 'RosettaRelax': continue 
-                
-            # Set paths
-            score_file_path = f"{self.FOLDER_HOME}/{int(index)}/score_RosettaRelax.sc"
-            pdb_path = f"{self.FOLDER_HOME}/{int(index)}/{self.WT}_RosettaRelax_{int(index)}.pdb"
+        #unblock index for calculations that should only be executed once!
+        for unblock in ["RosettaRelax","ESMfold"]:
+            if self.all_scores_df.at[int(index), f"blocked_{unblock}"] == True:
+                if os.path.isfile(f"{self.FOLDER_HOME}/{index}/{self.WT}_{unblock}_{index}.pdb"):
+                    self.all_scores_df.at[index, f"blocked_{unblock}"] = False
+                    logging.debug(f"Unblocked {unblock} index {int(index)}.")      
+             
+        seq_path = f"{self.FOLDER_HOME}/{index}/{self.WT}_{index}.seq"
+
+        # Check what structure to score on
+        if os.path.exists(f"{self.FOLDER_HOME}/{int(index)}/score_RosettaRelax.sc"): # Score based on RosettaRelax            
+            if row['score_taken_from'] == 'RosettaRelax': continue # Do NOT update score to prevent repeated scoring!
+            score_type = 'RosettaRelax'
                         
         elif os.path.exists(f"{self.FOLDER_HOME}/{int(index)}/score_RosettaDesign.sc"): # Score based on RosettaDesign
+            if row['score_taken_from'] == 'RosettaDesign': continue # Do NOT update score to prevent repeated scoring! 
+            score_type = 'RosettaDesign'
             
-            # Do NOT update score to prevent repeated scoring!
-            if row['score_taken_from'] == 'RosettaDesign': continue 
-                
-            # Set paths
-            score_file_path = f"{self.FOLDER_HOME}/{int(index)}/score_RosettaDesign.sc" 
-            pdb_path = f"{self.FOLDER_HOME}/{int(index)}/{self.WT}_RosettaDesign_{int(index)}.pdb"
+        elif os.path.exists(seq_path): # Update just cat_resn (needed for ProteinMPNN and LigandMPNN)
+            
+            with open(seq_path, "r") as f:
+                seq = f.read()
+            cat_resns = []
+            for cat_resi in str(self.all_scores_df.at[index, 'cat_resi']).split(";"): 
+                cat_resns += [one_to_three_letter_aa(seq[int(float(cat_resi))-1])]
+            self.all_scores_df['cat_resn'] = self.all_scores_df['cat_resn'].astype(str)
+            self.all_scores_df.at[index, 'cat_resn'] = ";".join(cat_resns)
+            
+            continue # Do NOT update anything else
         
         else:
             
             continue # Do NOT update score, job is not done.
+        
+        # Set paths
+        score_file_path = f"{self.FOLDER_HOME}/{int(index)}/score_{score_type}.sc"
+        pdb_path = f"{self.FOLDER_HOME}/{int(index)}/{self.WT}_{score_type}_{int(index)}.pdb"
             
+        # Do not update score if files do not exist!
+        if not os.path.isfile(pdb_path): continue
+        if not os.path.isfile(seq_path): continue
+
+        # Check if ElectricFields are done   
+        if not os.path.exists(f"{self.FOLDER_HOME}/{int(index)}/{self.WT}_{score_type}_{parent_index}_fields.pkl"): continue 
+
         # Load scores
         with open(score_file_path, "r") as f:
             scores = f.readlines()
@@ -200,96 +273,73 @@ def update_scores(self):
         logging.info(f"Updated scores and potentials of index {index}.")
         if self.all_scores_df.at[index, 'score_taken_from'] == 'Relax' and self.all_scores_df.at[index, 'parent_index'] != "Parent":
             logging.info(f"Adjusted potentials of {self.all_scores_df.at[index, 'parent_index']}, parent of {int(index)}).")
-                
-        #unblock index if relaxed file exists
-        if self.all_scores_df.at[int(index), "blocked"] == True:
-            if os.path.isfile(f"{self.FOLDER_HOME}/{index}/{self.WT}_RosettaRelax_{index}.pdb"):
-                self.all_scores_df.at[index, "blocked"] = False
-                logging.debug(f"Unblocked index {int(index)}.")
-
+                        
         # Update sequence and mutations
-        reference_sequence = extract_sequence_from_pdb(f"{self.FOLDER_INPUT}/{self.WT}.pdb")
-        current_sequence = extract_sequence_from_pdb(pdb_path)
+        with open(f"{self.FOLDER_PARENT}/{self.WT}.seq", "r") as f:
+            reference_sequence = f.read()
+        with open(seq_path, "r") as f:
+            current_sequence = f.read()
         mutations = sum(1 for a, b in zip(current_sequence, reference_sequence) if a != b)
         self.all_scores_df['sequence'] = self.all_scores_df['sequence'].astype('object')
         self.all_scores_df.at[index, 'sequence']  = current_sequence
         self.all_scores_df.at[index, 'mutations'] = int(mutations)
 
     save_all_scores_df(self)
+        
 
-def normalize_scores(self, unblocked_all_scores_df, include_catalytic_score=False, print_norm=False, norm_all=False, extension="score"):
-    
-    def neg_norm_array(array, score_type):
-
-        if len(array) > 1:  ##check that it's not only one value
-            
-            array    = -array
-            
-            if norm_all:
-                if print_norm:
-                    print(score_type,NORM[score_type],end=" ")
-                array = (array-NORM[score_type][0])/(NORM[score_type][1]-NORM[score_type][0])
-                array[array < 0] = 0.0
-                if np.any(array > 1.0): print("\nNORMALIZATION ERROR!",score_type,"has a value >1!") 
-            else:
-                if print_norm:
-                    print(score_type,[np.mean(array),np.std(array)],end=" ")
-                # Normalize using mean and standard deviation
-                if np.std(array) == 0:
-                    array = np.where(np.isnan(array), array, 0.0)  # Handle case where all values are the same
-                else:
-                    array = (array - np.mean(array)) / np.std(array)
-
-            return array
-        
-        else:
-            # do not normalize if array only contains 1 value
-            return [1]
-         
-    catalytic_scores    = unblocked_all_scores_df[f"catalytic_{extension}"]
-    catalytic_scores    = neg_norm_array(catalytic_scores, f"catalytic_{extension}")   
-    
-    total_scores        = unblocked_all_scores_df[f"total_{extension}"]
-    total_scores        = neg_norm_array(total_scores, f"total_{extension}")   
-    
-    interface_scores    = unblocked_all_scores_df[f"interface_{extension}"]
-    interface_scores    = neg_norm_array(interface_scores, f"interface_{extension}")  
-    
-    efield_scores    = unblocked_all_scores_df[f"efield_{extension}"]   ### to be worked on
-    efield_scores    = neg_norm_array(-1*efield_scores, f"efield_{extension}")   ### to be worked on, with MINUS here
-    
-    if len(total_scores) == 0:
-        combined_scores = []
-    else:
-        if include_catalytic_score:
-            combined_scores     = np.stack((total_scores, interface_scores, efield_scores, catalytic_scores))
-        else:
-            combined_scores     = np.stack((total_scores, interface_scores, efield_scores))
-        combined_scores     = np.mean(combined_scores, axis=0)
-        
-          
-    if print_norm:
-        if combined_scores.size > 0:
-            print("HIGHSCORE:","{:.2f}".format(np.amax(combined_scores)),end=" ")
-            print("Designs:",len(combined_scores),end=" ")
-            PARENTS = [i for i in os.listdir(f'{FOLDER_HOME}/{FOLDER_PARENT}') if i[-4:] == ".pdb"]
-            print("Parents:",len(PARENTS))
-        
-    return catalytic_scores, total_scores, interface_scores, efield_scores, combined_scores
-        
 def boltzmann_selection(self):
-    
+    """
+    Selects a design variant based on a Boltzmann-weighted probability distribution.
+
+    Filters variants based on certain conditions (e.g., scores, block status), then computes probabilities
+    using Boltzmann factors with a temperature factor (`KBT_BOLTZMANN`) to select a variant for further design steps.
+
+    Returns:
+        int: Index of the selected design variant.
+    """
+        
     parent_indices = set(self.all_scores_df['parent_index'].astype(str).values)
-    unblocked_all_scores_df = self.all_scores_df[self.all_scores_df["blocked"] == False] # Remove blocked indices
-    unblocked_all_scores_df = unblocked_all_scores_df.dropna(subset=['total_score'])     # Remove indices without score (design running)
-   
+    
+    unblocked_all_scores_df = self.all_scores_df
+    
+    # Remove blocked indices
+    for unblock in ["RosettaRelax","ESMfold"]:                    
+        unblocked_all_scores_df = unblocked_all_scores_df[unblocked_all_scores_df[f"blocked_{unblock}"] == False]
+             
+    # Complet ESMfold and RosettaRelax
+    filtered_indices = unblocked_all_scores_df[unblocked_all_scores_df['score_taken_from'] != 'RosettaRelax'] # Remove Relaxed Indeces
+    
+    # Before running the Boltzmann selection, check if files should be run immediatly
+    #  |-- if a design was made (seq exist)
+    #    |-- select index is there is no ESMfold
+    #      |-- select index is there is no RosettaRelax
+    
+    for index, row in filtered_indices.iterrows():
+        
+        # Check if sequence file exists
+        if not os.path.isfile(f'{self.FOLDER_HOME}/{index}/{self.WT}_{index}.seq'):
+            continue
+            
+        # If there are designed structures that were not run through ESMFold, run them
+        if not os.path.isfile(f'{self.FOLDER_HOME}/{index}/{self.WT}_ESMfold_{index}.pdb'):
+            selected_index = index
+            return selected_index
+            
+        # If there are structures that ran through ESMFold but have not been Relax, run them
+        elif not os.path.isfile(f'{self.FOLDER_HOME}/{index}/{self.WT}_RosettaRelax_{index}.pdb'):
+            selected_index = index
+            return selected_index     
+
     # Drop catalytic scroes > mean + 1 std
     mean_catalytic_score = unblocked_all_scores_df['catalytic_score'].mean()
     std_catalytic_score = unblocked_all_scores_df['catalytic_score'].std()
     mean_std_catalytic_score = mean_catalytic_score + std_catalytic_score
     if len(unblocked_all_scores_df) > 10:
         unblocked_all_scores_df = unblocked_all_scores_df[unblocked_all_scores_df['catalytic_score'] < mean_std_catalytic_score]
-    
+        
+    # Remove indices without score (design running)
+    unblocked_all_scores_df = unblocked_all_scores_df.dropna(subset=['total_score'])     
+  
     # If there are structures that ran through RosettaRelax but have never been used for design,
     # run design (exclude ProteinMPNN as it is always relaxed)
     relaxed_indices = unblocked_all_scores_df[unblocked_all_scores_df['score_taken_from'] == 'RosettaRelax']
@@ -298,11 +348,12 @@ def boltzmann_selection(self):
     relaxed_indices = [str(i) for i in relaxed_indices.index]
     filtered_indices = [index for index in relaxed_indices if index not in parent_indices]
 
+    #### NEEDS TO BE ADJUSTED!!!!
     if len(filtered_indices) >= 1:
         selected_index = filtered_indices[0]
         logging.info(f"{selected_index} selected because its relaxed but nothing was designed from it.")
         return int(selected_index)
-                
+              
     # Do Boltzmann Selection if some scores exist
     _, _, _, _, combined_potentials = normalize_scores(self, 
                                                        unblocked_all_scores_df, 
@@ -317,18 +368,25 @@ def boltzmann_selection(self):
         elif len(self.KBT_BOLTZMANN) > 2:
             logging.error(f"KBT_BOLTZMANN must either be a single value or list of two values.")
             logging.error(f"KBT_BOLTZMANN is {self.KBT_BOLTZMANN}")
-        else:
+        elif len(self.KBT_BOLTZMANN) == 2:
             # Ramp down kbT_boltzmann over time (i.e., with increaseing indices)
             # datapoints = legth of all_scores_df - number of parents generated
             num_pdb_files = len([file for file in os.listdir(self.FOLDER_PARENT) if file.endswith('.pdb')])
-            datapoints = max(self.all_scores_df['index'].max() +1 - num_pdb_files*self.N_PARENT_JOBS, 0)
-            kbt_boltzmann = max(self.KBT_BOLTZMANN[0] * np.exp(-self.KBT_BOLTZMANN[1]*datapoints), 0.05)
-        boltzmann_factors = np.exp(combined_potentials / (kbt_boltzmann))
+            datapoints = max(self.all_scores_df['index'].max() + 1 - num_pdb_files*self.N_PARENT_JOBS, 0)
+            kbt_boltzmann = float(max(self.KBT_BOLTZMANN[0] * np.exp(-self.KBT_BOLTZMANN[1]*datapoints), 0.05))
+        
+        # Some issue with numpy exp when calculating boltzman factors.
+        combined_potentials_list = [float(x) for x in combined_potentials]
+        combined_potentials = np.array(combined_potentials_list)
+
+        boltzmann_factors = np.exp(combined_potentials / kbt_boltzmann)
         probabilities = boltzmann_factors / sum(boltzmann_factors)
         
-        if len(self.all_scores_df["index"] > 0):
+        if len(unblocked_all_scores_df) > 0:
             selected_index = int(np.random.choice(unblocked_all_scores_df["index"].to_numpy(), p=probabilities))
         else:
+            logging.debug(f'Boltzmann selection tries to select a variant for design, but all are blocked. Waiting 20 seconds')
+            time.sleep(20)
             return None
         
     else:
@@ -337,7 +395,14 @@ def boltzmann_selection(self):
 
     return selected_index
 
+
 def check_parent_done(self):
+    """
+    Determines if parent designs are complete based on the number of generated designs and parent jobs.
+
+    Returns:
+        bool: True if parent designs are complete, otherwise False.
+    """
        
     number_of_indices = len(self.all_scores_df)
     parents = [i for i in os.listdir(self.FOLDER_PARENT) if i[-4:] == ".pdb"]
@@ -349,7 +414,17 @@ def check_parent_done(self):
         
     return parent_done
     
+
 def start_parent_design(self):
+    """
+    Initiates a new design process for a parent structure by creating a new variant entry.
+
+    Sets up the required files and configuration for designing a parent structure, then calls the design method
+    specified in `PARENT_DES_MED`.
+
+    Parameters:
+        self: An instance of the AIzymes_MAIN class with setup attributes and properties.
+    """
     
     number_of_indices = len(self.all_scores_df)
     PARENTS = [i for i in os.listdir(self.FOLDER_PARENT) if i[-4:] == ".pdb"]
@@ -359,92 +434,115 @@ def start_parent_design(self):
         
     new_index = create_new_index(self, parent_index="Parent")
     self.all_scores_df['design_method'] = self.all_scores_df['design_method'].astype('object') 
-    self.all_scores_df.at[new_index, 'design_method'] = "RosettaDesign"
+    self.all_scores_df.at[new_index, 'design_method'] = self.PARENT_DES_MED
     self.all_scores_df['luca'] = self.all_scores_df['luca'].astype('object') 
     self.all_scores_df.at[new_index, 'luca'] = parent_index
 
     # Add cat res to new entry
     save_cat_res_into_all_scores_df(self, new_index, 
                                    f'{self.FOLDER_PARENT}/{PARENTS[selected_index]}',
-                                   from_parent_struct=True)
+                                   save_resn=False)
     
     # Difficult to set kbt_boltzmann of first design. Here we just assign it the number of the second design
     if new_index == 1: 
         self.all_scores_df.at[new_index-1, 'kbt_boltzmann'] = self.all_scores_df.at[new_index, 'kbt_boltzmann']
 
-    run_design(self,
-               parent_index,
-               new_index,
-               ["RosettaDesign"],
-               parent_done = False)
-
+    # Start design
+    if self.PARENT_DES_MED not in ["ProteinMPNN"]:
+        run_design(self, new_index, [self.PARENT_DES_MED, "ElectricFields"])
+        self.all_scores_df.at[new_index, "blocked_ElectricFields"] = True 
+    else:
+        run_design(self, new_index, [self.PARENT_DES_MED, "ESMfold", "RosettaRelax", "ElectricFields"])
+        self.all_scores_df.at[new_index, "blocked_ESMfold"] = True 
+        self.all_scores_df.at[new_index, "blocked_RosettaRelax"] = True 
+        self.all_scores_df.at[new_index, "blocked_ElectricFields"] = True 
+      
     save_all_scores_df(self)
     
 # Decides what to do with selected index
-def start_calculation(self, 
-                      selected_index):
+
+def start_calculation(self, parent_index):
+    """
+    Decides the next calculation step for the specified design variant index.
+
+    Based on the current design state, this function decides to run ESMfold, RosettaRelax, or a design method
+    for the given index.
+
+    Parameters:
+        parent_index (int): Index of the variant to evaluate for further calculations.
+    """
     
-    logging.debug(f"Starting new calculation for index {selected_index}.")
-    parent_index = selected_index
+    logging.debug(f"Starting new calculation for index {parent_index}.")
+     
+    # if blocked
+    #  └──> Error
+    # elif no esmfold
+    #  └──> run esmfold
+    # elif no relax
+    #  └──> run relax
+    # else
+    #  └──> run design
 
-    blocked = False
-    if self.all_scores_df.at[selected_index, "blocked"] == True:
-        blocked = True
-        
-    relaxed = False
-    if f"{self.WT}_RosettaRelax_{selected_index}.pdb" in os.listdir(os.path.join(self.FOLDER_HOME, str(selected_index))):
-        relaxed = True
+    # Check if index is still blocked, if yes --> STOP. This shouldn't happen!
+    if any(self.all_scores_df.at[parent_index, col] == True for col in [f"blocked_RosettaRelax", f"blocked_ESMfold"]):
+        logging.error(f"Index {parent_index} is being worked on. Skipping index.")
+        logging.error(f"Note: This should not happen! Check blocking and Boltzman selection.")        
+        return
+    
+    # Check if ESMfold is done
+    elif not f"{self.WT}_ESMfold_{parent_index}.pdb" in os.listdir(os.path.join(self.FOLDER_HOME, str(parent_index))):
+        logging.info(f"Index {parent_index} has no predicted structure, starting ESMfold.")
+        self.all_scores_df.at[parent_index, "blocked_ESMfold"] = True   
+        run_design(self, parent_index, ["ESMfold"])  
+    
+    # Check if RosettaRelax is done    
+    elif not f"{self.WT}_RosettaRelax_{parent_index}.pdb" in os.listdir(os.path.join(self.FOLDER_HOME, str(parent_index))):
+        logging.info(f"Index {parent_index} has no relaxed structure, starting RosettaRelax.")
+        self.all_scores_df.at[parent_index, "blocked_RosettaRelax"] = True 
+        run_design(self, parent_index, ["RosettaRelax", "ElectricFields"])    
 
-    # Check if RosettaRelax is done
-    if relaxed:
+    # If all OK, start Design
+    else:
 
         # RosettaRelax is done, create a new index
         new_index = create_new_index(self, parent_index)
 
+        # Add cat res to new entry
+        save_cat_res_into_all_scores_df(self, new_index, 
+                                       f"{self.FOLDER_HOME}/{parent_index}/{self.WT}_RosettaRelax_{parent_index}.pdb",
+                                       save_resn=False)
+        
         #####
         # Here, we can add an AI to decide on the next steps
         #####
 
-        # Run Design with new_index
+        # Run Design with new_index --> CHECK IF self.ProteinMPNN_PROB + self.LMPNN_PROB is below 1!!!!
         if random.random() < self.ProteinMPNN_PROB:  
             self.all_scores_df.at[new_index, 'design_method'] = "ProteinMPNN"
-            run_design(self, 
-                       parent_index, 
-                       new_index,
-                       ["ProteinMPNN"])
-            
-        elif random.random() < self.LMPNN_PROB:
+            run_design(self, new_index, ["ProteinMPNN", "ESMfold", "RosettaRelax", "ElectricFields"])
+        elif random.random()+self.ProteinMPNN_PROB < self.LMPNN_PROB+self.ProteinMPNN_PROB:
             self.all_scores_df.at[new_index, 'design_method'] = "LigandMPNN"
-            run_design(self, 
-                       parent_index, 
-                       new_index,
-                       ["LigandMPNN"])
+            run_design(self, new_index, ["LigandMPNN", "ESMfold", "RosettaRelax", "ElectricFields"])
         else:                    
             self.all_scores_df.at[new_index, 'design_method'] = "RosettaDesign"
-            run_design(self, 
-                       parent_index, 
-                       new_index,
-                       ["RosettaDesign"])
+            run_design(self, new_index, ["RosettaDesign", "ElectricFields"])
         
-    else:
-        
-        # RosettaRelax is not done, check if Index is blocked
-        if blocked:
-            # Blocked --> RosettaRelax is still running, do not do antyting. This shouldn't happen!
-            logging.error(f"Index {selected_index} is being worked on. Skipping index.")
-            logging.error(f"Note: This should not happen! Check blocking and Boltzman selection.")
-        else:
-            # Not blocked --> submit ESMfold and RosettaRelax and block index
-            logging.info(f"Index {selected_index} has no relaxed structure, starting ESMfold and RosettaRelax.")
-            run_design(self, 
-                       selected_index, 
-                       selected_index, 
-                       ["ESMfold","RosettaRelax"])
-            self.all_scores_df.at[selected_index, "blocked"] = True
-
     save_all_scores_df(self)
         
+
 def create_new_index(self, parent_index):
+    """
+    Creates a new design entry in `all_scores_df` with a unique index, inheriting attributes from a parent variant.
+
+    Updates the DataFrame with new index information, saves the updated file, and sets up the directory structure
+    for the new design variant.
+
+    Parameters:
+        parent_index (str): The index of the parent variant or "Parent" for initial designs.
+
+    Returns:
+        int: The newly created index for the variant.
+    """
     
     # Create a new line with the next index and parent_index
     new_index = len(self.all_scores_df)
@@ -468,14 +566,17 @@ def create_new_index(self, parent_index):
                                 'kbt_boltzmann': kbt_boltzmann,
                                 'generation': generation,
                                 'luca': luca,
-                                'blocked': False,
-                                }, index = [0])
+                                'blocked_ESMfold': False,
+                                'blocked_RosettaRelax': False,
+                                }, index = [0] , dtype=object)  
+        
     self.all_scores_df = pd.concat([self.all_scores_df, new_index_df], ignore_index=True)
 
     save_all_scores_df(self)
 
     # Create the folders for the new index
     os.makedirs(f"{self.FOLDER_HOME}/{new_index}/scripts", exist_ok=True)
+    os.makedirs(f"{self.FOLDER_HOME}/{new_index}/efield", exist_ok=True)
            
     logging.debug(f"Child index {new_index} created for {parent_index}.")
     
