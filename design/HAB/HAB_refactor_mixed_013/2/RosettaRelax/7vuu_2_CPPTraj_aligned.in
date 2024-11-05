@@ -1,5 +1,0 @@
-parm    /home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/2/RosettaRelax/7vuu_2_old_bb.pdb
-reference /home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/2/RosettaRelax/7vuu_2_old_bb.pdb [ref]
-trajin    /home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/2/RosettaRelax/7vuu_2_new_bb.pdb
-rmsd      @CA ref [ref]
-trajout   /home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/2/RosettaRelax/7vuu_2_aligned.pdb noter

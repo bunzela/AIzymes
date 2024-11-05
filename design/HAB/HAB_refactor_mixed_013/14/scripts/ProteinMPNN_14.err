@@ -1,6 +1,0 @@
-Traceback (most recent call last):
-  File "/home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/parent/find_highest_scoring_sequence.py", line 51, in <module>
-    main(args)
-  File "/home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/parent/find_highest_scoring_sequence.py", line 13, in main
-    with open(sequence_parent, 'r') as file:
-FileNotFoundError: [Errno 2] No such file or directory: '/home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/3/7vuu_RosettaRelax_3.seq'
