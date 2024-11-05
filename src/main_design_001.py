@@ -95,7 +95,7 @@ def run_design(self,
             
             logging.error(f"{design_step} is not defined!")
             sys.exit()
-     
+                 
     # Write the shell command to a file and submit job                
     job = "_".join(design_steps)
     with open(f'{self.FOLDER_HOME}/{index}/scripts/{job}_{index}.sh','w') as file: file.write(cmd)

@@ -209,8 +209,9 @@ def update_scores(self):
         if not os.path.isfile(seq_path): continue
 
         # Check if ElectricFields are done   
-        if not os.path.exists(f"{self.FOLDER_HOME}/{int(index)}/{self.WT}_{score_type}_{parent_index}_fields.pkl"): continue 
-
+        if not os.path.exists(f"{self.FOLDER_HOME}/{int(index)}/ElectricFields/{self.WT}_{score_type}_{index}_fields.pkl"):
+            continue 
+        
         # Load scores
         with open(score_file_path, "r") as f:
             scores = f.readlines()
@@ -226,7 +227,7 @@ def update_scores(self):
             self.all_scores_df.at[index, 'score_taken_from'] = 'RosettaDesign'
                 
         # Update catalytic residues
-        save_cat_res_into_all_scores_df(self, index, pdb_path) 
+        save_cat_res_into_all_scores_df(self, index, pdb_path, save_resn=True) 
         cat_res = self.all_scores_df.at[index, 'cat_resi']
         
         # Calculate catalytic and interface score
@@ -245,7 +246,7 @@ def update_scores(self):
             if header in ['dihedral_constraint']:      catalytic_score += float(scores[idx_headers]) 
 
         # Calculate efield score
-        efield_score, index_efields_dict = calc_efields_score(self, pdb_path, cat_res)  
+        efield_score, index_efields_dict = get_efields_score(self, index, score_type)  
         update_efieldsdf(self, index, index_efields_dict)              
 
         # Update scores
@@ -448,14 +449,15 @@ def start_parent_design(self):
         self.all_scores_df.at[new_index-1, 'kbt_boltzmann'] = self.all_scores_df.at[new_index, 'kbt_boltzmann']
 
     # Start design
-    if self.PARENT_DES_MED not in ["ProteinMPNN"]:
-        run_design(self, new_index, [self.PARENT_DES_MED, "ElectricFields"])
-        self.all_scores_df.at[new_index, "blocked_ElectricFields"] = True 
-    else:
+    if self.PARENT_DES_MED in ["ProteinMPNN","LigandMPNN"]:
         run_design(self, new_index, [self.PARENT_DES_MED, "ESMfold", "RosettaRelax", "ElectricFields"])
         self.all_scores_df.at[new_index, "blocked_ESMfold"] = True 
         self.all_scores_df.at[new_index, "blocked_RosettaRelax"] = True 
-        self.all_scores_df.at[new_index, "blocked_ElectricFields"] = True 
+    elif self.PARENT_DES_MED in ["RosettaDesign"]:  
+        run_design(self, new_index, [self.PARENT_DES_MED, "ElectricFields"])
+    else:
+        logging.error(f"ERROR! PARENT_DES_MED: {PARENT_DES_MED} not defined.")
+        sys.exit()
       
     save_all_scores_df(self)
     
@@ -493,7 +495,8 @@ def start_calculation(self, parent_index):
     elif not f"{self.WT}_ESMfold_{parent_index}.pdb" in os.listdir(os.path.join(self.FOLDER_HOME, str(parent_index))):
         logging.info(f"Index {parent_index} has no predicted structure, starting ESMfold.")
         self.all_scores_df.at[parent_index, "blocked_ESMfold"] = True   
-        run_design(self, parent_index, ["ESMfold"])  
+        self.all_scores_df.at[parent_index, "blocked_RosettaRelax"] = True 
+        run_design(self, parent_index, ["ESMfold", "RosettaRelax", "ElectricFields"])  
     
     # Check if RosettaRelax is done    
     elif not f"{self.WT}_RosettaRelax_{parent_index}.pdb" in os.listdir(os.path.join(self.FOLDER_HOME, str(parent_index))):
@@ -516,7 +519,7 @@ def start_calculation(self, parent_index):
         # Here, we can add an AI to decide on the next steps
         #####
 
-        # Run Design with new_index --> CHECK IF self.ProteinMPNN_PROB + self.LMPNN_PROB is below 1!!!!
+        # Run Design with new_index --> need to add code to CHECK IF self.ProteinMPNN_PROB + self.LMPNN_PROB is below 1!!!!
         if random.random() < self.ProteinMPNN_PROB:  
             self.all_scores_df.at[new_index, 'design_method'] = "ProteinMPNN"
             run_design(self, new_index, ["ProteinMPNN", "ESMfold", "RosettaRelax", "ElectricFields"])
@@ -576,7 +579,7 @@ def create_new_index(self, parent_index):
 
     # Create the folders for the new index
     os.makedirs(f"{self.FOLDER_HOME}/{new_index}/scripts", exist_ok=True)
-    os.makedirs(f"{self.FOLDER_HOME}/{new_index}/efield", exist_ok=True)
+    os.makedirs(f"{self.FOLDER_HOME}/{new_index}/ElectricFields", exist_ok=True)
            
     logging.debug(f"Child index {new_index} created for {parent_index}.")
     

@@ -23,10 +23,11 @@ def prepare_RosettaRelax(self,
     """
     Relaxes protein structure in {index} using RosettaRelax.
     
-    Args index (str): The index of the protein variant to be relaxed.
+    Args:
+    index (str): The index of the protein variant to be relaxed.
     cmd (str): collection of commands to be run, this script wil append its commands to cmd
     
-    Optional parameters:
+    Optional Args:
     PreMatchRelax (bool): True if ESMfold to be run without ligand (prior to RosettaMatch).
 
     """
@@ -115,8 +116,7 @@ cat {PDBfile_out}_lig.pdb     >> {PDBfile_out}_input.pdb
 sed -i '/TER/d' {PDBfile_out}_input.pdb
 """
         
-    cmd += f"""
-# Run Rosetta Relax
+    cmd += f"""# Run Rosetta
 {self.ROSETTA_PATH}/bin/rosetta_scripts.{self.rosetta_ext} \\
                 -s                                        {PDBfile_out}_input.pdb \\
                 -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params \\
@@ -193,5 +193,5 @@ sed -i '/        H  /d' {self.WT}_RosettaRelax_{index}.pdb
     # Write the RosettaRelax.xml to a file
     with open(f'{filename}/scripts/RosettaRelax_{index}.xml', 'w') as f:
         f.writelines(RosettaRelax_xml)      
-       
+           
     return cmd

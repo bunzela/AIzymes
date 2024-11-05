@@ -84,6 +84,11 @@ def prepare_input_files(self):
     with open(f'{self.FOLDER_HOME}/cst.dat', 'w') as f:
         f.write(cst)    
 
+    # Save FIELD_TARGET
+    seq = sequence_from_pdb(f"{self.FOLDER_PARENT}/{self.WT}")
+    with open(f'{self.FOLDER_PARENT}/field_target.dat', "w") as f:
+        f.write(f'{self.FIELD_TARGET}\n')    
+        
 def initialize_variables(self):
 
     # Complete directories
@@ -204,7 +209,7 @@ def make_empty_all_scores_df(self):
                                               'relax_interface_score', 'relax_total_score', 'relax_catalytic_score', 'relax_efield_score', \
                                               'design_interface_score', 'design_total_score', 'design_catalytic_score', \
                                               'design_efield_score', 'generation', 'mutations', 'design_method', 'score_taken_from', \
-                                              'blocked_ESMfold', 'blocked_RosettaRelax',  'blocked_ElectricFields', \
+                                              'blocked_ESMfold', 'blocked_RosettaRelax', \
                                                'cat_resi', 'cat_resn'], dtype=object)
     
     save_all_scores_df(self)
