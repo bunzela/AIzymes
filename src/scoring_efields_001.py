@@ -18,32 +18,12 @@ def prepare_efields(self, index:str, cmd:str):
     cmd (str): Command to be exected by run_design using submit_job.
     """
    
-    # Figure out which structure to take as inuput
-    if cmd == "":
-        
-        # Running only electric field calculation on all structures in directory
-        pdbs = [pdb for pdb in os.listdir(f'{self.FOLDER_HOME}/{index}') if pdb.endswith(".pdb")]
-        pdbs = [pdb for pdb in os.listdir(f'{self.FOLDER_HOME}/{index}') if "ESMfold" not in pdb] # Do not calculate fields for EMSfold
-        if len(pdbs) == 1:
-            pdb = pdbs[0][:-4]
-        else:
-            logging.error(f"Index {index} has {len(pdbs)} PDB entries that requrie field calculations. Expected exactly 1.")
-            return
-
-        filename_in = f'{self.FOLDER_HOME}/{index}/{pdb}'
-        filename_out = f'{self.FOLDER_HOME}/{index}/efield/{pdb}'
-
-        generate_AMBER_files(self, filename_in, filename_out)
-        cmd += f"tleap -s -f {filename_out}_tleap.i -o {filename_out}_tleap.out \n"
-    
-    else:
-
-        pdb = [line.strip("#").strip() for line in cmd.splitlines() if line.startswith("###")]
-        pdb = [line for line in pdb if line in ["RosettaDesign", "ProteinMPNN", "LigandMPNN"]]
-        pdb = f'{self.WT}_{pdb[0]}_{index}'
+    pdb = [line.strip("#").strip() for line in cmd.splitlines() if line.startswith("###")]
+    pdb = [line for line in pdb if line in ["RosettaDesign", "ProteinMPNN", "LigandMPNN", "RosettaRelax"]]
+    pdb = f'{self.WT}_{pdb[0]}_{index}'
         
     filename_in = f'{self.FOLDER_HOME}/{index}/{pdb}'
-    filename_out = f'{self.FOLDER_HOME}/{index}/efield/{pdb}'
+    filename_out = f'{self.FOLDER_HOME}/{index}/ElectricFields/{pdb}'
     
     # Make tleap files to generate input
     with open(f"{filename_out}_tleap.in", "w") as f:
@@ -66,14 +46,14 @@ sed -i '/ H /d'      {filename_out}.pdb
 # Make AMBER files
 tleap -f             {filename_out}_tleap.in > \\
                      {filename_out}_tleap.out
-mv leap.log         {filename_out}_tleap.log
+mv leap.log          {filename_out}_tleap.log
 
 # Add field calculation command
 python   {self.FIELD_TOOLS} \\
 -nc      {filename_out}.rst7 \\
 -parm    {filename_out}.parm7 \\
 -out     {filename_out}_fields.pkl \\
--target  Input/field_target.dat \\
+-target  {self.FOLDER_PARENT}/field_target.dat \\
 -solvent WAT
 
 
@@ -81,10 +61,9 @@ python   {self.FIELD_TOOLS} \\
     
     return cmd
 
-def calc_efields_score(self, pdb_path, cat_resi):
+def get_efields_score(self, index, score_type):
 
-    filename_out = f'{self.FOLDER_HOME}/{parent_index}/efield/{pdb}_clean'
-    with open(f"{filename_out}_fields.pkl", "rb") as f:
+    with open(f"{self.FOLDER_HOME}/{index}/ElectricFields/{self.WT}_{score_type}_{index}_fields.pkl", "rb") as f:
         FIELDS = pkl.load(f)
 
     bond_field = FIELDS[f':5TS@C9_:5TS@H04']['Total']

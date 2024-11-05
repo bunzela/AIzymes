@@ -32,13 +32,14 @@ def prepare_ESMfold(self,
     sequence_file = f'{self.FOLDER_HOME}/{index}/{self.WT}_{index}.seq'
     
     # Make sequence file exist
-    if not os.path.isfile(sequence_file):      
-        logging.error(f"Sequence_file {sequence_file} not present!")
-        return False
-       
-    cmd += f"""
+    #if not os.path.isfile(sequence_file):      
+    #    logging.error(f"Sequence_file {sequence_file} not present!")
+    #    return False
+    #does not work anymore if run in batch!!!
     
-{self.bash_args} python {self.FOLDER_PARENT}/ESMfold.py \
+    cmd += f"""### ESMfold ###
+    
+{self.bash_args}python {self.FOLDER_PARENT}/ESMfold.py \
 --sequence_file {sequence_file} \
 --output_file   {output_file} 
 
