@@ -1,0 +1,4 @@
+parm    /home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/3/7vuu_RosettaDesign_3.pdb
+trajin  /home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/3/7vuu_RosettaDesign_3.pdb
+strip   !:5TS
+trajout /home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/3/RosettaRelax/7vuu_3_lig.pdb

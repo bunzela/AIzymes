@@ -1,0 +1,4 @@
+parm    /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/17/1ohp_ESMfold_17.pdb
+trajin  /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/17/1ohp_ESMfold_17.pdb
+strip   !@C,N,O,CA
+trajout /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/17/RosettaRelax/1ohp_17_new_bb.pdb

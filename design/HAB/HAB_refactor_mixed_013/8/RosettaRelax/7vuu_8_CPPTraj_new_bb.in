@@ -1,0 +1,4 @@
+parm    /home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/8/7vuu_ESMfold_8.pdb
+trajin  /home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/8/7vuu_ESMfold_8.pdb
+strip   !@C,N,O,CA
+trajout /home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/8/RosettaRelax/7vuu_8_new_bb.pdb

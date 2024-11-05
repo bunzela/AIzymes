@@ -1,0 +1,12 @@
+#!/bin/bash
+#$ -V
+#$ -cwd
+#$ -N KSI_pos_ESMfold_62
+#$ -hard -l mf=40G
+#$ -o /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/62/scripts/ESMfold_62.out
+#$ -e /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/62/scripts/ESMfold_62.err
+
+# Output folder
+cd /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/62
+pwd
+bash /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/62/scripts/ESMfold_62.sh

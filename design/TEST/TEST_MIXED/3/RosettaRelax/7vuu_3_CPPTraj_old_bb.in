@@ -1,0 +1,5 @@
+parm    /home/bunzelh/AIzymes/design/TEST/TEST_MIXED/3/7vuu_RosettaDesign_3.pdb
+trajin  /home/bunzelh/AIzymes/design/TEST/TEST_MIXED/3/7vuu_RosettaDesign_3.pdb
+strip   :5TS
+strip   !@C,N,O,CA
+trajout /home/bunzelh/AIzymes/design/TEST/TEST_MIXED/3/RosettaRelax/7vuu_3_old_bb.pdb

@@ -1,0 +1,116 @@
+2024-11-05 14:52:17 - DEBUG - Updating scores
+2024-11-05 14:52:17 - DEBUG - Parent design not yet done. 1/5 jobs submitted.
+2024-11-05 14:52:17 - DEBUG - Child index 0 created for Parent.
+2024-11-05 14:52:17 - DEBUG - Run RosettaDesign for index 0 based on index 0.
+2024-11-05 14:52:17 - DEBUG - Calculating ElectricFields for index 0.
+2024-11-05 14:52:17 - DEBUG - Your job 1676696 ("ROS_RosettaDesign_ElectricFields_0") has been submitted
+2024-11-05 14:52:17 - DEBUG - Updating scores
+2024-11-05 14:52:17 - DEBUG - Parent design not yet done. 2/5 jobs submitted.
+2024-11-05 14:52:17 - DEBUG - Child index 1 created for Parent.
+2024-11-05 14:52:17 - DEBUG - Run RosettaDesign for index 1 based on index 1.
+2024-11-05 14:52:17 - DEBUG - Calculating ElectricFields for index 1.
+2024-11-05 14:52:17 - DEBUG - Your job 1676697 ("ROS_RosettaDesign_ElectricFields_1") has been submitted
+2024-11-05 14:52:17 - DEBUG - Updating scores
+2024-11-05 14:52:17 - DEBUG - Parent design not yet done. 3/5 jobs submitted.
+2024-11-05 14:52:17 - DEBUG - Child index 2 created for Parent.
+2024-11-05 14:52:17 - DEBUG - Run RosettaDesign for index 2 based on index 2.
+2024-11-05 14:52:17 - DEBUG - Calculating ElectricFields for index 2.
+2024-11-05 14:52:17 - DEBUG - Your job 1676698 ("ROS_RosettaDesign_ElectricFields_2") has been submitted
+2024-11-05 14:52:18 - DEBUG - Updating scores
+2024-11-05 14:52:18 - DEBUG - Parent design not yet done. 4/5 jobs submitted.
+2024-11-05 14:52:18 - DEBUG - Child index 3 created for Parent.
+2024-11-05 14:52:18 - DEBUG - Run RosettaDesign for index 3 based on index 3.
+2024-11-05 14:52:18 - DEBUG - Calculating ElectricFields for index 3.
+2024-11-05 14:52:18 - DEBUG - Your job 1676699 ("ROS_RosettaDesign_ElectricFields_3") has been submitted
+2024-11-05 14:52:18 - DEBUG - Updating scores
+2024-11-05 14:52:18 - DEBUG - Parent design not yet done. 5/5 jobs submitted.
+2024-11-05 14:52:18 - DEBUG - Child index 4 created for Parent.
+2024-11-05 14:52:18 - DEBUG - Run RosettaDesign for index 4 based on index 4.
+2024-11-05 14:52:18 - DEBUG - Calculating ElectricFields for index 4.
+2024-11-05 14:52:18 - DEBUG - Your job 1676700 ("ROS_RosettaDesign_ElectricFields_4") has been submitted
+2024-11-05 14:54:20 - DEBUG - Updating scores
+2024-11-05 14:54:20 - INFO - Updated scores and potentials of index 2.
+2024-11-05 14:54:20 - DEBUG - Starting new calculation for index 2.
+2024-11-05 14:54:20 - INFO - Index 2 has no predicted structure, starting ESMfold.
+2024-11-05 14:54:20 - DEBUG - Run ESMfold for index 2.
+2024-11-05 14:54:20 - DEBUG - Run RosettaRelax for index 2.
+2024-11-05 14:54:20 - DEBUG - Calculating ElectricFields for index 2.
+2024-11-05 14:54:20 - DEBUG - Your job 1676766 ("ROS_ESMfold_RosettaRelax_ElectricFields_2") has been submitted
+2024-11-05 14:55:00 - DEBUG - Updating scores
+2024-11-05 14:55:00 - INFO - Updated scores and potentials of index 3.
+2024-11-05 14:55:00 - INFO - Updated scores and potentials of index 4.
+2024-11-05 14:55:00 - DEBUG - Starting new calculation for index 3.
+2024-11-05 14:55:00 - INFO - Index 3 has no predicted structure, starting ESMfold.
+2024-11-05 14:55:00 - DEBUG - Run ESMfold for index 3.
+2024-11-05 14:55:00 - DEBUG - Run RosettaRelax for index 3.
+2024-11-05 14:55:00 - DEBUG - Calculating ElectricFields for index 3.
+2024-11-05 14:55:01 - DEBUG - Your job 1676767 ("ROS_ESMfold_RosettaRelax_ElectricFields_3") has been submitted
+2024-11-05 14:55:01 - DEBUG - Updating scores
+2024-11-05 14:55:01 - DEBUG - Starting new calculation for index 4.
+2024-11-05 14:55:01 - INFO - Index 4 has no predicted structure, starting ESMfold.
+2024-11-05 14:55:01 - DEBUG - Run ESMfold for index 4.
+2024-11-05 14:55:01 - DEBUG - Run RosettaRelax for index 4.
+2024-11-05 14:55:01 - DEBUG - Calculating ElectricFields for index 4.
+2024-11-05 14:55:01 - DEBUG - Your job 1676768 ("ROS_ESMfold_RosettaRelax_ElectricFields_4") has been submitted
+2024-11-05 15:13:45 - DEBUG - Updating scores
+2024-11-05 15:13:45 - DEBUG - Unblocked RosettaRelax index 2.
+2024-11-05 15:13:45 - DEBUG - Unblocked ESMfold index 2.
+2024-11-05 15:13:46 - INFO - Updated scores and potentials of index 2.
+2024-11-05 15:13:46 - DEBUG - Unblocked RosettaRelax index 3.
+2024-11-05 15:13:46 - DEBUG - Unblocked ESMfold index 3.
+2024-11-05 15:13:46 - INFO - Updated scores and potentials of index 3.
+2024-11-05 15:13:46 - DEBUG - Unblocked RosettaRelax index 4.
+2024-11-05 15:13:46 - DEBUG - Unblocked ESMfold index 4.
+2024-11-05 15:13:46 - INFO - Updated scores and potentials of index 4.
+2024-11-05 15:13:46 - DEBUG - Starting new calculation for index 0.
+2024-11-05 15:13:46 - INFO - Index 0 has no predicted structure, starting ESMfold.
+2024-11-05 15:13:46 - DEBUG - Run ESMfold for index 0.
+2024-11-05 15:13:46 - DEBUG - Run RosettaRelax for index 0.
+2024-11-05 15:13:46 - DEBUG - Calculating ElectricFields for index 0.
+2024-11-05 15:13:46 - DEBUG - Your job 1676771 ("ROS_ESMfold_RosettaRelax_ElectricFields_0") has been submitted
+2024-11-05 15:13:46 - DEBUG - Updating scores
+2024-11-05 15:13:46 - DEBUG - Starting new calculation for index 1.
+2024-11-05 15:13:46 - INFO - Index 1 has no predicted structure, starting ESMfold.
+2024-11-05 15:13:46 - DEBUG - Run ESMfold for index 1.
+2024-11-05 15:13:46 - DEBUG - Run RosettaRelax for index 1.
+2024-11-05 15:13:46 - DEBUG - Calculating ElectricFields for index 1.
+2024-11-05 15:13:46 - DEBUG - Your job 1676772 ("ROS_ESMfold_RosettaRelax_ElectricFields_1") has been submitted
+2024-11-05 15:13:46 - DEBUG - Updating scores
+2024-11-05 15:13:46 - INFO - 2 selected because its relaxed but nothing was designed from it.
+2024-11-05 15:13:46 - DEBUG - Starting new calculation for index 2.
+2024-11-05 15:13:46 - DEBUG - Child index 5 created for 2.
+2024-11-05 15:13:46 - DEBUG - Run RosettaDesign for index 5 based on index 5.
+2024-11-05 15:13:46 - DEBUG - Calculating ElectricFields for index 5.
+2024-11-05 15:13:46 - DEBUG - Your job 1676773 ("ROS_RosettaDesign_ElectricFields_5") has been submitted
+2024-11-05 15:20:09 - DEBUG - Updating scores
+2024-11-05 15:20:10 - INFO - Updated scores and potentials of index 1.
+2024-11-05 15:20:10 - INFO - 3 selected because its relaxed but nothing was designed from it.
+2024-11-05 15:20:10 - DEBUG - Starting new calculation for index 3.
+2024-11-05 15:20:10 - DEBUG - Child index 6 created for 3.
+2024-11-05 15:20:10 - DEBUG - Run RosettaDesign for index 6 based on index 6.
+2024-11-05 15:20:10 - DEBUG - Calculating ElectricFields for index 6.
+2024-11-05 15:20:10 - DEBUG - Your job 1676791 ("ROS_RosettaDesign_ElectricFields_6") has been submitted
+2024-11-05 15:20:50 - DEBUG - Updating scores
+2024-11-05 15:20:50 - INFO - Updated scores and potentials of index 0.
+2024-11-05 15:20:50 - INFO - 4 selected because its relaxed but nothing was designed from it.
+2024-11-05 15:20:50 - DEBUG - Starting new calculation for index 4.
+2024-11-05 15:20:50 - DEBUG - Child index 7 created for 4.
+2024-11-05 15:20:50 - DEBUG - Run RosettaDesign for index 7 based on index 7.
+2024-11-05 15:20:50 - DEBUG - Calculating ElectricFields for index 7.
+2024-11-05 15:20:50 - DEBUG - Your job 1676798 ("ROS_RosettaDesign_ElectricFields_7") has been submitted
+2024-11-05 15:22:31 - DEBUG - Updating scores
+2024-11-05 15:22:31 - INFO - Updated scores and potentials of index 6.
+2024-11-05 15:22:31 - INFO - Updated scores and potentials of index 7.
+2024-11-05 15:22:31 - DEBUG - Starting new calculation for index 6.
+2024-11-05 15:22:31 - INFO - Index 6 has no predicted structure, starting ESMfold.
+2024-11-05 15:22:31 - DEBUG - Run ESMfold for index 6.
+2024-11-05 15:22:31 - DEBUG - Run RosettaRelax for index 6.
+2024-11-05 15:22:31 - DEBUG - Calculating ElectricFields for index 6.
+2024-11-05 15:22:31 - DEBUG - Your job 1676801 ("ROS_ESMfold_RosettaRelax_ElectricFields_6") has been submitted
+2024-11-05 15:22:32 - DEBUG - Updating scores
+2024-11-05 15:22:32 - DEBUG - Starting new calculation for index 7.
+2024-11-05 15:22:32 - INFO - Index 7 has no predicted structure, starting ESMfold.
+2024-11-05 15:22:32 - DEBUG - Run ESMfold for index 7.
+2024-11-05 15:22:32 - DEBUG - Run RosettaRelax for index 7.
+2024-11-05 15:22:32 - DEBUG - Calculating ElectricFields for index 7.
+2024-11-05 15:22:32 - DEBUG - Your job 1676802 ("ROS_ESMfold_RosettaRelax_ElectricFields_7") has been submitted
