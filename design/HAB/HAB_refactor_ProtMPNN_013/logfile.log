@@ -1,0 +1,4 @@
+2024-11-05 08:47:50 - DEBUG - An unexpected error occurred while tokenizing input
+The following traceback may be corrupted or invalid
+The error message is: ('EOF in multi-line string', (1, 4))
+

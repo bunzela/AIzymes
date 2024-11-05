@@ -1,3 +1,34 @@
+
+"""
+Contains utility functions and supporting routines used across multiple modules
+within the AIzymes project.
+
+Functions:
+    - normalize_scores
+    - one_to_three_letter_aa
+    - run_command
+    - get_PDB_in
+    - load_main_variables
+    - save_main_variables
+    - submit_job
+    - sequence_from_pdb
+    - generate_remark_from_all_scores_df
+    - save_cat_res_into_all_scores_df
+    - reset_to_after_parent_design
+    - reset_to_after_index
+    - save_all_scores_df
+    - get_best_structures
+    - remove_intersection_best_structures
+    - trace_mutation_tree
+    - print_average_scores
+    - wait_for_file
+    - hamming_distance
+    - exponential_func
+
+Modules Required:
+    setup_system_001
+
+"""
 import os
 import sys
 import time
@@ -16,6 +47,159 @@ warnings.simplefilter('ignore', PDBConstructionWarning)
 from Bio import BiopythonParserWarning
 warnings.simplefilter('ignore', BiopythonParserWarning)
 
+from setup_system_001         import *
+
+def normalize_scores(self, 
+                     unblocked_all_scores_df, 
+                     include_catalytic_score=False, 
+                     print_norm=False, 
+                     norm_all=False, 
+                     extension="score"):
+    
+    def neg_norm_array(array, score_type):
+
+        if len(array) > 1:  ##check that it's not only one value
+            
+            array    = -array
+            
+            if norm_all:
+                if print_norm:
+                    print(score_type,self.NORM[score_type],end=" ")
+                array = (array-self.NORM[score_type][0])/(self.NORM[score_type][1]-self.NORM[score_type][0])
+                
+                # COMMENTED OUT BY HAB. I think this is useless and bad!
+                #array[array < 0] = 0.0
+                
+                if np.any(array > 1.0):
+                    print(f"\nNORMALIZATION ERROR! {score_type} has a value >1! Max value is {max(array)}") 
+                if np.any(array < 0.0):
+                    print(f"\nNORMALIZATION ERROR! {score_type} has a value <0! Min value is {min(array)}")
+            else:
+                if print_norm:
+                    print(score_type,[np.mean(array),np.std(array)],end=" ")
+                # Normalize using mean and standard deviation
+                if np.std(array) == 0:
+                    array = np.where(np.isnan(array), array, 0.0)  # Handle case where all values are the same
+                else:
+                    array = (array - np.mean(array)) / np.std(array)
+
+            return array
+        
+        else:
+            # do not normalize if array only contains 1 value
+            return [1]
+         
+    catalytic_scores    = unblocked_all_scores_df[f"catalytic_{extension}"]
+    catalytic_scores    = neg_norm_array(catalytic_scores, f"catalytic_{extension}")   
+    
+    total_scores        = unblocked_all_scores_df[f"total_{extension}"]
+    total_scores        = neg_norm_array(total_scores, f"total_{extension}")   
+    
+    interface_scores    = unblocked_all_scores_df[f"interface_{extension}"]
+    interface_scores    = neg_norm_array(interface_scores, f"interface_{extension}")  
+    
+    efield_scores    = unblocked_all_scores_df[f"efield_{extension}"]   ### to be worked on
+    efield_scores    = neg_norm_array(-1*efield_scores, f"efield_{extension}")   ### to be worked on, with MINUS here
+    
+    if len(total_scores) == 0:
+        combined_scores = []
+    else:
+        if include_catalytic_score:
+            combined_scores     = np.stack((total_scores, interface_scores, efield_scores, catalytic_scores))
+        else:
+            combined_scores     = np.stack((total_scores, interface_scores, efield_scores))
+        combined_scores     = np.mean(combined_scores, axis=0)
+        
+          
+    if print_norm:
+        if combined_scores.size > 0:
+            print("HIGHSCORE:","{:.2f}".format(np.amax(combined_scores)),end=" ")
+            print("Designs:",len(combined_scores),end=" ")
+            parents = [i for i in os.listdir(self.FOLDER_PARENT) if i[-4:] == ".pdb"]
+            print("Parents:",len(parents))
+        
+    return catalytic_scores, total_scores, interface_scores, efield_scores, combined_scores
+
+def one_to_three_letter_aa(one_letter_aa):
+    
+    # Dictionary mapping one-letter amino acid codes to three-letter codes in all caps
+    aa_dict = {
+        'A': 'ALA', 'R': 'ARG', 'N': 'ASN', 'D': 'ASP', 'C': 'CYS',
+        'E': 'GLU', 'Q': 'GLN', 'G': 'GLY', 'H': 'HIS', 'I': 'ILE',
+        'L': 'LEU', 'K': 'LYS', 'M': 'MET', 'F': 'PHE', 'P': 'PRO',
+        'S': 'SER', 'T': 'THR', 'W': 'TRP', 'Y': 'TYR', 'V': 'VAL'
+    }
+    
+    # Convert it to the three-letter code in all caps
+    return aa_dict[one_letter_aa]
+
+def run_command(command, cwd=None, capture_output=False):
+    """Wrapper to execute .py files in runtime with arguments, and print error messages if they occur.
+    
+    Parameters:
+    command: The command to run as a list of strings.
+    cwd: Optional; The directory to execute the command in.
+    capture_output: Optional; If True, capture stdout and stderr. Defaults to False (This is to conserve memory).
+    """
+    try:
+        # If capture_output is True, capture stdout and stderr
+        if capture_output:
+            result = subprocess.run(command, capture_output=True, text=True, check=True, cwd=cwd)
+        else:
+            # If capture_output is False, suppress all output by redirecting to os.devnull
+            with open(os.devnull, 'w') as fnull:
+                result = subprocess.run(command, stdout=fnull, stderr=fnull, text=True, check=True, cwd=cwd)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Command '{e.cmd}' failed with return code {e.returncode}")
+        logging.error(e.stderr)
+        #maybe rerun command here in case of efields
+        raise
+    except Exception as e:
+        logging.error(f"An error occurred while running command: {command}")
+        raise
+        
+def get_PDB_in(self, index):
+    
+    """Based on index, find the input PDB files for the AIzymes modules
+    
+    Paramters:
+    - index: The indix of the current design
+    
+    Output:
+    - PDBfile_Design_in: Input file for RosettaDesign
+    - PDBfile_Relax_in: Input file for RosettaRelax 
+    - PDBfile_Relax_ligand_in: Input file for Ligand to be used in RosettaRelax
+    """
+    
+    parent_index  = self.all_scores_df.loc[index, 'parent_index']
+    design_method = self.all_scores_df.loc[index, 'design_method']
+    
+    # PDBfile_Relax_ligand_in
+    if design_method == "ProteinMPNN":        
+        if parent_index == "Parent":
+            # Take ligand for relax run from Parent strucutre
+            PDBfile_Relax_ligand_in = f"{self.FOLDER_PARENT}/{self.WT}"
+        else:
+            # Take ligand for relax run from parent_index RosettaRelaxed structure
+            PDBfile_Relax_ligand_in  = f'{self.FOLDER_HOME}/{parent_index}/{self.WT}_RosettaRelax_{parent_index}'  
+
+    else:
+        # Take ligand for relax run from designed structure
+        PDBfile_Relax_ligand_in  = f'{self.FOLDER_HOME}/{index}/{self.WT}_{design_method}_{index}'    
+        
+    # PDBfile_Relax_in 
+    PDBfile_Relax_in = f'{self.FOLDER_HOME}/{index}/{self.WT}_ESMfold_{index}'  
+    
+    # PDBfile_Design_in
+    if parent_index == "Parent":
+        PDBfile_Design_in = f'{self.FOLDER_PARENT}/{self.WT}'
+    else:
+        PDBfile_Design_in = f'{self.FOLDER_HOME}/{parent_index}/{self.WT}_RosettaRelax_{parent_index}'
+        
+    
+    return PDBfile_Design_in, PDBfile_Relax_in, PDBfile_Relax_ligand_in
+
 def load_main_variables(self, FOLDER_HOME):
     
     self.VARIABLES_JSON  = f'{FOLDER_HOME}/variables.json'
@@ -33,39 +217,9 @@ def save_main_variables(self):
     with open(self.VARIABLES_JSON, 'w') as f: json.dump(variables, f, indent=4)
         
 def submit_job(self, index, job, ram=16, bash=False):        
-      
-    if self.SYSTEM == 'GRID':
-        submission_script = f"""#!/bin/bash
-#$ -V
-#$ -cwd
-#$ -N {self.SUBMIT_PREFIX}_{job}_{index}
-#$ -hard -l mf={ram}G
-#$ -o {self.FOLDER_HOME}/{index}/scripts/{job}_{index}.out
-#$ -e {self.FOLDER_HOME}/{index}/scripts/{job}_{index}.err
-"""
-    if self.SYSTEM == 'BLUEPEBBLE':
-        submission_script = f"""#!/bin/bash
-#SBATCH --account={self.BLUEPEBBLE_ACCOUNT}
-#SBATCH --partition=short
-#SBATCH --mem=40GB
-#SBATCH --ntasks-per-node=1
-#SBATCH --time=2:00:00    
-#SBATCH --nodes=1          
-#SBATCH --job-name={self.SUBMIT_PREFIX}_{job}_{index}
-#SBATCH --output={self.FOLDER_HOME}/{index}/scripts/AI_{job}_{index}.out
-#SBATCH --error={self.FOLDER_HOME}/{index}/scripts/AI_{job}_{index}.err
-"""
-        
-    if self.SYSTEM == 'BACKGROUND_JOB':
-        if not os.path.isfile(f'{self.FOLDER_HOME}/n_running_jobs.dat'):
-            with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'w') as f: f.write('0')
-        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'r'): jobs = int(f.read())
-        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'w'): f.write(jobs+1)
-        submission_script = ""
-
-    if self.SYSTEM == 'ABBIE_LOCAL':
-        submission_script = ""
-        
+              
+    submission_script = submit_head(self, index, job, ram)
+    
     submission_script += f"""
 # Output folder
 cd {self.FOLDER_HOME}/{index}
@@ -129,13 +283,14 @@ echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
                 process = subprocess.Popen(f'bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh &', 
                                            shell=True, stdout=stdout_log_file, stderr=stderr_log_file)
         
-def extract_sequence_from_pdb(pdb_path):
+def sequence_from_pdb(pdb_in):
     
-    with open(pdb_path, "r") as pdb_file:
-        for record in SeqIO.parse(pdb_file, "pdb-atom"):
+    with open(f"{pdb_in}.pdb", "r") as f:
+        for record in SeqIO.parse(f, "pdb-atom"):
             seq = str(record.seq)
-    return seq
     
+    return seq
+
 def generate_remark_from_all_scores_df(self, index):
 
     remark = ''
@@ -147,15 +302,13 @@ def generate_remark_from_all_scores_df(self, index):
         remarks.append(f'REMARK 666 MATCH TEMPLATE X {self.LIGAND}    0 MATCH MOTIF A {cat_resn}{str(cat_resi).rjust(5)}  {idx}  1')
     return "\n".join(remarks)
 
-def save_cat_res_into_all_scores_df(self, index, PDB_file_path, from_parent_struct=False):
+def save_cat_res_into_all_scores_df(self, index, PDB_file_path, save_resn=True):
     
     '''Finds the indices and names of the catalytic residue from <PDB_file_path> 
        Saves indices and residues into <all_scores_df> in row <index> as lists.
        To make sure these are saved and loaded as list, ";".join() and .split(";") should be used
        If information is read from an input structure for design do not save cat_resn'''
-      
-    time.sleep(0.1)
-    
+
     with open(PDB_file_path, 'r') as f: 
         PDB = f.readlines()
     
@@ -178,8 +331,8 @@ def save_cat_res_into_all_scores_df(self, index, PDB_file_path, from_parent_stru
                 break
     self.all_scores_df.at[index, 'cat_resi'] = ";".join(cat_resis)
     
-    # Only save the cat_resn if this comes from the designed structure, not from the input structure for design
-    if not from_parent_struct:
+    # Save resn only if enabled
+    if save_resn:
         self.all_scores_df['cat_resn'] = self.all_scores_df['cat_resn'].astype(str)
         self.all_scores_df.at[index, 'cat_resn'] = ";".join(cat_resns)
 
@@ -521,10 +674,16 @@ def wait_for_file(file_path, timeout=5):
         time.sleep(0.1)  # Wait for 0.1 seconds before checking again
     return False
 
+#Define the hamming distance function and other required functions
 def hamming_distance(seq1, seq2):
-    """Calculate the Hamming distance between two strings."""
+    #Ensures that seq2 is a string
     if not isinstance(seq2, str):
         return None
+     #Ensures that the current and predecessor sequence length is equal
     if len(seq1) != len(seq2):
         raise ValueError("Sequences must be of equal length")
+    #Returns the number of differences between the current sequence and the parent sequence.
     return sum(ch1 != ch2 for ch1, ch2 in zip(seq1, seq2))
+
+def exponential_func(x, A, k, c):
+    return c-A*np.exp(-k * x)
