@@ -1,0 +1,80 @@
+
+CPPTRAJ: Trajectory Analysis. V4.14.0 (AmberTools V19.10)
+    ___  ___  ___  ___
+     | \/ | \/ | \/ | 
+    _|_/\_|_/\_|_/\_|_
+
+| Date/time: 10/19/24 11:31:41
+| Available memory: 1.066 TB
+
+INPUT: Reading input from '/home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/38/RosettaRelax/1ohp_38_CPPTraj_aligned.in'
+  [parm /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/38/RosettaRelax/1ohp_38_old_bb.pdb]
+	Reading '/home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/38/RosettaRelax/1ohp_38_old_bb.pdb' as PDB File
+	Reading bond info from CONECT records.
+	Not reading bond info from LINK records.
+	Determining bond info from distances.
+Warning: 1ohp_38_old_bb.pdb: Determining default bond distances from element types.
+  [reference /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/38/RosettaRelax/1ohp_38_old_bb.pdb [ref]]
+	Reading '/home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/38/RosettaRelax/1ohp_38_old_bb.pdb' as PDB
+	Setting active reference for distance-based masks: '1ohp_38_old_bb.pdb'
+  [trajin /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/38/RosettaRelax/1ohp_38_new_bb.pdb]
+	Reading '/home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/38/RosettaRelax/1ohp_38_new_bb.pdb' as PDB
+  [rmsd @CA ref [ref]]
+    RMSD: (@CA), reference is "[ref]:1" (@CA).
+	Best-fit RMSD will be calculated, coords will be rotated and translated.
+  [trajout /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/38/RosettaRelax/1ohp_38_aligned.pdb noter]
+	Writing '/home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/38/RosettaRelax/1ohp_38_aligned.pdb' as PDB
+---------- RUN BEGIN -------------------------------------------------
+
+PARAMETER FILES (1 total):
+ 0: 1ohp_38_old_bb.pdb, 500 atoms, 125 res, box: None, 1 mol
+
+INPUT TRAJECTORIES (1 total):
+ 0: '1ohp_38_new_bb.pdb' is a PDB file, Parm 1ohp_38_old_bb.pdb (reading 1 of 1)
+  Coordinate processing will occur on 1 frames.
+
+REFERENCE FRAMES (1 total):
+    0: [ref]:1
+	Active reference frame for distance-based masks is '[ref]:1'
+
+OUTPUT TRAJECTORIES (1 total):
+  '1ohp_38_aligned.pdb' (1 frames) is a PDB file
+
+BEGIN TRAJECTORY PROCESSING:
+.....................................................
+ACTION SETUP FOR PARM '1ohp_38_old_bb.pdb' (1 actions):
+  0: [rmsd @CA ref [ref]]
+	Target mask: [@CA](125)
+	Reference mask: [@CA](125)
+.....................................................
+ACTIVE OUTPUT TRAJECTORIES (1):
+  /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/38/RosettaRelax/1ohp_38_aligned.pdb (coordinates)
+----- 1ohp_38_new_bb.pdb (1-1, 1) -----
+100% Complete.
+
+Read 1 frames and processed 1 frames.
+TIME: Avg. throughput= 183.7560 frames / second.
+
+ACTION OUTPUT:
+TIME: Analyses took 0.0000 seconds.
+
+DATASETS (1 total):
+	RMSD_00002 "RMSD_00002" (double, rms), size is 1 (0.008 kB)
+    Total data set memory usage is at least 0.008 kB
+
+RUN TIMING:
+TIME:		Init               : 0.0000 s (  0.18%)
+TIME:		Trajectory Process : 0.0054 s ( 59.54%)
+TIME:		Action Post        : 0.0000 s (  0.01%)
+TIME:		Analysis           : 0.0000 s (  0.00%)
+TIME:		Data File Write    : 0.0000 s (  0.39%)
+TIME:		Other              : 0.0036 s (  0.40%)
+TIME:	Run Total 0.0091 s
+---------- RUN END ---------------------------------------------------
+TIME: Total execution time: 11.2913 seconds.
+--------------------------------------------------------------------------------
+To cite CPPTRAJ use:
+Daniel R. Roe and Thomas E. Cheatham, III, "PTRAJ and CPPTRAJ: Software for
+  Processing and Analysis of Molecular Dynamics Trajectory Data". J. Chem.
+  Theory Comput., 2013, 9 (7), pp 3084-3095.
+

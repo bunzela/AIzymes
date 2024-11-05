@@ -1,0 +1,78 @@
+
+<ROSETTASCRIPTS>
+
+    <SCOREFXNS>
+
+        <ScoreFunction            name="score"                           weights="beta_nov16" >  
+            <Reweight             scoretype="atom_pair_constraint"       weight="1" />
+            <Reweight             scoretype="angle_constraint"           weight="1" />    
+            <Reweight             scoretype="dihedral_constraint"        weight="1" />        
+            <Reweight             scoretype="res_type_constraint"        weight="1" />              
+        </ScoreFunction>
+       
+        <ScoreFunction            name="score_unconst"                   weights="beta_nov16" >        
+            <Reweight             scoretype="atom_pair_constraint"       weight="0" />
+            <Reweight             scoretype="dihedral_constraint"        weight="0" />
+            <Reweight             scoretype="angle_constraint"           weight="0" />              
+        </ScoreFunction>
+
+        <ScoreFunction            name="score_final"                     weights="beta_nov16" >    
+            <Reweight             scoretype="atom_pair_constraint"       weight="1" />
+            <Reweight             scoretype="angle_constraint"           weight="1" />    
+            <Reweight             scoretype="dihedral_constraint"        weight="1" />               
+        </ScoreFunction>
+   
+   </SCOREFXNS>
+   
+    <RESIDUE_SELECTORS>
+   
+        <Index                    name="sel_design"
+                                  resnums="4,8,16,21,25,28,40,41,44,52,57,60,61" />
+
+        <Index                    name="sel_cat_0"
+                                  resnums="8" />
+
+        <Not                      name="sel_nothing"
+                                  selector="sel_design" />
+    </RESIDUE_SELECTORS>
+   
+    <TASKOPERATIONS>
+   
+        <OperateOnResidueSubset   name="tsk_design"                      selector="sel_design" >
+                                  <RestrictAbsentCanonicalAASRLT         aas="GPAVLIMFYWHKRQNEDST" />
+        </OperateOnResidueSubset>
+
+       
+       
+        <OperateOnResidueSubset   name="tsk_nothing"                     selector="sel_nothing" >
+                                  <PreventRepackingRLT />
+        </OperateOnResidueSubset>
+       
+    </TASKOPERATIONS>
+
+    <FILTERS>
+   
+        <HbondsToResidue          name="flt_hbonds"
+                                  scorefxn="score"
+                                  partners="1"
+                                  residue="1X"
+                                  backbone="true"
+                                  sidechain="true"
+                                  from_other_chains="true"
+                                  from_same_chain="false"
+                                  confidence="0" />
+    </FILTERS>
+   
+    <MOVERS>
+       
+        <FavorSequenceProfile     name="mv_native"
+                                  weight="1.0"
+                                  use_native="true"
+                                  matrix="IDENTITY"
+                                  scorefxns="score" />  
+
+        <EnzRepackMinimize        name="mv_cst_opt"
+                                  scorefxn_repack="score"
+                                  scorefxn_minimize="score_final"
+                                  cst_opt="true"
+                                  task_operations="tsk_design,tsk_nothing" />

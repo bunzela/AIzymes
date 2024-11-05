@@ -1,0 +1,68 @@
+
+CPPTRAJ: Trajectory Analysis. V4.14.0 (AmberTools V19.10)
+    ___  ___  ___  ___
+     | \/ | \/ | \/ | 
+    _|_/\_|_/\_|_/\_|_
+
+| Date/time: 10/19/24 12:40:54
+| Available memory: 28.643 GB
+
+INPUT: Reading input from '/home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/47/RosettaRelax/1ohp_47_CPPTraj_new_bb.in'
+  [parm /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/47/1ohp_ESMfold_47.pdb]
+	Reading '/home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/47/1ohp_ESMfold_47.pdb' as PDB File
+	Reading bond info from CONECT records.
+	Not reading bond info from LINK records.
+	Determining bond info from distances.
+Warning: 1ohp_ESMfold_47.pdb: Determining default bond distances from element types.
+  [trajin /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/47/1ohp_ESMfold_47.pdb]
+	Reading '/home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/47/1ohp_ESMfold_47.pdb' as PDB
+  [strip !@C,N,O,CA]
+    STRIP: Stripping atoms in mask [!@C,N,O,CA]
+  [trajout /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/47/RosettaRelax/1ohp_47_new_bb.pdb]
+	Writing '/home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/47/RosettaRelax/1ohp_47_new_bb.pdb' as PDB
+---------- RUN BEGIN -------------------------------------------------
+
+PARAMETER FILES (1 total):
+ 0: 1ohp_ESMfold_47.pdb, 953 atoms, 125 res, box: None, 1 mol
+
+INPUT TRAJECTORIES (1 total):
+ 0: '1ohp_ESMfold_47.pdb' is a PDB file, Parm 1ohp_ESMfold_47.pdb (reading 1 of 1)
+  Coordinate processing will occur on 1 frames.
+
+OUTPUT TRAJECTORIES (1 total):
+  '1ohp_47_new_bb.pdb' (1 frames) is a PDB file
+
+BEGIN TRAJECTORY PROCESSING:
+.....................................................
+ACTION SETUP FOR PARM '1ohp_ESMfold_47.pdb' (1 actions):
+  0: [strip !@C,N,O,CA]
+	Stripping 453 atoms.
+	Stripped topology: 500 atoms, 125 res, box: None, 1 mol
+.....................................................
+ACTIVE OUTPUT TRAJECTORIES (1):
+  /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/47/RosettaRelax/1ohp_47_new_bb.pdb (coordinates)
+----- 1ohp_ESMfold_47.pdb (1-1, 1) -----
+100% Complete.
+
+Read 1 frames and processed 1 frames.
+TIME: Avg. throughput= 4.9318 frames / second.
+
+ACTION OUTPUT:
+TIME: Analyses took 0.0000 seconds.
+
+RUN TIMING:
+TIME:		Init               : 0.0000 s (  0.01%)
+TIME:		Trajectory Process : 0.2028 s ( 97.44%)
+TIME:		Action Post        : 0.0000 s (  0.00%)
+TIME:		Analysis           : 0.0000 s (  0.00%)
+TIME:		Data File Write    : 0.0000 s (  0.00%)
+TIME:		Other              : 0.0053 s (  0.03%)
+TIME:	Run Total 0.2081 s
+---------- RUN END ---------------------------------------------------
+TIME: Total execution time: 17.2308 seconds.
+--------------------------------------------------------------------------------
+To cite CPPTRAJ use:
+Daniel R. Roe and Thomas E. Cheatham, III, "PTRAJ and CPPTRAJ: Software for
+  Processing and Analysis of Molecular Dynamics Trajectory Data". J. Chem.
+  Theory Comput., 2013, 9 (7), pp 3084-3095.
+

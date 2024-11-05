@@ -1,0 +1,74 @@
+##############################################################################################################
+#
+# Rosetta crash log. Please submit the contents of this file to http://crash.rosettacommons.org/
+# or use the script Rosetta/main/source/scripts/python/public/report_crashes.py
+#
+
+[START_CRASH_REPORT]
+[ROSETTA_VERSION]: 2021.16+release.8ee4f02
+[COMMIT_DATE]: 2021-04-20T20:57:38.289184
+[APPLICATION]: /home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source//bin/rosetta_scripts.linuxgccrelease
+[MODE]: Release
+[EXTRAS]: default
+[OS]: GNU/Linux
+[COMPILER]: GCC version "4.8.5 20150623 (Red Hat 4.8.5-44)"
+[STDLIB]: libstdc++ version 20150623
+[START_OPTIONS]
+ -in:file:s=/home/bunzelh/AIzymes/design/HAB/HAB_refactor_no_cst/parent/7vuu.pdb -in:file:native=/home/bunzelh/AIzymes/design/HAB/HAB_refactor_no_cst/parent/7vuu.pdb -in:file:extra_res_fa=/home/bunzelh/AIzymes/design/HAB/Input/5TS.params -out:overwrite -out:nstruct=1 -out:file:scorefile=/home/bunzelh/AIzymes/design/HAB/HAB_refactor_no_cst/9/score_RosettaDesign.sc -run:preserve_header -run:ignore_zero_occupancy=false -parser:protocol=/home/bunzelh/AIzymes/design/HAB/HAB_refactor_no_cst/9/scripts/RosettaDesign_9.xml -corrections:beta_nov16 -enzdes:cst_opt -enzdes:cstfile=/home/bunzelh/AIzymes/design/HAB/Input/.cst
+
+[END_OPTIONS]
+
+[START_BACKTRACE]: RAW_LIBC
+/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/build/src/release/linux/3.10/64/x86/gcc/4.8/default/libutility.so(backtrace_string(int)+0x3a) [0x2b35d3edcefa]
+/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/build/src/release/linux/3.10/64/x86/gcc/4.8/default/libutility.so(utility::excn::Exception::Exception(char const*, int, std::string const&)+0x51) [0x2b35d3f1a4b1]
+/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/build/src/release/linux/3.10/64/x86/gcc/4.8/default/libprotocols.1.so(protocols::rosetta_scripts::RosettaScriptsParser::validate_input_script_against_xsd(std::string const&, std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> > const&) const+0x79e) [0x2b35ce4c948e]
+/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/build/src/release/linux/3.10/64/x86/gcc/4.8/default/libprotocols.1.so(protocols::rosetta_scripts::RosettaScriptsParser::finish_creating_tag(std::string const&, utility::vector1<std::string, std::allocator<std::string> > const&, std::string const&) const+0x39f) [0x2b35ce4c9e2f]
+/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/build/src/release/linux/3.10/64/x86/gcc/4.8/default/libprotocols.1.so(protocols::rosetta_scripts::RosettaScriptsParser::create_tag_from_xml(std::string const&, utility::vector1<std::string, std::allocator<std::string> > const&)+0x2df) [0x2b35ce4ca47f]
+/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/build/src/release/linux/3.10/64/x86/gcc/4.8/default/libprotocols.1.so(protocols::rosetta_scripts::RosettaScriptsParser::create_tag_from_xml(std::string const&, utility::options::OptionCollection const&)+0x17e) [0x2b35ce4ca9ae]
+/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/build/src/release/linux/3.10/64/x86/gcc/4.8/default/libprotocols.1.so(protocols::rosetta_scripts::RosettaScriptsParser::generate_mover(std::shared_ptr<protocols::moves::Mover>&, bool, std::string const&, std::string const&, std::string const&, bool)+0xac) [0x2b35ce4cb3ec]
+/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/build/src/release/linux/3.10/64/x86/gcc/4.8/default/libprotocols.1.so(protocols::jd2::JobDistributor::run_one_job(std::shared_ptr<protocols::moves::Mover>&, long, std::string&, std::string&, unsigned long&, unsigned long&, bool)+0x139d) [0x2b35ce0f06ad]
+/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/build/src/release/linux/3.10/64/x86/gcc/4.8/default/libprotocols.1.so(protocols::jd2::JobDistributor::go_main(std::shared_ptr<protocols::moves::Mover>)+0xc1) [0x2b35ce0f1c81]
+/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/build/src/release/linux/3.10/64/x86/gcc/4.8/default/libprotocols.1.so(protocols::jd2::FileSystemJobDistributor::go(std::shared_ptr<protocols::moves::Mover>)+0x4a) [0x2b35ce0dfeca]
+/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source//bin/rosetta_scripts.linuxgccrelease() [0x403cae]
+/lib64/libc.so.6(__libc_start_main+0xf5) [0x2b35d6d35555]
+/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source//bin/rosetta_scripts.linuxgccrelease() [0x4040a4]
+
+[END_BACKTRACE]
+
+[FILE]: src/protocols/rosetta_scripts/RosettaScriptsParser.cc
+[LINE]: 1207
+[START_MESSAGE]
+Input rosetta scripts XML file "/home/bunzelh/AIzymes/design/HAB/HAB_refactor_no_cst/9/scripts/RosettaDesign_9.xml" failed to validate against the rosetta scripts schema. Use the option -parser::output_schema <output filename> to output the schema to a file to see all valid options.
+Your XML has failed validation.  The error message below will tell you where in your XML file the error occurred.  Here's how to fix it:
+
+1) If the validation fails on something obvious, like an illegal attribute due to a spelling error (perhaps you used scorefnction instead of scorefunction), then you need to fix your XML file.
+2) If you haven't run the XML rewriter script and this might be pre-2017 Rosetta XML, run the rewriter script (tools/xsd_xrw/rewrite_rosetta_script.py) on your input XML first.  The attribute values not being in quotes (scorefunction=talaris2014 instead of scorefunction="talaris2014") is a good indicator that this is your problem.
+3) If you are a developer and neither 1 nor 2 worked - email the developer's mailing list or try Slack.
+4) If you are an academic or commercial user - try the Rosetta Forums https://www.rosettacommons.org/forum
+
+
+Error messages were:
+Error: Premature end of data in tag MOVERS line 66
+
+74:         <EnzRepackMinimize        name="mv_cst_opt"
+75:                                   scorefxn_repack="score"
+76:                                   scorefxn_minimize="score_final"
+77:                                   cst_opt="true"
+78:                                   task_operations="tsk_design,tsk_nothing" />
+79: 
+Error: Premature end of data in tag ROSETTASCRIPTS line 2
+
+74:         <EnzRepackMinimize        name="mv_cst_opt"
+75:                                   scorefxn_repack="score"
+76:                                   scorefxn_minimize="score_final"
+77:                                   cst_opt="true"
+78:                                   task_operations="tsk_design,tsk_nothing" />
+79: 
+------------------------------------------------------------
+Warning messages were:
+------------------------------------------------------------
+
+
+[END_MESSAGE]
+[END_CRASH_REPORT]
+

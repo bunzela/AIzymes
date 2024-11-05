@@ -1,0 +1,17 @@
+/home/bunzelh/AIzymes/design/HAB/HAB_refactor_mixed_013/14
+----------------------------------------
+pssm_jsonl is NOT loaded
+----------------------------------------
+omit_AA_jsonl is NOT loaded
+----------------------------------------
+bias_AA_jsonl is NOT loaded
+----------------------------------------
+tied_positions_jsonl is NOT loaded
+bias by residue dictionary is loaded
+----------------------------------------
+discarded {'bad_chars': 0, 'too_long': 0, 'bad_seq_length': 0}
+----------------------------------------
+Number of edges: 48
+Training noise level: 0.2A
+Generating sequences for: 7vuu_RosettaRelax_3
+100 sequences of length 63 generated in 61.3782 seconds

@@ -1,0 +1,28 @@
+Error: residue names/positions in catalytic header map in pdb file don't match actual protein residues:
+Error: residue 0 ( X 0 ) should be 5TS, is <autofind>
+Error: residue 99 ( A 99 ) should be nan, is ASP
+
+ERROR:: Exit from: src/protocols/toolbox/match_enzdes_util/EnzConstraintIO.cc line: 296
+
+[ ERROR ]: Caught exception:
+
+
+File: src/protocols/toolbox/match_enzdes_util/EnzConstraintIO.cc:296
+[ ERROR ] UtilityExitException
+ERROR: 
+
+
+
+
+AN INTERNAL ERROR HAS OCCURED. PLEASE SEE THE CONTENTS OF ROSETTA_CRASH.log FOR DETAILS.
+
+
+
+---------------------------------------------------------------
+[ ERROR ]: Error(s) were encountered when running jobs.
+1 jobs failed;
+Check the output further up for additional error messages.
+---------------------------------------------------------------
+
+mv: cannot stat '/home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/1/1ohp_1_input_0001.pdb': No such file or directory
+sed: can't read 1ohp_RosettaRelax_1.pdb: No such file or directory

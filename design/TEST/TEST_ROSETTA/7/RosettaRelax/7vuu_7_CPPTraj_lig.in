@@ -1,0 +1,4 @@
+parm    /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/7/7vuu_RosettaDesign_7.pdb
+trajin  /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/7/7vuu_RosettaDesign_7.pdb
+strip   !:5TS
+trajout /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/7/RosettaRelax/7vuu_7_lig.pdb
