@@ -1,13 +1,20 @@
 # To Do
-> [!IMPORTANT]
-> @Abbie <br>
-> Currently working on an MDMin design option to run between ESMfold and RosettaRelax. Updates for this are on branch MD_minimise 
+| **Action Item**             | **Description**                                                                                                  | **Person** |
+|-----------------------------|------------------------------------------------------------------------------------------------------------------|------------|
+| MDMin Design Option         | Work on an MDMin design option to run between ESMfold and RosettaRelax. Updates are on the branch `MD_minimise`. | Abbie      |
+| Running MD Option           | To be done after MDMin                                                                                           | Abbie      |
+| Enable AIzymes for CATPHOTO | Establish heme & design protocols to make AI.zymes accessible to everyone in the group                           | ???        |
+| Finalize Plot Functions     | Complete the tree plot and UMAP plotting functions.                                                              | Vivian     |
+| Optimize `cst_weight`       | Optimize the `cst_weight` to increase the total score and smooth hamming distance over generations.              | Vivian     |
+| Optimize `cst_weight`       | Optimize the `boltzman_weight`                                                                                   | Vivian     |
+| Test New Design Runs        | Test whether starting a new design run from a previous design provides improvement.                              | Vivian     |
+| Test New Design Runs        | Test whether starting a new design run from a previous design provides improvement.                              | Vivian     |
 
-> [!IMPORTANT]
-> @Vivian <br>
-> Finalize the plot functions (tree plot and umap)
-> Optimization of cst_weight to increase total score and smooth hamming distance over generations
-> Test whether starting a new design run from a previous design brings some improvement
+| **Packages**                | **Description**                                                                                                  | **Person** |
+|-----------------------------|------------------------------------------------------------------------------------------------------------------|------------|
+| LigandMPNN                  | .                                                                                                                | ???        |
+| ChemNet                     | [AI tool to generate ensembles](https://doi.org/10.1101/2024.09.25.614868)                                       | ???        |
+| Runni
 
 
 # AIzymes
