@@ -14,8 +14,15 @@
 |-----------------------------|------------------------------------------------------------------------------------------------------------------|------------|
 | LigandMPNN                  | .                                                                                                                | ???        |
 | ChemNet                     | [AI tool to generate ensembles](https://doi.org/10.1101/2024.09.25.614868)                                       | ???        |
-| Runni
+| Additional Base Filter      | [Base vdW energy in Rosetta seems to correlate with activity?](https://onlinelibrary.wiley.com/doi/full/10.1002/pro.4400) | ???        |
+| ElektroNN                   | Not yet published, currently developed by Jens Meiler, NN tool generate electron density of full protein structure | ???        |
 
+RiffDiff – Rotamer Inverted Fragment Finder Diffiusion
+
+# Related work
+
+[REvoLd: Ultra-Large Library Screening with an Evolutionary Algorithm in Rosetta](https://pubmed.ncbi.nlm.nih.gov/38711437/)
+put other links here, please
 
 # AIzymes
 This will be the AIzymes Github. Lets use the readme to collect notes.
