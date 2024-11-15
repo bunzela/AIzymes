@@ -3,6 +3,7 @@
 |-----------------------------|------------------------------------------------------------------------------------------------------------------|------------|
 | `MS` Finalize variant charact | pH-dependence & MM Kin of variants for preprint                                                                  | Vivian     |
 | `MS` Finalize variant charact | Chrystallography (for future full paper)                                                                         | ???        |
+| `MS` Finalize manual        | Detailed description, setup, and usage instructions. Includes docstrings in code                                 | Vivian     |
 | `MS` Plots                  | What is missing both in terms of parameter testing and from experiment                                           | Lucas      |
 | MDMin Design Option         | Work on an MDMin design option to run between ESMfold and RosettaRelax. Updates are on the branch `MD_minimise`. | Abbie      |
 | Running MD Option           | To be done after MDMin                                                                                           | Abbie      |
