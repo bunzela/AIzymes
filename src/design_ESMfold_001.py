@@ -44,7 +44,8 @@ def prepare_ESMfold(self,
 sed -i '/PARENT N\/A/d' {output_file}
 """
     ##Add the ligand back in after running ESMfold for backbone
-    _, _, PDBfile_ligand = get_PDB_in(self, index)
+    input_pdb_paths = get_PDB_in(self, index)
+    PDBfile_ligand = input_pdb_paths['ligand_in']
     
     # Get the pdb file from the last step and strip away ligand and hydrogens 
     cpptraj = f'''parm {PDBfile_ligand}.pdb

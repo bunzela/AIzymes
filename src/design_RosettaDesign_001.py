@@ -23,7 +23,9 @@ def prepare_RosettaDesign(self,
     else:
         ex = "-ex1 -ex2"
     
-    PDB_input ,_ ,_ = get_PDB_in(self, new_index)
+    #PDB_input ,_ ,_ = get_PDB_in(self, new_index)
+    input_pdb_paths = get_PDB_in(self, new_index)
+    PDB_input = input_pdb_paths['Design_in']
     
     # HAB thinks this is not necessary! Check???
     #save_cat_res_into_all_scores_df(self, new_index, PDB_input, from_parent_struct=True)

@@ -36,96 +36,13 @@ def prepare_RosettaRelax(self,
         repeats = "3"
         ex = "-ex1 -ex2"
       
-    _, PDBfile, PDBfile_ligand = get_PDB_in(self, index)
+    #_, PDBfile, PDBfile_ligand = get_PDB_in(self, index)
+
+    input_pdb_paths = get_PDB_in(self, index)
+    PDBfile_in = input_pdb_paths['Relax_in']
         
-    PDBfile_out = f"{filename}/RosettaRelax/{self.WT}_{index}"
-    
-    # Get the pdb file from the last step and strip away ligand and hydrogens 
-    cpptraj = f'''parm    {PDBfile_ligand}.pdb
-trajin  {PDBfile_ligand}.pdb
-strip   :{self.LIGAND}
-strip   !@C,N,O,CA
-trajout {PDBfile_out}_old_bb.pdb
-'''
-    with open(f'{PDBfile_out}_CPPTraj_old_bb.in','w') as f: f.write(cpptraj)
-
-    # Get the pdb file from the last step and strip away everything except the ligand
-    cpptraj = f'''parm    {PDBfile_ligand}.pdb
-trajin  {PDBfile_ligand}.pdb
-strip   !:{self.LIGAND}
-trajout {PDBfile_out}_lig.pdb
-'''
-    with open(f'{PDBfile_out}_CPPTraj_lig.in','w') as f: f.write(cpptraj)
-
-    # Get the ESMfold pdb file and strip away all hydrogens
-    cpptraj = f'''parm    {PDBfile}.pdb
-trajin  {PDBfile}.pdb
-strip   !@C,N,O,CA
-trajout {PDBfile_out}_new_bb.pdb
-'''
-    with open(f'{PDBfile_out}_CPPTraj_new_bb.in','w') as f: f.write(cpptraj)
-
-    # Align substrate and ESM prediction of scaffold without hydrogens
-    cpptraj = f'''parm    {PDBfile_out}_old_bb.pdb
-reference {PDBfile_out}_old_bb.pdb [ref]
-trajin    {PDBfile_out}_new_bb.pdb
-rmsd      @CA ref [ref]
-trajout   {PDBfile_out}_aligned.pdb noter
-'''
-    with open(f'{PDBfile_out}_CPPTraj_aligned.in','w') as f: f.write(cpptraj) 
- 
-    cmd += f"""
-    
-cpptraj -i {PDBfile_out}_CPPTraj_old_bb.in &> \
-           {PDBfile_out}_CPPTraj_old_bb.out
-cpptraj -i {PDBfile_out}_CPPTraj_lig.in &> \
-           {PDBfile_out}_CPPTraj_lig.out
-cpptraj -i {PDBfile_out}_CPPTraj_new_bb.in &> \
-           {PDBfile_out}_CPPTraj_new_bb.out
-cpptraj -i {PDBfile_out}_CPPTraj_aligned.in &> \
-           {PDBfile_out}_CPPTraj_aligned.out
-
-# Cleanup structures
-sed -i '/END/d' {PDBfile_out}_aligned.pdb
-sed -i -e 's/^ATOM  /HETATM/' -e '/^TER/d' {PDBfile_out}_lig.pdb
-"""
-
-    if PreMatchRelax:
-
-        ## No ligand present so just use the aligned pdb from ESMfold
-        cmd += f"""# Assemble structure
-cp {PDBfile}_aligned.pdb {PDBfile_out}_input.pdb
-"""  
-
-    else:
-        
-        remark = generate_remark_from_all_scores_df(self, index)
-        with open(f'{PDBfile_out}_input.pdb', 'w') as f: f.write(remark+"\n")
-        cmd += f"""# Assemble structure
-cat {PDBfile_out}_aligned.pdb >> {PDBfile_out}_input.pdb
-cat {PDBfile_out}_lig.pdb     >> {PDBfile_out}_input.pdb
-sed -i '/TER/d' {PDBfile_out}_input.pdb
-"""
-        
-    cmd += f"""
-# Run Rosetta Relax
-{self.ROSETTA_PATH}/bin/rosetta_scripts.{self.rosetta_ext} \
-                -s                                        {PDBfile_out}_input.pdb \
-                -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params \
-                -parser:protocol                          {filename}/scripts/RosettaRelax_{index}.xml \
-                -out:file:scorefile                       {filename}/score_RosettaRelax.sc \
-                -nstruct                                  1 \
-                -ignore_zero_occupancy                    false \
-                -corrections::beta_nov16                  true \
-                -run:preserve_header                      true \
-                -overwrite {ex}
-
-# Rename the output file
-mv {filename}/{self.WT}_{index}_input_0001.pdb {self.WT}_RosettaRelax_{index}.pdb
-sed -i '/        H  /d' {self.WT}_RosettaRelax_{index}.pdb
-
-"""
-
+    working_dir_path = f"{filename}/RosettaRelax/{self.WT}_{index}"
+  
     # Create the RosettaRelax.xml file    
     RosettaRelax_xml = f"""
 <ROSETTASCRIPTS>
@@ -182,8 +99,32 @@ sed -i '/        H  /d' {self.WT}_RosettaRelax_{index}.pdb
     
 </ROSETTASCRIPTS>
 """
+    
+    cmd += f"""# Assemble structure
+cat {PDBfile_in}.pdb > {working_dir_path}_input.pdb
+"""
+        
     # Write the RosettaRelax.xml to a file
     with open(f'{filename}/scripts/RosettaRelax_{index}.xml', 'w') as f:
-        f.writelines(RosettaRelax_xml)      
-       
+        f.writelines(RosettaRelax_xml)   
+  
+    cmd += f"""
+# Run Rosetta Relax
+{self.ROSETTA_PATH}/bin/rosetta_scripts.{self.rosetta_ext} \
+                -s                                        {working_dir_path}_input.pdb \
+                -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params \
+                -parser:protocol                          {filename}/scripts/RosettaRelax_{index}.xml \
+                -out:file:scorefile                       {filename}/score_RosettaRelax.sc \
+                -nstruct                                  1 \
+                -ignore_zero_occupancy                    false \
+                -corrections::beta_nov16                  true \
+                -run:preserve_header                      true \
+                -overwrite {ex}
+
+# Rename the output file
+mv {filename}/{self.WT}_{index}_input_0001.pdb {self.WT}_RosettaRelax_{index}.pdb
+sed -i '/        H  /d' {self.WT}_RosettaRelax_{index}.pdb
+
+"""
+    
     return cmd
