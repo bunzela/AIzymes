@@ -22,8 +22,9 @@ def prepare_MDMin(self,
     # Make directories
     os.makedirs(f"{filename}/scripts", exist_ok=True)
     os.makedirs(f"{filename}/MDMin", exist_ok=True)
-      
-    _, PDBfile_in, PDBfile_ligand = get_PDB_in(self, index)
+    
+    input_pdb_paths = get_PDB_in(self, index)
+    PDBfile_in = input_pdb_paths['MDMin_in']
         
     working_dir_path = f"{filename}/MDMin/{self.WT}_{index}"
 

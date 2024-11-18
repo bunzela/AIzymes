@@ -158,16 +158,21 @@ def get_PDB_in(self, index):
         PDBfile_Relax_ligand_in  = f'{self.FOLDER_HOME}/{index}/{self.WT}_{design_method}_{index}'    
         
     # PDBfile_Relax_in 
-    PDBfile_Relax_in = f'{self.FOLDER_HOME}/{index}/{self.WT}_ESMfold_{index}'  
+    PDBfile_MDMin_in = f'{self.FOLDER_HOME}/{index}/{self.WT}_ESMfold_{index}'  
+    PDBfile_Relax_in = f'{self.FOLDER_HOME}/{index}/{self.WT}_MDMin_{index}'  
     
     # PDBfile_Design_in
     if parent_index == "Parent":
         PDBfile_Design_in = f'{self.FOLDER_PARENT}/{self.WT}'
     else:
         PDBfile_Design_in = f'{self.FOLDER_HOME}/{parent_index}/{self.WT}_RosettaRelax_{parent_index}'
-        
     
-    return PDBfile_Design_in, PDBfile_Relax_in, PDBfile_Relax_ligand_in
+    input_pdb_paths = {'Design_in': PDBfile_Design_in,
+                       'MDMin_in': PDBfile_MDMin_in,
+                       'Relax_in': PDBfile_Relax_in,
+                       'ligand_in': PDBfile_Relax_ligand_in}
+    
+    return input_pdb_paths #PDBfile_Design_in, PDBfile_Relax_in, PDBfile_Relax_ligand_in
 
 def load_main_variables(self, FOLDER_HOME):
     
