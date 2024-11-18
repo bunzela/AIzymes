@@ -88,20 +88,19 @@ def plot_boltzmann_histogram(self, ax, combined_scores, score_min, score_max, sc
                                                        print_norm=False,
                                                        norm_all=False,
                                                        extension="score")
-    
-    # Definition of the kbt value which is used as the Boltzmann weight. 
-    # The value is not constant throughout the simulation but decays with time (increasing index).
-    # The dacay rate is defined in the second line of the code.
-    if isinstance(self.KBT_BOLTZMANN, (float, int)):
-        kbt_boltzmann = self.KBT_BOLTZMANN
-    else:
-        if len(self.KBT_BOLTZMANN) == 2:
-            kbt_boltzmann = max(self.KBT_BOLTZMANN[0] * np.exp(-self.KBT_BOLTZMANN[1]*self.plot_scores_df['index'].max()), 0.05)
+
+    # Some issue with numpy exp when calculating boltzman factors.
+    combined_potentials_list = [float(x) for x in combined_potentials]
+    combined_potentials = np.array(combined_potentials_list)
+
+    #Creates a numpy array with the kbt_weights of each index in the unblocked_all_scores dataframe
+    kbt_values = self.plot_scores_df['kbt_boltzmann'].to_numpy()
+    kbt_values = np.array(kbt_values, dtype=np.float64)
     
     #Calculates the weights using the Boltzmann formula which are then going to be used for the generation of the boltzmann_scores
-    boltzmann_factors = np.exp(combined_potentials / (kbt_boltzmann)) 
+    boltzmann_factors = np.exp(combined_potentials / kbt_values)
     print(f"Min/Max boltzmann factors: {min(boltzmann_factors)}, {max(boltzmann_factors)}")
-    probabilities = boltzmann_factors / sum(boltzmann_factors) 
+    probabilities = boltzmann_factors / sum(boltzmann_factors)
     
     #Lists of values sampled from the combined potential either randomly (random_scores) or using weights (boltzmann_scores)
     random_scores = np.random.choice(combined_potentials, size=10000, replace=True)
@@ -113,7 +112,7 @@ def plot_boltzmann_histogram(self, ax, combined_scores, score_min, score_max, sc
     ax.text(0.05, 0.95, "normalized only to \n this dataset")
     ax.set_xlabel('Potential')
     ax.set_ylabel('Density (Normal)')
-    ax.set_title(f'kbT = {kbt_boltzmann:.1e}')
+    #ax.set_title(f'kbT = {kbt_values:.1e}')
     
     #Definition of a twin axis for the second histogram using the Boltzmann sampling with the weights for the Boltzmann distribution
     ax_dup = ax.twinx()
@@ -440,6 +439,57 @@ def plot_scores(self, combined_score_min=0, combined_score_max=1, combined_score
         #plt.savefig(os.path.join(plots, 'main_plots.png'), format='png')
 
         plt.show()
+        
+#Defines the kbt_cst_weights_plotting_function which generates two line plots and saves them in the plot folder
+def kbt_cst_weights_plotting_function(self):
+    
+    fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+    fig.suptitle('kbt and cst weights across generations', fontsize=15, weight='bold')    
+    
+    max_gen = int(self.plot_scores_df['generation'].max())
+    generation_range = np.arange(0, max_gen + 1)    
+    generations= pd.Series(generation_range)
+    
+    #Creates the line plot showing the kbt weights values over generation
+    kbt_weights = self.plot_scores_df['kbt_boltzmann'].dropna()
+    kbt_weights_filtered = kbt_weights.drop_duplicates(keep='first')
+    
+    kbt_plot = axs[0].plot(generations, kbt_weights_filtered)
+    
+    #Sets kbt plot details
+    axs[0].set_title("kbt Weights vs Generations")
+    axs[0].set_xlabel("Generations")
+    every_third_generation = generations[::3]
+    axs[0].set_xticks(every_third_generation)
+    axs[0].set_xticklabels(every_third_generation)
+    axs[0].set_ylabel("kbt Weights")
+    
+    #Creates the line plot showing the cst weights values over generation
+    cst_weights = self.plot_scores_df['cst_weight'].dropna()
+    cst_weights_filtered = cst_weights.drop_duplicates(keep='first')
+   
+    cst_plot = axs[1].plot(generations, cst_weights_filtered)
+
+    #Sets cst plot details
+    axs[1].set_title("cst Weights vs Generations")
+    axs[1].set_xlabel("Generations")
+    every_third_generation = generations[::3]
+    axs[1].set_xticks(every_third_generation)
+    axs[1].set_xticklabels(every_third_generation)
+    axs[1].set_ylabel("cst weights")
+    
+    #Creates and prints dataframe with the values of the kbt and cst weights of the corresponding generation
+    generations_reset = generations.reset_index(drop=True)
+    kbt_weights_reset = kbt_weights_filtered.reset_index(drop=True)
+    cst_weights_reset = cst_weights_filtered.reset_index(drop=True)
+
+    kbt_cst_df = pd.DataFrame({'Generation': generations_reset, 'kbt_weights': kbt_weights_reset, 'cst_weights':cst_weights_reset})
+    print(kbt_cst_df)
+    
+    plt.tight_layout()
+    plt.savefig(os.path.join(self.FOLDER_PLOT, 'kbt_cst_weights_plot.png'), format='png')  
+
+    plt.show()
         
 #Defines the tree_plotting function which generates the tree plot and saves it in the plot folder
 def tree_plotting_function(self):
