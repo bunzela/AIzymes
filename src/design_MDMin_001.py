@@ -23,81 +23,20 @@ def prepare_MDMin(self,
     os.makedirs(f"{filename}/scripts", exist_ok=True)
     os.makedirs(f"{filename}/MDMin", exist_ok=True)
       
-    _, PDBfile, PDBfile_ligand = get_PDB_in(self, index)
+    _, PDBfile_in, PDBfile_ligand = get_PDB_in(self, index)
         
-    PDBfile_out = f"{filename}/MDMin/{self.WT}_{index}"
-    
-    # Get the pdb file from the last step and strip away ligand and hydrogens 
-    cpptraj = f'''parm    {PDBfile_ligand}.pdb
-trajin  {PDBfile_ligand}.pdb
-strip   :{self.LIGAND}
-strip   !@C,N,O,CA
-trajout {PDBfile_out}_old_bb.pdb
-'''
-    with open(f'{PDBfile_out}_CPPTraj_old_bb.in','w') as f: f.write(cpptraj)
+    working_dir_path = f"{filename}/MDMin/{self.WT}_{index}"
 
-    # Get the pdb file from the last step and strip away everything except the ligand
-    cpptraj = f'''parm    {PDBfile_ligand}.pdb
-trajin  {PDBfile_ligand}.pdb
-strip   !:{self.LIGAND}
-trajout {PDBfile_out}_lig.pdb
-'''
-    with open(f'{PDBfile_out}_CPPTraj_lig.in','w') as f: f.write(cpptraj)
-
-    # Get the ESMfold pdb file and strip away all hydrogens
-    cpptraj = f'''parm    {PDBfile}.pdb
-trajin  {PDBfile}.pdb
-strip   !@C,N,O,CA
-trajout {PDBfile_out}_new_bb.pdb
-'''
-    with open(f'{PDBfile_out}_CPPTraj_new_bb.in','w') as f: f.write(cpptraj)
-
-    # Align substrate and ESM prediction of scaffold without hydrogens
-    cpptraj = f'''parm    {PDBfile_out}_old_bb.pdb
-reference {PDBfile_out}_old_bb.pdb [ref]
-trajin    {PDBfile_out}_new_bb.pdb
-rmsd      @CA ref [ref]
-trajout   {PDBfile_out}_aligned.pdb noter
-'''
-    
-#     cpptraj = f'''parm    {PDBfile_ligand}.pdb [ref_parm]
-# parm    {PDBfile}.pdb [struc_parm]
-# reference {PDBfile_ligand}.pdb parm [ref_parm] [ref]
-# trajin    {PDBfile}.pdb parm [struc_parm]
-# rmsd      @CA ref [ref]
-# trajout   {PDBfile_out}_aligned.pdb parm [struc_parm] noter
-# '''
-    with open(f'{PDBfile_out}_CPPTraj_aligned.in','w') as f: f.write(cpptraj) 
- 
-    cmd += f"""
-    
-cpptraj -i {PDBfile_out}_CPPTraj_old_bb.in &> \
-           {PDBfile_out}_CPPTraj_old_bb.out
-cpptraj -i {PDBfile_out}_CPPTraj_lig.in &> \
-           {PDBfile_out}_CPPTraj_lig.out
-cpptraj -i {PDBfile_out}_CPPTraj_new_bb.in &> \
-           {PDBfile_out}_CPPTraj_new_bb.out
-cpptraj -i {PDBfile_out}_CPPTraj_aligned.in &> \
-           {PDBfile_out}_CPPTraj_aligned.out
-
-# Cleanup structures
-sed -i '/END/d' {PDBfile_out}_aligned.pdb
-sed -i -e 's/^ATOM  /HETATM/' -e '/^TER/d' {PDBfile_out}_lig.pdb
-    """
-        
-    remark = generate_remark_from_all_scores_df(self, index)
-    with open(f'{PDBfile_out}_input.pdb', 'w') as f: f.write(remark+"\n")
     cmd += f"""# Assemble structure
-cat {PDBfile_out}_aligned.pdb > {PDBfile_out}_input.pdb
-cat {PDBfile_out}_lig.pdb     >> {PDBfile_out}_input.pdb
-sed -i '/TER/d' {PDBfile_out}_input.pdb
-    """
+cat {PDBfile_in}.pdb > {working_dir_path}_input.pdb
+"""
+    
 
 #Write Rosetta input to build in sidechains
     Rosetta_xml = f"""
 <ROSETTASCRIPTS>
     <MOVERS>
-        <DumpPdb name="output_pdb" fname="{PDBfile_out}_wRosetta_sidechains.pdb"/>
+        <DumpPdb name="output_pdb" fname="{working_dir_path}_wRosetta_sidechains.pdb"/>
     </MOVERS>
     <PROTOCOLS>
         <Add mover_name="output_pdb" />
@@ -111,7 +50,7 @@ sed -i '/TER/d' {PDBfile_out}_input.pdb
     cmd += f"""
 # Run Rosetta Relax
 {self.ROSETTA_PATH}/bin/rosetta_scripts.{self.rosetta_ext} \
-                -s                        {PDBfile_out}_input.pdb \
+                -s                        {working_dir_path}_input.pdb \
                 -extra_res_fa             {self.FOLDER_INPUT}/{self.LIGAND}.params \
                 -parser:protocol          {filename}/scripts/Rosetta_buildPDB_{index}.xml \
                 -nstruct                  1 \
@@ -120,25 +59,25 @@ sed -i '/TER/d' {PDBfile_out}_input.pdb
                 -run:preserve_header      true \
                     
 # Tidy up the output file
-sed -i -e '/[0-9]H/d' -e '/H[0-9]/d' -e '/CONECT/Q' {PDBfile_out}_wRosetta_sidechains.pdb
+sed -i -e '/[0-9]H/d' -e '/H[0-9]/d' -e '/CONECT/Q' {working_dir_path}_wRosetta_sidechains.pdb
 
 #Remove Rosetta output 
 rm {self.WT}_{index}_input_0001.pdb
 """
 
-    with open(f"{PDBfile_out}_tleap.in", "w") as f:
+    with open(f"{working_dir_path}_tleap.in", "w") as f:
         f.write(f"""source leaprc.protein.ff19SB 
 source leaprc.gaff
 loadamberprep   {self.FOLDER_INPUT}/5TS.prepi
 loadamberparams {self.FOLDER_INPUT}/5TS.frcmod
-mol = loadpdb {PDBfile_out}_wRosetta_sidechains.pdb
+mol = loadpdb {working_dir_path}_wRosetta_sidechains.pdb
 set default pbradii mbondi3
-saveamberparm mol {PDBfile_out}.parm7 {PDBfile_out}.rst7
+saveamberparm mol {working_dir_path}.parm7 {working_dir_path}.rst7
 quit
 """)
         
     cmd += f"""# Generate AMBER input files
-tleap -s -f {PDBfile_out}_tleap.in &> {PDBfile_out}_tleap.out
+tleap -s -f {working_dir_path}_tleap.in &> {working_dir_path}_tleap.out
     """
 
     # Create the input file    
@@ -163,19 +102,19 @@ initial minimization
 # Run MD
 echo Starting MD
 sander -O -i {filename}/scripts/MDmin_{index}.in \
-          -c {PDBfile_out}.rst7 -p {PDBfile_out}.parm7 \
-          -o {PDBfile_out}_MD.log -x {PDBfile_out}_MD.nc -r {PDBfile_out}_MD_out.rst7 -inf {PDBfile_out}_MD_out.mdinf
+          -c {working_dir_path}.rst7 -p {working_dir_path}.parm7 \
+          -o {working_dir_path}_MD.log -x {working_dir_path}_MD.nc -r {working_dir_path}_MD_out.rst7 -inf {working_dir_path}_MD_out.mdinf
 
-cpptraj -p {PDBfile_out}.parm7 -y {PDBfile_out}_MD_out.rst7 -x {PDBfile_out}_MD_out.pdb
+cpptraj -p {working_dir_path}.parm7 -y {working_dir_path}_MD_out.rst7 -x {working_dir_path}_MD_out.pdb
 
 # Clean the output file
-sed -i '/        H  /d' {PDBfile_out}_MD_out.pdb
+sed -i '/        H  /d' {working_dir_path}_MD_out.pdb
     """
     remark = generate_remark_from_all_scores_df(self, index)
 
     cmd += f"""
 echo '{remark}' > {self.WT}_MDMin_{index}.pdb
-cat {PDBfile_out}_MD_out.pdb >> {self.WT}_MDMin_{index}.pdb
+cat {working_dir_path}_MD_out.pdb >> {self.WT}_MDMin_{index}.pdb
 sed -i -e 's/^\(ATOM.\{{17\}}\) /\\1A/' {self.WT}_MDMin_{index}.pdb
 sed -i -e 's/5TS A/5TS X/' {self.WT}_MDMin_{index}.pdb
     """
