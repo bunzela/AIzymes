@@ -31,7 +31,9 @@ def prepare_ProteinMPNN(self, new_index, cmd):
     os.makedirs(folder_proteinmpnn, exist_ok=True)
      
         
-    PDB_input, _, _ = get_PDB_in(self, new_index)
+    #PDB_input, _, _ = get_PDB_in(self, new_index)
+    input_pdb_paths = get_PDB_in(self, new_index)
+    PDB_input = input_pdb_paths['Design_in']
     
     make_bias_dict(self, PDB_input, folder_proteinmpnn)
 
