@@ -496,7 +496,7 @@ def start_calculation(self, parent_index):
         logging.info(f"Index {parent_index} has no predicted structure, starting ESMfold.")
         self.all_scores_df.at[parent_index, "blocked_ESMfold"] = True   
         self.all_scores_df.at[parent_index, "blocked_RosettaRelax"] = True 
-        run_design(self, parent_index, ["ESMfold", "RosettaRelax", "MDMin", "ElectricFields"])  
+        run_design(self, parent_index, ["ESMfold", "MDMin", "RosettaRelax", "ElectricFields"])  
     
     # Check if RosettaRelax is done    
     elif not f"{self.WT}_RosettaRelax_{parent_index}.pdb" in os.listdir(os.path.join(self.FOLDER_HOME, str(parent_index))):

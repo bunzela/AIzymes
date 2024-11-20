@@ -52,7 +52,7 @@ class AIzymes_MAIN:
               CST_WEIGHT=1.0, ProteinMPNN_PROB=0.0, ProteinMPNN_BIAS=0.0, LMPNN_PROB=0.0, 
               FOLDER_MATCH=None, ProteinMPNN_T="0.1", LMPNN_T="0.1", LMPNN_BIAS=0.0, 
               SUBMIT_PREFIX=None, SYSTEM=None, MATCH=None, 
-              EXPLORE=False, LOG='debug', PARENT_DES_MED='RosettaDesign', FIELD_TARGET=":5TS@C9 :5TS@H04"):
+              EXPLORE=False, LOG='debug', PARENT_DES_MED='RosettaDesign', FIELD_TARGET=":5TS@C9 :5TS@H04", MDMin = False):
         """
         Sets up the AIzymes project environment with specified parameters.
 
@@ -82,6 +82,7 @@ class AIzymes_MAIN:
             FIELD_TARGET (str): Target atoms at which to calculate electric field.
             LOG (str): Logging level.
             PARENT_DES_MED (str): Parent design method.
+            MDMin (bool): Use MD minimis(z)ation.
         """
         for key, value in locals().items():
             if key not in ['self']:  

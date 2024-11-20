@@ -39,6 +39,7 @@ def set_system(self):
         self.FIELD_TOOLS       = '../../src/FieldTools.py'
         self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
         self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
+        self.BLUEPEBBLE_ACCOUNT= 'ptch000721'
         
     elif self.SYSTEM == 'BACKGROUND_JOB': 
         
