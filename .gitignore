@@ -1,14 +1,7 @@
 # Ignore everything in the design/ directory
-#design/*
-
-# But exclude these specific directories and all .ipynb files from being ignored
-!design/Input/
-!design/LigandMPNN/
-!design/Parent_1ohp/
-!design/ProteinMPNN/
-!*.ipynb
+design/*
+# Keep test
+!design/TEST 
 
 # Ignore all log files
 *.log
-
-design/AL
