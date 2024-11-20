@@ -36,7 +36,7 @@ def set_system(self):
         self.rosetta_ext       = "linuxgccrelease"
         self.bash_args         = ""
         self.ROSETTA_PATH      = "/user/work/qz22231/rosetta.source.release-371/main/source"
-        self.FIELD_TOOLS       = '../../src/FieldTools.py'
+        self.FIELD_TOOLS       = "/user/work/qz22231/AIzymes/AIzymes_git/AIzymes/src/FieldTools.py" #'../../../src/FieldTools.py'
         self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
         self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
         self.BLUEPEBBLE_ACCOUNT= 'ptch000721'
