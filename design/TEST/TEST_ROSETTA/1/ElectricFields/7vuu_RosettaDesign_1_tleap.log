@@ -1,4 +1,4 @@
-log started: Tue Nov  5 14:58:35 2024
+log started: Wed Nov 20 12:09:51 2024
 
 Log file: ./leap.log
 >> #
@@ -224,7 +224,7 @@ Loading: NVAL
 ----- Source: /home/bunzelh/miniconda3/envs/py37/dat/leap/cmd/leaprc.gaff
 ----- Source of /home/bunzelh/miniconda3/envs/py37/dat/leap/cmd/leaprc.gaff done
 >> logFile leap.log
-log started: Tue Nov  5 14:58:43 2024
+log started: Wed Nov 20 12:09:51 2024
 
 Log file: ./leap.log
 >> #
@@ -341,14 +341,14 @@ Loading PDB file: /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/1/ElectricField
 Matching PDB residue names to LEaP variables.
 Mapped residue LEU, term: Terminal/beginning, seq. number: 0 to: NLEU.
 Mapped residue ALA, term: Terminal/last, seq. number: 62 to: CALA.
-  total atoms in file: 531
-  Leap added 486 missing atoms according to residue templates:
-       486 H / lone pairs
+  total atoms in file: 527
+  Leap added 481 missing atoms according to residue templates:
+       481 H / lone pairs
 >     saveamberparm mol /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/1/ElectricFields/7vuu_RosettaDesign_1.parm7 /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/1/ElectricFields/7vuu_RosettaDesign_1.rst7
 Checking Unit.
 
 /home/bunzelh/miniconda3/envs/py37/bin/teLeap: Warning!
-The unperturbed charge of the unit (-10.000000) is not zero.
+The unperturbed charge of the unit (-12.000000) is not zero.
 
 /home/bunzelh/miniconda3/envs/py37/bin/teLeap: Note.
 Ignoring the warning from Unit Checking.
@@ -368,7 +368,7 @@ old PREP-specified impropers:
  <5TS 64>:  C3   C5   C4   O5  
  <5TS 64>:  C4   C6   C5   C9  
  <5TS 64>:  C5   H04  C9   N1  
- total 225 improper torsions applied
+ total 219 improper torsions applied
  8 improper torsions in old prep form
 Building H-Bond parameters.
 Incorporating Non-Bonded adjustments.

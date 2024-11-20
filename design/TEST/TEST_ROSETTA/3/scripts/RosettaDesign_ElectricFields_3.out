@@ -2,15 +2,15 @@
 core.init: Checking for fconfig files in pwd and ./rosetta/flags 
 core.init: Rosetta version: rosetta.source.release-280 r280 2021.16+release.8ee4f02 8ee4f02ac5768a8a339ffada74cb0ff5f778b3e6 https://www.rosettacommons.org 2021-04-20T20:57:38.289184
 core.init: command: /home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source//bin/rosetta_scripts.linuxgccrelease -s /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/parent/7vuu.pdb -in:file:native /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/parent/7vuu.pdb -run:preserve_header true -extra_res_fa /home/bunzelh/AIzymes/design/TEST/Input/5TS.params -enzdes:cstfile /home/bunzelh/AIzymes/design/TEST/Input/5TS_enzdes_planar_tAB100.cst -enzdes:cst_opt true -parser:protocol /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/3/scripts/RosettaDesign_3.xml -out:file:scorefile /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/3/score_RosettaDesign.sc -nstruct 1 -ignore_zero_occupancy false -corrections::beta_nov16 true -overwrite
-basic.random.init_random_generator: 'RNG device' seed mode, using '/dev/urandom', seed=-739465632 seed_offset=0 real_seed=-739465632
-basic.random.init_random_generator: RandomGenerator:init: Normal mode, seed=-739465632 RG_type=mt19937
+basic.random.init_random_generator: 'RNG device' seed mode, using '/dev/urandom', seed=2057982480 seed_offset=0 real_seed=2057982480
+basic.random.init_random_generator: RandomGenerator:init: Normal mode, seed=2057982480 RG_type=mt19937
 core.init: Resolved executable path: /home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/build/src/release/linux/3.10/64/x86/gcc/4.8/default/rosetta_scripts.default.linuxgccrelease
 core.init: Looking for database based on location of executable: /home/bunzelh/rosetta_src_2021.16.61629_bundle/main/database/
 protocols.jd2.PDBJobInputter: Instantiate PDBJobInputter
 protocols.jd2.PDBJobInputter: PDBJobInputter::fill_jobs
 protocols.jd2.PDBJobInputter: pushed /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/parent/7vuu.pdb nstruct index 1
 core.chemical.GlobalResidueTypeSet: Finished initializing fa_standard residue type set.  Created 985 residue types
-core.chemical.GlobalResidueTypeSet: Total time to initialize 1.96 seconds.
+core.chemical.GlobalResidueTypeSet: Total time to initialize 2.59 seconds.
 core.import_pose.import_pose: File '/home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/parent/7vuu.pdb' automatically determined to be of type PDB
 core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue ALA:CtermProteinFull 63
 protocols.evaluation.ChiWellRmsdEvaluatorCreator: Evaluation Creator active ... 
@@ -237,7 +237,7 @@ core.scoring.elec.util: Read 40 countpair representative atoms
 core.pack.dunbrack.RotamerLibrary: shapovalov_lib_fixes_enable option is true.
 core.pack.dunbrack.RotamerLibrary: Binary rotamer library selected: /home/bunzelh/rosetta_src_2021.16.61629_bundle/main/database/rotamer/beta_nov2016/Dunbrack10.lib.bin
 core.pack.dunbrack.RotamerLibrary: Using Dunbrack library binary file '/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/database/rotamer/beta_nov2016/Dunbrack10.lib.bin'.
-core.pack.dunbrack.RotamerLibrary: Dunbrack 2010 library took 0.38 seconds to load from binary
+core.pack.dunbrack.RotamerLibrary: Dunbrack 2010 library took 0.3 seconds to load from binary
 protocols.enzdes.EnzRepackMinimize: Creating packer task based on specified task operations...
 core.pack.task: Packer task: initialize from command line() 
 protocols.enzdes.EnzRepackMinimize: Starting PolyAla CstOptimization...
@@ -421,9 +421,9 @@ protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.693167 -0.68748 
 protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.693167 -0.68748 0.216545 -0.663559 0.72597 0.180714 -0.281442 -0.0184254 -0.959401 6.78021 0.898917 -7.59733  
 protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.693167 -0.68748 0.216545 -0.663559 0.72597 0.180714 -0.281442 -0.0184254 -0.959401 -268.527 416.218 33.8227  
 protocols.rosetta_scripts.ParsedProtocol: setting status to success
-protocols.jd2.JobDistributor: 7vuu_0001 reported success in 94 seconds
+protocols.jd2.JobDistributor: 7vuu_0001 reported success in 95 seconds
 protocols.jd2.JobDistributor: no more batches to process... 
-protocols.jd2.JobDistributor: 1 jobs considered, 1 jobs attempted in 94 seconds
+protocols.jd2.JobDistributor: 1 jobs considered, 1 jobs attempted in 100 seconds
 protocols.jd2.JobDistributor: [ WARNING ] The following options have been set, but have not yet been used:
 	-enzdes:cst_opt 
 
@@ -447,13 +447,3 @@ InterfaceScoreCalculator Mover's citation(s):
 Lemmon G, and Meiler J.  (2012).  Rosetta Ligand docking with flexible XML protocols.  Methods Mol Biol 819:143-55.  doi: 10.1007/978-1-61779-465-0_10.
 
 
--nc              Trajectory file      :  /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/3/ElectricFields/7vuu_RosettaDesign_3.rst7
--parm            Parameter file       :  /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/3/ElectricFields/7vuu_RosettaDesign_3.parm7
--out             Output file          :  /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/3/ElectricFields/7vuu_RosettaDesign_3_fields.pkl
--target          Field target         :  /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/parent/field_target.dat
--arg_solvent     Non-protein residues :  WAT
--exclude_atoms   Atoms excluded       : Full residue defined in the first Atom for each Target.
-
-Field calculation RUNNING :  2024-11-05 14:54:48.803164
-
-Field calculation DONE :  2024-11-05 14:54:48.883412
