@@ -28,7 +28,9 @@ def prepare_MDMin(self,
         
     working_dir_path = f"{filename}/MDMin/{self.WT}_{index}"
 
-    cmd += f"""# Assemble structure
+    cmd += f"""### MDMin ###
+    
+# Assemble structure
 cat {PDBfile_in}.pdb > {working_dir_path}_input.pdb
 """
     
@@ -50,14 +52,14 @@ cat {PDBfile_in}.pdb > {working_dir_path}_input.pdb
 #Add Rosetta command to shell script
     cmd += f"""
 # Run Rosetta Relax
-{self.ROSETTA_PATH}/bin/rosetta_scripts.{self.rosetta_ext} \
-                -s                        {working_dir_path}_input.pdb \
-                -extra_res_fa             {self.FOLDER_INPUT}/{self.LIGAND}.params \
-                -parser:protocol          {filename}/scripts/Rosetta_buildPDB_{index}.xml \
-                -nstruct                  1 \
-                -ignore_zero_occupancy    false \
-                -corrections::beta_nov16  true \
-                -run:preserve_header      true \
+{self.ROSETTA_PATH}/bin/rosetta_scripts.{self.rosetta_ext} \\
+    -s                        {working_dir_path}_input.pdb \\
+    -extra_res_fa             {self.FOLDER_INPUT}/{self.LIGAND}.params \\
+    -parser:protocol          {filename}/scripts/Rosetta_buildPDB_{index}.xml \\
+    -nstruct                  1 \\
+    -ignore_zero_occupancy    false \\
+    -corrections::beta_nov16  true \\
+    -run:preserve_header      true \\
                     
 # Tidy up the output file
 sed -i -e '/[0-9]H/d' -e '/H[0-9]/d' -e '/CONECT/Q' {working_dir_path}_wRosetta_sidechains.pdb
@@ -118,6 +120,7 @@ echo '{remark}' > {self.WT}_MDMin_{index}.pdb
 cat {working_dir_path}_MD_out.pdb >> {self.WT}_MDMin_{index}.pdb
 sed -i -e 's/^\(ATOM.\{{17\}}\) /\\1A/' {self.WT}_MDMin_{index}.pdb
 sed -i -e 's/5TS A/5TS X/' {self.WT}_MDMin_{index}.pdb
-    """
+
+"""
 
     return cmd

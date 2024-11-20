@@ -114,5 +114,6 @@ cat {working_dir_path}_lig.pdb     >> {working_dir_path}_input.pdb
 sed -i '/TER/d' {working_dir_path}_input.pdb
 
 cat {working_dir_path}_input.pdb > {self.FOLDER_HOME}/{index}/{self.WT}_ESMfold_{index}.pdb
+
 """        
     return cmd

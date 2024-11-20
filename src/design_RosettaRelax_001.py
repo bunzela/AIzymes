@@ -110,7 +110,9 @@ def prepare_RosettaRelax(self,
 </ROSETTASCRIPTS>
 """
     
-    cmd += f"""# Assemble structure
+    cmd += f"""### RosettaRelax ###
+    
+# Assemble structure
 cat {PDBfile_in}.pdb > {working_dir_path}_input.pdb
 """
         
@@ -120,16 +122,16 @@ cat {PDBfile_in}.pdb > {working_dir_path}_input.pdb
   
     cmd += f"""
 # Run Rosetta Relax
-{self.ROSETTA_PATH}/bin/rosetta_scripts.{self.rosetta_ext} \
-                -s                                        {working_dir_path}_input.pdb \
-                -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params \
-                -parser:protocol                          {filename}/scripts/RosettaRelax_{index}.xml \
-                -out:file:scorefile                       {filename}/score_RosettaRelax.sc \
-                -nstruct                                  1 \
-                -ignore_zero_occupancy                    false \
-                -corrections::beta_nov16                  true \
-                -run:preserve_header                      true \
-                -overwrite {ex}
+{self.ROSETTA_PATH}/bin/rosetta_scripts.{self.rosetta_ext} \\
+    -s                                        {working_dir_path}_input.pdb \\
+    -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params \\
+    -parser:protocol                          {filename}/scripts/RosettaRelax_{index}.xml \\
+    -out:file:scorefile                       {filename}/score_RosettaRelax.sc \\
+    -nstruct                                  1 \\
+    -ignore_zero_occupancy                    false \\
+    -corrections::beta_nov16                  true \\
+    -run:preserve_header                      true \\
+    -overwrite {ex}
 
 # Rename the output file
 mv {filename}/{self.WT}_{index}_input_0001.pdb {self.WT}_RosettaRelax_{index}.pdb

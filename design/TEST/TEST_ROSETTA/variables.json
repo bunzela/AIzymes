@@ -26,6 +26,7 @@
     "EXPLORE": true,
     "PARENT_DES_MED": "RosettaDesign",
     "FIELD_TARGET": ":5TS@C9 :5TS@H04",
+    "MDMin": true,
     "FOLDER_INPUT": "/home/bunzelh/AIzymes/design/TEST/Input",
     "USERNAME": "bunzelh",
     "LOG_FILE": "/home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/logfile.log",

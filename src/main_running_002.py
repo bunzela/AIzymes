@@ -492,18 +492,18 @@ def start_calculation(self, parent_index):
         self.all_scores_df.at[parent_index, "blocked_ESMfold"] = True   
         self.all_scores_df.at[parent_index, "blocked_RosettaRelax"] = True 
         if self.MDMin:
-            run_design(self, parent_index, ["ESMfold", "RosettaRelax", "ElectricFields"])  
-        else:
             run_design(self, parent_index, ["ESMfold", "MDMin", "RosettaRelax", "ElectricFields"])  
+        else:
+            run_design(self, parent_index, ["ESMfold", "RosettaRelax", "ElectricFields"])  
     
     # Check if RosettaRelax is done --> should never happen, probabbly not needed anymore but keep for consistency
     elif not f"{self.WT}_RosettaRelax_{parent_index}.pdb" in os.listdir(os.path.join(self.FOLDER_HOME, str(parent_index))):
         logging.info(f"Index {parent_index} has no relaxed structure, starting RosettaRelax.")
         self.all_scores_df.at[parent_index, "blocked_RosettaRelax"] = True 
         if self.MDMin:
-            run_design(self, parent_index, ["RosettaRelax", "ElectricFields"])    
+            run_design(self, parent_index, ["MDMin", "RosettaRelax", "ElectricFields"])    
         else:
-            run_design(self, parent_index, ["MDMin", "RosettaRelax", "ElectricFields"])   
+            run_design(self, parent_index, ["RosettaRelax", "ElectricFields"])   
 
     # If all OK, start Design
     else:
