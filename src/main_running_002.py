@@ -439,7 +439,7 @@ def start_parent_design(self):
     # Add cat res to new entry
     save_cat_res_into_all_scores_df(self, new_index, 
                                    f'{self.FOLDER_PARENT}/{parent_structures[selected_index]}',
-                                   save_resn=False)
+                                   save_resn=True)
     
     # Difficult to set kbt_boltzmann of first design. Here we just assign it the number of the second design?????????????
     if new_index == 1: 
