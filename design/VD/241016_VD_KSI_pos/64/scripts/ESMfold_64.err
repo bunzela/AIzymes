@@ -1,2 +1,0 @@
-Some weights of EsmForProteinFolding were not initialized from the model checkpoint at facebook/esmfold_v1 and are newly initialized: ['esm.contact_head.regression.bias', 'esm.contact_head.regression.weight']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.

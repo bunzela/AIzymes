@@ -1,5 +1,0 @@
-parm    /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/10/RosettaRelax/1ohp_10_old_bb.pdb
-reference /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/10/RosettaRelax/1ohp_10_old_bb.pdb [ref]
-trajin    /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/10/RosettaRelax/1ohp_10_new_bb.pdb
-rmsd      @CA ref [ref]
-trajout   /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos_control/10/RosettaRelax/1ohp_10_aligned.pdb noter
