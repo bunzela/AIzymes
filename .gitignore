@@ -1,7 +1,7 @@
 # Ignore everything in the design/ directory
 design/*
 # Keep test
-!design/TEST 
+!design/TEST/* 
 
 # Ignore all log files
 *.log
