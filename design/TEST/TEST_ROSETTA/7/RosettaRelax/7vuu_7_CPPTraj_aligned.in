@@ -1,5 +1,0 @@
-parm    /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/7/RosettaRelax/7vuu_7_old_bb.pdb
-reference /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/7/RosettaRelax/7vuu_7_old_bb.pdb [ref]
-trajin    /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/7/RosettaRelax/7vuu_7_new_bb.pdb
-rmsd      @CA ref [ref]
-trajout   /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/7/RosettaRelax/7vuu_7_aligned.pdb noter
