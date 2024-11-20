@@ -453,7 +453,7 @@ def start_parent_design(self):
     elif self.PARENT_DES_MED in ["RosettaDesign"]:  
         run_design(self, new_index, [self.PARENT_DES_MED, "ElectricFields"])
     else:
-        logging.error(f"ERROR! PARENT_DES_MED: {PARENT_DES_MED} not defined.")
+        logging.error(f"ERROR! PARENT_DES_MED: {self.PARENT_DES_MED} not defined.")
         sys.exit()
       
     save_all_scores_df(self)
