@@ -1,4 +1,0 @@
-parm    /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/15/1ohp_ESMfold_15.pdb
-trajin  /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/15/1ohp_ESMfold_15.pdb
-strip   !@C,N,O,CA
-trajout /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/15/RosettaRelax/1ohp_15_new_bb.pdb

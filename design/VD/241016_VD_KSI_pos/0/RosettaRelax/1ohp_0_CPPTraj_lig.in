@@ -1,4 +1,0 @@
-parm    /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/0/1ohp_RosettaDesign_0.pdb
-trajin  /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/0/1ohp_RosettaDesign_0.pdb
-strip   !:5TS
-trajout /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/0/RosettaRelax/1ohp_0_lig.pdb
