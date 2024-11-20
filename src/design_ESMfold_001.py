@@ -1,3 +1,11 @@
+"""
+Design ESMfold Module
+
+Manages the structure prediction of protein sequences using ESMfold within the AIzymes project.
+
+Functions:
+    - prepare_ESMfold: Prepares commands for ESMfold job submission.
+"""
 import logging
 import os
 import shutil 
@@ -12,11 +20,11 @@ def prepare_ESMfold(self,
     Predicts structure of sequence in {index} using ESMfold. Uses ligand coordinates from previous RosettaDesign.
     
     Parameters:
-    - index (str): The index of the protein variant to be predicted.
-    - cmd (str): Growing list of commands to be exected by run_design using submit_job.
+    index (str): The index of the protein variant to be predicted.
+    cmd (str): Growing list of commands to be exected by run_design using submit_job.
 
     Returns:
-    - cmd (str): Command to be exected by run_design using submit_job.
+    cmd (str): Command to be exected by run_design using submit_job.
     """
     filename = f'{self.FOLDER_HOME}/{index}'
         
@@ -31,13 +39,14 @@ def prepare_ESMfold(self,
     sequence_file = f'{self.FOLDER_HOME}/{index}/{self.WT}_{index}.seq'
     
     # Make sequence file exist
-    if not os.path.isfile(sequence_file):      
-        logging.error(f"Sequence_file {sequence_file} not present!")
-        return False
-       
-    cmd += f"""
+    #if not os.path.isfile(sequence_file):      
+    #    logging.error(f"Sequence_file {sequence_file} not present!")
+    #    return False
+    #does not work anymore if run in batch!!!
     
-{self.bash_args} python {self.FOLDER_PARENT}/ESMfold.py \
+    cmd += f"""### ESMfold ###
+    
+{self.bash_args}python {self.FOLDER_PARENT}/ESMfold.py \
 --sequence_file {sequence_file} \
 --output_file   {output_file} 
 

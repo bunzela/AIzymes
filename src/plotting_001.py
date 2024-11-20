@@ -6,12 +6,21 @@ from scipy.optimize import curve_fit
 from scipy.stats import pearsonr
 import networkx as nx
 from sklearn.decomposition import PCA
+from Bio import SeqIO
 from networkx.drawing.nx_agraph import graphviz_layout
-#import umap
-#import torch
-#import esm
+from transformers import EsmModel, EsmTokenizer
+from scipy.ndimage import gaussian_filter
+from scipy.interpolate import griddata
+from scipy.spatial.distance import cdist
+import umap 
+import torch
+import esm
 
 from helper_001               import *
+
+#plots = '/net/bs-gridfs/export/grid/scratch/vdegiorgi/AIzymes/design/VD/241025_VD_AlleyCat_cstweight_2.0/plots'
+#os.makedirs(plots)
+
 
 #Imports ALL_SCORES_CSV as the plot_scores_df dataframe
 def load_plot_scores_df(self):
@@ -40,7 +49,7 @@ def plot_combined_score(self, ax, combined_scores, combined_score_min, combined_
     ax.set_title('Histogram of Combined Score')
     ax.set_xlabel('Combined Score')
     ax.set_ylabel('Frequency')
-
+    
 def plot_interface_score(ax, interface_scores, interface_score_min, interface_score_max, interface_score_bin):
     ax.hist(interface_scores, density=True,
             bins=np.arange(interface_score_min,interface_score_max+interface_score_bin,interface_score_bin))
@@ -79,20 +88,19 @@ def plot_boltzmann_histogram(self, ax, combined_scores, score_min, score_max, sc
                                                        print_norm=False,
                                                        norm_all=False,
                                                        extension="score")
-    
-    # Definition of the kbt value which is used as the Boltzmann weight. 
-    # The value is not constant throughout the simulation but decays with time (increasing index).
-    # The dacay rate is defined in the second line of the code.
-    if isinstance(self.KBT_BOLTZMANN, (float, int)):
-        kbt_boltzmann = self.KBT_BOLTZMANN
-    else:
-        if len(self.KBT_BOLTZMANN) == 2:
-            kbt_boltzmann = max(self.KBT_BOLTZMANN[0] * np.exp(-self.KBT_BOLTZMANN[1]*self.plot_scores_df['index'].max()), 0.05)
+
+    # Some issue with numpy exp when calculating boltzman factors.
+    combined_potentials_list = [float(x) for x in combined_potentials]
+    combined_potentials = np.array(combined_potentials_list)
+
+    #Creates a numpy array with the kbt_weights of each index in the unblocked_all_scores dataframe
+    kbt_values = self.plot_scores_df['kbt_boltzmann'].to_numpy()
+    kbt_values = np.array(kbt_values, dtype=np.float64)
     
     #Calculates the weights using the Boltzmann formula which are then going to be used for the generation of the boltzmann_scores
-    boltzmann_factors = np.exp(combined_potentials / (kbt_boltzmann)) 
+    boltzmann_factors = np.exp(combined_potentials / kbt_values)
     print(f"Min/Max boltzmann factors: {min(boltzmann_factors)}, {max(boltzmann_factors)}")
-    probabilities = boltzmann_factors / sum(boltzmann_factors) 
+    probabilities = boltzmann_factors / sum(boltzmann_factors)
     
     #Lists of values sampled from the combined potential either randomly (random_scores) or using weights (boltzmann_scores)
     random_scores = np.random.choice(combined_potentials, size=10000, replace=True)
@@ -104,7 +112,7 @@ def plot_boltzmann_histogram(self, ax, combined_scores, score_min, score_max, sc
     ax.text(0.05, 0.95, "normalized only to \n this dataset")
     ax.set_xlabel('Potential')
     ax.set_ylabel('Density (Normal)')
-    ax.set_title(f'kbT = {kbt_boltzmann:.1e}')
+    #ax.set_title(f'kbT = {kbt_values:.1e}')
     
     #Definition of a twin axis for the second histogram using the Boltzmann sampling with the weights for the Boltzmann distribution
     ax_dup = ax.twinx()
@@ -349,7 +357,7 @@ def plot_hamming_distance_v_generation_violin(self, ax):
     ax.plot(generations, mean_values, linewidth=1.0)
     
     #Sets plot details
-    ax.set_ylim(0, 8)
+    ax.set_ylim(bottom=0)
     ax.set_title('Hamming Distance vs Generations')
     ax.set_xlabel('Generation')
     ax.set_ylabel('Hamming Distance')
@@ -426,9 +434,62 @@ def plot_scores(self, combined_score_min=0, combined_score_max=1, combined_score
         #plot_interface_score_v_total_score(axs[-,-],plot_scores_df, total_score_min, total_score_max, interface_score_min, interface_score_max)
 
         plt.tight_layout()
-        #plt.savefig(os.path.join(self.FOLDER_PLOT, 'main_plots.png'), format='png')
+
+        plt.savefig(os.path.join(self.FOLDER_PLOT, 'main_plots.png'), format='png')    
+        #plt.savefig(os.path.join(plots, 'main_plots.png'), format='png')
 
         plt.show()
+        
+#Defines the kbt_cst_weights_plotting_function which generates two line plots and saves them in the plot folder
+def kbt_cst_weights_plotting_function(self):
+    
+    fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+    fig.suptitle('kbt and cst weights across generations', fontsize=15, weight='bold')    
+    
+    max_gen = int(self.plot_scores_df['generation'].max())
+    generation_range = np.arange(0, max_gen + 1)    
+    generations= pd.Series(generation_range)
+    
+    #Creates the line plot showing the kbt weights values over generation
+    kbt_weights = self.plot_scores_df['kbt_boltzmann'].dropna()
+    kbt_weights_filtered = kbt_weights.drop_duplicates(keep='first')
+    
+    kbt_plot = axs[0].plot(generations, kbt_weights_filtered)
+    
+    #Sets kbt plot details
+    axs[0].set_title("kbt Weights vs Generations")
+    axs[0].set_xlabel("Generations")
+    every_third_generation = generations[::3]
+    axs[0].set_xticks(every_third_generation)
+    axs[0].set_xticklabels(every_third_generation)
+    axs[0].set_ylabel("kbt Weights")
+    
+    #Creates the line plot showing the cst weights values over generation
+    cst_weights = self.plot_scores_df['cst_weight'].dropna()
+    cst_weights_filtered = cst_weights.drop_duplicates(keep='first')
+   
+    cst_plot = axs[1].plot(generations, cst_weights_filtered)
+
+    #Sets cst plot details
+    axs[1].set_title("cst Weights vs Generations")
+    axs[1].set_xlabel("Generations")
+    every_third_generation = generations[::3]
+    axs[1].set_xticks(every_third_generation)
+    axs[1].set_xticklabels(every_third_generation)
+    axs[1].set_ylabel("cst weights")
+    
+    #Creates and prints dataframe with the values of the kbt and cst weights of the corresponding generation
+    generations_reset = generations.reset_index(drop=True)
+    kbt_weights_reset = kbt_weights_filtered.reset_index(drop=True)
+    cst_weights_reset = cst_weights_filtered.reset_index(drop=True)
+
+    kbt_cst_df = pd.DataFrame({'Generation': generations_reset, 'kbt_weights': kbt_weights_reset, 'cst_weights':cst_weights_reset})
+    print(kbt_cst_df)
+    
+    plt.tight_layout()
+    plt.savefig(os.path.join(self.FOLDER_PLOT, 'kbt_cst_weights_plot.png'), format='png')  
+
+    plt.show()
         
 #Defines the tree_plotting function which generates the tree plot and saves it in the plot folder
 def tree_plotting_function(self):
@@ -508,19 +569,135 @@ def tree_plotting_function(self):
     #min_score = min(scores.values())
     #max_score = max(scores.values())
     #normalized_scores = {node: (score - min_score) / (max_score - min_score) for node, score in scores.items()}
-          
-    #plt.savefig(os.path.join(self.FOLDER_PLOT, 'tree_plot.png'), format='png')
-    
+      
+        
+    plt.savefig(os.path.join(self.FOLDER_PLOT, 'tree_plot.png'), format='png')  
+    #plt.savefig(os.path.join(plots, 'tree_plot.png'), format='png')
+
     plt.show()
 
         
 #Defines the landscape_plotting function which generates the tree plot and saves it in the plot folder
 def landscape_plotting_function(self):
-        print("landscape plot")
-            
-        #plt.savefig(os.path.join(FOLDER_PLOT, 'landscape_plot.png'), format='png')
+    
+     #Checks for GPU availability
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
+    #Defines the esm2 model to be used
+    esm2_model = "facebook/esm2_t6_8M_UR50D"
+
+    #Retrieves the protein seqeunces from the all_scores_csv file and performs tokenization
+    sequences_df = self.plot_scores_df['sequence']
+    tokenizer = EsmTokenizer.from_pretrained(esm2_model)
+    tokenized_sequence = [tokenizer(sequence, return_tensors='pt') for sequence in sequences_df]
+    
+    #Performs ESM embedding
+    
+    #Loads pre-trained esm model into the choosen device (CPU or GPU)
+    model = EsmModel.from_pretrained(esm2_model).to(device)
+    model.eval()
+
+    #Performs ESM embedding and saves output into the all_hidden_states numpy array.
+    
+    #The all_hidden_states numpy array is an array of vectors, containing all the hidden states for each sequence token. 
+    def get_last_hidden_states(model, tokenized_sequences):
+        with torch.no_grad():
+            all_hidden_states = []
+            for seq in tokenized_sequences:
+                seq = {k: v.to(device) for k, v in seq.items()}
+                output = model(**seq)
+                hidden_states = output.last_hidden_state.squeeze(0).mean(dim=0).cpu().numpy()
+                all_hidden_states.append(hidden_states)
+            return np.array(all_hidden_states)
+    all_hidden_states = get_last_hidden_states(model, tokenized_sequence)
+    
+    print("ESM Embedding done")
+
+    # Dimensionality reduction of all_hidden_states
+    umap_model = umap.UMAP()  
+    umap_df = pd.DataFrame(umap_model.fit_transform(all_hidden_states), columns=['umap_x', 'umap_y'], index=sequences_df)
+
+    # Merge the UMAP values with the plot_scores_df to generate the landscape_plot_df needed for plotting
+    landscape_plot_df = pd.merge(self.plot_scores_df, umap_df, on='sequence', how='left')
+    
+    #Define the features to be plotted in the z-coordinate and corrects their value if necessary
+    features = ['interface_score', 'total_score', 'efield_score', 'generation']
+    invert   = ['interface_score', 'total_score']
+    
+    for feature in features:
+        if feature not in invert: continue
+        landscape_plot_df[feature] = -landscape_plot_df[feature]
+    
+    #Creates a figure and a 2x4 grid for the landscape subplot and set the title of the plot
+    fig, axs = plt.subplots(2, 2, figsize=(10,10))
+    fig.suptitle(f'ESM2 embeddings UMAP colored by all_scores metrics and generation', fontsize=15, weight='bold')
+    
+    #For each feature, it generates the corresponding z-coordinate values and creates the scatter and contour plot along with the UMAP values (x,y)
+    for idx, feature in enumerate(features):
+        x = landscape_plot_df['umap_x']
+        y = landscape_plot_df['umap_y']
+        z = landscape_plot_df[feature]
+        vmin, vmax = z.min(), z.max()
         
-        #plt.show()
+        #Scatter Plots Generation
+        #Generates the scatter plot displaying the UMAP values on the x- and y-axis and the corresponding metric score for the z-coordinate.
+        if feature=='total_score':
+            scatter = axs[0, 0].scatter(x, y, c=z, cmap='bwr', s=2, vmin=vmin, vmax=vmax, zorder=10)
+            axs[0, 0].set_title(feature)
+            fig.colorbar(scatter, ax=axs[0, 0], orientation='vertical')
+        if feature=='generation':
+            scatter = axs[0, 1].scatter(x, y, c=z, cmap='bwr', s=2, vmin=vmin, vmax=vmax, zorder=10)
+            axs[0, 1].set_title(feature)
+            fig.colorbar(scatter, ax=axs[0, 1], orientation='vertical')
+        if feature=='interface_score':
+            scatter = axs[1, 0].scatter(x, y, c=z, cmap='bwr', s=2, vmin=vmin, vmax=vmax, zorder=10)
+            axs[1, 0].set_title(feature)
+            fig.colorbar(scatter, ax=axs[1, 0], orientation='vertical')
+        if feature=='efield_score':
+            scatter = axs[1, 1].scatter(x, y, c=z, cmap='bwr', s=2, vmin=vmin, vmax=vmax, zorder=10)
+            axs[1,1].set_title(feature)
+            fig.colorbar(scatter, ax=axs[1, 1], orientation='vertical')
+
+        #scatter = axs[0, idx].scatter(x, y, c=z, cmap='bwr', s=2, vmin=vmin, vmax=vmax, zorder=10)
+        #axs[0, idx].set_title(feature)
+
+        #Extends the limits of the x and y axes for the landscape scatter plot by adding a 10%-margin to the minimum and maximum values. 
+        x_margin = (x.max() - x.min()) * 0.1
+        y_margin = (y.max() - y.min()) * 0.1
+        x_min, x_max = x.min() - x_margin, x.max() + x_margin
+        y_min, y_max = y.min() - y_margin, y.max() + y_margin
+        
+        '''
+        #Contour Plots Generation
+        #Creates grid for interpolation and calculates the corresponding zz values at the define grid points using linear interpolation
+        xx, yy = np.meshgrid(np.linspace(x_min, x_max, 500), np.linspace(y_min, y_max, 500))
+        zz = griddata((x, y), z, (xx, yy), method='linear')
+        zz = gaussian_filter(zz, sigma=3)
+        
+        #Generates the contour plot displaying the UMAP values on the x- and y-axis and the corresponding metric score for the z-coordinate.
+        contour = axs[1, idx].contourf(xx, yy, zz, levels=10, cmap='bwr', zorder=1, vmin=vmin, vmax=vmax)
+
+        #Computes the distances between each grid point and the nearest data point
+        grid_points = np.column_stack([xx.ravel(), yy.ravel()])
+        data_points = np.column_stack([x, y])
+        distances = cdist(grid_points, data_points, metric='euclidean').min(axis=1)
+        
+        #Filters out grid points that are more than 0.5 away from the nearest data point and sets them equal to the minimum zz value in the dataset.
+        distance_mask = distances.reshape(xx.shape) > 0.5
+        zz[distance_mask] = np.nan
+        zz[np.isnan(zz)] = np.nanmin(zz)
+        '''
+
+        # Add a colorbar for the features in each scatter and contour plot
+        #fig.colorbar(scatter, ax=axs[0, idx], orientation='vertical')
+        #fig.colorbar(contour, ax=axs[1, idx], orientation='vertical')
+
+
+    plt.tight_layout()
+    #plt.savefig(os.path.join(plots, 'landscape_plot.png'), format='png')
+    plt.savefig(os.path.join(self.FOLDER_PLOT, 'landscape_plot.png'), format='png')
+
+    plt.show()
 
     
     
@@ -1145,80 +1322,6 @@ def plot_pca_umap():
     plt.tight_layout()
     plt.show()
 
-
-
-def plot_esm_umap():
-
-    #ESM embeddings and UMAP
-    def prepare_data(sequences):
-        """ Convert a list of protein sequences to the model's input format. """
-        batch_tokens = []
-        for seq in sequences:
-            tokens = torch.tensor([alphabet.encode(seq)], dtype=torch.long)
-            batch_tokens.append(tokens)
-        return torch.cat(batch_tokens)
-
-    # 1. Load ESM model
-    model, alphabet = esm.pretrained.esm2_t33_650M_UR50D()
-    model.eval()
-
-    # Load and preprocess data
-    all_scores_df = pd.read_csv(ALL_SCORES_CSV)
-    all_scores_df.dropna(subset=['total_score', 'catalytic_score', 'interface_score', 'sequence'], inplace=True)
-
-    # Extract sequences
-    sequences = all_scores_df['sequence'].tolist()
-
-    with torch.no_grad():
-        tokens = prepare_data(sequences)
-        results = model(tokens, repr_layers=[33])  # Specify the layer you want
-        token_embeddings = results["representations"][33]
-
-        # Mean pooling over positions
-        sequence_embeddings = token_embeddings.mean(dim=1)
-        
-    embeddings_array = sequence_embeddings.cpu().numpy()
-
-    # Perform UMAP
-    reducer = umap.UMAP()
-    umap_result = reducer.fit_transform(embeddings_array)
-
-    # Create a figure and a 2x2 grid of subplots
-    fig, axs = plt.subplots(3, 1, figsize=(12, 24))  # Adjust the figure size as needed
-
-    # Define a base font size
-    base_font_size = 10  # Adjust here
-
-    # Plot UMAP Interface score
-    axs[0].scatter(umap_result[:, 0], umap_result[:, 1], c=all_scores_df['interface_score'], cmap='viridis', alpha=0.6, s=1)
-    cbar = fig.colorbar(axs[0].collections[0], ax=axs[0], label='Interface Score')
-    axs[0].set_title('UMAP of Sequences - Interface score', fontsize=base_font_size * 2)
-    axs[0].set_xlabel('UMAP1', fontsize=base_font_size * 2)
-    axs[0].set_ylabel('UMAP2', fontsize=base_font_size * 2)
-    cbar.set_label('Interface Score', size=base_font_size * 2)
-
-    # Filter the DataFrame to include only rows where 'total_score' is <= -340
-    filtered_df = all_scores_df[all_scores_df['total_score'] <= -340]
-    filtered_umap_result = umap_result[all_scores_df['total_score'] <= -340]
-
-    # Now plot using the filtered data
-    axs[1].scatter(filtered_umap_result[:, 0], filtered_umap_result[:, 1], c=filtered_df['total_score'], cmap='viridis', alpha=0.6, s=1)
-    cbar = fig.colorbar(axs[1].collections[0], ax=axs[1], label='Total Score')
-    axs[1].set_title('UMAP of Sequences - Total score', fontsize=base_font_size * 2)
-    axs[1].set_xlabel('UMAP1', fontsize=base_font_size * 2)
-    axs[1].set_ylabel('UMAP2', fontsize=base_font_size * 2)
-    cbar.set_label('Total Score', size=base_font_size * 2)
-
-    # Plot UMAP with 'index' as the color
-    axs[2].scatter(umap_result[:, 0], umap_result[:, 1], c=all_scores_df['index'], cmap='viridis', alpha=0.6, s=1)
-    cbar = fig.colorbar(axs[2].collections[0], ax=axs[2], label='Generation')
-    axs[2].set_title('UMAP of Sequences - Generation', fontsize=base_font_size * 2)
-    axs[2].set_xlabel('UMAP1', fontsize=base_font_size * 2)
-    axs[2].set_ylabel('UMAP2', fontsize=base_font_size * 2)
-    cbar.set_label('Generation', size=base_font_size * 2)
-
-    plt.tight_layout()
-    plt.show()
 
 def find_mutations(seq1, seq2):
     # Function to compare sequences and find mutation positions

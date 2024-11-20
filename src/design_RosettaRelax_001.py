@@ -1,3 +1,13 @@
+
+"""
+Executes RosettaRelax to refine protein structures and improve stability in the AIzymes project.
+
+Functions:
+    prepare_RosettaRelax: Sets up commands for RosettaRelax job submission.
+
+Modules Required:
+    helper_001
+"""
 import logging
 import os
 import shutil 
@@ -13,12 +23,12 @@ def prepare_RosettaRelax(self,
     """
     Relaxes protein structure in {index} using RosettaRelax.
     
-    Parameters:
-    - index (str): The index of the protein variant to be relaxed.
-    - cmd (str): collection of commands to be run, this script wil append its commands to cmd
+    Args:
+    index (str): The index of the protein variant to be relaxed.
+    cmd (str): collection of commands to be run, this script wil append its commands to cmd
     
-    Optional parameters:
-    - PreMatchRelax (bool): True if ESMfold to be run without ligand (prior to RosettaMatch).
+    Optional Args:
+    PreMatchRelax (bool): True if ESMfold to be run without ligand (prior to RosettaMatch).
 
     """
     

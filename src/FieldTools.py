@@ -368,21 +368,21 @@ def inputParser(arg):
     
     for index in range(1,len(arg)-1,2):
         param = arg[index]
-        if param=="-nc"               : arg_nc            = os.getcwd()+"/"+str(arg[index+1])         ### Add new flag here
-        elif param=="-parm"           : arg_parm         = os.getcwd()+"/"+str(arg[index+1])
-        elif param=="-out"            : arg_out           = os.getcwd()+"/"+str(arg[index+1])
-        elif param=="-energy_out"     : arg_energy_out    = os.getcwd()+"/"+str(arg[index+1])
-        elif param=="-target"         : arg_target        = os.getcwd()+"/"+str(arg[index+1])
+        if param=="-nc"               : arg_nc            = str(arg[index+1])         ### Add new flag here
+        elif param=="-parm"           : arg_parm          = str(arg[index+1])
+        elif param=="-out"            : arg_out           = str(arg[index+1])
+        elif param=="-energy_out"     : arg_energy_out    = str(arg[index+1])
+        elif param=="-target"         : arg_target        = str(arg[index+1])
         elif param=="-solvent"        : arg_solvent       = str(arg[index+1])
-        elif param=="-exclude_atoms"  : arg_exclude_atoms = os.getcwd()+"/"+str(arg[index+1])
-        elif param=="-qm_dict"        : arg_qm_dict       = os.getcwd()+"/"+str(arg[index+1])
+        elif param=="-exclude_atoms"  : arg_exclude_atoms = str(arg[index+1])
+        elif param=="-qm_dict"        : arg_qm_dict       = str(arg[index+1])
         elif param=="-TIP4P"          : arg_TIP4P         = str(arg[index+1])
         elif param=="-verbose"        : arg_verbose       = str(arg[index+1])
         elif param=="-use_qm_charges" : arg_use_qmcharges = str(arg[index+1])
-        elif param=="-vector_out"     : arg_vector_out    = os.getcwd()+"/"+str(arg[index+1])
-        elif param=="-qm_mask"        : arg_qm_mask       = os.getcwd()+"/"+str(arg[index+1])
-        elif param=="-qm_charges"     : arg_qm_charges    = os.getcwd()+"/"+str(arg[index+1])
-        elif param=="-qm_dict"        : arg_qm_dict       = os.getcwd()+"/"+str(arg[index+1])
+        elif param=="-vector_out"     : arg_vector_out    = str(arg[index+1])
+        elif param=="-qm_mask"        : arg_qm_mask       = str(arg[index+1])
+        elif param=="-qm_charges"     : arg_qm_charges    = str(arg[index+1])
+        elif param=="-qm_dict"        : arg_qm_dict       = str(arg[index+1])
         else:
             print ("Error! "+param+" not a valid option.")
             usage()

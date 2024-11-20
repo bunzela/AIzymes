@@ -1,5 +1,3 @@
-import sys
-import os
 
 """
 Contains system specifc information. At the Moment, this is all hard-coded.
@@ -10,6 +8,9 @@ submit_head() constructs the submission header to submit jobs.
 
 """
 
+import sys
+import os
+
 def set_system(self):
     
     if self.SYSTEM == 'GRID':       
@@ -17,7 +18,7 @@ def set_system(self):
         self.rosetta_ext       = "linuxgccrelease"
         self.bash_args         = ""
         self.ROSETTA_PATH      = "/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/"
-        self.FIELD_TOOLS       = '../../src/FieldTools.py'
+        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
         self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
         self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
         
@@ -26,7 +27,7 @@ def set_system(self):
         self.rosetta_ext       = "serialization.linuxgccrelease"
         self.bash_args         = ""
         self.ROSETTA_PATH      = "ERROR! NOT YET CONFIGURED"
-        self.FIELD_TOOLS       = '../../src/FieldTools.py'
+        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
         self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
         self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
         
@@ -44,16 +45,16 @@ def set_system(self):
         self.rosetta_ext       = "serialization.linuxgccrelease"
         self.bash_args         = ""
         self.ROSETTA_PATH      = "ERROR! NOT YET CONFIGURED"
-        self.FIELD_TOOLS       = '../../src/FieldTools.py'
+        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}../../../src/FieldTools.py'
         self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
         self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
         
     elif self.SYSTEM == 'ABBIE_LOCAL':    
         
         self.rosetta_ext       = "linuxgccrelease"
-        self.bash_args         = "OMP_NUM_THREADS=1"
+        self.bash_args         = "OMP_NUM_THREADS=1 "
         self.ROSETTA_PATH      = "ERROR! NOT YET CONFIGURED"
-        self.FIELD_TOOLS       = '../../src/FieldTools.py'
+        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
         self.SUBMIT_HEAD       = ""
         self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
         self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'

@@ -1,3 +1,18 @@
+
+"""
+Main Design Module
+
+Coordinates various design steps, managing the workflow of Rosetta, ProteinMPNN, and other modules
+within the AIzymes project.
+
+Functions:
+    - get_ram: Determines RAM allocation for design steps.
+    - run_design: Runs the selected design steps based on configuration.
+
+Modules Required:
+    - helper_001, design_match_001, design_ProteinMPNN_001, design_LigandMPNN_001,
+      design_RosettaDesign_001, design_ESMfold_001, design_RosettaRelax_001
+"""
 import logging
 import sys
 
@@ -9,7 +24,8 @@ from design_LigandMPNN_001    import *
 from design_RosettaDesign_001 import *
 from design_ESMfold_001       import *
 from design_RosettaRelax_001  import *
-from design_MDMin_001         import *
+from scoring_efields_001      import *   
+from design_MDMin_001         import *      
 
 
 def get_ram(design_steps):
@@ -28,6 +44,8 @@ def get_ram(design_steps):
             new_ram = 10
         elif design_step == "ESMfold":
             new_ram = 40
+        elif design_step == "ElectricFields":
+            new_ram = 10
         else:
             logging.error(f"RAM for design_step {design_step} is not defined!")
             sys.exit()
@@ -76,10 +94,15 @@ def run_design(self,
             cmd = prepare_ESMfold(self, index, cmd)
             logging.debug(f"Run ESMfold for index {index}.")
             
+        elif design_step == "ElectricFields":
+            
+            cmd = prepare_efields(self, index, cmd)
+            logging.debug(f"Calculating ElectricFields for index {index}.")
+            
         else:
             logging.error(f"{design_step} is not defined!")
             sys.exit()
-     
+                 
     # Write the shell command to a file and submit job                
     job = "_".join(design_steps)
     with open(f'{self.FOLDER_HOME}/{index}/scripts/{job}_{index}.sh','w') as file: file.write(cmd)
