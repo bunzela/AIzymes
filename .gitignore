@@ -1,7 +1,11 @@
 # Ignore everything in the design/ directory
 design/*
-# Keep test
-!design/TEST/* 
 
-# Ignore all log files
+# Keep test
+!design/TEST/*ipynb
+!design/TEST/Input
+
+# Ignore all log files and checkpoint files
 *.log
+*/.ipynb_checkpoints
+*/__pycache__
