@@ -1,8 +1,0 @@
-source leaprc.protein.ff19SB 
-    source leaprc.gaff
-    loadamberprep   /home/bunzelh/AIzymes/design/TEST/Input/5TS.prepi
-    loadamberparams /home/bunzelh/AIzymes/design/TEST/Input/5TS.frcmod
-    mol = loadpdb /home/bunzelh/AIzymes/design/TEST/TEST_ProtMPNN/9/ElectricFields/7vuu_ProteinMPNN_9.pdb
-    saveamberparm mol /home/bunzelh/AIzymes/design/TEST/TEST_ProtMPNN/9/ElectricFields/7vuu_ProteinMPNN_9.parm7 /home/bunzelh/AIzymes/design/TEST/TEST_ProtMPNN/9/ElectricFields/7vuu_ProteinMPNN_9.rst7
-    quit
-    

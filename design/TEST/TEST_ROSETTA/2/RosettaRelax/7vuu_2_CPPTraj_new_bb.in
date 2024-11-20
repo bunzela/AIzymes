@@ -1,4 +1,0 @@
-parm    /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/2/7vuu_ESMfold_2.pdb
-trajin  /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/2/7vuu_ESMfold_2.pdb
-strip   !@C,N,O,CA
-trajout /home/bunzelh/AIzymes/design/TEST/TEST_ROSETTA/2/RosettaRelax/7vuu_2_new_bb.pdb
