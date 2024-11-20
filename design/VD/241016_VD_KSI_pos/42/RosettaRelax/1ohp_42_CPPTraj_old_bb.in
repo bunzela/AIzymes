@@ -1,0 +1,5 @@
+parm    /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/42/1ohp_RosettaDesign_42.pdb
+trajin  /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/42/1ohp_RosettaDesign_42.pdb
+strip   :5TS
+strip   !@C,N,O,CA
+trajout /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/42/RosettaRelax/1ohp_42_old_bb.pdb

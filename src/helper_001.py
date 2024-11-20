@@ -1,3 +1,34 @@
+
+"""
+Contains utility functions and supporting routines used across multiple modules
+within the AIzymes project.
+
+Functions:
+    - normalize_scores
+    - one_to_three_letter_aa
+    - run_command
+    - get_PDB_in
+    - load_main_variables
+    - save_main_variables
+    - submit_job
+    - sequence_from_pdb
+    - generate_remark_from_all_scores_df
+    - save_cat_res_into_all_scores_df
+    - reset_to_after_parent_design
+    - reset_to_after_index
+    - save_all_scores_df
+    - get_best_structures
+    - remove_intersection_best_structures
+    - trace_mutation_tree
+    - print_average_scores
+    - wait_for_file
+    - hamming_distance
+    - exponential_func
+
+Modules Required:
+    setup_system_001
+
+"""
 import os
 import sys
 import time
@@ -106,9 +137,9 @@ def run_command(command, cwd=None, capture_output=False):
     """Wrapper to execute .py files in runtime with arguments, and print error messages if they occur.
     
     Parameters:
-    - command: The command to run as a list of strings.
-    - cwd: Optional; The directory to execute the command in.
-    - capture_output: Optional; If True, capture stdout and stderr. Defaults to False (This is to conserve memory).
+    command: The command to run as a list of strings.
+    cwd: Optional; The directory to execute the command in.
+    capture_output: Optional; If True, capture stdout and stderr. Defaults to False (This is to conserve memory).
     """
     try:
         # If capture_output is True, capture stdout and stderr

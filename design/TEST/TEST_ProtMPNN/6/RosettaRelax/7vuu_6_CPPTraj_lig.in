@@ -1,0 +1,4 @@
+parm    /home/bunzelh/AIzymes/design/TEST/TEST_ProtMPNN/parent/7vuu.pdb
+trajin  /home/bunzelh/AIzymes/design/TEST/TEST_ProtMPNN/parent/7vuu.pdb
+strip   !:5TS
+trajout /home/bunzelh/AIzymes/design/TEST/TEST_ProtMPNN/6/RosettaRelax/7vuu_6_lig.pdb

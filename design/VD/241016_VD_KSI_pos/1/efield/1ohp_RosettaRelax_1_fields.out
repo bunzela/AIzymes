@@ -1,0 +1,10 @@
+-nc              Trajectory file      :  /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/1/efield/1ohp_RosettaRelax_1.rst7
+-parm            Parameter file       :  /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/1/efield/1ohp_RosettaRelax_1.parm7
+-out             Output file          :  /home/bunzelh/AIzymes/design/VD/241016_VD_KSI_pos/1/efield/1ohp_RosettaRelax_1_fields.pkl
+-target          Field target         :  /home/bunzelh/AIzymes/design/VD/Input/field_target.dat
+-arg_solvent     Non-protein residues :  WAT
+-exclude_atoms   Atoms excluded       : Full residue defined in the first Atom for each Target.
+
+Field calculation RUNNING :  2024-10-19 12:43:28.157826
+
+Field calculation DONE :  2024-10-19 12:43:28.298609
