@@ -40,10 +40,9 @@ def prepare_ProteinMPNN(self, new_index, cmd):
     folder_proteinmpnn = f"{self.FOLDER_HOME}/{new_index}/ProteinMPNN"
     os.makedirs(folder_proteinmpnn, exist_ok=True)
      
-        
-    #PDB_input, _, _ = get_PDB_in(self, new_index)
     input_pdb_paths = get_PDB_in(self, new_index)
     PDB_input = input_pdb_paths['Design_in']
+    seq_input = input_pdb_paths['Design_seq_in']
     
     make_bias_dict(self, PDB_input, folder_proteinmpnn)
 
@@ -85,7 +84,7 @@ cp {PDB_input}.pdb {folder_proteinmpnn}
 # Find highest scoring sequence
 {self.bash_args} python {os.path.join(self.FOLDER_PARENT, 'find_highest_scoring_sequence.py')} \
 --sequence_wildcard {self.FOLDER_HOME}/{self.WT}_with_X_as_wildecard.seq \
---sequence_parent   {os.path.splitext(PDB_input)[0]}.seq \
+--sequence_parent   {seq_input}.seq \
 --sequence_in       {folder_proteinmpnn}/seqs/{os.path.splitext(os.path.basename(PDB_input))[0]}.fa \
 --sequence_out      {self.WT}_{new_index}.seq 
 

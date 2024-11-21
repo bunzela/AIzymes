@@ -167,9 +167,7 @@ def get_PDB_in(self, index):
     - index: The index of the current design
     
     Output:
-    - PDBfile_Design_in: Input file for RosettaDesign
-    - PDBfile_Relax_in: Input file for RosettaRelax 
-    - PDBfile_Relax_ligand_in: Input file for Ligand to be used in RosettaRelax
+    - input_pdb_paths (dict): Contains relevant paths for input PDBs. Keys: ligand_in, Relax_in, Design_in and if MDMin = True, MDMin_in
     """
     input_pdb_paths = {}
     
@@ -204,6 +202,13 @@ def get_PDB_in(self, index):
         PDBfile_Design_in = f'{self.FOLDER_PARENT}/{self.WT}'
     else:
         PDBfile_Design_in = f'{self.FOLDER_HOME}/{parent_index}/{self.WT}_RosettaRelax_{parent_index}'
+
+    if design_method == "ProteinMPNN": 
+        if parent_index == "Parent":
+            PDBfile_Design_seq_in = f'{self.FOLDER_PARENT}/{self.WT}'
+        else:
+            PDBfile_Design_seq_in = f'{self.FOLDER_HOME}/{parent_index}/{self.WT}_{parent_index}'
+        input_pdb_paths['Design_seq_in'] = PDBfile_Design_seq_in
     
     input_pdb_paths['ligand_in'] = PDBfile_Relax_ligand_in
     input_pdb_paths['Relax_in'] = PDBfile_Relax_in
