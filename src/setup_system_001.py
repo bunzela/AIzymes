@@ -37,9 +37,9 @@ def set_system(self):
         self.bash_args         = ""
         self.ROSETTA_PATH      = "/user/work/qz22231/rosetta.source.release-371/main/source"
         self.FIELD_TOOLS       = "/user/work/qz22231/AIzymes/AIzymes_git/AIzymes/src/FieldTools.py" #'../../../src/FieldTools.py'
-        self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
-        self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
-        self.BLUEPEBBLE_ACCOUNT= 'ptch000721'
+        self.FOLDER_PMPNN      = "/user/work/qz22231/ProteinMPNN"
+        self.FOLDER_PMPNN_h    = "/user/work/qz22231/ProteinMPNN/helper_scripts"
+        self.BLUEPEBBLE_ACCOUNT= "ptch000721"
         
     elif self.SYSTEM == 'BACKGROUND_JOB': 
         
