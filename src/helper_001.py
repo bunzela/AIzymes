@@ -171,6 +171,7 @@ def get_PDB_in(self, index):
     - PDBfile_Relax_in: Input file for RosettaRelax 
     - PDBfile_Relax_ligand_in: Input file for Ligand to be used in RosettaRelax
     """
+    input_pdb_paths = {}
     
     parent_index  = self.all_scores_df.loc[index, 'parent_index']
     design_method = self.all_scores_df.loc[index, 'design_method']
@@ -189,21 +190,26 @@ def get_PDB_in(self, index):
         PDBfile_Relax_ligand_in  = f'{self.FOLDER_HOME}/{index}/{self.WT}_{design_method}_{index}'    
         
     # PDBfile_Relax_in 
-    PDBfile_MDMin_in = f'{self.FOLDER_HOME}/{index}/{self.WT}_ESMfold_{index}'  
-    PDBfile_Relax_in = f'{self.FOLDER_HOME}/{index}/{self.WT}_MDMin_{index}'  
+    if self.MDMin:
+        input_pdb_paths['MDMin_in'] = f'{self.FOLDER_HOME}/{index}/{self.WT}_ESMfold_{index}'  
+        PDBfile_Relax_in = f'{self.FOLDER_HOME}/{index}/{self.WT}_MDMin_{index}' 
     
+    else:
+        PDBfile_Relax_in = f'{self.FOLDER_HOME}/{index}/{self.WT}_ESMfold_{index}'
+    
+    input_pdb_paths['ligand_in'] = PDBfile_Relax_ligand_in
+
     # PDBfile_Design_in
     if parent_index == "Parent":
         PDBfile_Design_in = f'{self.FOLDER_PARENT}/{self.WT}'
     else:
         PDBfile_Design_in = f'{self.FOLDER_HOME}/{parent_index}/{self.WT}_RosettaRelax_{parent_index}'
     
-    input_pdb_paths = {'Design_in': PDBfile_Design_in,
-                       'MDMin_in': PDBfile_MDMin_in,
-                       'Relax_in': PDBfile_Relax_in,
-                       'ligand_in': PDBfile_Relax_ligand_in}
+    input_pdb_paths['ligand_in'] = PDBfile_Relax_ligand_in
+    input_pdb_paths['Relax_in'] = PDBfile_Relax_in
+    input_pdb_paths['Design_in'] = PDBfile_Design_in
     
-    return input_pdb_paths #PDBfile_Design_in, PDBfile_Relax_in, PDBfile_Relax_ligand_in
+    return input_pdb_paths
 
 def load_main_variables(self, FOLDER_HOME):
     
