@@ -220,7 +220,7 @@ def update_scores(self):
                 
         # Update catalytic residues
         save_cat_res_into_all_scores_df(self, index, pdb_path, save_resn=True) 
-        cat_res = self.all_scores_df.at[index, 'cat_resi']
+        #cat_res = self.all_scores_df.at[index, 'cat_resi']
         
         # Calculate catalytic and interface score
         catalytic_score = 0.0
@@ -514,7 +514,7 @@ def start_calculation(self, parent_index: int):
         # Add cat res to new entry
         save_cat_res_into_all_scores_df(self, new_index, 
                                        f"{self.FOLDER_HOME}/{parent_index}/{self.WT}_RosettaRelax_{parent_index}.pdb",
-                                       save_resn=False)
+                                       save_resn=True)
         
         #####
         # Here, we can add an AI to decide on the next steps
