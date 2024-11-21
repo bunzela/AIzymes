@@ -102,7 +102,7 @@ def check_running_jobs(self):
         return len(jobs)
         
     if self.SYSTEM == 'BACKGROUND_JOB':
-        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'r'): jobs = int(f.read())
+        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'r') as f: jobs = int(f.read())
         return jobs
     
     if self.SYSTEM == 'ABBIE_LOCAL':
@@ -136,7 +136,7 @@ def update_potential(self, score_type, index):
     if parent_index == "Parent":           return                     # Do not update the parent potential of a variant from parent
     with open(parent_filename, "a") as f:  f.write(f"\n{str(score)}") # Appends to parent_filename
     with open(parent_filename, "r") as f:  potentials = f.readlines() # Reads in potential values 
-    self.all_scores_df.at[parent_index, f'{score_type}_potential'] = np.average([float(i) for i in potentials])
+    self.all_scores_df.at[int(parent_index), f'{score_type}_potential'] = np.average([float(i) for i in potentials])
         
 
 def update_scores(self):
@@ -460,7 +460,7 @@ def start_parent_design(self):
     
 # Decides what to do with selected index
 
-def start_calculation(self, parent_index):
+def start_calculation(self, parent_index: int):
     """
     The start_calculation function checks whether the index that was selected by the Boltzmann selection to be parent_index has gone through ESMfold and RosettaRelax, and if
     necessary execute them. The function then creates the new child index and decides based on the defined probabilities whether to generate the new child variant with
@@ -534,7 +534,7 @@ def start_calculation(self, parent_index):
     save_all_scores_df(self)
         
 
-def create_new_index(self, parent_index):
+def create_new_index(self, parent_index: str):
     """
     The create_new_index function is responsible for generating a new index for both the initial generation (called by start_parent_design) and subsequent generations (called
     by start_calculation). This function assigns a new index, sets various attributes (such as generation, parent index, cst_weight, and other parameters), and updates the
