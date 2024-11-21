@@ -19,7 +19,7 @@ def prepare_efields(self, index:str, cmd:str):
     """
    
     pdb = [line.strip("#").strip() for line in cmd.splitlines() if line.startswith("###")]
-    pdb = [line for line in pdb if line in ["RosettaDesign", "ProteinMPNN", "LigandMPNN", "RosettaRelax"]]
+    pdb = [line for line in pdb if line in ["RosettaDesign", "RosettaRelax"]] # "ProteinMPNN", "LigandMPNN", 
     pdb = f'{self.WT}_{pdb[0]}_{index}'
         
     filename_in = f'{self.FOLDER_HOME}/{index}/{pdb}'
