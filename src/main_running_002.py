@@ -524,9 +524,14 @@ def start_calculation(self, parent_index: int):
         if random.random() < self.ProteinMPNN_PROB:  
             self.all_scores_df.at[new_index, 'design_method'] = "ProteinMPNN"
             run_design(self, new_index, ["ProteinMPNN", "ESMfold", "RosettaRelax", "ElectricFields"])
+            #Possibly could put this into indivual prepare_design steps?
+            self.all_scores_df.at[new_index, "blocked_ESMfold"] = True 
+            self.all_scores_df.at[new_index, "blocked_RosettaRelax"] = True 
         elif random.random()+self.ProteinMPNN_PROB < self.LMPNN_PROB+self.ProteinMPNN_PROB:
             self.all_scores_df.at[new_index, 'design_method'] = "LigandMPNN"
             run_design(self, new_index, ["LigandMPNN", "ESMfold", "RosettaRelax", "ElectricFields"])
+            self.all_scores_df.at[new_index, "blocked_ESMfold"] = True 
+            self.all_scores_df.at[new_index, "blocked_RosettaRelax"] = True 
         else:                    
             self.all_scores_df.at[new_index, 'design_method'] = "RosettaDesign"
             run_design(self, new_index, ["RosettaDesign", "ElectricFields"])
