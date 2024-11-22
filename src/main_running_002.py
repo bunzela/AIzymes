@@ -447,7 +447,10 @@ def start_parent_design(self):
 
     #Runs the design of the parent structure
     if self.PARENT_DES_MED in ["ProteinMPNN","LigandMPNN"]:
-        run_design(self, new_index, [self.PARENT_DES_MED, "ESMfold", "RosettaRelax", "ElectricFields"])
+        if self.MDMin:
+            run_design(self, new_index, [self.PARENT_DES_MED, "ESMfold", "MDMin", "RosettaRelax", "ElectricFields"])
+        else:
+            run_design(self, new_index, [self.PARENT_DES_MED, "ESMfold", "RosettaRelax", "ElectricFields"])
         self.all_scores_df.at[new_index, "blocked_ESMfold"] = True 
         self.all_scores_df.at[new_index, "blocked_RosettaRelax"] = True 
     elif self.PARENT_DES_MED in ["RosettaDesign"]:  
@@ -523,13 +526,19 @@ def start_calculation(self, parent_index: int):
         # Run Design with new_index --> need to add code to CHECK IF self.ProteinMPNN_PROB + self.LMPNN_PROB is below 1!!!!
         if random.random() < self.ProteinMPNN_PROB:  
             self.all_scores_df.at[new_index, 'design_method'] = "ProteinMPNN"
-            run_design(self, new_index, ["ProteinMPNN", "ESMfold", "RosettaRelax", "ElectricFields"])
+            if self.MDMin:
+                run_design(self, parent_index, ["ProteinMPNN", "ESMfold", "MDMin", "RosettaRelax", "ElectricFields"]) 
+            else:
+                run_design(self, new_index, ["ProteinMPNN", "ESMfold", "RosettaRelax", "ElectricFields"])
             #Possibly could put this into indivual prepare_design steps?
             self.all_scores_df.at[new_index, "blocked_ESMfold"] = True 
             self.all_scores_df.at[new_index, "blocked_RosettaRelax"] = True 
         elif random.random()+self.ProteinMPNN_PROB < self.LMPNN_PROB+self.ProteinMPNN_PROB:
             self.all_scores_df.at[new_index, 'design_method'] = "LigandMPNN"
-            run_design(self, new_index, ["LigandMPNN", "ESMfold", "RosettaRelax", "ElectricFields"])
+            if self.MDMin:
+                run_design(self, parent_index, ["LigandMPNN", "ESMfold", "MDMin", "RosettaRelax", "ElectricFields"]) 
+            else:
+                run_design(self, new_index, ["LigandMPNN", "ESMfold", "RosettaRelax", "ElectricFields"])
             self.all_scores_df.at[new_index, "blocked_ESMfold"] = True 
             self.all_scores_df.at[new_index, "blocked_RosettaRelax"] = True 
         else:                    
