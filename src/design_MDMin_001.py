@@ -66,6 +66,11 @@ sed -i -e '/[0-9]H/d' -e '/H[0-9]/d' -e '/CONECT/Q' {working_dir_path}_wRosetta_
 
 #Remove Rosetta output 
 rm {self.WT}_{index}_input_0001.pdb
+
+#Clean PDB for amber
+pdb4amber -i {working_dir_path}_wRosetta_sidechains.pdb -o {working_dir_path}_clean4amber.pdb 2> {working_dir_path}_pdb4amber.log
+rm {working_dir_path}_clean4amber_*
+
 """
 
     with open(f"{working_dir_path}_tleap.in", "w") as f:
@@ -73,7 +78,7 @@ rm {self.WT}_{index}_input_0001.pdb
 source leaprc.gaff
 loadamberprep   {self.FOLDER_INPUT}/5TS.prepi
 loadamberparams {self.FOLDER_INPUT}/5TS.frcmod
-mol = loadpdb {working_dir_path}_wRosetta_sidechains.pdb
+mol = loadpdb {working_dir_path}_clean4amber.pdb
 set default pbradii mbondi3
 saveamberparm mol {working_dir_path}.parm7 {working_dir_path}.rst7
 quit
