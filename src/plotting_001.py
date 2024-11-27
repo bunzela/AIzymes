@@ -388,7 +388,7 @@ def plot_scores(self, combined_score_min=0, combined_score_max=1, combined_score
         #to integrate??
         if (self.ProteinMPNN_PROB > 0 or self.LMPNN_PROB > 0):
             #first not nan sequence from all_scores_df
-            mut_max = len(plot_scores_df[plot_scores_df['sequence'] != 'nan']['sequence'].iloc[0])    
+            mut_max = len(self.plot_scores_df[self.plot_scores_df['sequence'] != 'nan']['sequence'].iloc[0])    
 
         # Defines the scores variables by running the normalize_scores function.
         catalytic_scores, total_scores, interface_scores, efield_scores, combined_scores = normalize_scores(self,
