@@ -21,6 +21,15 @@ def set_system(self):
         self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
         self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
         self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
+            
+    elif self.SYSTEM == 'GRID_parallel':       
+        
+        self.rosetta_ext       = "linuxgccrelease"
+        self.bash_args         = ""
+        self.ROSETTA_PATH      = "/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/"
+        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
+        self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
+        self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
         
     elif self.SYSTEM == 'EULER':     
         
@@ -62,7 +71,7 @@ def set_system(self):
         
     else:
 
-        print(f"{self.SYSTEM} not recognized!")
+        print(f"{self.SYSTEM} not defined in set_system(self).")
         sys.exit()
         
 def submit_head(self, index, job, ram):
@@ -77,7 +86,7 @@ def submit_head(self, index, job, ram):
 #$ -o {self.FOLDER_HOME}/{index}/scripts/{job}_{index}.out
 #$ -e {self.FOLDER_HOME}/{index}/scripts/{job}_{index}.err
 """         
-        
+          
     elif self.SYSTEM == 'BLUEPEBBLE':     
         
         return f"""#!/bin/bash
