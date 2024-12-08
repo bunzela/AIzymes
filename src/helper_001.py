@@ -276,12 +276,12 @@ echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
                                                 shell=True, text=True)
             logging.debug(output[:-1]) #remove newline at end of output
             
-        if self.SYSTEM == 'BLUEPEBBLE':
+        elif self.SYSTEM == 'BLUEPEBBLE':
             output = subprocess.check_output(f'sbatch {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', \
                                              shell=True, text=True)
             logging.debug(output[:-1]) #remove newline at end of output
             
-        if self.SYSTEM == 'BACKGROUND_JOB':
+        elif self.SYSTEM == 'BACKGROUND_JOB':
 
             stdout_log_file_path = f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}_stdout.log'
             stderr_log_file_path = f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}_stderr.log'
@@ -290,7 +290,7 @@ echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
                 process = subprocess.Popen(f'bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh &', 
                                            shell=True, stdout=stdout_log_file, stderr=stderr_log_file)
         
-        if self.SYSTEM == 'ABBIE_LOCAL':
+        elif self.SYSTEM == 'ABBIE_LOCAL':
 
             stdout_log_file_path = f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}_stdout.log'
             stderr_log_file_path = f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}_stderr.log'
@@ -298,7 +298,66 @@ echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
             with open(stdout_log_file_path, 'w') as stdout_log_file, open(stderr_log_file_path, 'w') as stderr_log_file:
                 process = subprocess.Popen(f'bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh &', 
                                            shell=True, stdout=stdout_log_file, stderr=stderr_log_file)
+            
+        else:
+            logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in submit_job() in helper.py.")
+            sys.exit()
+
+def start_controller_parallel(self):
+
+    cmd = f'''import sys, os
+if os.path.join(os.getcwd(), '../../src') not in sys.path: sys.path.append(os.path.join(os.getcwd(), '../../src'))
+from AIzymes_014 import *
+AIzymes = AIzymes_MAIN()
+AIzymes.initialize(FOLDER_HOME = '{self.FOLDER_HOME}', 
+                   LOG = '{self.LOG}', 
+                   PRINT_VAR=False)
+AIzymes.controller()
+'''
+    with open(f"{self.FOLDER_HOME}/start_controller_parallel.py", "w") as f:
+        f.write(cmd)
+
+    ### Prepare submission script
+    if self.SYSTEM == 'GRID': 
+
+        cmd = f"""#!/bin/bash
+#$ -V
+#$ -cwd
+#$ -N {self.SUBMIT_PREFIX}_controller
+#$ -hard -l mf=10G
+#$ -pe smp {self.MAX_JOBS} 
+#$ -o {self.FOLDER_HOME}/controller.out
+#$ -e {self.FOLDER_HOME}/controller.err
+
+python {self.FOLDER_HOME}/start_controller_parallel.py
+
+"""      
+
+    else: 
+        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in start_controller_parallel() in helper.py.")
+        sys.exit()    
         
+    with open(f"{self.FOLDER_HOME}/start_controller_parallel.sh", "w") as f:
+        f.write(cmd)
+        
+    logging.info(f"Starting parallel controller.")
+
+    ### Start job
+    if self.SYSTEM == 'GRID': 
+        output = subprocess.check_output(
+    (f'qsub -l h="!bs-dsvr64&!bs-dsvr58&!bs-dsvr42&'
+     f'!bs-grid64&!bs-grid65&!bs-grid66&!bs-grid67&'
+     f'!bs-grid68&!bs-grid69&!bs-grid70&!bs-grid71&'
+     f'!bs-grid72&!bs-grid73&!bs-grid74&!bs-grid75&'
+     f'!bs-grid76&!bs-grid77&!bs-grid78&!bs-headnode04&'
+     f'!bs-stellcontrol05&!bs-stellsubmit05" -q regular.q '
+     f'{self.FOLDER_HOME}/start_controller_parallel.sh'),
+    shell=True, text=True
+    )
+    else: 
+        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in start_controller_parallel() in helper.py.")
+        sys.exit()   
+
 def sequence_from_pdb(pdb_in):
     
     with open(f"{pdb_in}.pdb", "r") as f:
