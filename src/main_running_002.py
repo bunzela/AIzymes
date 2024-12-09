@@ -49,7 +49,7 @@ def start_controller(self):
     Each ofthese tasks is performed by the functions introduced before, and thereforer the start_controller function controls the flow of actions.
     '''
 
-    if self.RUN_PARALLEL: 
+    if self.RUN_PARALLEL and self.CHECK_PARALLEL: 
 
         start_controller_parallel(self)
         
@@ -57,11 +57,9 @@ def start_controller(self):
         
         # Run this part of the function until the maximum number of designs has been reached.
         while len(self.all_scores_df['index']) < int(self.MAX_DESIGNS): 
-            
+                
             # Check how many jobs are currently running and waits when the number is equal or bigger than the maximum number of parallel jobs allowed.
             num_running_jobs = check_running_jobs(self)
-    
-            print(num_running_jobs)
             
             if num_running_jobs >= self.MAX_JOBS: 
                 time.sleep(20)
@@ -103,38 +101,31 @@ def check_running_jobs(self):
         int: Number of running jobs for the specific system.
     """
    
-    if self.SYSTEM == 'GRID':
+    if self.RUN_PARALLEL:
+        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'r') as f: jobs = int(f.read())
+        with open("test_py.txt", "a") as f: f.write(f"Number of jobs {jobs} \\n") ### CHECK TO SEE IF PYTHON IS RUNNING
+
+    
+    elif self.SYSTEM == 'GRID':
         jobs = subprocess.check_output(["qstat", "-u", self.USERNAME]).decode("utf-8").split("\n")
         jobs = [job for job in jobs if self.SUBMIT_PREFIX in job]
         jobs = len(jobs)
-        if jobs == None : jobs = 0
-        return jobs   
-        
-    elif self.SYSTEM == 'GRID_parallel':
-        jobs = subprocess.check_output(["qstat", "-u", self.USERNAME]).decode("utf-8").split("\n")
-        jobs = [job for job in jobs if self.SUBMIT_PREFIX in job]
-        jobs = len(jobs)
-        if jobs == None : jobs = 0
-        return jobs
         
     elif self.SYSTEM == 'BLUEPEBBLE':
         jobs = subprocess.check_output(["squeue","--me"]).decode("utf-8").split("\n")
         jobs = [job for job in jobs if self.SUBMIT_PREFIX in job]
         jobs = len(jobs)
-        if jobs == None : jobs = 0
-        return jobs
-        
-    elif self.SYSTEM == 'BACKGROUND_JOB':
-        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'r') as f: jobs = int(f.read())
-        return jobs
-    
+
     elif self.SYSTEM == 'ABBIE_LOCAL':
-        return 0
+        jobs = 0
 
     else:
         logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in check_running_jobs().")
         sys.exit()
 
+    if jobs == None : jobs = 0
+    return jobs
+    
 def update_potential(self, score_type, index):
     """
     Updates the potential file for a given score type at the specified variant index.

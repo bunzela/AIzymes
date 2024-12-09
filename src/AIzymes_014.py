@@ -93,7 +93,7 @@ class AIzymes_MAIN:
         
         print("AIzymes initiated.")
 
-    def initialize(self, FOLDER_HOME, UNBLOCK_ALL=False, PRINT_VAR=True, PLOT_DATA=False, LOG='debug'):
+    def initialize(self, FOLDER_HOME, UNBLOCK_ALL=False, PRINT_VAR=True, PLOT_DATA=False, LOG='debug', CHECK_PARALLEL=True):
         """
         Initializes AIzymes with given parameters.
 

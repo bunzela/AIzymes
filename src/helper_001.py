@@ -235,15 +235,23 @@ def save_main_variables(self):
 def submit_job(self, index, job, ram=16, bash=False):        
               
     submission_script = submit_head(self, index, job, ram)
-    
+
+    if self.RUN_PARALLEL: 
+        submission_script = f"""
+jobs=$(cat {self.FOLDER_HOME}/n_running_jobs.dat)
+jobs=$((jobs + 1))
+echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
+"""
+
     submission_script += f"""
 # Output folder
 cd {self.FOLDER_HOME}/{index}
 pwd
 bash {self.FOLDER_HOME}/{index}/scripts/{job}_{index}.sh
 """ 
-    if self.SYSTEM == 'BACKGROUND_JOB':
-        submission_script = f"""
+    
+    if self.RUN_PARALLEL: 
+        submission_script += f"""
 jobs=$(cat {self.FOLDER_HOME}/n_running_jobs.dat)
 jobs=$((jobs - 1))
 echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
@@ -253,9 +261,17 @@ echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
     with open(f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', 'w') as file: file.write(submission_script)
     
     if bash:
+        
         #Bash the submission_script for testing
         subprocess.run(f'bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', shell=True, text=True)
+
+    elif self.RUN_PARALLEL:
+        
+        #Bash the submission_script in background using Popen to run jobs in parallel
+        subprocess.Popen(f'bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', shell=True, text=True)
+        
     else:
+        
         #Submit the submission_script
         if self.SYSTEM == 'GRID':
             if "ESM" in job:
@@ -305,13 +321,19 @@ echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
 
 def start_controller_parallel(self):
 
+    with open(f"{self.FOLDER_HOME}/n_running_jobs.dat", "w") as f: f.write("0") ### set number of running jobs to 0
+
     cmd = f'''import sys, os
-if os.path.join(os.getcwd(), '../../src') not in sys.path: sys.path.append(os.path.join(os.getcwd(), '../../src'))
+sys.path.append(os.path.join(os.getcwd(), '../../src'))
 from AIzymes_014 import *
 AIzymes = AIzymes_MAIN()
-AIzymes.initialize(FOLDER_HOME = '{self.FOLDER_HOME}', 
-                   LOG = '{self.LOG}', 
-                   PRINT_VAR=False)
+AIzymes.initialize(FOLDER_HOME    = '{os.path.basename(self.FOLDER_HOME)}', 
+                   LOG            = '{self.LOG}',
+                   CHECK_PARALLEL = False,
+                   PRINT_VAR      = False)
+
+with open("test_py.txt", "w") as f: f.write("AIzymes.initialized! \\n") ### CHECK TO SEE IF PYTHON IS RUNNING
+
 AIzymes.controller()
 '''
     with open(f"{self.FOLDER_HOME}/start_controller_parallel.py", "w") as f:
@@ -324,12 +346,20 @@ AIzymes.controller()
 #$ -V
 #$ -cwd
 #$ -N {self.SUBMIT_PREFIX}_controller
-#$ -hard -l mf=10G
-#$ -pe smp {self.MAX_JOBS} 
+#$ -l mf=1G
+#$ -pe openmpi144 {self.MAX_JOBS} 
 #$ -o {self.FOLDER_HOME}/controller.out
 #$ -e {self.FOLDER_HOME}/controller.err
 
+set -e  # Exit script on any error
+
+cd {self.FOLDER_HOME}/..
+
+pwd > test.txt
+
 python {self.FOLDER_HOME}/start_controller_parallel.py
+
+echo test2 >> test.txt
 
 """      
 
@@ -345,13 +375,7 @@ python {self.FOLDER_HOME}/start_controller_parallel.py
     ### Start job
     if self.SYSTEM == 'GRID': 
         output = subprocess.check_output(
-    (f'qsub -l h="!bs-dsvr64&!bs-dsvr58&!bs-dsvr42&'
-     f'!bs-grid64&!bs-grid65&!bs-grid66&!bs-grid67&'
-     f'!bs-grid68&!bs-grid69&!bs-grid70&!bs-grid71&'
-     f'!bs-grid72&!bs-grid73&!bs-grid74&!bs-grid75&'
-     f'!bs-grid76&!bs-grid77&!bs-grid78&!bs-headnode04&'
-     f'!bs-stellcontrol05&!bs-stellsubmit05" -q regular.q '
-     f'{self.FOLDER_HOME}/start_controller_parallel.sh'),
+    (f'qsub {self.FOLDER_HOME}/start_controller_parallel.sh'),
     shell=True, text=True
     )
     else: 
