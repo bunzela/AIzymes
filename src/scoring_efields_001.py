@@ -66,7 +66,15 @@ def get_efields_score(self, index, score_type):
     with open(f"{self.FOLDER_HOME}/{index}/ElectricFields/{self.WT}_{score_type}_{index}_fields.pkl", "rb") as f:
         FIELDS = pkl.load(f)
 
-    bond_field = FIELDS[f':5TS@C9_:5TS@H04']['Total'] # minus field of base
+    bond_field =  np.array(FIELDS[f':5TS@C9_:5TS@H04']['Total'])
+    
+    if self.FIELDS_EXCL_CAT:
+        print(f'original field {bond_field}')
+        key = f"{self.all_scores_df.at[index, 'cat_resn']}_{self.all_scores_df.at[index, 'cat_resi']}"
+        print(f"base field {FIELDS[':5TS@C9_:5TS@H04'][key]}")
+        bond_field = bond_field - np.array(FIELDS[':5TS@C9_:5TS@H04'][key])
+        print(f'new field base subtraction {bond_field}')
+        
     all_fields = FIELDS[f':5TS@C9_:5TS@H04']
 
     return bond_field[0], all_fields
