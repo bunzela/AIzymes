@@ -103,7 +103,7 @@ def check_running_jobs(self):
    
     if self.RUN_PARALLEL:
         with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'r') as f: jobs = int(f.read())
-        with open("test_py.txt", "a") as f: f.write(f"Number of jobs {jobs} \\n") ### CHECK TO SEE IF PYTHON IS RUNNING
+        with open("test_py.txt", "a") as f: f.write(f"Number of jobs {jobs} \n") ### CHECK TO SEE IF PYTHON IS RUNNING
 
     
     elif self.SYSTEM == 'GRID':
