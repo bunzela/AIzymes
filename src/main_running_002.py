@@ -37,51 +37,61 @@ from scoring_efields_001      import *
 # Keep the controller as clean as possible!!! All complex operations are performed on the next level! ---------------------
 # -------------------------------------------------------------------------------------------------------------------------
 
-
 def start_controller(self):
     '''
-    The start_controller function is called in the AIzyme_0X script's controller function. The controller function decides what action to take, assures that the maximum number of
-    design jobs are run in parallel, collects information from the designs and stores them in a shared database, selects the variants to submit for design and decides the type of
-    structure prediction to perform with the selected variant. Each of this task is performed by the functions introduced before and therefore the start_controller function
-    controls the flow of actions.
+    The start_controller function is called in the AIzyme_0X script's controller function.
+    The controller function decides what action to take, 
+    assures that the maximum number of design jobs are run in parallel, 
+    collects information from the designs and stores them in a shared database, 
+    selects the variants to submit for design,
+    and decides the type of structure prediction to perform with the selected variant.
+    
+    Each ofthese tasks is performed by the functions introduced before, and thereforer the start_controller function controls the flow of actions.
     '''
- #Run this part of the function until the maximum number of designs has been reached.
-    while len(self.all_scores_df['index']) < int(self.MAX_DESIGNS): 
-        
-        # Check how many jobs are currently running and waits when the number is equal or bigger than the maximum number of parallel jobs allowed.
-        num_running_jobs = check_running_jobs(self)
-        
-        if num_running_jobs >= self.MAX_JOBS: 
-            time.sleep(20)
-        
-        #If the number of maximum parallel jobs is not reached, the AIzyme design protocol is executed.
-        else:
-            update_scores(self)
-                        
-            # Checks if all the parent designs needed, defined by the PARENT_JOB variable, are generated.
-            parent_done = check_parent_done(self)
-            
-            #If the parent designs are not generated, it continues design until the number PARENT_JOB is reached. 
-            if not parent_done:
-                start_parent_design(self)
 
-            else:
-                #Performs Boltzmann selection to select the parent index for the next design
-                selected_index = boltzmann_selection(self)
+    if self.RUN_PARALLEL and self.CHECK_PARALLEL: 
+
+        start_controller_parallel(self)
+        
+    else:
+        
+        # Run this part of the function until the maximum number of designs has been reached.
+        while len(self.all_scores_df['index']) < int(self.MAX_DESIGNS): 
                 
-                #Checks whether a valid index is returned by the Boltzmann selection (error handling) and starts the design of the next variant using the selected index as parent
-                if selected_index is not None:
-                    start_calculation(self, selected_index)
+            # Check how many jobs are currently running and waits when the number is equal or bigger than the maximum number of parallel jobs allowed.
+            num_running_jobs = check_running_jobs(self)
+            
+            if num_running_jobs >= self.MAX_JOBS: 
+                time.sleep(20)
+            
+            #If the number of maximum parallel jobs is not reached, the AIzyme design protocol is executed.
+            else:
+                update_scores(self)
+                            
+                # Checks if all the parent designs needed, defined by the PARENT_JOB variable, are generated.
+                parent_done = check_parent_done(self)
+                
+                # If the parent designs are not generated, it continues design until the number PARENT_JOB is reached. 
+                if not parent_done:
+                    start_parent_design(self)
     
-        # Sleep a bit for safety
-        time.sleep(0.1)
+                else:
+                    # Performs Boltzmann selection to select the parent index for the next design
+                    selected_index = boltzmann_selection(self)
+                    
+                    # Checks whether a valid index is returned by the Boltzmann selection (error handling)
+                    # Starts the design of the next variant using the selected index as parent
+                    if selected_index is not None:
+                        start_calculation(self, selected_index)
         
-    #When the maximum number of designs has been generated, the corresponding scores are calculated and added to the all_scores.csv file.
-    update_scores(self)
-    
-    print(f"Stopped because {len(self.all_scores_df['index'])}/{self.MAX_DESIGNS} designs have been made.")
-    
-
+            # Sleep a bit for safety
+            time.sleep(0.1)
+            
+        # When the maximum number of designs has been generated, the corresponding scores are calculated and added to the all_scores.csv file.
+        update_scores(self)
+        
+        print(f"Stopped because {len(self.all_scores_df['index'])}/{self.MAX_DESIGNS} designs have been made.")
+        
 def check_running_jobs(self):
     """
     The check_running_job function returns the number of parallel jobs that are running by counting how many lines in the qstat output are present which correspond to the
@@ -91,24 +101,31 @@ def check_running_jobs(self):
         int: Number of running jobs for the specific system.
     """
    
-    if self.SYSTEM == 'GRID':
+    if self.RUN_PARALLEL:
+        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'r') as f: jobs = int(f.read())
+        with open("test_py.txt", "a") as f: f.write(f"Number of jobs {jobs} \n") ### CHECK TO SEE IF PYTHON IS RUNNING
+
+    
+    elif self.SYSTEM == 'GRID':
         jobs = subprocess.check_output(["qstat", "-u", self.USERNAME]).decode("utf-8").split("\n")
         jobs = [job for job in jobs if self.SUBMIT_PREFIX in job]
-        return len(jobs)
+        jobs = len(jobs)
         
-    if self.SYSTEM == 'BLUEPEBBLE':
+    elif self.SYSTEM == 'BLUEPEBBLE':
         jobs = subprocess.check_output(["squeue","--me"]).decode("utf-8").split("\n")
         jobs = [job for job in jobs if self.SUBMIT_PREFIX in job]
-        return len(jobs)
-        
-    if self.SYSTEM == 'BACKGROUND_JOB':
-        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'r') as f: jobs = int(f.read())
-        return jobs
+        jobs = len(jobs)
+
+    elif self.SYSTEM == 'ABBIE_LOCAL':
+        jobs = 0
+
+    else:
+        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in check_running_jobs().")
+        sys.exit()
+
+    if jobs == None : jobs = 0
+    return jobs
     
-    if self.SYSTEM == 'ABBIE_LOCAL':
-        return 0
-
-
 def update_potential(self, score_type, index):
     """
     Updates the potential file for a given score type at the specified variant index.
