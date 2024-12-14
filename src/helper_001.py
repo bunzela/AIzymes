@@ -235,15 +235,23 @@ def save_main_variables(self):
 def submit_job(self, index, job, ram=16, bash=False):        
               
     submission_script = submit_head(self, index, job, ram)
-    
+
+    if self.RUN_PARALLEL: 
+        submission_script = f"""
+jobs=$(cat {self.FOLDER_HOME}/n_running_jobs.dat)
+jobs=$((jobs + 1))
+echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
+"""
+
     submission_script += f"""
 # Output folder
 cd {self.FOLDER_HOME}/{index}
 pwd
 bash {self.FOLDER_HOME}/{index}/scripts/{job}_{index}.sh
 """ 
-    if self.SYSTEM == 'BACKGROUND_JOB':
-        submission_script = f"""
+    
+    if self.RUN_PARALLEL: 
+        submission_script += f"""
 jobs=$(cat {self.FOLDER_HOME}/n_running_jobs.dat)
 jobs=$((jobs - 1))
 echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
@@ -253,9 +261,27 @@ echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
     with open(f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', 'w') as file: file.write(submission_script)
     
     if bash:
+        
         #Bash the submission_script for testing
-        subprocess.run(f'bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', shell=True, text=True)
+        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat') as f: cpu_id = int(f.read())-1
+        subprocess.run(f'taskset -c {cpu_id} bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', shell=True, text=True)
+
+    elif self.RUN_PARALLEL:
+        
+        #Bash the submission_script in background using Popen to run jobs in parallel
+        stdout_path = f"{self.FOLDER_HOME}/{index}/scripts/{job}_{index}.out"
+        stderr_path = f"{self.FOLDER_HOME}/{index}/scripts/{job}_{index}.err"
+        
+        with open(stdout_path, "w") as stdout_file, open(stderr_path, "w") as stderr_file:
+            subprocess.Popen(
+                f'bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh',
+                shell=True,
+                text=True,
+                stdout=stdout_file,
+                stderr=stderr_file
+            )        
     else:
+        
         #Submit the submission_script
         if self.SYSTEM == 'GRID':
             if "ESM" in job:
@@ -276,12 +302,12 @@ echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
                                                 shell=True, text=True)
             logging.debug(output[:-1]) #remove newline at end of output
             
-        if self.SYSTEM == 'BLUEPEBBLE':
+        elif self.SYSTEM == 'BLUEPEBBLE':
             output = subprocess.check_output(f'sbatch {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', \
                                              shell=True, text=True)
             logging.debug(output[:-1]) #remove newline at end of output
             
-        if self.SYSTEM == 'BACKGROUND_JOB':
+        elif self.SYSTEM == 'BACKGROUND_JOB':
 
             stdout_log_file_path = f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}_stdout.log'
             stderr_log_file_path = f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}_stderr.log'
@@ -290,7 +316,7 @@ echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
                 process = subprocess.Popen(f'bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh &', 
                                            shell=True, stdout=stdout_log_file, stderr=stderr_log_file)
         
-        if self.SYSTEM == 'ABBIE_LOCAL':
+        elif self.SYSTEM == 'ABBIE_LOCAL':
 
             stdout_log_file_path = f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}_stdout.log'
             stderr_log_file_path = f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}_stderr.log'
@@ -298,7 +324,75 @@ echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
             with open(stdout_log_file_path, 'w') as stdout_log_file, open(stderr_log_file_path, 'w') as stderr_log_file:
                 process = subprocess.Popen(f'bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh &', 
                                            shell=True, stdout=stdout_log_file, stderr=stderr_log_file)
+            
+        else:
+            logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in submit_job() in helper.py.")
+            sys.exit()
+
+def start_controller_parallel(self):
+
+    with open(f"{self.FOLDER_HOME}/n_running_jobs.dat", "w") as f: f.write("0") ### set number of running jobs to 0
+
+    cmd = f'''import sys, os
+sys.path.append(os.path.join(os.getcwd(), '../../src'))
+from AIzymes_014 import *
+AIzymes = AIzymes_MAIN()
+AIzymes.initialize(FOLDER_HOME    = '{os.path.basename(self.FOLDER_HOME)}', 
+                   LOG            = '{self.LOG}',
+                   CHECK_PARALLEL = False,
+                   PRINT_VAR      = False)
+
+with open("test_py.txt", "w") as f: f.write("AIzymes.initialized! \\n") ### CHECK TO SEE IF PYTHON IS RUNNING
+
+AIzymes.controller()
+'''
+    with open(f"{self.FOLDER_HOME}/start_controller_parallel.py", "w") as f:
+        f.write(cmd)
+
+    ### Prepare submission script
+    if self.SYSTEM == 'GRID': 
+
+        cmd = f"""#!/bin/bash
+#$ -V
+#$ -cwd
+#$ -N {self.SUBMIT_PREFIX}_controller
+#$ -l mf=1G
+#$ -pe openmpi144 {self.MAX_JOBS} 
+#$ -o {self.FOLDER_HOME}/controller.out
+#$ -e {self.FOLDER_HOME}/controller.err
+
+set -e  # Exit script on any error
+
+cd {self.FOLDER_HOME}/..
+
+pwd > test.txt
+date >> test.txt
+
+python {self.FOLDER_HOME}/start_controller_parallel.py
+
+echo test2 >> test.txt
+
+"""      
+
+    else: 
+        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in start_controller_parallel() in helper.py.")
+        sys.exit()    
         
+    with open(f"{self.FOLDER_HOME}/start_controller_parallel.sh", "w") as f:
+        f.write(cmd)
+        
+    logging.info(f"Starting parallel controller.")
+
+    ### Start job
+    if self.SYSTEM == 'GRID': 
+        output = subprocess.check_output(
+    (f'qsub {self.FOLDER_HOME}/start_controller_parallel.sh'),
+    shell=True, text=True
+    )
+    else: 
+        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in start_controller_parallel() in helper.py.")
+        sys.exit()   
+
 def sequence_from_pdb(pdb_in):
     
     with open(f"{pdb_in}.pdb", "r") as f:

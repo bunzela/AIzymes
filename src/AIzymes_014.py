@@ -51,38 +51,40 @@ class AIzymes_MAIN:
               MAX_JOBS=100, N_PARENT_JOBS=3, MAX_DESIGNS=10000, KBT_BOLTZMANN=[0.5, 0.0003],
               CST_WEIGHT=1.0, ProteinMPNN_PROB=0.0, ProteinMPNN_BIAS=0.0, LMPNN_PROB=0.0, 
               FOLDER_MATCH=None, ProteinMPNN_T="0.1", LMPNN_T="0.1", LMPNN_BIAS=0.0, 
-              SUBMIT_PREFIX=None, SYSTEM=None, MATCH=None, 
+              SUBMIT_PREFIX=None, SYSTEM=None, MATCH=None, RUN_PARALLEL=False, FIELDS_EXCL_CAT=False,
               EXPLORE=False, LOG='debug', PARENT_DES_MED='RosettaDesign', FIELD_TARGET=":5TS@C9 :5TS@H04", MDMin = False):
         """
         Sets up the AIzymes project environment with specified parameters.
 
         Args:
-            FOLDER_HOME (str): Path to the main folder.
-            FOLDER_PARENT (str): Path to the parent folder.
-            CST_NAME (str): Constraint name.
-            WT (str): Wild type information.
-            LIGAND (str): Ligand data.
-            DESIGN (str): Design specifications.
-            MAX_JOBS (int): Maximum number of jobs to run concurrently.
-            N_PARENT_JOBS (int): Number of parent jobs.
-            MAX_DESIGNS (int): Maximum number of designs.
-            KBT_BOLTZMANN (list): Boltzmann constant values.
-            CST_WEIGHT (float): Constraint weight.
-            ProteinMPNN_PROB (float): Probability parameter for ProteinMPNN.
-            ProteinMPNN_BIAS (float): Bias parameter for ProteinMPNN.
-            LMPNN_PROB (float): Probability parameter for LMPNN.
-            FOLDER_MATCH (str): Path to match folder.
-            ProteinMPNN_T (str): Temperature for ProteinMPNN.
-            LMPNN_T (str): Temperature for LMPNN.
-            LMPNN_BIAS (float): Bias parameter for LMPNN.
-            SUBMIT_PREFIX (str): Submission prefix.
-            SYSTEM (str): System information.
-            MATCH (str): Match specifications.
-            EXPLORE (bool): Whether to explore parameter space.
-            FIELD_TARGET (str): Target atoms at which to calculate electric field.
-            LOG (str): Logging level.
-            PARENT_DES_MED (str): Parent design method.
-            MDMin (bool): Use MD minimis(z)ation.
+            FOLDER_HOME (str):          Path to the main folder.
+            FOLDER_PARENT (str):        Path to the parent folder.
+            CST_NAME (str):             Constraint name.
+            WT (str):                   Wild type information.
+            LIGAND (str):               Ligand data.
+            DESIGN (str):               Design specifications.
+            MAX_JOBS (int):             Maximum number of jobs to run concurrently.
+            N_PARENT_JOBS (int):        Number of parent jobs.
+            MAX_DESIGNS (int):          Maximum number of designs.
+            KBT_BOLTZMANN (list):       Boltzmann constant values.
+            CST_WEIGHT (float):         Constraint weight.
+            ProteinMPNN_PROB (float):   Probability parameter for ProteinMPNN.
+            ProteinMPNN_BIAS (float):   Bias parameter for ProteinMPNN.
+            LMPNN_PROB (float):         Probability parameter for LMPNN.
+            FOLDER_MATCH (str):         Path to match folder.
+            ProteinMPNN_T (str):        Temperature for ProteinMPNN.
+            LMPNN_T (str):              Temperature for LMPNN.
+            LMPNN_BIAS (float):         Bias parameter for LMPNN.
+            SUBMIT_PREFIX (str):        Submission prefix.
+            SYSTEM (str):               System information.
+            MATCH (str):                Match specifications.
+            EXPLORE (bool):             Whether to explore parameter space.
+            FIELD_TARGET (str):         Target atoms at which to calculate the electric field.
+            LOG (str):                  Logging level.
+            PARENT_DES_MED (str):       Parent design method.
+            MDMin (bool):               Use MD minimization.
+            RUN_PARALLEL (bool):        If true, start a single job using MAX_JOBS CPUs that will constantly run for design.
+            FIELDS_EXCL_CAT (bool):     If true, subtract the field of catalytic residue from the electric field score.
         """
         for key, value in locals().items():
             if key not in ['self']:  
@@ -92,7 +94,7 @@ class AIzymes_MAIN:
         
         print("AIzymes initiated.")
 
-    def initialize(self, FOLDER_HOME, UNBLOCK_ALL=False, PRINT_VAR=True, PLOT_DATA=False, LOG='debug'):
+    def initialize(self, FOLDER_HOME, UNBLOCK_ALL=False, PRINT_VAR=True, PLOT_DATA=False, LOG='debug', CHECK_PARALLEL=True):
         """
         Initializes AIzymes with given parameters.
 
