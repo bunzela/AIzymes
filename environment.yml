@@ -17,7 +17,5 @@ dependencies:
   - ambertools
   - umap-learn
   - bio-embeddings-esm
+  - scikit-learn
   
-  # NOT NEEDED ANYOMRE
-  #- pip:
-  #  - pdb-tools
