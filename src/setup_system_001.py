@@ -69,14 +69,28 @@ def set_system(self):
         self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
         self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
         
+    elif self.SYSTEM == 'CSCS_PARALLEL_INTERACTIVE':    
+        
+        self.rosetta_ext       = "ERROR! NOT YET CONFIGURED"
+        self.bash_args         = "OMP_NUM_THREADS=1 "
+        self.ROSETTA_PATH      = "ERROR! NOT YET CONFIGURED"
+        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
+        self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
+        self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
+        
     else:
 
-        print(f"{self.SYSTEM} not defined in set_system(self).")
+        print(f"{self.SYSTEM} not defined in set_system(self), located in setup_system.py.")
         sys.exit()
         
 def submit_head(self, index, job, ram):
 
-    if self.SYSTEM == 'GRID': 
+    # Note: All RUN_INTERACTIVE jobs are also RUN_PARALLEL jobs!
+    if self.RUN_PARALLEL == True:
+        
+        return ""
+            
+    elif self.SYSTEM == 'GRID': 
 
         return f"""#!/bin/bash
 #$ -V
@@ -103,5 +117,5 @@ def submit_head(self, index, job, ram):
         
     else:
 
-        print(f"{self.SYSTEM} not yet setup for submission of jobs! Please adjust setup_system!")
+        print(f"{self.SYSTEM} not yet setup for submission of jobs! Please adjust submit_head(), which is part of setup_system.py!")
         sys.exit()

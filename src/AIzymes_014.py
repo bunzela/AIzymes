@@ -51,7 +51,7 @@ class AIzymes_MAIN:
               MAX_JOBS=100, N_PARENT_JOBS=3, MAX_DESIGNS=10000, KBT_BOLTZMANN=[0.5, 0.0003],
               CST_WEIGHT=1.0, ProteinMPNN_PROB=0.0, ProteinMPNN_BIAS=0.0, LMPNN_PROB=0.0, 
               FOLDER_MATCH=None, ProteinMPNN_T="0.1", LMPNN_T="0.1", LMPNN_BIAS=0.0, 
-              SUBMIT_PREFIX=None, SYSTEM=None, MATCH=None, RUN_PARALLEL=False, FIELDS_EXCL_CAT=False,
+              SUBMIT_PREFIX=None, SYSTEM=None, MATCH=None, RUN_PARALLEL=False, FIELDS_EXCL_CAT=False, RUN_INTERACTIVE=False,
               EXPLORE=False, LOG='debug', PARENT_DES_MED='RosettaDesign', FIELD_TARGET=":5TS@C9 :5TS@H04", MDMin = False):
         """
         Sets up the AIzymes project environment with specified parameters.
@@ -83,7 +83,8 @@ class AIzymes_MAIN:
             LOG (str):                  Logging level.
             PARENT_DES_MED (str):       Parent design method.
             MDMin (bool):               Use MD minimization.
-            RUN_PARALLEL (bool):        If true, start a single job using MAX_JOBS CPUs that will constantly run for design.
+            RUN_PARALLEL (bool):        If true, use a single job using MAX_JOBS CPUs that will constantly run for design.
+            RUN_INTERACTIVE (bool):     If true, do not submit jobs but run in background.
             FIELDS_EXCL_CAT (bool):     If true, subtract the field of catalytic residue from the electric field score.
         """
         for key, value in locals().items():
