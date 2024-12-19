@@ -71,9 +71,9 @@ def set_system(self):
         
     elif self.SYSTEM == 'CSCS_PARALLEL_INTERACTIVE':    
         
-        self.rosetta_ext       = "ERROR! NOT YET CONFIGURED"
+        self.rosetta_ext       = "linuxgccrelease"
         self.bash_args         = "OMP_NUM_THREADS=1 "
-        self.ROSETTA_PATH      = "ERROR! NOT YET CONFIGURED"
+        self.ROSETTA_PATH      = "/users/abunzel/rosetta.source.release-371/main/source"
         self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
         self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
         self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
