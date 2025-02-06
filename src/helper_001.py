@@ -285,12 +285,12 @@ echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
             if "ESM" in job:
                 
                 output = subprocess.check_output(
-    (f'qsub -l h="!bs-dsvr64&!bs-dsvr58&!bs-dsvr42&'
+    (f'ssh $USER@bs-submit04.ethz.ch qsub -l h="!bs-dsvr64&!bs-dsvr58&!bs-dsvr42&'
      f'!bs-grid64&!bs-grid65&!bs-grid66&!bs-grid67&'
      f'!bs-grid68&!bs-grid69&!bs-grid70&!bs-grid71&'
      f'!bs-grid72&!bs-grid73&!bs-grid74&!bs-grid75&'
      f'!bs-grid76&!bs-grid77&!bs-grid78&!bs-headnode04&'
-     f'!bs-stellcontrol05&!bs-stellsubmit05" ssh $USER@bs-submit04.ethz.ch -q regular.q '
+     f'!bs-stellcontrol05&!bs-stellsubmit05" -q regular.q '
      f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh'),
     shell=True, text=True
     )

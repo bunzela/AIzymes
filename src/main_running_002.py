@@ -107,9 +107,10 @@ def check_running_jobs(self):
         with open("test_py.txt", "a") as f: f.write(f"Number of jobs {jobs} \n") ### CHECK TO SEE IF PYTHON IS RUNNING
    
     elif self.SYSTEM == 'GRID':
-        jobs = subprocess.check_output(["qstat", "-u", self.USERNAME]).decode("utf-8").split("\n")
+        command = f"ssh {self.USERNAME}@bs-submit04.ethz.ch 'qstat -u {self.USERNAME}'"
+        jobs = subprocess.check_output(command, shell=True).decode("utf-8").split("\n")
         jobs = [job for job in jobs if self.SUBMIT_PREFIX in job]
-        jobs = len(jobs)
+        return len(jobs)
         
     elif self.SYSTEM == 'BLUEPEBBLE':
         jobs = subprocess.check_output(["squeue","--me"]).decode("utf-8").split("\n")
