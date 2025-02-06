@@ -64,10 +64,8 @@ def normalize_scores(self,
             
             if norm_all:
                 if print_norm:
-                    #print(score_type,self.NORM[score_type],end=" ")
-                    print(score_type)
-                #array = (array-self.NORM[score_type][0])/(self.NORM[score_type][1]-self.NORM[score_type][0])
-                array = (array - np.min(array)) / (np.max(array) - np.min(array))
+                    print(score_type,self.NORM[score_type],end=" ")
+                array = (array-self.NORM[score_type][0])/(self.NORM[score_type][1]-self.NORM[score_type][0])
     
                 if np.any(array > 1.0):
                     print(f"\nNORMALIZATION ERROR! {score_type} has a value >1! Max value is {max(array)}") 
@@ -284,15 +282,10 @@ echo "$jobs" > {self.FOLDER_HOME}/n_running_jobs.dat
             if "ESM" in job:
                 
                 output = subprocess.check_output(
-    (f'ssh $USER@bs-submit04.ethz.ch qsub -l h="!bs-dsvr64&!bs-dsvr58&!bs-dsvr42&'
-     f'!bs-grid64&!bs-grid65&!bs-grid66&!bs-grid67&'
-     f'!bs-grid68&!bs-grid69&!bs-grid70&!bs-grid71&'
-     f'!bs-grid72&!bs-grid73&!bs-grid74&!bs-grid75&'
-     f'!bs-grid76&!bs-grid77&!bs-grid78&!bs-headnode04&'
-     f'!bs-stellcontrol05&!bs-stellsubmit05" -q regular.q '
-     f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh'),
+    (f'ssh $USER@bs-submit04.ethz.ch "qsub -l h=\'!bs-dsvr64&!bs-dsvr58&!bs-dsvr42&!bs-grid64&!bs-grid65&!bs-grid66&!bs-grid67&!bs-grid68&!bs-grid69&!bs-grid70&!bs-grid71&!bs-grid72&!bs-grid73&!bs-grid74&!bs-grid75&!bs-grid76&!bs-grid77&!bs-grid78&!bs-headnode04&!bs-stellcontrol05&!bs-stellsubmit05\' -q regular.q {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh"'),
     shell=True, text=True
-    )
+)
+
             else:
                 output = subprocess.check_output(f'ssh $USER@bs-submit04.ethz.ch qsub -q regular.q \
                                                 {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', \
