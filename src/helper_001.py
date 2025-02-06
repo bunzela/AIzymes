@@ -51,10 +51,10 @@ from setup_system_001         import *
 
 def normalize_scores(self, 
                      unblocked_all_scores_df, 
-                     include_catalytic_score=False, 
                      print_norm=False, 
                      norm_all=False, 
                      extension="score"):
+    print(unblocked_all_scores_df)
     
     def neg_norm_array(array, score_type):
 
@@ -88,37 +88,35 @@ def normalize_scores(self,
         else:
             # do not normalize if array only contains 1 value
             return [1]
-         
-    catalytic_scores    = unblocked_all_scores_df[f"catalytic_{extension}"]
-    catalytic_scores    = neg_norm_array(catalytic_scores, f"catalytic_{extension}")   
-    
-    total_scores        = unblocked_all_scores_df[f"total_{extension}"]
-    total_scores        = neg_norm_array(total_scores, f"total_{extension}")   
-    
-    interface_scores    = unblocked_all_scores_df[f"interface_{extension}"]
-    interface_scores    = neg_norm_array(interface_scores, f"interface_{extension}")  
-    
-    efield_scores    = unblocked_all_scores_df[f"efield_{extension}"]   ### to be worked on
-    efield_scores    = neg_norm_array(-1*efield_scores, f"efield_{extension}")   ### to be worked on, with MINUS here
-    
-    if len(total_scores) == 0:
+
+    # Normalize and stack normalized scores in combined_scores
+    scores = {}
+    for score_type in self.SELECTED_SCORES:
+        scores[score_type] = unblocked_all_scores_df[f"{score_type}_{extension}"]
+        if score_type in ["efield", "identical"]: 
+            scores[score_type] = -scores[score_type] # Adjust scale so that more negative is better for all score types
+        normalized_scores = neg_norm_array(scores[score_type], score_type)
+        globals()[f"{score_type}_scores"] = normalized_scores # Save normalized scores in arrays called scoretype_scores
+
+    if len(total_scores) == 0: 
         combined_scores = []
     else:
-        if include_catalytic_score:
-            combined_scores     = np.stack((total_scores, interface_scores, efield_scores, catalytic_scores))
-        else:
-            combined_scores     = np.stack((total_scores, interface_scores, efield_scores))
-        combined_scores     = np.mean(combined_scores, axis=0)
+        score_arrays = []
+        for score_type in self.SELECTED_SCORES:
+            if score_type != "catalytic":  
+                score_arrays.append(globals()[f"{score_type}_scores"])
+        print(score_arrays)
+        combined_scores = np.stack(score_arrays, axis=0)
+        combined_scores = np.mean(combined_scores, axis=0)
         
-          
     if print_norm:
         if combined_scores.size > 0:
             print("HIGHSCORE:","{:.2f}".format(np.amax(combined_scores)),end=" ")
             print("Designs:",len(combined_scores),end=" ")
             parents = [i for i in os.listdir(self.FOLDER_PARENT) if i[-4:] == ".pdb"]
             print("Parents:",len(parents))
-        
-    return catalytic_scores, total_scores, interface_scores, efield_scores, combined_scores
+            
+    return catalytic_scores, total_scores, interface_scores, efield_scores, identical_scores, combined_scores
 
 def one_to_three_letter_aa(one_letter_aa):
     

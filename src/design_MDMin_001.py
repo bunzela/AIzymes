@@ -124,7 +124,7 @@ sed -i '/        H  /d' {working_dir_path}_MD_out.pdb
 echo '{remark}' > {self.WT}_MDMin_{index}.pdb
 cat {working_dir_path}_MD_out.pdb >> {self.WT}_MDMin_{index}.pdb
 sed -i -e 's/^\(ATOM.\{{17\}}\) /\\1A/' {self.WT}_MDMin_{index}.pdb
-sed -i -e 's/5TS A/5TS X/g' -e 's/HIE/HIS/g' {self.WT}_MDMin_{index}.pdb
+sed -i -e 's/5TS A/5TS X/g' -e 's/HIE/HIS/g' -e 's/HID/HIS/g' {self.WT}_MDMin_{index}.pdb
 
 """
 

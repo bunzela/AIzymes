@@ -204,11 +204,13 @@ def aizymes_setup(self):
 def make_empty_all_scores_df(self):
     
     self.all_scores_df = pd.DataFrame(columns=['index', 'sequence', 'parent_index', \
-                                              'interface_score', 'total_score', 'catalytic_score', 'efield_score', \
-                                              'interface_potential', 'total_potential', 'catalytic_potential', 'efield_potential', \
-                                              'relax_interface_score', 'relax_total_score', 'relax_catalytic_score', 'relax_efield_score', \
-                                              'design_interface_score', 'design_total_score', 'design_catalytic_score', \
-                                              'design_efield_score', 'generation', 'mutations', 'design_method', 'score_taken_from', \
+                                              'interface_score', 'total_score', 'catalytic_score', 'efield_score', 'identical_score',\
+                                              'interface_potential', 'total_potential', 'catalytic_potential', 'efield_potential', 'identical_potential',\
+                                              'relax_interface_score', 'relax_total_score', 'relax_catalytic_score', 'relax_efield_score',\
+                                              'relax_identical_score',\
+                                              'design_interface_score', 'design_total_score', 'design_catalytic_score', 'design_efield_score', \
+                                              'design_identical_score',\
+                                              'generation', 'mutations', 'design_method', 'score_taken_from', \
                                               'blocked_ESMfold', 'blocked_RosettaRelax', \
                                                'cat_resi', 'cat_resn'], dtype=object)
     

@@ -126,7 +126,7 @@ def check_running_jobs(self):
     if jobs == None : jobs = 0
     return jobs
     
-def update_potential(self, score_type, index):
+def update_potential(self, score_type, index): 
     """
     Updates the potential file for a given score type at the specified variant index.
 
@@ -137,25 +137,24 @@ def update_potential(self, score_type, index):
         score_type (str): Type of score to update (e.g., total, interface, catalytic, efield).
         index (int): Variant index to update potential data.
     """
-    
     score = self.all_scores_df.at[index, f'{score_type}_score']
     score_taken_from = self.all_scores_df.at[index, 'score_taken_from']    
     parent_index = self.all_scores_df.at[index, "parent_index"] 
     parent_filename = f"{self.FOLDER_HOME}/{parent_index}/{score_type}_potential.dat"  
-    
+
     # Update current potential
     with open(f"{self.FOLDER_HOME}/{index}/{score_type}_potential.dat", "w") as f: 
         f.write(str(score))
     self.all_scores_df.at[index, f'{score_type}_potential'] = score
 
-    #Update parrent potential
+    #Update parent potential
     if score_taken_from != "RosettaRelax": return                     # Only update the parent potential for RosettaRelax
     if parent_index == "Parent":           return                     # Do not update the parent potential of a variant from parent
     with open(parent_filename, "a") as f:  f.write(f"\n{str(score)}") # Appends to parent_filename
     with open(parent_filename, "r") as f:  potentials = f.readlines() # Reads in potential values 
     self.all_scores_df.at[int(parent_index), f'{score_type}_potential'] = np.average([float(i) for i in potentials])
-        
 
+ 
 def update_scores(self):
     """
     Updates various scores, including total, interface, catalytic, and efield scores for each design variant.
@@ -170,7 +169,7 @@ def update_scores(self):
     logging.debug("Updating scores")
         
     for _, row in self.all_scores_df.iterrows():
-        
+
         if pd.isna(row['index']): continue # Prevents weird things from happening
         index = int(row['index'])
         parent_index = row['parent_index']         
@@ -183,7 +182,36 @@ def update_scores(self):
                     logging.debug(f"Unblocked {unblock} index {int(index)}.")      
              
         seq_path = f"{self.FOLDER_HOME}/{index}/{self.WT}_{index}.seq"
+        
+        # Update sequence and mutations if row does not yet contain a sequence
+        if pd.isna(self.all_scores_df.at[index, 'sequence']):
+            if os.path.exists(seq_path):
+                with open(f"{self.FOLDER_PARENT}/{self.WT}.seq", "r") as f:
+                    reference_sequence = f.read()
+                with open(seq_path, "r") as f:
+                    current_sequence = f.read()
+                mutations = sum(1 for a, b in zip(current_sequence, reference_sequence) if a != b)
+                self.all_scores_df['sequence'] = self.all_scores_df['sequence'].astype('object')
+                self.all_scores_df.at[index, 'sequence']  = current_sequence
+                self.all_scores_df.at[index, 'mutations'] = int(mutations)
 
+        # Calculate identical score
+        if "identical" in self.SELECTED_SCORES:
+            same_seq = 0
+            identical_score = 0.0
+            if pd.notna(self.all_scores_df.at[index, 'sequence']):
+                for  _, row_2 in self.all_scores_df.iterrows():  # Loop through the indexes and count identical sequences
+                    index_2 = int(row_2['index'])
+                    if self.all_scores_df.at[index, 'sequence'] == self.all_scores_df.at[index_2,'sequence']: 
+                        same_seq += 1
+                if self.all_scores_df.at[index, 'parent_index'] == 'Parent': 
+                    same_seq = 1 # All parents will have an identical score = 1
+                identical_score = 1 / same_seq
+                
+            # Update identical score and identical potential
+            self.all_scores_df.at[index, 'identical_score'] = identical_score
+            update_potential(self, score_type='identical', index=index)   
+        
         # Check what structure to score on
         if os.path.exists(f"{self.FOLDER_HOME}/{int(index)}/score_RosettaRelax.sc"): # Score based on RosettaRelax            
             if row['score_taken_from'] == 'RosettaRelax': continue # Do NOT update score to prevent repeated scoring!
@@ -239,31 +267,38 @@ def update_scores(self):
         save_cat_res_into_all_scores_df(self, index, pdb_path, save_resn=True) 
         #cat_res = self.all_scores_df.at[index, 'cat_resi']
         
-        # Calculate catalytic and interface score
+        # Calculate scores
         catalytic_score = 0.0
         interface_score = 0.0
+        efield_score = 0.0
+        total_score = 0.0
+        
         for idx_headers, header in enumerate(headers):
-            if header == 'total_score':                total_score      = float(scores[idx_headers])
+            if "total" in self.SELECTED_SCORES:
+                if header == 'total_score':                total_score      = float(scores[idx_headers])
             # Subtract constraints from interface score
-            if header == 'interface_delta_X':          interface_score += float(scores[idx_headers])
-            if header in ['if_X_angle_constraint', 
+            if "interface" in self.SELECTED_SCORES:
+                if header == 'interface_delta_X':          interface_score += float(scores[idx_headers])
+                if header in ['if_X_angle_constraint', 
                           'if_X_atom_pair_constraint', 
                           'if_X_dihedral_constraint']: interface_score -= float(scores[idx_headers])   
             # Calculate catalytic score by adding constraints
-            if header in ['atom_pair_constraint']:     catalytic_score += float(scores[idx_headers])       
-            if header in ['angle_constraint']:         catalytic_score += float(scores[idx_headers])       
-            if header in ['dihedral_constraint']:      catalytic_score += float(scores[idx_headers]) 
-
+            if "catalytic" in self.SELECTED_SCORES:
+                if header in ['atom_pair_constraint']:     catalytic_score += float(scores[idx_headers])       
+                if header in ['angle_constraint']:         catalytic_score += float(scores[idx_headers])       
+                if header in ['dihedral_constraint']:      catalytic_score += float(scores[idx_headers]) 
+        
         # Calculate efield score
-        efield_score, index_efields_dict = get_efields_score(self, index, score_type)  
-        update_efieldsdf(self, index, index_efields_dict)              
+        if "efield" in self.SELECTED_SCORES:
+            efield_score, index_efields_dict = get_efields_score(self, index, score_type)  
+            update_efieldsdf(self, index, index_efields_dict)   
 
         # Update scores
         self.all_scores_df.at[index, 'total_score']     = total_score
         self.all_scores_df.at[index, 'interface_score'] = interface_score                
         self.all_scores_df.at[index, 'catalytic_score'] = catalytic_score
         self.all_scores_df.at[index, 'efield_score']    = efield_score
-        
+
         # This is just for book keeping. AIzymes will always use the most up_to_date scores saved above
         if "RosettaRelax" in score_file_path:
             self.all_scores_df.at[index, 'relax_total_score']     = total_score
@@ -277,22 +312,13 @@ def update_scores(self):
             self.all_scores_df.at[index, 'design_catalytic_score'] = catalytic_score
             self.all_scores_df.at[index, 'design_efield_score'] = efield_score
 
-        for score_type in ['total', 'interface', 'catalytic', 'efield']:     
-            update_potential(self, score_type=score_type, index= index)   
+        for score_type in self.SELECTED_SCORES: 
+            if score_type != "identical":
+                update_potential(self, score_type=score_type, index= index)   
 
         logging.info(f"Updated scores and potentials of index {index}.")
         if self.all_scores_df.at[index, 'score_taken_from'] == 'Relax' and self.all_scores_df.at[index, 'parent_index'] != "Parent":
             logging.info(f"Adjusted potentials of {self.all_scores_df.at[index, 'parent_index']}, parent of {int(index)}).")
-                        
-        # Update sequence and mutations
-        with open(f"{self.FOLDER_PARENT}/{self.WT}.seq", "r") as f:
-            reference_sequence = f.read()
-        with open(seq_path, "r") as f:
-            current_sequence = f.read()
-        mutations = sum(1 for a, b in zip(current_sequence, reference_sequence) if a != b)
-        self.all_scores_df['sequence'] = self.all_scores_df['sequence'].astype('object')
-        self.all_scores_df.at[index, 'sequence']  = current_sequence
-        self.all_scores_df.at[index, 'mutations'] = int(mutations)
 
     save_all_scores_df(self)
         
@@ -341,11 +367,12 @@ def boltzmann_selection(self):
             return selected_index     
 
     # Drop catalytic scroes > mean + 1 std
-    mean_catalytic_score = unblocked_all_scores_df['catalytic_score'].mean()
-    std_catalytic_score = unblocked_all_scores_df['catalytic_score'].std()
-    mean_std_catalytic_score = mean_catalytic_score + std_catalytic_score
-    if len(unblocked_all_scores_df) > 10:
-        unblocked_all_scores_df = unblocked_all_scores_df[unblocked_all_scores_df['catalytic_score'] < mean_std_catalytic_score]
+    if "catalytic" in self.SELECTED_SCORES:
+        mean_catalytic_score = unblocked_all_scores_df['catalytic_score'].mean()
+        std_catalytic_score = unblocked_all_scores_df['catalytic_score'].std()
+        mean_std_catalytic_score = mean_catalytic_score + std_catalytic_score
+        if len(unblocked_all_scores_df) > 10:
+            unblocked_all_scores_df = unblocked_all_scores_df[unblocked_all_scores_df['catalytic_score'] < mean_std_catalytic_score]
         
     # Remove indices without score (design running)
     unblocked_all_scores_df = unblocked_all_scores_df.dropna(subset=['total_score'])     
@@ -363,14 +390,15 @@ def boltzmann_selection(self):
         selected_index = filtered_indices[0]
         logging.info(f"{selected_index} selected because its relaxed but nothing was designed from it.")
         return int(selected_index)
-              
+
+    display(unblocked_all_scores_df)
+    
     # Do Boltzmann Selection if some scores exist
-    _, _, _, _, combined_potentials = normalize_scores(self, 
+    _, _, _, _, _, combined_potentials = normalize_scores(self, 
                                                        unblocked_all_scores_df, 
                                                        norm_all=False, 
                                                        extension="potential", 
                                                        print_norm=False) 
-        
     if len(combined_potentials) > 0:
         generation=self.all_scores_df['generation'].max()
                 
@@ -386,7 +414,7 @@ def boltzmann_selection(self):
         # Some issue with numpy exp when calculating boltzman factors.
         combined_potentials_list = [float(x) for x in combined_potentials]
         combined_potentials = np.array(combined_potentials_list)
-
+        
         boltzmann_factors = np.exp(combined_potentials / kbt_boltzmann)
         probabilities = boltzmann_factors / sum(boltzmann_factors)
         
