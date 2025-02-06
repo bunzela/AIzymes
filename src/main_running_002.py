@@ -198,20 +198,21 @@ def update_scores(self):
 
         # Calculate identical score
         if "identical" in self.SELECTED_SCORES:
-            same_seq = 0
-            identical_score = 0.0
-            if pd.notna(self.all_scores_df.at[index, 'sequence']):
-                for  _, row_2 in self.all_scores_df.iterrows():  # Loop through the indexes and count identical sequences
-                    index_2 = int(row_2['index'])
-                    if self.all_scores_df.at[index, 'sequence'] == self.all_scores_df.at[index_2,'sequence']: 
-                        same_seq += 1
-                if self.all_scores_df.at[index, 'parent_index'] == 'Parent': 
-                    same_seq = 1 # All parents will have an identical score = 1
-                identical_score = 1 / same_seq
-                
-            # Update identical score and identical potential
+            
+            sequence = self.all_scores_df.at[index, 'sequence']
+            parent_index = self.all_scores_df.at[index, 'parent_index']
+            
+            if pd.notna(sequence):
+                if parent_index == 'Parent': # If it's a parent, set identical score to 1
+                    identical_score = 1.0 
+                else:
+                    # Calculate the number of occurrences of the current sequence
+                    identical_count = (self.all_scores_df['sequence'] == sequence).sum()
+                    identical_score = 1 / identical_count if identical_count > 0 else 0.0
+        
+            # Update identical score and potential
             self.all_scores_df.at[index, 'identical_score'] = identical_score
-            update_potential(self, score_type='identical', index=index)   
+            update_potential(self, score_type='identical', index=index)
         
         # Check what structure to score on
         if os.path.exists(f"{self.FOLDER_HOME}/{int(index)}/score_RosettaRelax.sc"): # Score based on RosettaRelax            
