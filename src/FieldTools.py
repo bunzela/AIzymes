@@ -4,7 +4,8 @@ import subprocess
 import numpy as np  
 import pickle
 import datetime
-import pytraj as pt
+import mdtraj as md
+import parmed as pmd
 
 def ResNr_from_ResName(ResName, Names):
     for Name_i in range(0,len(Names),1):
@@ -244,53 +245,51 @@ def fkt_get_Target_XYZ(Frame,Target_Index):
                 
     return Target_XYZ #Passed to Target_Index in main!
 
-def fkt_Load_Trajectory(arg_nc,arg_parm,arg_TIP4P):
-
-    traj = pt.load(arg_nc, arg_parm) 
-    Trajectory = traj.xyz
-    Charges = traj.topology.charge
-    Names          = [str(atom.name)       for atom in traj.topology.atoms]
-    AtomResid      = [atom.resid           for atom in traj.topology.atoms]
-    ResidueNames   = [str(residue.name)    for residue in traj.topology.residues]
-    ResidueNumbers = [str(residue.index+1) for residue in traj.topology.residues]
+def fkt_Load_Trajectory(arg_nc, arg_parm, arg_TIP4P):
     
-    for Name_i in range(0,len(Names),1):
-        ###########    AtommName ,                       ResName ,                           ResiNR
-        ###########            0 ,                             1 ,                                2      
-        Names[Name_i] = [Names[Name_i],ResidueNames[AtomResid[Name_i]],ResidueNumbers[AtomResid[Name_i]]]
-        #if ResidueNumbers[AtomResid[Name_i]] in ["211","212"]:
-        #    print Names[Name_i], Charges[Name_i]
-        
-    if arg_TIP4P=="True":
-        for Names_i in range(0,len(Names),1):
-            if Names[Names_i][0] == "EPW" and Names[Names_i][1] == "WAT":
-                Names[Names_i-3] = "del"
-                Charges[Names_i-3] = np.inf
-                for Frame_i in range(0,len(Trajectory),1):
-                    Trajectory[Frame_i][Names_i-3] = [np.inf,np.inf,np.inf]
-        Names   = [i for i in Names if i != "del"]
-        Charges = [i for i in Charges if i != np.inf]
-        Trajectory = Trajectory.tolist()
-        for Frame_i in range(0,len(Trajectory),1):
-            Frame = Trajectory[Frame_i]
-            Frame = np.array([i for i in Frame if np.inf not in i])
-            Trajectory[Frame_i] = Frame
-        Trajectory = np.array(Trajectory)  
-        
-    return (Trajectory, Charges, np.array(Names))
- 
-def make_pdb(arg_nc,arg_param,arg_pdb,arg_use_qmcharges,arg_TIP4P,arg_qm_mask,arg_out):
-    tmp_TIP4P = ""
-    if arg_TIP4P == "True": tmp_TIP4P = " include_ep"
-    cpptraj = """parm """+arg_param+"""
-trajin """+arg_nc+"""
-autoimage
-outtraj """+arg_pdb+""" """+tmp_TIP4P+""" onlyframes -1
-"""
-    with open("cpptraj.in", "w") as f:
-        f.write(cpptraj)  
-    with open("cppraj.out", 'w') as f:
-        process = subprocess.call(['cpptraj', '-i', 'cpptraj.in'], stdout=f)
+    # Load topology using ParmEd
+    parm = pmd.load_file(arg_parm)
+    
+    # Extract charges from ParmEd topology
+    Charges = np.array([atom.charge for atom in parm.atoms])
+    
+    # Load trajectory using MDTraj
+    traj = md.load(arg_nc, top=arg_parm)
+    Trajectory = traj.xyz  # Coordinates in nanometers
+    
+    # Extract atomic and residue information
+    Names = [[str(atom.name), str(atom.residue.name), str(atom.residue.index + 1)] for atom in traj.topology.atoms]
+
+    if arg_TIP4P == "True":
+        TIP4P_indices = [
+            i for i, name in enumerate(atom.name for atom in traj.topology.atoms)
+            if name == "EPW" and atom.residue.name == "WAT"
+        ]
+        for index in TIP4P_indices:
+            Charges[index - 3] = np.inf  # Ignore charge of linker atoms
+            for frame in Trajectory:
+                frame[index - 3] = [np.inf, np.inf, np.inf]
+
+        Trajectory = np.array([
+            frame[np.all(frame != [np.inf, np.inf, np.inf], axis=1)]
+            for frame in Trajectory
+        ])
+        Charges = Charges[np.isfinite(Charges)]
+
+    return Trajectory, Charges, np.array(Names)
+
+def make_pdb(arg_nc, arg_parm, arg_pdb, arg_use_qmcharges, arg_TIP4P, arg_qm_mask, arg_out):
+    traj = md.load(arg_nc, top=arg_parm)
+    
+    if arg_TIP4P == "True":
+        TIP4P_indices = [
+            i for i, atom in enumerate(traj.topology.atoms)
+            if atom.name == "EPW" and atom.residue.name == "WAT"
+        ]
+        # Remove extra points from both topology and trajectory
+        traj = traj.atom_slice([i for i in range(traj.n_atoms) if i not in TIP4P_indices])
+    
+    traj.save_pdb(arg_pdb)
         
 def load_qm_mask(arg_qm_mask):
     with open(arg_qm_mask) as f:

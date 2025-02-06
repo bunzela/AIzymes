@@ -44,14 +44,31 @@ def main(args):
             pdbs.append(to_pdb(pred))
         return pdbs
 
-    tokenizer = AutoTokenizer.from_pretrained("facebook/esmfold_v1")
-    model = EsmForProteinFolding.from_pretrained("facebook/esmfold_v1", low_cpu_mem_usage=True)
-    torch.backends.cuda.matmul.allow_tf32 = True
-    model.trunk.set_chunk_size(64)
-    tokenized_input = tokenizer([sequence], return_tensors="pt", add_special_tokens=False)['input_ids']
-    with torch.no_grad(): output = model(tokenized_input)
-    pdb = convert_outputs_to_pdb(output)
-    with open(output_file, "w") as f: f.write("".join(pdb))
+    try:
+        tokenizer = AutoTokenizer.from_pretrained("facebook/esmfold_v1")
+        model = EsmForProteinFolding.from_pretrained("facebook/esmfold_v1", low_cpu_mem_usage=True)
+        torch.backends.cuda.matmul.allow_tf32 = True
+        model.trunk.set_chunk_size(64)
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  
+        model = model.to(device)
+        tokenized_input = tokenizer([sequence], return_tensors="pt", add_special_tokens=False)['input_ids'].to(device)
+        
+        with torch.no_grad(): 
+            output = model(tokenized_input)
+
+        pdb = convert_outputs_to_pdb(output)
+        with open(output_file, "w") as f: 
+            f.write("".join(pdb))
+
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        raise
+
+    finally:
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            torch.cuda.synchronize()
     
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
