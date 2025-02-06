@@ -69,7 +69,6 @@ def normalize_scores(self,
                 #array = (array-self.NORM[score_type][0])/(self.NORM[score_type][1]-self.NORM[score_type][0])
                 array = (array - np.min(array)) / (np.max(array) - np.min(array))
     
-                
                 if np.any(array > 1.0):
                     print(f"\nNORMALIZATION ERROR! {score_type} has a value >1! Max value is {max(array)}") 
                 if np.any(array < 0.0):
