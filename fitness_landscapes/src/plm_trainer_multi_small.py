@@ -122,14 +122,35 @@ class PLM_trainer():
         return df
     
     def read_datasets_csv(self):
+        """
+        Reads one or multiple CSV files into a single DataFrame.
+        """
 
-        df = pd.read_csv(self.df_path)
-        df = df[df['sequence'].notnull()]
-        
+        if isinstance(self.df_path, str):
+            self.df_path = [self.df_path]  # Convert to list if a single path is provided
+
+        df_list = []
+
+        for file in self.df_path:
+            print(f"Loading dataset: {file}")
+            temp_df = pd.read_csv(file)
+
+            if 'sequence' not in temp_df.columns:
+                print(f"Warning: 'sequence' column missing in {file}. Skipping this file.")
+                continue
+
+            temp_df = temp_df[temp_df['sequence'].notnull()]
+            df_list.append(temp_df)
+
+        # Combine all DataFrames
+        df = pd.concat(df_list, ignore_index=True)
+
+        # Handle unique sequences
         if self.select_unique:
             score_df = df.groupby('sequence')[self.scores].mean().reset_index()
             label_df = df.drop_duplicates('sequence')[self.labels + ['sequence']]
             df = pd.merge(score_df, label_df, on='sequence')
+
         if self.cat_resi is not None:
             df = df[df['cat_resi'] == self.cat_resi]
 
@@ -137,7 +158,7 @@ class PLM_trainer():
         lengths = np.array([len(seq) for seq in sequences])
         max_len = np.max(lengths)
 
-        print(f'### Data loaded from: {self.df_path} ###')
+        print(f'### {len(self.df_path)} files loaded into one dataset. ###')
 
         return df, lengths, max_len, sequences
     
