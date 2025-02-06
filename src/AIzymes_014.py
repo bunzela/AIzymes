@@ -52,7 +52,8 @@ class AIzymes_MAIN:
               CST_WEIGHT=1.0, ProteinMPNN_PROB=0.0, ProteinMPNN_BIAS=0.0, LMPNN_PROB=0.0, 
               FOLDER_MATCH=None, ProteinMPNN_T="0.1", LMPNN_T="0.1", LMPNN_BIAS=0.0, 
               SUBMIT_PREFIX=None, SYSTEM=None, MATCH=None, RUN_PARALLEL=False, FIELDS_EXCL_CAT=False,
-              EXPLORE=False, LOG='debug', PARENT_DES_MED='RosettaDesign', FIELD_TARGET=":5TS@C9 :5TS@H04", MDMin = False):
+              EXPLORE=False, LOG='debug', PARENT_DES_MED='RosettaDesign', FIELD_TARGET=":5TS@C9 :5TS@H04", MDMin = False, 
+              SELECTED_SCORES = ["total","catalytic","interface","efield"]):
         """
         Sets up the AIzymes project environment with specified parameters.
 

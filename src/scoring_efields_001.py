@@ -11,7 +11,7 @@ def prepare_efields(self, index:str, cmd:str):
     Calculate electric fields for structure in {index}.
     
     Args:
-    index (str): The index of the protein variant for whcih efields are to be calculated.
+    index (str): The index of the protein variant for which efields are to be calculated.
     cmd (str): Growing list of commands to be exected by run_design using submit_job.
 
     Returns:
@@ -29,8 +29,8 @@ def prepare_efields(self, index:str, cmd:str):
     with open(f"{filename_out}_tleap.in", "w") as f:
         f.write(f"""source leaprc.protein.ff19SB 
     source leaprc.gaff
-    loadamberprep   {self.FOLDER_INPUT}/5TS.prepi
-    loadamberparams {self.FOLDER_INPUT}/5TS.frcmod
+    loadamberprep   {self.FOLDER_INPUT}/{self.LIGAND}.prepi
+    loadamberparams {self.FOLDER_INPUT}/{self.LIGAND}.frcmod
     mol = loadpdb {filename_out}.pdb
     saveamberparm mol {filename_out}.parm7 {filename_out}.rst7
     quit
@@ -66,16 +66,16 @@ def get_efields_score(self, index, score_type):
     with open(f"{self.FOLDER_HOME}/{index}/ElectricFields/{self.WT}_{score_type}_{index}_fields.pkl", "rb") as f:
         FIELDS = pkl.load(f)
 
-    bond_field =  np.array(FIELDS[f':5TS@C9_:5TS@H04']['Total'])
+    bond_field =  np.array(FIELDS[self.FIELD_TARGET.replace(" ", "_")]['Total'])
     
     if self.FIELDS_EXCL_CAT:
-        print(f'original field {bond_field}')
+        #print(f'original field {bond_field}')
         key = f"{self.all_scores_df.at[index, 'cat_resn']}_{self.all_scores_df.at[index, 'cat_resi']}"
-        print(f"base field {FIELDS[':5TS@C9_:5TS@H04'][key]}")
-        bond_field = bond_field - np.array(FIELDS[':5TS@C9_:5TS@H04'][key])
-        print(f'new field base subtraction {bond_field}')
+        #print(f'base field {FIELDS[self.FIELD_TARGET.replace(" ", "_")][key]}')
+        bond_field = bond_field - np.array(FIELDS[self.FIELD_TARGET.replace(" ", "_")][key])
+        #print(f'new field base subtraction {bond_field}')
         
-    all_fields = FIELDS[f':5TS@C9_:5TS@H04']
+    all_fields = FIELDS[self.FIELD_TARGET.replace(" ", "_")]
 
     return bond_field[0], all_fields
 
