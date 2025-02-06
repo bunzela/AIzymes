@@ -52,9 +52,9 @@ from setup_system_001         import *
 def normalize_scores(self, 
                      unblocked_all_scores_df, 
                      print_norm=False, 
-                     norm_all=False, 
+                     norm_all=False, # True is min max normalization, False is Z-score normalization
                      extension="score"):
-    print(unblocked_all_scores_df)
+    #print(unblocked_all_scores_df)
     
     def neg_norm_array(array, score_type):
 
@@ -64,11 +64,11 @@ def normalize_scores(self,
             
             if norm_all:
                 if print_norm:
-                    print(score_type,self.NORM[score_type],end=" ")
-                array = (array-self.NORM[score_type][0])/(self.NORM[score_type][1]-self.NORM[score_type][0])
-                
-                # COMMENTED OUT BY HAB. I think this is useless and bad!
-                #array[array < 0] = 0.0
+                    #print(score_type,self.NORM[score_type],end=" ")
+                    print(score_type)
+                #array = (array-self.NORM[score_type][0])/(self.NORM[score_type][1]-self.NORM[score_type][0])
+                array = (array - np.min(array)) / (np.max(array) - np.min(array))
+    
                 
                 if np.any(array > 1.0):
                     print(f"\nNORMALIZATION ERROR! {score_type} has a value >1! Max value is {max(array)}") 
