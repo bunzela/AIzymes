@@ -6,6 +6,7 @@ design/*
 !design/TEST/Input
 
 # Ignore all log files and checkpoint files
-*.log
-*/.ipynb_checkpoints
-*/__pycache__
+**.log
+**/.ipynb_checkpoints
+**/__pycache__
+
