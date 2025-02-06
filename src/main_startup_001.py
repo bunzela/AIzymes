@@ -89,17 +89,26 @@ def prepare_input_files(self):
     with open(f'{self.FOLDER_PARENT}/field_target.dat', "w") as f:
         f.write(f'{self.FIELD_TARGET}\n')    
         
+    # For parallel runs, create blank number of running jobs file
+    if self.RUN_PARALLEL:
+        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'w') as f:
+            f.write("0")
+            
 def initialize_variables(self):
 
     # Complete directories
     self.FOLDER_HOME     = f'{os.getcwd()}/{self.FOLDER_HOME}'
     self.FOLDER_PARENT   = f'{self.FOLDER_HOME}/{self.FOLDER_PARENT}'
     self.FOLDER_INPUT    = f'{os.getcwd()}/Input'
-    self.USERNAME        = os.getlogin()
+    self.USERNAME        = os.environ.get("USER", os.environ.get("LOGNAME", "unknown_user"))
     self.LOG_FILE        = f'{self.FOLDER_HOME}/logfile.log'
     self.ALL_SCORES_CSV  = f'{self.FOLDER_HOME}/all_scores.csv'
     self.VARIABLES_JSON  = f'{self.FOLDER_HOME}/variables.json'
     self.FOLDER_PLOT     = f'{self.FOLDER_HOME}/plots' 
+    
+    # All interactive jobs (jobs submitted in background while jupyter is running interactively) are parallel jobs (one jobs claiming MAX_JOBS CPUs)!
+    if self.RUN_INTERACTIVE: 
+        self.RUN_PARALLEL == True
         
     # Define system-specific settings
     set_system(self)    
@@ -107,7 +116,7 @@ def initialize_variables(self):
     if not os.path.isdir(self.FOLDER_INPUT):
         print(f"ERROR! Input folder missing! Should be {self.FOLDER_INPUT}")
         sys.exit()
-        
+                    
 def initialize_logging(self):
 
     os.makedirs(self.FOLDER_HOME, exist_ok=True)
@@ -149,6 +158,14 @@ def aizymes_setup(self):
     # Starts the logger
     initialize_logging(self)
     
+    # Check if the job uses the appropriate number of jobs
+    if self.RUN_INTERACTIVE:
+        total_cpus = os.cpu_count()
+        if total_cpus != self.MAX_JOBS:
+            logging.info(f"Job seems to be running in INTERACTIVE mode with {total_cpus} cpus. It is recommended to set MAX_JOBS to {total_cpus}.")
+        if total_cpus*2 != self.N_PARENT_JOBS:
+            logging.info(f"Job seems to be running in INTERACTIVE mode with {total_cpus} cpus. It is recommended to set N_PARENT_JOBS to {total_cpus*2}.")
+               
     # Check if setup needs to run
     if input(f'''Do you really want to restart AIzymes from scratch? 
     This will delete all existing files in {self.FOLDER_HOME} [y/n]
@@ -166,13 +183,12 @@ def aizymes_setup(self):
     if self.LIGAND == None:
         logging.error("Please define the name of the ligand with [LIGAND].")
         sys.exit()
-    if self.SUBMIT_PREFIX == None:
+    if self.SUBMIT_PREFIX == None and not self.RUN_INTERACTIVE: # Interactive runs are not submitted but executed in bash. no prefix needed
         logging.error("Please provide a unique prefix for job submission with [SUBMIT_PREFIX].")
         sys.exit()
     if self.SYSTEM == None:
         logging.error("Please define operating system with [SYSTEM]. {GRID,BLUPEBBLE}")
         sys.exit()
-        
     if self.N_PARENT_JOBS < self.MAX_JOBS:
         logging.error(f"N_PARENT_JOBS must be > MAX_JOBS. N_PARENT_JOBS: {self.N_PARENT_JOBS}, MAX_JOBS: {self.MAX_JOBS}.")
         sys.exit()

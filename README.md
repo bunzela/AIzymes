@@ -1,19 +1,13 @@
-# To Do
-| **Action Item**             | **Description**                                                                                                  | **Person** |
-|-----------------------------|------------------------------------------------------------------------------------------------------------------|------------|
-| `MS` Finalize variant charact | pH-dependence & MM Kin of variants for preprint                                                                  | Vivian     |
-| `MS` Finalize variant charact | Chrystallography (for future full paper)                                                                         | ???        |
-| `MS` Finalize manual        | Detailed description, setup, and usage instructions. Includes docstrings in code                                 | Vivian     |
-| `MS` Plots                  | What is missing both in terms of parameter testing and from experiment                                           | Lucas      |
-| MDMin Design Option         | Work on an MDMin design option to run between ESMfold and RosettaRelax. Updates are on the branch `MD_minimise`. | Abbie      |
-| Running MD Option           | To be done after MDMin                                                                                           | Abbie      |
-| Enable AIzymes for CATPHOTO | Establish heme & design protocols to make AI.zymes accessible to everyone in the group                           | ???        |
-| Finalize Plot Functions     | Complete the tree plot and UMAP plotting functions.                                                              | Vivian     |
-| Optimize `cst_weight`       | Optimize the `cst_weight` to increase the total score and smooth hamming distance over generations.              | Vivian     |
-| Optimize `cst_weight`       | Optimize the `boltzman_weight`                                                                                   | Vivian     |
-| Test New Design Runs        | Test whether starting a new design run from a previous design provides improvement.                              | Vivian     |
-| Test New Design Runs        | Test whether starting a new design run from a previous design provides improvement.                              | Vivian     |
+# Note to Reviewers
+In this code repository, you find the code for our manuscript: AI.zymes – A modular platform for evolutionary enzyme design.
 
+You can access the code used for the submitted manuscript under src/AIzymes_013.py. 
+
+Example notebooks to test AI.zymes are given under AIzymes/design/TEST/
+
+Upon peer-reviewed publications, a seperate repository will be uploaded to the ETH Research Collection. This upload will be unmodifable and associated with a DOI. Because the upload will contain  data that may change during peer-review (e.g. additional analyses requested by reviewers), the upload to the ETH Research Collection will only be completed after peer review. 
+
+# Future To Do
 | **Packages**                | **Description**                                                                                                  | **Person** |
 |-----------------------------|------------------------------------------------------------------------------------------------------------------|------------|
 | LigandMPNN                  | .                                                                                                                | ???        |

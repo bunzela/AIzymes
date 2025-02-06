@@ -84,7 +84,8 @@ class AIzymes_MAIN:
             LOG (str):                  Logging level.
             PARENT_DES_MED (str):       Parent design method.
             MDMin (bool):               Use MD minimization.
-            RUN_PARALLEL (bool):        If true, start a single job using MAX_JOBS CPUs that will constantly run for design.
+            RUN_PARALLEL (bool):        If true, use a single job using MAX_JOBS CPUs that will constantly run for design.
+            RUN_INTERACTIVE (bool):     If true, do not submit jobs but run in background.
             FIELDS_EXCL_CAT (bool):     If true, subtract the field of catalytic residue from the electric field score.
         """
         for key, value in locals().items():
@@ -181,3 +182,5 @@ class AIzymes_MAIN:
             landscape_plotting_function(self)
 
         return
+
+

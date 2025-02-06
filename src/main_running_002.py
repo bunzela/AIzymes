@@ -1,5 +1,5 @@
 """
-main_running_001.py
+main_running_002.py
 
 This module contains the main control functions for managing the AIzymes workflow, including job submission,
 score updating, and Boltzmann selection. The functions in this file are responsible for the high-level management
@@ -49,7 +49,7 @@ def start_controller(self):
     Each ofthese tasks is performed by the functions introduced before, and thereforer the start_controller function controls the flow of actions.
     '''
 
-    if self.RUN_PARALLEL and self.CHECK_PARALLEL: 
+    if self.RUN_PARALLEL and self.CHECK_PARALLEL and not self.RUN_INTERACTIVE: 
 
         start_controller_parallel(self)
         
@@ -58,7 +58,8 @@ def start_controller(self):
         # Run this part of the function until the maximum number of designs has been reached.
         while len(self.all_scores_df['index']) < int(self.MAX_DESIGNS): 
                 
-            # Check how many jobs are currently running and waits when the number is equal or bigger than the maximum number of parallel jobs allowed.
+            # Check how many jobs are currently running
+            # Wait if the number is equal or bigger than the maximum number of parallel jobs allowed.
             num_running_jobs = check_running_jobs(self)
             
             if num_running_jobs >= self.MAX_JOBS: 
@@ -104,8 +105,7 @@ def check_running_jobs(self):
     if self.RUN_PARALLEL:
         with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'r') as f: jobs = int(f.read())
         with open("test_py.txt", "a") as f: f.write(f"Number of jobs {jobs} \n") ### CHECK TO SEE IF PYTHON IS RUNNING
-
-    
+   
     elif self.SYSTEM == 'GRID':
         jobs = subprocess.check_output(["qstat", "-u", self.USERNAME]).decode("utf-8").split("\n")
         jobs = [job for job in jobs if self.SUBMIT_PREFIX in job]
@@ -120,7 +120,7 @@ def check_running_jobs(self):
         jobs = 0
 
     else:
-        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in check_running_jobs().")
+        logging.error(f"SYSTEM: {self.SYSTEM} not defined in check_running_jobs() which is part of main_running.py.")
         sys.exit()
 
     if jobs == None : jobs = 0
