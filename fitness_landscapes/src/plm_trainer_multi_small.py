@@ -66,14 +66,11 @@ class PLM_trainer():
     def load_dataset(self, 
                      df_path='./data/all_scores_pooled_cut.csv', 
                      scores=['total_score'], 
-                     labels=['score_taken_from', 'design_method', 'cat_resn', 'cat_resi', 'parent_index', 'generation', 'mutations'], 
+                     labels=['score_taken_from', 'design_method', 'cat_resn', 'cat_resi', 'parent_index', 'generation', 'mutations', 'landscape'], 
                      cat_resi=None, 
                      select_unique=True,
                      normalize='both', 
-                     test_size=0.2,
-                     scores_invert= ['total_score','interface_score','total_potential','interface_potential'],
-                     stratify_nan=True,
-                     print_testtrain = True):
+                     scores_invert= ['total_score','interface_score','total_potential','interface_potential']):
         
         self.df_path         = df_path
         self.scores          = scores
@@ -82,24 +79,9 @@ class PLM_trainer():
         self.select_unique   = select_unique
         self.normalize       = normalize
         self.scores_invert   = scores_invert
-        self.stratify_nan    = stratify_nan
-        self.print_testtrain = print_testtrain
 
         self.df, self.lengths, self.max_len, self.sequences = self.read_datasets_csv()
         self.df = self.normalize_scores(self.df)
-
-        # Split the dataset, stratifying based on NaN presence
-        if self.stratify_nan:
-            nan_mask = self.df[self.scores].isna().any(axis=1).astype(int)  # 1 if any NaN, else 0
-        else:
-            nan_mask = None
-        self.train_df, self.test_df = train_test_split(self.df, test_size=test_size, random_state=42, stratify=nan_mask)
-
-        if print_testtrain:
-            print("train_df")
-            display(self.train_df)
-            print("test_df")
-            display(self.test_df)
 
     def normalize_scores(self, df):
 
@@ -162,13 +144,57 @@ class PLM_trainer():
 
         return df, lengths, max_len, sequences
     
-    def train_PLM(self, epochs=3, esm2_model_name=None, p_loss=0.1, liveplot = False, overwrite=False):
+    def train_PLM(self, 
+                  epochs               = 3, 
+                  esm2_model_name      = None,
+                  p_loss               = 0.1, 
+                  liveplot             = False, 
+                  overwrite            = False,
+                  validation           = "test_train",
+                  validation_landscape = None,
+                  test_size            = 0.2,
+                  stratify_nan         = True,
+                  print_testtrain      = True,
+                  figure_name          = ""):
         
+        self.stratify_nan    = stratify_nan
+        self.print_testtrain = print_testtrain
         self.epochs = epochs
         self.esm2_model_name = esm2_model_name
         self.p_loss = p_loss
         self.liveplot = liveplot
+        self.figure_name = figure_name
         self.overwrite = overwrite
+     
+        if validation == "test_train":
+ 
+            # Stratify based on binned score values
+            stratify_bins = pd.qcut(self.df[self.scores[0]], q=4, duplicates="drop", labels=False)  # 4 bins
+
+            # Perform train-test split with stratification
+            self.train_df, self.test_df = train_test_split(
+                self.df, 
+                test_size=test_size, 
+                random_state=42, 
+                stratify=stratify_bins
+            )
+
+            if print_testtrain:
+                print("train_df")
+                display(self.train_df)
+                print("test_df")
+                display(self.test_df)
+
+        if validation == "landscape":
+
+            self.train_df = self.df[self.df["landscape"] != validation_landscape]
+            self.test_df = self.df[self.df["landscape"] == validation_landscape]
+
+            if print_testtrain:
+                print("train_df")
+                display(self.train_df)
+                print("test_df")
+                display(self.test_df)
 
         if esm2_model_name is not None:
             self.plm_model_name = esm2_model_name
@@ -529,7 +555,10 @@ class PLM_trainer():
 
         plt.suptitle(self.file_title().replace('_', ' '))
         plt.tight_layout()
-        plt.savefig(f"{self.output_folder}/{self.file_title()}.png")
+        if self.figure_name == "":
+            plt.savefig(f"{self.output_folder}/{self.file_title()}.png")
+        else:
+            plt.savefig(f"{self.output_folder}/{self.figure_name}_{self.file_title()}.png")
         plt.show()
 
         # Collect data
