@@ -561,6 +561,7 @@ class PLM_trainer():
             plt.savefig(f"{self.output_folder}/{self.figure_name}_{self.file_title()}.png")
         plt.show()
 
+'''
         # Collect data
         filename = f"{self.output_folder}/results.pkl"  
 
@@ -675,3 +676,4 @@ def plot_summary(output_folder,scores=None,models=None,top_p=0.8):
     plt.tight_layout()
     plt.subplots_adjust(top=0.8)  # Adjust to make room for the suptitle
     plt.show()
+'''
