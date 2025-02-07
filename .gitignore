@@ -10,7 +10,10 @@ design/*
 **/.ipynb_checkpoints
 **/__pycache__
 
-#Qsub stuff from grid
+# qsub stuff from grid
 qsub_jupyter.err
 qsub_jupyter.out
 IP_jupyter.IP
+
+# .pkl files from PLM learner
+fitness_landscapes/**/*.pkl
