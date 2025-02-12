@@ -14,3 +14,7 @@ design/*
 qsub_jupyter.err
 qsub_jupyter.out
 IP_jupyter.IP
+
+# .pkl files from PLM learner
+fitness_landscapes/**/*.pkl
+

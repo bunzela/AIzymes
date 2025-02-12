@@ -15,7 +15,10 @@ from scipy.spatial.distance import cdist
 import umap 
 import torch
 import esm
+<<<<<<< HEAD
 import math
+=======
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
 
 from helper_001               import *
 
@@ -80,6 +83,7 @@ def plot_efield_score(ax, efield_scores, total_score_min, total_score_max, total
     ax.set_title('Histogram of Efield Score')
     ax.set_xlabel('Efield Score')
     ax.set_ylabel('Frequency')
+<<<<<<< HEAD
 
 def plot_identical_score(ax, identical_scores, total_score_min, total_score_max, total_score_bin):
     ax.hist(identical_scores, density=True, bins=np.arange(total_score_min,total_score_max+total_score_bin,total_score_bin))
@@ -87,11 +91,17 @@ def plot_identical_score(ax, identical_scores, total_score_min, total_score_max,
     ax.set_title('Histogram of Identical Score')
     ax.set_xlabel('Identical Score')
     ax.set_ylabel('Frequency')
+=======
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
     
 def plot_boltzmann_histogram(self, ax, combined_scores, score_min, score_max, score_bin):
 
     # Generation of the combined potentials values
+<<<<<<< HEAD
     _, _, _, _, _, combined_potentials = normalize_scores(self,
+=======
+    _, _, _, _, combined_potentials = normalize_scores(self,
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
                                                        self.plot_scores_df, 
                                                        print_norm=False,
                                                        norm_all=False,
@@ -140,10 +150,17 @@ def plot_combined_score_v_index(self, ax, combined_scores):
     ax.axhline(self.HIGHSCORE_NEGBEST['HIGHSCORE_combined_score'], color='b', label='Highest Score', alpha = 0.5)
     ax.axhline(self.HIGHSCORE_NEGBEST['NEGBEST_combined_score'], color='r', label='Negative Best', alpha = 0.5)
     
+<<<<<<< HEAD
     # #Imports values from the PARENT files and creates a x-line on the plot indicating ????
     # full_path = os.path.join(self.FOLDER_HOME, self.FOLDER_PARENT)
     # PARENTS = [i for i in os.listdir(full_path) if i.endswith(".pdb") and os.path.isfile(os.path.join(full_path, i))]
     # ax.axvline(self.N_PARENT_JOBS*len(PARENTS), color='k')
+=======
+    #Imports values from the PARENT files and creates a x-line on the plot indicating ????
+    full_path = os.path.join(self.FOLDER_HOME, self.FOLDER_PARENT)
+    PARENTS = [i for i in os.listdir(full_path) if i.endswith(".pdb") and os.path.isfile(os.path.join(full_path, i))]
+    ax.axvline(self.N_PARENT_JOBS*len(PARENTS), color='k')
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
     
     #Calculates the moving average in a window of 20 of the combined scores and creates a line plot with the moving average values.
     moving_avg = combined_scores.rolling(window=20).mean()
@@ -151,23 +168,83 @@ def plot_combined_score_v_index(self, ax, combined_scores):
     
     #Sets plot details
     ax.set_ylim(0,1)
+<<<<<<< HEAD
     ax.set_xlim(0, self.plot_scores_df['index'].max())
+=======
+    ax.set_xlim(0,self.MAX_DESIGNS)
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
     ax.set_title('Combined score vs Index')
     ax.set_xlabel('Index')
     ax.set_ylabel('Combined Score')
     ax.legend(loc='best')
     
+<<<<<<< HEAD
 def plot_score_v_generation_violin(self, ax, score_type, ylim=(0,1)):
+=======
+def plot_combined_score_v_generation_violin(self, ax, combined_scores):
+    #Defines the values for generating the violin plot and creates it
+    self.plot_scores_df['tmp'] = combined_scores
+    max_gen = int(self.plot_scores_df['generation'].max())
+    generations = np.arange(0, max_gen + 1)
+    violin_data = [self.plot_scores_df[self.plot_scores_df['generation'] == gen]['tmp'].dropna().values for gen in generations]
+    parts = ax.violinplot(violin_data, positions=generations, showmeans=False, showmedians=True)
+    
+    # Customizing the color of violin plots and the median lines
+    for pc in parts['bodies']:
+        pc.set_facecolor('blue')
+        pc.set_edgecolor('black')
+        pc.set_alpha(0.5)
+    for partname in ('cbars', 'cmins', 'cmaxes'):
+        vp = parts.get(partname)
+        if vp:
+            vp.set_edgecolor('black')
+            vp.set_linewidth(0.1)
+    vp = parts.get('cmedians')
+    if vp:
+        vp.set_edgecolor('tab:orange')
+        vp.set_linewidth(2.0)
+    
+    # Fit the data to the exponential function and plot it
+    #weights = np.linspace(1, 0.1, len(generations))
+    #weights = np.ones(len(generations))
+    #weights[:1] = 0.3
+    #mean_scores = [np.mean(data) for data in violin_data]
+    #popt, pcov = curve_fit(exponential_func, generations, mean_scores, p0=(1, 0.1, 0.7), sigma=weights, maxfev=2000)
+    #fitted_curve = exponential_func(generations, *popt)
+    #ax.plot(generations, fitted_curve, 'r--', label=f'Fit: A*exp(-kt) - c\nA={popt[0]:.2f}, k={popt[1]:.2f}, c={popt[2]:.2f}')
+    
+    #Adds the two values HIGHSCORE and NEG_BEST as reference values for the top ever design and the best ever negative control value.
+    ax.axhline(self.HIGHSCORE_NEGBEST['HIGHSCORE_combined_score'], color='b', label='Highest Score', alpha = 0.5)
+    ax.axhline(self.HIGHSCORE_NEGBEST['NEGBEST_combined_score'], color='r', label='Negative Best', alpha = 0.5)
+
+    #Sets plot details
+    ax.set_ylim(0, 1)
+    ax.set_title('Combined Score vs Generations')
+    ax.set_xlabel('Generation')
+    ax.set_ylabel('Combined Score')
+    ax.yaxis.grid(True, linestyle='--', which='major', color='grey', alpha=0.7)
+    ax.legend(loc='best')
+    every_second_generation = generations[::2]
+    ax.set_xticks(every_second_generation)
+    ax.set_xticklabels(every_second_generation)
+    
+def plot_score_v_generation_violin(self, ax, score_type):
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
     
     #Prepares data for the violin plot generation and creates it
     max_gen = int(self.plot_scores_df['generation'].max())
     generations = np.arange(0, max_gen + 1)
+<<<<<<< HEAD
     catalytic_scores, total_scores, interface_scores, efield_scores, identical_scores, combined_scores = normalize_scores(self,
+=======
+    catalytic_scores, total_scores, interface_scores, efield_scores, combined_scores = normalize_scores(self,
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
                                                                                                             self.plot_scores_df,
                                                                                                             print_norm=True,
                                                                                                             norm_all=True)    
     if score_type=="total_score":
         normalized_violin_data = [total_scores[self.plot_scores_df['generation'] == gen] for gen in generations]
+<<<<<<< HEAD
     elif score_type=="interface_score":
         normalized_violin_data = [interface_scores[self.plot_scores_df['generation'] == gen] for gen in generations]
     elif score_type=="catalytic_score":
@@ -187,6 +264,14 @@ def plot_score_v_generation_violin(self, ax, score_type, ylim=(0,1)):
             for gen in generations]
     
     parts = ax.violinplot(normalized_violin_data, positions=generations)
+=======
+    if score_type=="interface_score":
+        normalized_violin_data = [interface_scores[self.plot_scores_df['generation'] == gen] for gen in generations]
+    if score_type=="efield_score":
+        normalized_violin_data = [efield_scores[self.plot_scores_df['generation'] == gen] for gen in generations]
+        
+    parts = ax.violinplot(normalized_violin_data, positions=generations, showmeans=False, showmedians=True)
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
 
     #Uncomment to generate the violin plot with the absolute rather than the normalized values of the scores (comment the lines above)
     '''
@@ -194,16 +279,24 @@ def plot_score_v_generation_violin(self, ax, score_type, ylim=(0,1)):
     parts = ax.violinplot(violin_data, positions=generations, showmeans=False, showmedians=True)
     
     '''
+<<<<<<< HEAD
     # Customizing the color of violin plots 
     for pc in parts['bodies']:
         pc.set_facecolor('blue')
         pc.set_edgecolor('none')
+=======
+    # Customizing the color of violin plots and the median lines
+    for pc in parts['bodies']:
+        pc.set_facecolor('blue')
+        pc.set_edgecolor('black')
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
         pc.set_alpha(0.5)
     for partname in ('cbars', 'cmins', 'cmaxes'):
         vp = parts.get(partname)
         if vp:
             vp.set_edgecolor('black')
             vp.set_linewidth(0.1)
+<<<<<<< HEAD
             
     # Add and customize mean points
     means = [np.mean(data) for data in normalized_violin_data]  
@@ -221,6 +314,31 @@ def plot_score_v_generation_violin(self, ax, score_type, ylim=(0,1)):
     ax.set_ylim(ylim)
     ax.yaxis.grid(True, linestyle='--', which='major', color='grey', alpha=0.7)
     #ax.legend(loc='best')
+=======
+    vp = parts.get('cmedians')
+    if vp:
+        vp.set_edgecolor('tab:orange')
+        vp.set_linewidth(2.0)
+ 
+    # Fit the data to the exponential function and plot it
+    # weights = np.ones(len(generations))
+    # mean_scores = [np.mean(data) for data in violin_data]
+    # popt, pcov = curve_fit(exponential_func, generations, mean_scores, p0=(1, 0.1, 0.7), sigma=weights, maxfev=10000)
+    # fitted_curve = exponential_func(generations, *popt)
+    # ax.plot(generations, fitted_curve, 'r--', label=f'Fit: A*exp(-kt) - c\nA={popt[0]:.2f}, k={popt[1]:.2f}, c={popt[2]:.2f}')
+    
+    #Adds the two values HIGHSCORE and NEG_BEST as reference values for the top ever design and the best ever negative control value.
+    ax.axhline(self.HIGHSCORE_NEGBEST[f'HIGHSCORE_{score_type}'], color='b', label='Highest Score', alpha=0.5)
+    ax.axhline(self.HIGHSCORE_NEGBEST[f'NEGBEST_{score_type}'], color='r', label='Negative Best', alpha=0.5)
+
+    #Sets the plot details
+    ax.set_ylim(0,1)
+    ax.set_title(f'{score_type.replace("_", " ").title()} vs Generations')
+    ax.set_xlabel('Generation')
+    ax.set_ylabel(f'{score_type.replace("_", " ").title()}')
+    ax.yaxis.grid(True, linestyle='--', which='major', color='grey', alpha=0.7)
+    ax.legend(loc='best')
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
     every_fourth_generation = generations[::4]
     ax.set_xticks(every_fourth_generation)
     ax.set_xticklabels(every_fourth_generation)
@@ -237,7 +355,11 @@ def plot_mutations_v_generation_violin(self, ax, mut_min, mut_max):
     # Customizing the color of violin plots and the median lines
     for pc in parts['bodies']:
         pc.set_facecolor('blue')
+<<<<<<< HEAD
         pc.set_edgecolor('none')
+=======
+        pc.set_edgecolor('black')
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
         pc.set_alpha(0.5)
     for partname in ('cbars', 'cmins', 'cmaxes'):
         vp = parts.get(partname)
@@ -306,10 +428,17 @@ def plot_hamming_distance_v_generation_violin(self, ax):
     violin_data_hm = [self.plot_scores_df[self.plot_scores_df['generation'] == gen]["Hamming Distance"].dropna().values for gen in generations]
     parts=ax.violinplot(violin_data_hm, positions=generations, showmeans=True, showmedians=False)
     
+<<<<<<< HEAD
     # Customizing the color of violin plots 
     for pc in parts['bodies']:
         pc.set_facecolor('blue')
         pc.set_edgecolor('none')
+=======
+    # Customizing the color of violin plots and the median lines
+    for pc in parts['bodies']:
+        pc.set_facecolor('blue')
+        pc.set_edgecolor('black')
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
         pc.set_alpha(0.5)
     for partname in ('cbars', 'cmins', 'cmaxes'):
         vp = parts.get(partname)
@@ -334,6 +463,7 @@ def plot_hamming_distance_v_generation_violin(self, ax):
     ax.set_xticklabels(every_fourth_generation)
     
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+<<<<<<< HEAD
 #Defines the plot_scores function which generates the 15 main plots and saves them in the plot folder
 def plot_scores(self, combined_score_min=0, combined_score_max=1, combined_score_bin=0.01, 
                 interface_score_min=0, interface_score_max=1, interface_score_bin=0.01,
@@ -342,6 +472,13 @@ def plot_scores(self, combined_score_min=0, combined_score_max=1, combined_score
                 efield_score_min=0, efield_score_max=1, efield_score_bin=0.01,
                 identical_score_min=0, identical_score_max=1, identical_score_bin=0.01,
                 print_vals=True,
+=======
+#Defines the plot_scores function which generates the 12 main plots and saves them in the plot folder
+def plot_scores(self, combined_score_min=0, combined_score_max=1, combined_score_bin=0.01, 
+                interface_score_min=0, interface_score_max=1, interface_score_bin=0.01,
+                total_score_min=0, total_score_max=1, total_score_bin=0.01,
+                catalytic_score_min=0, catalytic_score_max=1, catalytic_score_bin=0.01, print_vals=True,
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
                 ):
       
         mut_min=0
@@ -362,7 +499,11 @@ def plot_scores(self, combined_score_min=0, combined_score_max=1, combined_score
             mut_max = len(self.plot_scores_df[self.plot_scores_df['sequence'] != 'nan']['sequence'].iloc[0])    
 
         # Defines the scores variables by running the normalize_scores function.
+<<<<<<< HEAD
         catalytic_scores, total_scores, interface_scores, efield_scores, identical_scores, combined_scores = normalize_scores(self,
+=======
+        catalytic_scores, total_scores, interface_scores, efield_scores, combined_scores = normalize_scores(self,
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
                                                                                                             self.plot_scores_df,
                                                                                                             print_norm=True,
                                                                                                             norm_all=True)
@@ -373,6 +514,7 @@ def plot_scores(self, combined_score_min=0, combined_score_max=1, combined_score
             print(f'efield_score: {round(min(efield_scores),3)} , {round(max(efield_scores),3)}')
             print(f'combined_score: {round(min(combined_scores),3)} , {round(max(combined_scores),3)}')
 
+<<<<<<< HEAD
         # Creates a figure with the 15 subplots and generates the different plots. Their position in the figure is defined by the axs index.
         fig, axs = plt.subplots(3, 5, figsize=(15, 11))
 
@@ -406,12 +548,43 @@ def plot_scores(self, combined_score_min=0, combined_score_max=1, combined_score
     
         plot_hamming_distance_v_generation_violin(self, axs[2,4])
 
+=======
+        # Creates a figure with the 12 subplots and generates the different plots. Their position in the figure is defined by the axs index.
+        fig, axs = plt.subplots(3, 4, figsize=(15, 9))
+
+        plot_combined_score(self, axs[0,0], combined_scores, combined_score_min, combined_score_max, combined_score_bin)
+
+        plot_interface_score(axs[0,1], interface_scores, interface_score_min, interface_score_max, interface_score_bin)
+
+        plot_total_score(axs[0,2], total_scores,  total_score_min, total_score_max, total_score_bin)
+
+        plot_catalytic_score(axs[0,3], catalytic_scores, catalytic_score_min, catalytic_score_max, catalytic_score_bin)
+
+        plot_efield_score(axs[1,0], efield_scores, catalytic_score_min, catalytic_score_max, catalytic_score_bin)
+
+        plot_boltzmann_histogram(self, axs[1,1], combined_scores, combined_score_min, combined_score_max, combined_score_bin)
+
+        plot_combined_score_v_index(self, axs[1,2], combined_scores)
+
+        plot_combined_score_v_generation_violin(self, axs[1,3], combined_scores)
+
+        plot_hamming_distance_v_generation_violin(self, axs[2,0])
+
+        plot_score_v_generation_violin(self, axs[2,1], 'total_score')
+
+        plot_score_v_generation_violin(self, axs[2,2], 'interface_score')
+
+        plot_score_v_generation_violin(self, axs[2,3], 'efield_score')
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
 
         #Additional plot types to interchange
         #plot_mutations_v_generation_violin(self, axs[2,0], plot_scores_df, mut_min, mut_max)
         #plot_interface_score_v_total_score(axs[-,-],plot_scores_df, total_score_min, total_score_max, interface_score_min, interface_score_max)
+<<<<<<< HEAD
         #plot_boltzmann_histogram(self, axs[2,3], combined_scores, combined_score_min, combined_score_max, combined_score_bin)
 
+=======
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
 
         plt.tight_layout()
 
@@ -425,6 +598,7 @@ def kbt_cst_weights_plotting_function(self):
     
     fig, axs = plt.subplots(1, 2, figsize=(12, 6))
     fig.suptitle('kbt and cst weights across generations', fontsize=15, weight='bold')    
+<<<<<<< HEAD
 
     # Extract generation,kbt and cst_weight columns
     gen_kbt_cst_df = self.plot_scores_df[['generation', 'kbt_boltzmann', 'cst_weight']].dropna()
@@ -436,6 +610,20 @@ def kbt_cst_weights_plotting_function(self):
 
     # kbt plot 
     kbt_plot = axs[0].plot(generations, avg_kbt)
+=======
+    
+    max_gen = int(self.plot_scores_df['generation'].max())
+    generation_range = np.arange(0, max_gen + 1)    
+    generations= pd.Series(generation_range)
+    
+    #Creates the line plot showing the kbt weights values over generation
+    kbt_weights = self.plot_scores_df['kbt_boltzmann'].dropna()
+    kbt_weights_filtered = kbt_weights.drop_duplicates(keep='first')
+    
+    kbt_plot = axs[0].plot(generations, kbt_weights_filtered)
+    
+    #Sets kbt plot details
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
     axs[0].set_title("kbt Weights vs Generations")
     axs[0].set_xlabel("Generations")
     every_third_generation = generations[::3]
@@ -443,8 +631,18 @@ def kbt_cst_weights_plotting_function(self):
     axs[0].set_xticklabels(every_third_generation)
     axs[0].set_ylabel("kbt Weights")
     
+<<<<<<< HEAD
     # cst plot
     cst_plot = axs[1].plot(generations, avg_cst_weights)
+=======
+    #Creates the line plot showing the cst weights values over generation
+    cst_weights = self.plot_scores_df['cst_weight'].dropna()
+    cst_weights_filtered = cst_weights.drop_duplicates(keep='first')
+   
+    cst_plot = axs[1].plot(generations, cst_weights_filtered)
+
+    #Sets cst plot details
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
     axs[1].set_title("cst Weights vs Generations")
     axs[1].set_xlabel("Generations")
     every_third_generation = generations[::3]
@@ -452,11 +650,23 @@ def kbt_cst_weights_plotting_function(self):
     axs[1].set_xticklabels(every_third_generation)
     axs[1].set_ylabel("cst weights")
     
+<<<<<<< HEAD
+=======
+    #Creates and prints dataframe with the values of the kbt and cst weights of the corresponding generation
+    generations_reset = generations.reset_index(drop=True)
+    kbt_weights_reset = kbt_weights_filtered.reset_index(drop=True)
+    cst_weights_reset = cst_weights_filtered.reset_index(drop=True)
+
+    kbt_cst_df = pd.DataFrame({'Generation': generations_reset, 'kbt_weights': kbt_weights_reset, 'cst_weights':cst_weights_reset})
+    print(kbt_cst_df)
+    
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
     plt.tight_layout()
     plt.savefig(os.path.join(self.FOLDER_PLOT, 'kbt_cst_weights_plot.png'), format='png')  
 
     plt.show()
         
+<<<<<<< HEAD
 
 def plot_tree(self, 
               max_generation=0, 
@@ -776,6 +986,95 @@ def plot_tree(self,
 
 
 #Defines the landscape_plotting function which generates the landscape plot and saves it in the plot folder
+=======
+#Defines the tree_plotting function which generates the tree plot and saves it in the plot folder
+def tree_plotting_function(self):
+        
+    #Retrieves the scores data from the ALL_SCORES_CSV file
+    load_plot_scores_df(self)   
+    
+    #Creates an empty directed graph to then be filled in
+    G = nx.DiGraph()
+    
+    #Extracts the sequence  for the parent and current design iteratively and creates nodes for each design and an edge to the parent design equal with hamming distance
+    for _, row in self.plot_scores_df.iterrows():
+        index = int(float(row['index'])) + 1
+        if not isinstance(row['sequence'], str):
+            continue
+        G.add_node(index, sequence=row['sequence'], interface_potential=row['interface_potential'], gen=int(row['generation']) + 1)
+        if row['parent_index'] != "Parent":
+            parent_idx = int(float(row['parent_index'])) + 1
+            parent_sequence = self.plot_scores_df.loc[self.plot_scores_df.index == parent_idx - 1, 'sequence'].values[0]
+            current_sequence = row['sequence']
+            #Calculates Hamming distance between the parent and the current sequence
+            distance = hamming_distance(parent_sequence, current_sequence)
+            #Adds an edge between the parent and the current index with the hamming distance as an attribute
+            G.add_edge(parent_idx, index, hamming_distance=distance)
+    
+    #Converts the directed graph G into an undirected one
+    G_undirected = G.to_undirected()
+
+    #Creates a new root node
+    G.add_node(0, sequence='root', interface_potential=0, gen=0)
+    
+    #Connects the new root node to all nodes of generation 1
+    for node in G.nodes:
+        if G.nodes[node]['gen'] == 1:
+            current_sequence = G.nodes[node]['sequence']
+            parent_sequence = self.ancestor_sequence
+            distance = hamming_distance(parent_sequence, current_sequence)
+            G.add_edge(0, node, hamming_distance=distance)
+    
+    #Uses graphviz_layout to get the positions for a concentric circular layout
+    pos = graphviz_layout(G, prog="twopi", args="")
+
+    #Colors all nodes in black and only the root node in white.
+    nodes_colors = ['white' if node == 0 else 'black' for node in G.nodes]
+
+    #Normalizes Hamming distances for edge colors
+    hamming_distances = [G.edges[edge]['hamming_distance'] for edge in G.edges]
+    
+    #Normalizes the Hamming distances, setting the minimal to 0 and the maximal to 1
+    min_hamming = min(hamming_distances)
+    max_hamming = max(hamming_distances)
+    normalized_hamming = [(dist - min_hamming) / (max_hamming - min_hamming) for dist in hamming_distances]
+
+    #Plots the tree graph
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=300)
+    nx.draw_networkx_nodes(G, pos, ax=ax, node_size=5, linewidths=0.1, node_color=nodes_colors)
+    
+    #Draws edges with custom color based on normalized Hamming distance, sets color to black if hamming distance=0
+    edge_colors = ['orange' if norm_dist == 0 else plt.cm.cool(norm_dist) for norm_dist in normalized_hamming]
+    nx.draw_networkx_edges(G, pos, ax=ax, width=0.5, edge_color=edge_colors, style='-', arrows=False)
+
+    #Creates a colorbar as a legend for Hamming distances
+    sm = plt.cm.ScalarMappable(cmap=plt.cm.cool, norm=plt.Normalize(vmin=min_hamming, vmax=max_hamming))
+    sm.set_array([])
+    cbar = plt.colorbar(sm, ax=ax)
+    cbar.set_label('Hamming Distance')
+
+    #Sets the plot details
+    ax.set_title("Ancestor in white, Edges colored by Hamming Distance")
+    ax.axis("equal")
+    
+    #Addition of another dimension given in terms of node colors, in this case "interface score" - Optional
+    #_, _, interface_potentials, _, combined_potentials = normalize_scores(None, plot_scores_df, print_norm=False, norm_all=False, extension="potential")
+    #plot_scores_df["interface_potential"] = interface_potentials
+    #Normalizes scores from 0 to 1, with 0 the minimum and 1 the maximum score
+    #scores = {node: plot_scores_df.loc[plot_scores_df['index'] == int(node)-1, 'interface_score'].values[0] for node in G.nodes if node != 0}
+    #min_score = min(scores.values())
+    #max_score = max(scores.values())
+    #normalized_scores = {node: (score - min_score) / (max_score - min_score) for node, score in scores.items()}
+      
+        
+    plt.savefig(os.path.join(self.FOLDER_PLOT, 'tree_plot.png'), format='png')  
+    #plt.savefig(os.path.join(plots, 'tree_plot.png'), format='png')
+
+    plt.show()
+
+        
+#Defines the landscape_plotting function which generates the tree plot and saves it in the plot folder
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
 def landscape_plotting_function(self):
     
      #Checks for GPU availability
@@ -1284,7 +1583,11 @@ def plot_delta_scores():
         # Customizing the color of violin plots
         for pc in parts['bodies']:
             pc.set_facecolor('green')
+<<<<<<< HEAD
             pc.set_edgecolor('none')
+=======
+            pc.set_edgecolor('black')
+>>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
             pc.set_alpha(0.7)
 
         # Customizing the color of the median lines
