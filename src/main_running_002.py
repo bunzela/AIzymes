@@ -397,17 +397,10 @@ def boltzmann_selection(self):
     
     # Do Boltzmann Selection if some scores exist
     _, _, _, _, _, combined_potentials = normalize_scores(self, 
-<<<<<<< HEAD
                                                 unblocked_all_scores_df, 
                                                 norm_all=False, 
                                                 extension="potential", 
                                                 print_norm=False) 
-=======
-                                                       unblocked_all_scores_df, 
-                                                       norm_all=False, 
-                                                       extension="potential", 
-                                                       print_norm=False) 
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
     if len(combined_potentials) > 0:
         generation=self.all_scores_df['generation'].max()
                 

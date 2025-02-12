@@ -22,10 +22,7 @@ Functions:
 from main_running_002         import *
 from main_startup_001         import *
 from plotting_001             import *
-<<<<<<< HEAD
 from helper_001               import *
-=======
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
 
 # Imports used elsewhere --------------------------------------------------------------------------------------------------
 #from main_design_001          import *
@@ -35,10 +32,7 @@ from helper_001               import *
 #from design_RosettaDesign_001 import *
 #from design_ESMfold_001       import *
 #from design_RosettaRelax_001  import *
-<<<<<<< HEAD
-=======
 #from helper_001               import *
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
 #from scoring_efields_001      import *
 #from setup_system_001         import *
 # -------------------------------------------------------------------------------------------------------------------------
@@ -133,12 +127,8 @@ class AIzymes_MAIN:
                 'interface_score': [10, 35],
                 'total_score': [200, 500], 
                 'catalytic_score': [-40, 0], 
-<<<<<<< HEAD
                 'efield_score': [10, 220],
                 'identical_score': [0, 1]
-=======
-                'efield_score': [10, 220]
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
             }
 
         for key, value in locals().items():
@@ -164,12 +154,8 @@ class AIzymes_MAIN:
                 'interface_score': [10, 35],
                 'total_score': [200, 500], 
                 'catalytic_score': [-40, 0], 
-<<<<<<< HEAD
                 'efield_score': [10, 220],
                 'identical_score': [0, 1]
-=======
-                'efield_score': [10, 220]
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
             }
         if HIGHSCORE_NEGBEST is None:
             HIGHSCORE_NEGBEST = {
@@ -179,17 +165,12 @@ class AIzymes_MAIN:
                 'NEGBEST_total_score': 0.209,
                 'HIGHSCORE_interface_score': 0.994,
                 'NEGBEST_interface_score': 0.935,
-<<<<<<< HEAD
                 'HIGHSCORE_catalytic_score': 0.994,
                 'NEGBEST_catalytic_score': 0.935,
                 'HIGHSCORE_efield_score': 0.970,
                 'NEGBEST_efield_score': 0.807,
                'HIGHSCORE_identical_score': 1,
                 'NEGBEST_identical_score': 0.935
-=======
-                'HIGHSCORE_efield_score': 0.970,
-                'NEGBEST_efield_score': 0.807
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
             }
 
         for key, value in locals().items():
@@ -200,21 +181,14 @@ class AIzymes_MAIN:
             plot_scores(self, print_vals=print_vals)
             kbt_cst_weights_plotting_function(self)
             
-<<<<<<< HEAD
         if tree_plot:
             plot_tree(self)
-=======
-         
-        if tree_plot:
-            tree_plotting_function(self)
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
-            
+           
         if landscape_plot:
             landscape_plotting_function(self)
 
         return
 
-<<<<<<< HEAD
     def best_structures(self, save_structures = False, include_catalytic_score = False, seq_per_active_site = 100, DESIGN = None, WT = None):
         get_best_structures(self, 
                             save_structures = save_structures, 
@@ -222,6 +196,4 @@ class AIzymes_MAIN:
                             seq_per_active_site = seq_per_active_site,
                             DESIGN = DESIGN,
                             WT = WT)
-=======
 
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f

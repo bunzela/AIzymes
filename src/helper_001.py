@@ -54,11 +54,7 @@ def normalize_scores(self,
                      print_norm=False, 
                      norm_all=False, # True is min max normalization, False is Z-score normalization
                      extension="score"):
-<<<<<<< HEAD
-=======
-    #print(unblocked_all_scores_df)
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
-    
+
     def neg_norm_array(array, score_type):
 
         if len(array) > 1:  ##check that it's not only one value
@@ -67,12 +63,9 @@ def normalize_scores(self,
             
             if norm_all:
                 if print_norm:
-<<<<<<< HEAD
                     print(self.NORM[score_type])
                     #print(score_type,self.NORM[score_type],end=" ")
-=======
-                    print(score_type,self.NORM[score_type],end=" ")
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
+
                 array = (array-self.NORM[score_type][0])/(self.NORM[score_type][1]-self.NORM[score_type][0])
     
                 if np.any(array > 1.0):
@@ -100,11 +93,9 @@ def normalize_scores(self,
         scores[score_type] = unblocked_all_scores_df[f"{score_type}_{extension}"]
         if score_type in ["efield", "identical"]: 
             scores[score_type] = -scores[score_type] # Adjust scale so that more negative is better for all score types
-<<<<<<< HEAD
+
         normalized_scores = neg_norm_array(scores[score_type], f"{score_type}_{extension}")
-=======
-        normalized_scores = neg_norm_array(scores[score_type], score_type)
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
+
         globals()[f"{score_type}_scores"] = normalized_scores # Save normalized scores in arrays called scoretype_scores
 
     if len(total_scores) == 0: 
@@ -114,10 +105,7 @@ def normalize_scores(self,
         for score_type in self.SELECTED_SCORES:
             if score_type != "catalytic":  
                 score_arrays.append(globals()[f"{score_type}_scores"])
-<<<<<<< HEAD
-=======
-        print(score_arrays)
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
+
         combined_scores = np.stack(score_arrays, axis=0)
         combined_scores = np.mean(combined_scores, axis=0)
         
@@ -534,17 +522,8 @@ def save_all_scores_df(self):
         os.unlink(temp_path)                               # Remove the temporary file if an error occurs
         raise e
 
-<<<<<<< HEAD
 def get_best_structures(self, save_structures = False, include_catalytic_score = False, seq_per_active_site = 100, DESIGN = None, WT = None):
-=======
-def get_best_structures(save_structures = False, include_catalytic_score = False, seq_per_active_site = 100):
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
-    if save_structures:
-        print("Saving structures...")
-    else:
-        print("Not saving structures...")
 
-<<<<<<< HEAD
     # Condition to check if the ALL_SCORES_CSV file exists, otherwise it returns the function.
     if not os.path.isfile(f'{self.FOLDER_HOME}/all_scores.csv'): 
         print(f"ERROR: {self.FOLDER_HOME}/all_scores.csv does not exist!")
@@ -568,27 +547,11 @@ def get_best_structures(save_structures = False, include_catalytic_score = False
     all_scores_df['replicate_sequences'] = 0  # Initialize to count duplicates
     all_scores_df['replicate_sequences_final_score'] = 0.0  # To store the average score
     all_scores_df['replicate_sequences_final_score_std'] = 0.0  # To store the standard deviation
-=======
-    # Read the scores DataFrame
-    all_scores_df = pd.read_csv(ALL_SCORES_CSV)
-    all_scores_df_og = all_scores_df.copy()
-    # Drop rows with NaN in 'total_score'
-    all_scores_df = all_scores_df.dropna(subset=['total_score'])
-
-    # Calculate the combined scores using the normalize_scores function
-    _, _, _, _, combined_scores = normalize_scores(all_scores_df, include_catalytic_score=include_catalytic_score, print_norm=False, norm_all=False)
-
-    all_scores_df['combined_score'] = combined_scores
-
-    all_scores_df['replicate_sequences'] = 0  # Initialize to count duplicates
-    all_scores_df['replicate_sequences_combined_score'] = 0.0  # To store the average score
-    all_scores_df['replicate_sequences_combined_score_std'] = 0.0  # To store the standard deviation
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
 
     # Loop to find duplicates, calculate average score, and standard deviation
     for i, row in all_scores_df.iterrows():
         duplicates = all_scores_df[all_scores_df['sequence'] == row['sequence']]
-<<<<<<< HEAD
+
         avg_score = duplicates['final_score'].mean()
         std_dev = duplicates['final_score'].std()
 
@@ -598,35 +561,15 @@ def get_best_structures(save_structures = False, include_catalytic_score = False
 
     # Remove replicates and keep only highest final
     all_scores_df.sort_values(by=['final_score'], ascending=[False], inplace=True)
-=======
-        avg_score = duplicates['combined_score'].mean()
-        std_dev = duplicates['combined_score'].std()
 
-        all_scores_df.at[i, 'replicate_sequences'] = len(duplicates)
-        all_scores_df.at[i, 'replicate_sequences_combined_score'] = avg_score
-        all_scores_df.at[i, 'replicate_sequences_combined_score_std'] = std_dev
-
-    # Remove replicates and keep only highest combined_score
-    all_scores_df.sort_values(by=['combined_score'], ascending=[False], inplace=True)
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
     all_scores_df.drop_duplicates(subset=['sequence'], keep='first', inplace=True)
 
     # Define Design group
     def get_design_sequence(sequence, design_positions):
         return ''.join(sequence[pos - 1] for pos in design_positions)
-<<<<<<< HEAD
+
     design_positions = [int(pos) for pos in DESIGN.split(',')]
     
-=======
-
-    design_positions = [int(pos) for pos in DESIGN.split(',')]
-
-    #manually define AS here
-    if WT == "1ohp":
-        print("Using 1ohp ress99 manual design positions, use DESIGN if working with an undefiend active site")
-        design_positions = [14, 18, 38, 54, 58, 63, 65, 82, 84, 97, 101, 112, 114]
-
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
     all_scores_df['design_group'] = all_scores_df['sequence'].apply(lambda seq: get_design_sequence(seq, design_positions))
 
     # Use the standard deviation selection for catalytic score
@@ -653,32 +596,20 @@ def get_best_structures(save_structures = False, include_catalytic_score = False
     top100 = pd.DataFrame(top_variants)
 
     selected_indices = np.array(top100['index'].tolist(), dtype=int)
-<<<<<<< HEAD
+
     print(selected_indices)
     print(top100)
 
     # Print average scores for top 100 and all data points
     score_types = ['final_score', 'combined_score', 'total_score', 'norm_total_score', 'interface_score', 'norm_interface_score', 'efield_score', 'norm_efield_score', 'catalytic_score', 'identical_score', 'mutations']
-=======
-    # print(selected_indices)
-    # print(top100)
 
-    # Print average scores for top 100 and all data points
-    score_types = ['combined_score', 'total_score', 'interface_score', 'efield_score', 'catalytic_score', 'mutations']
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
     print_average_scores(all_scores_df, top100, score_types)
 
     # Create the destination folder if it doesn't exist
     if include_catalytic_score:
-<<<<<<< HEAD
         best_structures_folder = os.path.join(self.FOLDER_HOME, 'best_structures')
     else:
         best_structures_folder = os.path.join(self.FOLDER_HOME, 'best_structures_nocat')
-=======
-        best_structures_folder = os.path.join(FOLDER_HOME, 'best_structures')
-    else:
-        best_structures_folder = os.path.join(FOLDER_HOME, 'best_structures_nocat')
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
     os.makedirs(best_structures_folder, exist_ok=True)
 
     # Create the plots folder
@@ -690,15 +621,11 @@ def get_best_structures(save_structures = False, include_catalytic_score = False
     if save_structures:
         print("Saving...")
         for index, row in top100.iterrows():
-<<<<<<< HEAD
+
             geom_mean = "{:.3f}".format(row['final_score'])
             relax_file = f"{self.FOLDER_HOME}/{int(index)}/{WT}_RosettaRelax_{int(index)}.pdb"
             design_file = f"{self.FOLDER_HOME}/{int(index)}/{WT}_RosettaDesign_{int(index)}.pdb"
-=======
-            geom_mean = "{:.3f}".format(row['combined_score'])
-            relax_file = f"{FOLDER_HOME}/{int(index)}/{WT}_Rosetta_Relax_{int(index)}.pdb"
-            design_file = f"{FOLDER_HOME}/{int(index)}/{WT}_Rosetta_Design_{int(index)}.pdb"
->>>>>>> 34712cff976f7fdc527b1b0993375f838278c80f
+            
             if os.path.isfile(relax_file):
                 src_file = relax_file
             else:
