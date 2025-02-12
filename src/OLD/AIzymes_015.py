@@ -19,10 +19,10 @@ Functions:
 # Import AIzymes modules --------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------
     
-from main_running_002         import *
+from main_running_003         import *
 from main_startup_001         import *
 from plotting_001             import *
-from helper_001               import *
+from helper_002               import *
 
 # Imports used elsewhere --------------------------------------------------------------------------------------------------
 #from main_design_001          import *

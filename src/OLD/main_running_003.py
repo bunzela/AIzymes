@@ -29,7 +29,7 @@ import logging
 import random
 import json
 
-from helper_001               import *
+from helper_002               import *
 from main_design_001          import *
 from scoring_efields_001      import *
 
@@ -197,6 +197,7 @@ def update_scores(self):
                 self.all_scores_df.at[index, 'mutations'] = int(mutations)
 
         # Calculate identical score
+        identical_score = 0.0
         if "identical" in self.SELECTED_SCORES:
             
             sequence = self.all_scores_df.at[index, 'sequence']
@@ -210,9 +211,9 @@ def update_scores(self):
                     identical_count = (self.all_scores_df['sequence'] == sequence).sum()
                     identical_score = 1 / identical_count if identical_count > 0 else 0.0
         
-            # Update identical score and potential
-            self.all_scores_df.at[index, 'identical_score'] = identical_score
-            update_potential(self, score_type='identical', index=index)
+                # Update identical score and potential
+                self.all_scores_df.at[index, 'identical_score'] = identical_score
+                update_potential(self, score_type='identical', index=index)
         
         # Check what structure to score on
         if os.path.exists(f"{self.FOLDER_HOME}/{int(index)}/score_RosettaRelax.sc"): # Score based on RosettaRelax            
@@ -400,7 +401,7 @@ def boltzmann_selection(self):
                                                 unblocked_all_scores_df, 
                                                 norm_all=False, 
                                                 extension="potential", 
-                                                print_norm=False) 
+                                                print_norm=True) 
     if len(combined_potentials) > 0:
         generation=self.all_scores_df['generation'].max()
                 
