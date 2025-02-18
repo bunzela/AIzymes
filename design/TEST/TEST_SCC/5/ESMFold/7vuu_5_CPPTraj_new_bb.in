@@ -1,0 +1,4 @@
+parm /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/5/ESMFold/7vuu_5_ESMfold_bb.pdb
+trajin  /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/5/ESMFold/7vuu_5_ESMfold_bb.pdb
+strip   !@C,N,O,CA
+trajout /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/5/ESMFold/7vuu_5_new_bb.pdb

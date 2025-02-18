@@ -1,9 +1,10 @@
 # Ignore everything in the design/ directory
 design/*
 
-# Keep test
-!design/TEST/*ipynb
-!design/TEST/Input
+# Keep test notebooks and input folder
+!design/TEST/
+!design/TEST/*.ipynb
+!design/TEST/Input/
 
 # Ignore all log files and checkpoint files
 **.log

@@ -1,0 +1,5 @@
+parm /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/2/7vuu_RosettaDesign_2.pdb
+trajin  /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/2/7vuu_RosettaDesign_2.pdb
+strip   :5TS
+strip   !@C,N,O,CA
+trajout /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/2/ESMFold/7vuu_2_old_bb.pdb

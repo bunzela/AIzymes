@@ -1,0 +1,8 @@
+source leaprc.protein.ff19SB 
+    source leaprc.gaff
+    loadamberprep   /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/Input/5TS.prepi
+    loadamberparams /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/Input/5TS.frcmod
+    mol = loadpdb /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/4/ElectricFields/7vuu_RosettaDesign_4.pdb
+    saveamberparm mol /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/4/ElectricFields/7vuu_RosettaDesign_4.parm7 /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/4/ElectricFields/7vuu_RosettaDesign_4.rst7
+    quit
+    

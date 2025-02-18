@@ -1,0 +1,456 @@
+/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/2
+********  (C) Copyright Rosetta Commons Member Institutions.  ***************
+* Use of Rosetta for commercial purposes may require purchase of a license. *
+********  See LICENSE.md or email license@uw.edu for more details. **********
+core.init: Checking for fconfig files in pwd and ./rosetta/flags 
+core.init: Rosetta version: rosetta.source.release-371 r371 2024.09+release.06b3cf8 06b3cf8ad0940d628690d0ed6fa2009d72ad2b44 https://www.rosettacommons.org 2024-03-07T14:59:22.624665
+core.init: command: /scratch-scc/projects/scc_mmtm_bunzel/rosetta.source.release-371/main/source//bin/rosetta_scripts.linuxgccrelease -s /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/parent/7vuu.pdb -in:file:native /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/parent/7vuu.pdb -run:preserve_header true -extra_res_fa /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/Input/5TS.params -enzdes:cstfile /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/Input/5TS_enzdes_planar_tAB100.cst -enzdes:cst_opt true -parser:protocol /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/2/scripts/RosettaDesign_2.xml -out:file:scorefile /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/2/score_RosettaDesign.sc -nstruct 1 -ignore_zero_occupancy false -corrections::beta_nov16 true -overwrite
+basic.random.init_random_generator: 'RNG device' seed mode, using '/dev/urandom', seed=-723651536 seed_offset=0 real_seed=-723651536
+basic.random.init_random_generator: RandomGenerator:init: Normal mode, seed=-723651536 RG_type=mt19937
+core.init: Resolved executable path: /scratch-scc/projects/scc_mmtm_bunzel/rosetta.source.release-371/main/source/build/src/release/linux/4.18/64/x86/gcc/8/default/rosetta_scripts.default.linuxgccrelease
+core.init: Looking for database based on location of executable: /scratch-scc/projects/scc_mmtm_bunzel/rosetta.source.release-371/main/database/
+protocols.jd2.PDBJobInputter: Instantiate PDBJobInputter
+protocols.jd2.PDBJobInputter: PDBJobInputter::fill_jobs
+protocols.jd2.PDBJobInputter: pushed /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/parent/7vuu.pdb nstruct index 1
+core.chemical.GlobalResidueTypeSet: Finished initializing fa_standard residue type set.  Created 986 residue types
+core.chemical.GlobalResidueTypeSet: Total time to initialize 1.71041 seconds.
+core.import_pose.import_pose: File '/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/parent/7vuu.pdb' automatically determined to be of type PDB
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue ALA:CtermProteinFull 63
+protocols.evaluation.ChiWellRmsdEvaluatorCreator: Evaluation Creator active ... 
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+protocols.jd2.PDBJobInputter: filling pose from PDB /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/parent/7vuu.pdb
+core.import_pose.import_pose: File '/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/parent/7vuu.pdb' automatically determined to be of type PDB
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue ALA:CtermProteinFull 63
+protocols.rosetta_scripts.RosettaScriptsParser: dock_design_filename=/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/2/scripts/RosettaDesign_2.xml
+protocols.rosetta_scripts.RosettaScriptsParser: Validating input script...
+protocols.rosetta_scripts.RosettaScriptsSchemaValidator: Generating XML Schema for rosetta_scripts...
+protocols.rosetta_scripts.RosettaScriptsSchemaValidator: ...done
+protocols.rosetta_scripts.RosettaScriptsSchemaValidator: Initializing schema validator...
+protocols.rosetta_scripts.RosettaScriptsSchemaValidator: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="score" weights="beta_nov16">
+			<Reweight scoretype="atom_pair_constraint" weight="1"/>
+			<Reweight scoretype="angle_constraint" weight="1"/>
+			<Reweight scoretype="dihedral_constraint" weight="1"/>
+			<Reweight scoretype="res_type_constraint" weight="1"/>
+		</ScoreFunction>
+		<ScoreFunction name="score_unconst" weights="beta_nov16">
+			<Reweight scoretype="atom_pair_constraint" weight="0"/>
+			<Reweight scoretype="dihedral_constraint" weight="0"/>
+			<Reweight scoretype="angle_constraint" weight="0"/>
+		</ScoreFunction>
+		<ScoreFunction name="score_final" weights="beta_nov16">
+			<Reweight scoretype="atom_pair_constraint" weight="1"/>
+			<Reweight scoretype="angle_constraint" weight="1"/>
+			<Reweight scoretype="dihedral_constraint" weight="1"/>
+		</ScoreFunction>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="sel_design" resnums="4,8,16,21,25,28,40,41,44,52,57,60,61"/>
+		<Index name="sel_cat_0" resnums="8"/>
+		<Not name="sel_nothing" selector="sel_design"/>
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<OperateOnResidueSubset name="tsk_design" selector="sel_design">
+			<RestrictAbsentCanonicalAASRLT aas="GPAVLIMFYWHKRQNEDST"/>
+		</OperateOnResidueSubset>
+		<OperateOnResidueSubset name="tsk_cat_0" selector="sel_cat_0">
+			<RestrictAbsentCanonicalAASRLT aas="DE"/>
+		</OperateOnResidueSubset>
+		<OperateOnResidueSubset name="tsk_nothing" selector="sel_nothing">
+			<PreventRepackingRLT/>
+		</OperateOnResidueSubset>
+	</TASKOPERATIONS>
+	<FILTERS>
+		<HbondsToResidue backbone="true" confidence="0" from_other_chains="true" from_same_chain="false" name="flt_hbonds" partners="1" residue="1X" scorefxn="score" sidechain="true"/>
+	</FILTERS>
+	<MOVERS>
+		<FavorSequenceProfile matrix="IDENTITY" name="mv_native" scorefxns="score" use_native="true" weight="1.0"/>
+		<EnzRepackMinimize cst_opt="true" name="mv_cst_opt" scorefxn_minimize="score_final" scorefxn_repack="score" task_operations="tsk_design,tsk_nothing,tsk_cat_0"/>
+		<AddOrRemoveMatchCsts cst_instruction="add_new" cstfile="/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/Input/5TS_enzdes_planar_tAB100.cst" name="mv_add_cst"/>
+		<FastDesign disable_design="false" name="mv_design" ramp_down_constraints="false" repeats="1" scorefxn="score" task_operations="tsk_design,tsk_nothing,tsk_cat_0"/>
+		<FastDesign disable_design="false" name="mv_design_no_native" ramp_down_constraints="false" repeats="1" scorefxn="score" task_operations="tsk_design,tsk_nothing,tsk_cat_0"/>
+		<FastRelax disable_design="true" name="mv_relax" ramp_down_constraints="false" repeats="1" scorefxn="score_unconst" task_operations="tsk_design,tsk_nothing,tsk_cat_0"/>
+		<InterfaceScoreCalculator chains="X" name="mv_inter" scorefxn="score_final"/>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name="mv_add_cst"/>
+		<Add mover_name="mv_cst_opt"/>
+		<Add mover_name="mv_native"/>
+		<Add mover_name="mv_design"/>
+		<Add mover_name="mv_relax"/>
+		<Add mover_name="mv_inter"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
+protocols.rosetta_scripts.RosettaScriptsParser: Loading native resource as native_pose to the datamap 
+core.import_pose.import_pose: File '/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/parent/7vuu.pdb' automatically determined to be of type PDB
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue ALA:CtermProteinFull 63
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: beta_nov16.wts
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/DonStrength.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/AccStrength.csv
+basic.io.database: Database file opened: scoring/score_functions/rama/fd_beta_nov2016/all.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/rama/fd_beta_nov2016/prepro.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.all.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.gly.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.pro.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.valile.txt
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+core.scoring.P_AA: shapovalov_lib::shap_p_aa_pp_smooth_level of 1( aka low_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop
+basic.io.database: Database file opened: scoring/score_functions/bondlength_bondangle/hydroxyl_torsion_preference.txt
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/PairEPotential/pdb_pair_stats_fine
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+core.scoring.ramachandran: shapovalov_lib::shap_rama_smooth_level of 4( aka highest_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb
+protocols.jd2.parser.ScoreFunctionLoader: defined score function "score" with weights "beta_nov16"
+protocols.jd2.parser.ScoreFunctionLoader:  setting score weight atom_pair_constraint to 1
+protocols.jd2.parser.ScoreFunctionLoader:  setting score weight angle_constraint to 1
+protocols.jd2.parser.ScoreFunctionLoader:  setting score weight dihedral_constraint to 1
+protocols.jd2.parser.ScoreFunctionLoader:  setting score weight res_type_constraint to 1
+protocols.jd2.parser.ScoreFunctionLoader: defined score function "score_unconst" with weights "beta_nov16"
+protocols.jd2.parser.ScoreFunctionLoader:  setting score_unconst weight atom_pair_constraint to 0
+protocols.jd2.parser.ScoreFunctionLoader:  setting score_unconst weight dihedral_constraint to 0
+protocols.jd2.parser.ScoreFunctionLoader:  setting score_unconst weight angle_constraint to 0
+protocols.jd2.parser.ScoreFunctionLoader: defined score function "score_final" with weights "beta_nov16"
+protocols.jd2.parser.ScoreFunctionLoader:  setting score_final weight atom_pair_constraint to 1
+protocols.jd2.parser.ScoreFunctionLoader:  setting score_final weight angle_constraint to 1
+protocols.jd2.parser.ScoreFunctionLoader:  setting score_final weight dihedral_constraint to 1
+protocols.jd2.parser.TaskOperationLoader: Defined TaskOperation named "tsk_design" of type OperateOnResidueSubset
+protocols.jd2.parser.TaskOperationLoader: Defined TaskOperation named "tsk_cat_0" of type OperateOnResidueSubset
+protocols.jd2.parser.TaskOperationLoader: Defined TaskOperation named "tsk_nothing" of type OperateOnResidueSubset
+protocols.protein_interface_design.filters.HbondsToResidueFilter: Hbonds to residue filter for resnum 1X with 1 hbonding partners as the cutoff threshold.
+protocols.protein_interface_design.filters.HbondsToResidueFilter: Hbonds to other chains, but not to the same chain, will be considered.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined filter named "flt_hbonds" of type HbondsToResidue
+core.import_pose.import_pose: File '/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/parent/7vuu.pdb' automatically determined to be of type PDB
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue ALA:CtermProteinFull 63
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mv_native" of type FavorSequenceProfile
+core.pack.task.xml_util: Object mv_cst_opt reading the following task_operations: Adding the following task operations
+tsk_design tsk_nothing tsk_cat_0 
+protocols.enzdes.EnzRepackMinimize: design=0, with repack scorefxn score and minimize scorefxn score_final
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mv_cst_opt" of type EnzRepackMinimize
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mv_add_cst" of type AddOrRemoveMatchCsts
+protocols.relax.RelaxScriptManager: Reading relax scripts list from database.
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: beta_nov16.wts
+protocols.relax.RelaxScriptManager: Looking for MonomerRelax2019.txt
+protocols.relax.RelaxScriptManager: ================== Reading script file: /scratch-scc/projects/scc_mmtm_bunzel/rosetta.source.release-371/main/database/sampling/relax_scripts/MonomerRelax2019.txt ==================
+protocols.relax.RelaxScriptManager: repeat %%nrepeats%%
+protocols.relax.RelaxScriptManager: coord_cst_weight 1.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.040
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.051
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.5
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.265
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.280
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.559
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.581
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 1
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: min 0.00001
+protocols.relax.RelaxScriptManager: accept_to_best
+protocols.relax.RelaxScriptManager: endrepeat
+core.pack.task.xml_util: Object mv_design reading the following task_operations: Adding the following task operations
+tsk_design tsk_nothing tsk_cat_0 
+protocols.relax.RelaxScriptManager: Looking for MonomerDesign2019.txt
+protocols.relax.RelaxScriptManager: ================== Reading script file: /scratch-scc/projects/scc_mmtm_bunzel/rosetta.source.release-371/main/database/sampling/relax_scripts/MonomerDesign2019.txt ==================
+protocols.relax.RelaxScriptManager: repeat %%nrepeats%%
+protocols.relax.RelaxScriptManager: coord_cst_weight 1.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.059
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.092
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.5
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.280
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.323
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.568
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.633
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 1
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: min 0.00001
+protocols.relax.RelaxScriptManager: accept_to_best
+protocols.relax.RelaxScriptManager: endrepeat
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mv_design" of type FastDesign
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: beta_nov16.wts
+core.pack.task.xml_util: Object mv_design_no_native reading the following task_operations: Adding the following task operations
+tsk_design tsk_nothing tsk_cat_0 
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mv_design_no_native" of type FastDesign
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: beta_nov16.wts
+core.pack.task.xml_util: Object mv_relax reading the following task_operations: Adding the following task operations
+tsk_design tsk_nothing tsk_cat_0 
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mv_relax" of type FastRelax
+core.import_pose.import_pose: File '/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/parent/7vuu.pdb' automatically determined to be of type PDB
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue ALA:CtermProteinFull 63
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mv_inter" of type InterfaceScoreCalculator
+protocols.rosetta_scripts.ParsedProtocol: ParsedProtocol mover with the following settings
+protocols.rosetta_scripts.ParsedProtocol: Added mover "mv_add_cst"
+protocols.rosetta_scripts.ParsedProtocol: Added mover "mv_cst_opt"
+protocols.rosetta_scripts.ParsedProtocol: Added mover "mv_native"
+protocols.rosetta_scripts.ParsedProtocol: Added mover "mv_design"
+protocols.rosetta_scripts.ParsedProtocol: Added mover "mv_relax"
+protocols.rosetta_scripts.ParsedProtocol: Added mover "mv_inter"
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+protocols.jd2.PDBJobInputter: filling pose from saved copy /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/parent/7vuu.pdb
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER AddOrRemoveMatchCsts - mv_add_cst=======================
+protocols.toolbox.match_enzdes_util.EnzConstraintIO: read enzyme constraints from /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/Input/5TS_enzdes_planar_tAB100.cst ... done, 1 cst blocks were read.
+protocols.toolbox.match_enzdes_util.EnzConstraintIO: Generating constraints for pose... 
+protocols.toolbox.match_enzdes_util.EnzConstraintParameters: Constraint specified between residues 64 and 8 is ambiguous, 2 different possibilities ( 1 for 64, 2 for 8.)
+protocols.toolbox.match_enzdes_util.EnzConstraintParameters: for block 1, 12 newly generated constraints were added 
+protocols.toolbox.match_enzdes_util.EnzConstraintIO: checking cst data consistency for block 1...  done
+protocols.toolbox.match_enzdes_util.EnzConstraintIO: Cst Block 1done... 
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER EnzRepackMinimize - mv_cst_opt=======================
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: beta_nov16.wts
+basic.io.database: Database file opened: scoring/score_functions/elec_cp_reps.dat
+core.scoring.elec.util: Read 40 countpair representative atoms
+core.pack.dunbrack.RotamerLibrary: shapovalov_lib_fixes_enable option is true.
+core.pack.dunbrack.RotamerLibrary: Binary rotamer library selected: /scratch-scc/projects/scc_mmtm_bunzel/rosetta.source.release-371/main/database/rotamer/beta_nov2016/Dunbrack10.lib.bin
+core.pack.dunbrack.RotamerLibrary: Using Dunbrack library binary file '/scratch-scc/projects/scc_mmtm_bunzel/rosetta.source.release-371/main/database/rotamer/beta_nov2016/Dunbrack10.lib.bin'.
+core.pack.dunbrack.RotamerLibrary: Dunbrack 2010 library took 0.238698 seconds to load from binary
+protocols.enzdes.EnzRepackMinimize: Creating packer task based on specified task operations...
+core.pack.task: Packer task: initialize from command line() 
+protocols.enzdes.EnzRepackMinimize: Starting PolyAla CstOptimization...
+protocols.enzdes.EnzRepackMinimize: Finished Cyle#1 of EnzRepackMinimize
+protocols.enzdes.EnzRepackMinimize: Finished EnzRepackMinimize
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FavorSequenceProfile - mv_native=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FastDesign - mv_design=======================
+protocols.denovo_design.movers.FastDesign: #Packer_Task
+protocols.denovo_design.movers.FastDesign: 
+protocols.denovo_design.movers.FastDesign: Threads to request: ALL AVAILABLE
+protocols.denovo_design.movers.FastDesign: 
+protocols.denovo_design.movers.FastDesign: resid	pack?	design?	allowed_aas
+protocols.denovo_design.movers.FastDesign: 1	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 2	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 3	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 4	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 5	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 6	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 7	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 8	TRUE	TRUE	ASP,GLU
+protocols.denovo_design.movers.FastDesign: 9	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 10	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 11	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 12	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 13	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 14	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 15	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 16	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 17	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 18	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 19	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 20	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 21	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 22	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 23	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 24	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 25	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 26	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 27	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 28	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 29	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 30	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 31	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 32	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 33	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 34	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 35	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 36	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 37	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 38	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 39	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 40	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 41	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 42	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 43	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 44	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 45	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 46	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 47	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 48	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 49	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 50	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 51	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 52	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 53	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 54	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 55	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 56	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 57	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 58	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 59	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 60	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 61	TRUE	TRUE	ALA,ASP,GLU,PHE,GLY,HIS,HIS_D,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR
+protocols.denovo_design.movers.FastDesign: 62	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 63	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 64	FALSE	FALSE	
+protocols.relax.FastRelax: CMD: repeat  59.3403  0  0  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  59.3403  0  0  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -80.7307  0  0  0.03245
+core.pack.pack_rotamers: built 3806 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -106.774  0  0  0.03245
+protocols.relax.FastRelax: CMD: scale:fa_rep  -97.7588  0  0  0.0506
+protocols.relax.FastRelax: CMD: min  -214.325  0.853742  0.853742  0.0506
+protocols.relax.FastRelax: CMD: coord_cst_weight  -214.325  0.853742  0.853742  0.0506
+protocols.relax.FastRelax: CMD: scale:fa_rep  -172.141  0.853742  0.853742  0.154
+core.pack.pack_rotamers: built 2581 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -172.963  0.853742  0.853742  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -164.238  0.853742  0.853742  0.17765
+protocols.relax.FastRelax: CMD: min  -185.203  0.768132  0.768132  0.17765
+protocols.relax.FastRelax: CMD: coord_cst_weight  -185.203  0.768132  0.768132  0.17765
+protocols.relax.FastRelax: CMD: scale:fa_rep  -163.302  0.768132  0.768132  0.3124
+core.pack.pack_rotamers: built 2496 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -163.954  0.768132  0.768132  0.3124
+protocols.relax.FastRelax: CMD: scale:fa_rep  -158.351  0.768132  0.768132  0.34815
+protocols.relax.FastRelax: CMD: min  -164.908  0.693702  0.693702  0.34815
+protocols.relax.FastRelax: CMD: coord_cst_weight  -164.908  0.693702  0.693702  0.34815
+protocols.relax.FastRelax: CMD: scale:fa_rep  -143.325  0.693702  0.693702  0.55
+core.pack.pack_rotamers: built 2403 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -143.389  0.693702  0.693702  0.55
+protocols.relax.FastRelax: CMD: min  -190.457  0.883957  0.883957  0.55
+protocols.relax.FastRelax: MRP: 0  -190.457  -190.457  0.883957  0.883957  
+protocols.relax.FastRelax: CMD: accept_to_best  -190.457  0.883957  0.883957  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -190.457  0.883957  0.883957  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.denovo_design.movers.FastDesign: 
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000    -346.240    -346.240
+ fa_rep                       0.550      61.235      33.679
+ fa_sol                       1.000     313.267     313.267
+ fa_intra_atr_xover4          1.000     -23.330     -23.330
+ fa_intra_rep_xover4          0.550      17.791       9.785
+ fa_intra_sol_xover4          1.000      22.062      22.062
+ lk_ball                      0.920     165.118     151.908
+ lk_ball_iso                 -0.380     422.638    -160.603
+ lk_ball_bridge              -0.330       2.557      -0.844
+ lk_ball_bridge_uncpl        -0.330      15.914      -5.252
+ fa_elec                      1.000    -117.244    -117.244
+ fa_intra_elec                1.000     -28.321     -28.321
+ pro_close                    1.250       0.338       0.423
+ hbond_sr_bb                  1.000     -33.399     -33.399
+ hbond_lr_bb                  1.000      -3.723      -3.723
+ hbond_bb_sc                  1.000     -16.961     -16.961
+ hbond_sc                     1.000      -3.516      -3.516
+ dslf_fa13                    1.250       0.000       0.000
+ atom_pair_constraint         1.000       0.414       0.414
+ angle_constraint             1.000       0.124       0.124
+ dihedral_constraint          1.000       0.133       0.133
+ omega                        0.480      14.582       6.999
+ fa_dun_dev                   0.690       9.243       6.378
+ fa_dun_rot                   0.760      33.768      25.664
+ fa_dun_semi                  0.780      99.890      77.914
+ p_aa_pp                      0.610     -33.493     -20.431
+ hxl_tors                     1.000      11.406      11.406
+ ref                          1.000     -31.729     -31.729
+ rama_prepro                  0.500      -4.042      -2.021
+ res_type_constraint          1.000     -57.000     -57.000
+---------------------------------------------------
+ Total weighted score:                     -190.457
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FastRelax - mv_relax=======================
+protocols.relax.FastRelax: CMD: repeat  -134.128  0.883957  0  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -134.128  0.883957  0  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -166.46  0.883957  0  0.022
+core.pack.pack_rotamers: built 217 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -168.557  0.883957  0  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -167.754  0.883957  0  0.02805
+protocols.relax.FastRelax: CMD: min  -201.216  1.20832  0.771779  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -201.216  1.20832  0.771779  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -126.423  1.20832  0.771779  0.14575
+core.pack.pack_rotamers: built 153 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -132.655  1.20832  0.771779  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -127.975  1.20832  0.771779  0.154
+protocols.relax.FastRelax: CMD: min  -168.003  1.02837  0.438753  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -168.003  1.02837  0.438753  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -143.939  1.02837  0.438753  0.30745
+core.pack.pack_rotamers: built 148 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -143.948  1.02837  0.438753  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -142.054  1.02837  0.438753  0.31955
+protocols.relax.FastRelax: CMD: min  -151.935  0.940208  0.242278  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -151.935  0.940208  0.242278  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -130.66  0.940208  0.242278  0.55
+core.pack.pack_rotamers: built 128 rotamers at 13 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -130.66  0.940208  0.242278  0.55
+protocols.relax.FastRelax: CMD: min  -138.222  0.898141  0.1114  0.55
+protocols.relax.FastRelax: MRP: 0  -138.222  -138.222  0.898141  0.1114  
+protocols.relax.FastRelax: CMD: accept_to_best  -138.222  0.898141  0.1114  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -138.222  0.898141  0.1114  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER InterfaceScoreCalculator - mv_inter=======================
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+protocols.jd2.JobDistributor: 7vuu_0001 reported success in 63 seconds
+protocols.jd2.JobDistributor: no more batches to process... 
+protocols.jd2.JobDistributor: 1 jobs considered, 1 jobs attempted in 64 seconds
+protocols.jd2.JobDistributor: [ WARNING ] The following options have been set, but have not yet been used:
+	-enzdes:cst_opt 
+
+basic.citation_manager.CitationManager: 
+The following Rosetta modules were used during this run of Rosetta, and should be cited:
+
+rosetta_scripts Application's citation(s):
+Fleishman SJ, Leaver-Fay A, Corn JE, Strauch E-M, Khare SD, Koga N, Ashworth J, Murphy P, Richter F, Lemmon G, Meiler J, and Baker D.  (2011).  RosettaScripts: A Scripting Language Interface to the Rosetta Macromolecular Modeling Suite.  PLoS ONE 6(6):e20161.  doi: 10.1371/journal.pone.0020161.
+
+FastDesign Mover's citation(s):
+*Bhardwaj G, *Mulligan VK, *Bahl G, Gilmore JM, Harvey PJ, Cheneval O, Buchko GW, Pulavarti SVSRK, Kaas Q, Eletsky A, Huang P-S, Johnsen PS, Greisen P Jr., Rocklin GJ, Song Y, Linsky TW, Watkins A, Rettie SA, Xu X, Carter LP, Bonneau R, Olson JM, Coutsias E, Correnti CE, Szyperski T, Craik DJ, and Baker D.  (2016).  Accurate de novo design of hyperstable constrained peptides.  Nature 538(7625):329-35.  doi: 10.1038/nature19791.  (*Co-primary authors.)
+
+Maguire JB, Haddox HK, Strickland D, Halabiya SF, Coventry B, Griffin JR, Pulavarti SVSRK, Cummins M, Thieker DF, Klavins E, Szyperski T, DiMaio F, Baker D, and Kuhlman B.  (2021).  Perturbing the energy landscape for improved packing during computational protein design.  Proteins 89(4):436-449.  doi: 10.1002/prot.26030.
+
+FastRelax Mover's citation(s):
+*Tyka MD, *Keedy DA, André I, Dimaio F, Song Y, Richardson DC, Richardson JS, and Baker D.  (2011).  Alternate states of proteins revealed by detailed energy landscape mapping.  J Mol Biol 405(2):607-18.  doi: 10.1016/j.jmb.2010.11.008.  (*Co-primary authors.)
+
+Khatib F, Cooper S, Tyka MD, Xu K, Makedon I, Popovic Z, Baker D, and Players F.  (2011).  Algorithm discovery by protein folding game players.  Proc Natl Acad Sci USA 108(47):18949-53.  doi: 10.1073/pnas.1115898108.
+
+Maguire JB, Haddox HK, Strickland D, Halabiya SF, Coventry B, Griffin JR, Pulavarti SVSRK, Cummins M, Thieker DF, Klavins E, Szyperski T, DiMaio F, Baker D, and Kuhlman B.  (2021).  Perturbing the energy landscape for improved packing during computational protein design.  Proteins 89(4):436-449.  doi: 10.1002/prot.26030.
+
+InterfaceScoreCalculator Mover's citation(s):
+Lemmon G, and Meiler J.  (2012).  Rosetta Ligand docking with flexible XML protocols.  Methods Mol Biol 819:143-55.  doi: 10.1007/978-1-61779-465-0_10.
+
+
+-nc              Trajectory file      :  /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/2/ElectricFields/7vuu_RosettaDesign_2.rst7
+-parm            Parameter file       :  /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/2/ElectricFields/7vuu_RosettaDesign_2.parm7
+-out             Output file          :  /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/2/ElectricFields/7vuu_RosettaDesign_2_fields.pkl
+-target          Field target         :  /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/parent/field_target.dat
+-arg_solvent     Non-protein residues :  WAT
+-exclude_atoms   Atoms excluded       : Full residue defined in the first Atom for each Target.
+
+Field calculation RUNNING :  2025-02-18 19:02:27.796209

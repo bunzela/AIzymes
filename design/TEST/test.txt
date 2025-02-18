@@ -1,0 +1,124 @@
+Current Working Directory:
+/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST
+Timestamp:
+Tue Feb 18 18:57:28 CET 2025
+
+XXXXXXXXXXXX len(self.processes) : 0 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/0/scripts/submit_RosettaDesign_ElectricFields_0.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 1 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/1/scripts/submit_RosettaDesign_ElectricFields_1.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 2 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/2/scripts/submit_RosettaDesign_ElectricFields_2.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 3 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/3/scripts/submit_RosettaDesign_ElectricFields_3.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 4 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/4/scripts/submit_RosettaDesign_ElectricFields_4.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 4 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/5/scripts/submit_RosettaDesign_ElectricFields_5.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 1 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/6/scripts/submit_RosettaDesign_ElectricFields_6.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 2 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/0/scripts/submit_ESMfold_RosettaRelax_ElectricFields_0.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 3 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/1/scripts/submit_ESMfold_RosettaRelax_ElectricFields_1.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 4 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/2/scripts/submit_ESMfold_RosettaRelax_ElectricFields_2.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 4 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/3/scripts/submit_ESMfold_RosettaRelax_ElectricFields_3.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 4 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/4/scripts/submit_ESMfold_RosettaRelax_ElectricFields_4.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 4 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/5/scripts/submit_ESMfold_RosettaRelax_ElectricFields_5.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 5 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 2 in main_running_002.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX bash /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/6/scripts/submit_ESMfold_RosettaRelax_ElectricFields_6.sh in helper_001.py XXXXXXXXXXXX
+
+XXXXXXXXXXXX len(self.processes) : 3 in main_running_002.py XXXXXXXXXXXX

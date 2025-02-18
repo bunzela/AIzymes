@@ -1,0 +1,5 @@
+parm    /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/6/ESMFold/7vuu_6_old_bb.pdb
+reference /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/6/ESMFold/7vuu_6_old_bb.pdb [ref]
+trajin    /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/6/ESMFold/7vuu_6_new_bb.pdb
+rmsd      @CA ref [ref]
+trajout   /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/6/ESMFold/7vuu_6_aligned.pdb noter

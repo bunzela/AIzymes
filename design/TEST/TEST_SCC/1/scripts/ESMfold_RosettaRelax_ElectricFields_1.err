@@ -1,0 +1,55 @@
+Lmod has detected the following error: These module(s) or extension(s) exist
+but cannot be loaded as requested: "cuda", "netcdf-c/4.9.2-cuda",
+"fftw/3.3.10-cuda-12.1.1", "openmpi/4.1.6-cuda-12.1.1"
+   Try: "module spider cuda netcdf-c/4.9.2-cuda fftw/3.3.10-cuda-12.1.1
+openmpi/4.1.6-cuda-12.1.1" to see how to load the module(s).
+
+
+
+Some weights of EsmForProteinFolding were not initialized from the model checkpoint at facebook/esmfold_v1 and are newly initialized: ['esm.contact_head.regression.bias', 'esm.contact_head.regression.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+sed: can't read /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/1/ESMFold/7vuu_1_aligned.pdb: No such file or directory
+sed: can't read /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/1/ESMFold/7vuu_1_lig.pdb: No such file or directory
+cat: /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/1/ESMFold/7vuu_1_aligned.pdb: No such file or directory
+cat: /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/1/ESMFold/7vuu_1_lig.pdb: No such file or directory
+
+ERROR: Cannot determine file type. Current supported types are: PDB, CIF, SRLZ, MMTF
+ERROR:: Exit from: src/core/import_pose/import_pose.cc line: 379
+
+[ ERROR ]: Caught exception:
+
+
+File: src/core/import_pose/import_pose.cc:379
+[ ERROR ] UtilityExitException
+ERROR: Cannot determine file type. Current supported types are: PDB, CIF, SRLZ, MMTF
+
+
+
+
+AN INTERNAL ERROR HAS OCCURED. PLEASE SEE THE CONTENTS OF ROSETTA_CRASH.log FOR DETAILS.
+
+
+
+---------------------------------------------------------------
+[ ERROR ]: Error(s) were encountered when running jobs.
+1 jobs failed;
+Check the output further up for additional error messages.
+---------------------------------------------------------------
+
+mv: cannot stat '/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/1/7vuu_1_input_0001.pdb': No such file or directory
+sed: can't read 7vuu_RosettaRelax_1.pdb: No such file or directory
+sed: can't read /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/1/7vuu_RosettaRelax_1.pdb: No such file or directory
+/scratch-scc/projects/scc_mmtm_bunzel/amber24/bin/teLeap: error while loading shared libraries: libnetcdf.so.19: cannot open shared object file: No such file or directory
+mv: cannot stat 'leap.log': No such file or directory
+Traceback (most recent call last):
+  File "/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/../../../src/FieldTools.py", line 659, in <module>
+    main()
+  File "/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/../../../src/FieldTools.py", line 576, in main
+    Trajectory, Charges, Names = fkt_Load_Trajectory(arg_nc,arg_param,arg_TIP4P)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/../../../src/FieldTools.py", line 251, in fkt_Load_Trajectory
+    parm = pmd.load_file(arg_parm)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch-scc/projects/scc_mmtm_bunzel/amber24/lib/python3.12/site-packages/parmed/formats/registry.py", line 166, in load_file
+    raise FileNotFoundError('%s does not exist' % filename)
+FileNotFoundError: /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/1/ElectricFields/7vuu_RosettaRelax_1.parm7 does not exist

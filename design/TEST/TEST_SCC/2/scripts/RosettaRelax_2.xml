@@ -1,0 +1,44 @@
+
+<ROSETTASCRIPTS>
+
+    <SCOREFXNS>
+    
+        <ScoreFunction name      = "score"                   weights = "beta_nov16" >
+            <Reweight scoretype  = "atom_pair_constraint"    weight  = "1" />
+            <Reweight scoretype  = "angle_constraint"        weight  = "1" />
+            <Reweight scoretype  = "dihedral_constraint"     weight  = "1" />
+        </ScoreFunction> 
+        
+        <ScoreFunction name      = "score_final"             weights = "beta_nov16" >
+            <Reweight scoretype  = "atom_pair_constraint"    weight  = "1" />
+            <Reweight scoretype  = "angle_constraint"        weight  = "1" />
+            <Reweight scoretype  = "dihedral_constraint"     weight  = "1" />
+        </ScoreFunction>
+        
+    </SCOREFXNS>
+       
+    <MOVERS>
+                                  
+        <FastRelax  name="mv_relax" disable_design="false" repeats="1" /> 
+
+        <AddOrRemoveMatchCsts     name="mv_add_cst" 
+                                  cst_instruction="add_new" 
+                                  cstfile="/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/Input/5TS_enzdes_planar_tAB100.cst" />
+
+
+
+        <InterfaceScoreCalculator   name                   = "mv_inter" 
+                                    chains                 = "X" 
+                                    scorefxn               = "score_final" />
+    </MOVERS>
+    
+    <PROTOCOLS>  
+
+        <Add mover_name="mv_relax" />
+                                  
+        <Add mover_name="mv_add_cst" />       
+        <Add mover_name="mv_inter" />
+
+    </PROTOCOLS>
+    
+</ROSETTASCRIPTS>
