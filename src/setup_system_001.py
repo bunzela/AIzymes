@@ -10,6 +10,7 @@ submit_head() constructs the submission header to submit jobs.
 
 import sys
 import os
+import getpass
 
 def set_system(self):
     
@@ -38,7 +39,16 @@ def set_system(self):
         self.ROSETTA_PATH      = "/scratch-scc/projects/scc_mmtm_bunzel/rosetta.source.release-371/main/source/"
         self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
         self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
-        self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
+        self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'  
+        
+    elif self.SYSTEM == 'RAVEN':       
+        
+        self.rosetta_ext       = "linuxgccrelease"
+        self.bash_args         = ""
+        self.ROSETTA_PATH      = f"/u/{getpass.getuser()}/bin/rosetta.source.release-371/main/source/"
+        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
+        self.FOLDER_PMPNN      = f'/u/{getpass.getuser()}/bin/ProteinMPNN'
+        self.FOLDER_PMPNN_h    = f'/u/{getpass.getuser()}/bin/ProteinMPNN/helper_scripts'
         
     elif self.SYSTEM == 'EULER':     
         

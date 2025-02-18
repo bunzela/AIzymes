@@ -1,4 +1,0 @@
-parm    /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/5/7vuu_RosettaDesign_5.pdb
-trajin  /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/5/7vuu_RosettaDesign_5.pdb
-strip   !:5TS
-trajout /mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/5/ESMFold/7vuu_5_lig.pdb

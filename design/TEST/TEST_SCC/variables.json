@@ -1,6 +1,6 @@
 {
-    "FOLDER_HOME": "/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC",
-    "FOLDER_PARENT": "/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/parent",
+    "FOLDER_HOME": "/raven/u/bunzela/AIzymes/design/TEST/TEST_SCC",
+    "FOLDER_PARENT": "/raven/u/bunzela/AIzymes/design/TEST/TEST_SCC/parent",
     "CST_NAME": "5TS_enzdes_planar_tAB100",
     "WT": "7vuu",
     "LIGAND": "5TS",
@@ -36,16 +36,16 @@
         "interface",
         "efield"
     ],
-    "FOLDER_INPUT": "/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/Input",
-    "USERNAME": "u14852",
-    "LOG_FILE": "/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/logfile.log",
-    "ALL_SCORES_CSV": "/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/all_scores.csv",
-    "VARIABLES_JSON": "/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/variables.json",
-    "FOLDER_PLOT": "/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/plots",
+    "FOLDER_INPUT": "/raven/u/bunzela/AIzymes/design/TEST/Input",
+    "USERNAME": "bunzela",
+    "LOG_FILE": "/raven/u/bunzela/AIzymes/design/TEST/TEST_SCC/logfile.log",
+    "ALL_SCORES_CSV": "/raven/u/bunzela/AIzymes/design/TEST/TEST_SCC/all_scores.csv",
+    "VARIABLES_JSON": "/raven/u/bunzela/AIzymes/design/TEST/TEST_SCC/variables.json",
+    "FOLDER_PLOT": "/raven/u/bunzela/AIzymes/design/TEST/TEST_SCC/plots",
     "rosetta_ext": "linuxgccrelease",
     "bash_args": "",
     "ROSETTA_PATH": "/scratch-scc/projects/scc_mmtm_bunzel/rosetta.source.release-371/main/source/",
-    "FIELD_TOOLS": "/mnt/vast-standard/home/hansadrian.bunzel01/u14852/AIzymes/design/TEST/TEST_SCC/../../../src/FieldTools.py",
-    "FOLDER_PMPNN": "/user/hansadrian.bunzel01/u14852/ProteinMPNN",
-    "FOLDER_PMPNN_h": "/user/hansadrian.bunzel01/u14852/ProteinMPNN/helper_scripts"
+    "FIELD_TOOLS": "/raven/u/bunzela/AIzymes/design/TEST/TEST_SCC/../../../src/FieldTools.py",
+    "FOLDER_PMPNN": "/u/bunzela/ProteinMPNN",
+    "FOLDER_PMPNN_h": "/u/bunzela/ProteinMPNN/helper_scripts"
 }
