@@ -1,10 +1,14 @@
 # Ignore everything in the design/ directory
 design/*
 
-# Keep test notebooks and input folder
+# Allow tracking of notebooks and Input folder in design/TEST
 !design/TEST/
 !design/TEST/*.ipynb
 !design/TEST/Input/
+
+# Ignore everything in design/TEST subfolders, except Input
+design/TEST/*/
+!design/TEST/Input/**
 
 # Ignore all log files and checkpoint files
 **.log
