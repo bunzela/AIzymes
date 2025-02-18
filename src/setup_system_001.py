@@ -31,6 +31,15 @@ def set_system(self):
         self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
         self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
         
+    elif self.SYSTEM == 'SCC':       
+        
+        self.rosetta_ext       = "linuxgccrelease"
+        self.bash_args         = ""
+        self.ROSETTA_PATH      = "/scratch-scc/projects/scc_mmtm_bunzel/rosetta.source.release-371/main/source/"
+        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
+        self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
+        self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
+        
     elif self.SYSTEM == 'EULER':     
         
         self.rosetta_ext       = "serialization.linuxgccrelease"

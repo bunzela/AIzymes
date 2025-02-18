@@ -11,6 +11,71 @@ from helper_001               import *
 from setup_system_001         import *
 from main_scripts_001         import *
 
+def submit_controller_parallel(self):
+
+    cmd = f'''import sys, os
+sys.path.append(os.path.join(os.getcwd(), '../../src'))
+from AIzymes_014 import *
+AIzymes = AIzymes_MAIN()
+AIzymes.initialize(FOLDER_HOME    = '{os.path.basename(self.FOLDER_HOME)}', 
+                   LOG            = '{self.LOG}',
+                   PRINT_VAR      = False,
+                   UNBLOCK_ALL    = True)
+AIzymes.controller()
+'''
+    with open(f"{self.FOLDER_HOME}/start_controller_parallel.py", "w") as f:
+        f.write(cmd)
+
+    ### Prepare submission script
+    if self.SYSTEM == 'SCC': 
+
+        cmd = f"""#!/bin/bash
+#SBATCH --job-name={self.SUBMIT_PREFIX}_controller
+#SBATCH --partition=scc-cpu
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task={self.MAX_JOBS}
+#SBATCH --mem=128G
+#SBATCH --time=2-00:00:00
+#SBATCH --output={self.FOLDER_HOME}/controller.log
+#SBATCH --error={self.FOLDER_HOME}/controller.log
+
+set -e  # Exit script on any error
+
+cd {self.FOLDER_HOME}/..
+
+echo "Current Working Directory:" > test.txt
+pwd >> test.txt
+echo "Timestamp:" >> test.txt
+date >> test.txt
+
+python {self.FOLDER_HOME}/start_controller_parallel.py
+
+echo "Timestamp:" >> test.txt
+date >> test.txt
+
+"""      
+
+    else: 
+        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in start_controller_parallel() in main_startup.py.")
+        sys.exit()    
+        
+    with open(f"{self.FOLDER_HOME}/submit_controller_parallel.sh", "w") as f:
+        f.write(cmd)
+        
+    logging.info(f"Starting parallel controller.")
+
+    ### Start job
+    if self.SYSTEM == 'SCC': 
+        output = subprocess.check_output(
+    (f'sbatch {self.FOLDER_HOME}/submit_controller_parallel.sh'),
+    shell=True, text=True
+    )
+    else: 
+        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in start_controller_parallel() in main_startup.py.")
+        sys.exit()   
+
+
 def initialize_controller(self, FOLDER_HOME):
     
     self.FOLDER_HOME = f'{os.getcwd()}/{FOLDER_HOME}'
@@ -42,6 +107,9 @@ def initialize_controller(self, FOLDER_HOME):
     # Read in current databases of AIzymes
     self.all_scores_df = pd.read_csv(self.ALL_SCORES_CSV)
 
+    if self.RUN_PARALLEL:
+        self.processes = []
+        
     if self.UNBLOCK_ALL: 
         print(f'Unblocking all')
         self.all_scores_df["blocked_ESMfold"] = False

@@ -97,7 +97,7 @@ class AIzymes_MAIN:
         
         print("AIzymes initiated.")
 
-    def initialize(self, FOLDER_HOME, UNBLOCK_ALL=False, PRINT_VAR=True, PLOT_DATA=False, LOG='debug', CHECK_PARALLEL=True):
+    def initialize(self, FOLDER_HOME, UNBLOCK_ALL=False, PRINT_VAR=True, PLOT_DATA=False, LOG='debug'):
         """
         Initializes AIzymes with given parameters.
 
@@ -114,28 +114,24 @@ class AIzymes_MAIN:
                               
         initialize_controller(self, FOLDER_HOME)
 
-    def controller(self, HIGHSCORE=0.70, NORM=None):
+    def controller(self):
         """
         Controls the AIzymes project based on scoring and normalization parameters.
-
-        Args:
-            HIGHSCORE (float): High score threshold for evaluation.
-            NORM (dict): Normalization values for different scores.
         """
-        if NORM is None:
-            NORM = {
-                'interface_score': [10, 35],
-                'total_score': [200, 500], 
-                'catalytic_score': [-40, 0], 
-                'efield_score': [10, 220],
-                'identical_score': [0, 1]
-            }
-
+        
         for key, value in locals().items():
             if key not in ['self']:
                 setattr(self, key, value)
                 
         start_controller(self)
+
+        
+    def submit_controller(self):
+        """
+        Controls the AIzymes project based on scoring and normalization parameters.
+        """
+
+        submit_controller_parallel(self)
         
     def plot(self, main_plots=True, tree_plot=True, landscape_plot=True, print_vals=True, NORM=None, HIGHSCORE_NEGBEST=None):
         """
