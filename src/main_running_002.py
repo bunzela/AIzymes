@@ -573,7 +573,7 @@ def start_calculation(self, parent_index: int):
         # Here, we can add an AI to decide on the next steps
         #####
 
-        # Run Design with new_index --> need to add code to CHECK IF self.ProteinMPNN_PROB + self.LMPNN_PROB is below 1!!!!
+        # Run Design with new_index --> need to add code to CHECK IF self.ProteinMPNN_PROB + self.LigandMPNN_PROB is below 1!!!!
         if random.random() < self.ProteinMPNN_PROB:  
             self.all_scores_df.at[new_index, 'design_method'] = "ProteinMPNN"
             if self.MDMin:
@@ -583,7 +583,7 @@ def start_calculation(self, parent_index: int):
             #Possibly could put this into indivual prepare_design steps?
             self.all_scores_df.at[new_index, "blocked_ESMfold"] = True 
             self.all_scores_df.at[new_index, "blocked_RosettaRelax"] = True 
-        elif random.random()+self.ProteinMPNN_PROB < self.LMPNN_PROB+self.ProteinMPNN_PROB:
+        elif random.random()+self.ProteinMPNN_PROB < self.LigandMPNN_PROB+self.ProteinMPNN_PROB:
             self.all_scores_df.at[new_index, 'design_method'] = "LigandMPNN"
             if self.MDMin:
                 run_design(self, new_index, ["LigandMPNN", "ESMfold", "MDMin", "RosettaRelax", "ElectricFields"]) 
