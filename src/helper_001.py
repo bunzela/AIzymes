@@ -96,29 +96,29 @@ def normalize_scores(self,
 
         normalized_scores = neg_norm_array(scores[score_type], f"{score_type}_{extension}")
 
-        scores[score_type] = normalized_scores # Save normalized score into scores dictionary
+        scores[f'{score_type}_{extension}'] = normalized_scores # Save normalized score into scores dictionary
         # globals()[f"{score_type}_scores"] = normalized_scores # Save normalized score in corresponding f"{score_type}_scores" global variable
 
-    if len(total_scores) == 0: 
+    if len(scores[f'{score_type}_{extension}']) == 0: 
         combined_scores = []
     else:
         score_arrays = []
         for score_type in self.SELECTED_SCORES: # Only include selected scores in combined score
             if score_type != "catalytic":  
-                score_arrays.append(scores[score_type])
+                score_arrays.append(scores[f'{score_type}_{extension}'])
 
         combined_scores = np.stack(score_arrays, axis=0)
         combined_scores = np.mean(combined_scores, axis=0)
-        scores["combined"] = combined_scores
+        scores[f'combined_{extension}'] = combined_scores
         
     if print_norm:
         if combined_scores.size > 0:
-            print("HIGHSCORE:","{:.2f}".format(np.amax(combined_scores)),end=" ")
-            print("Designs:",len(combined_scores),end=" ")
+            print("HIGHSCORE:","{:.2f}".format(np.amax(scores[f'combined_{extension}'])),end=" ")
+            print("Designs:",len(scores[f'combined_{extension}']),end=" ")
             parents = [i for i in os.listdir(self.FOLDER_PARENT) if i[-4:] == ".pdb"]
             print("Parents:",len(parents))
             
-    return scores[score_type]
+    return scores
 
 def one_to_three_letter_aa(one_letter_aa):
     
@@ -459,7 +459,7 @@ def get_best_structures(self, save_structures = False, include_catalytic_score =
     all_scores_df['combined_score'] = scores["combined"]
     for score_type in self.SELECTED_SCORES: # Only include selected scores in combined score
         if score_type != "catalytic":  
-            all_scores_df[f'norm_{score_type}_score'] = scores[score_type]
+            all_scores_df[f'norm_{score_type}_score'] = scores[f'{score_type}_score']
     
     # Remove rows where 'sequence' is NaN
     all_scores_df = all_scores_df.dropna(subset=['sequence'])  
@@ -620,7 +620,8 @@ def trace_mutation_tree(all_scores_df, index):
     all_scores_df = all_scores_df.dropna(subset=['total_score'])
     
     # Calculate combined scores using normalized scores
-    _, _, _, _, combined_scores_normalized = normalize_scores(all_scores_df, print_norm=True, norm_all=True)
+    scores = normalize_scores(all_scores_df, print_norm=True, norm_all=True)
+    combined_scores_normalized = scores['combined_score']
     
     # Add combined scores to the DataFrame
     all_scores_df['combined_score'] = combined_scores_normalized

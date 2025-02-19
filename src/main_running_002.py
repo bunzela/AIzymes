@@ -401,7 +401,8 @@ def boltzmann_selection(self):
                             norm_all=False, 
                             extension="potential", 
                             print_norm=False) 
-    combined_potentials = scores["combined"]
+        
+    combined_potentials = scores["combined_potential"]
     
     if len(combined_potentials) > 0:
         generation=self.all_scores_df['generation'].max()

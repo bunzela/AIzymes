@@ -51,46 +51,47 @@ class AIzymes_MAIN:
     def setup(self, FOLDER_HOME, FOLDER_PARENT, CST_NAME, WT, LIGAND, DESIGN,
 
               # General Job Settings
-              MAX_JOBS=100, 
-              N_PARENT_JOBS=3, 
-              MAX_DESIGNS=10000, 
-              KBT_BOLTZMANN=[0.5, 0.0003],
-              MATCH=None, 
+              MAX_JOBS         = 100, 
+              MAX_GPUS         = 0,
+              N_PARENT_JOBS    = 3, 
+              MAX_DESIGNS      = 10000, 
+              KBT_BOLTZMANN    = [0.5, 0.0003],
+              MATCH            = None, 
               
               # System Settings
-              SUBMIT_PREFIX=None, 
-              SYSTEM=None,
-              RUN_PARALLEL=False, 
-              LOG='debug',   
+              SUBMIT_PREFIX    = None, 
+              SYSTEM           = None,
+              RUN_PARALLEL     = False, 
+              LOG              = 'debug',   
               
               # General Design Settings
-              PARENT_DES_MED='RosettaDesign',
-              DESIGN_FUNCTIONS=[],
-              EXPLORE=False,
+              PARENT_DES_MED   = 'RosettaDesign',
+              DESIGN_METHODS   = [],
+              EXPLORE          = False,
               
               # General Scoring Settings
-              SELECTED_SCORES = ["total","catalytic","interface","efield"],
-              MDMin = False, 
+              SELECTED_SCORES  = ["total","catalytic","interface","efield"],
+              MDMin            = False, 
               
               # RosettaDesign Settings
-              CST_WEIGHT=1.0, 
+              CST_WEIGHT       = 1.0, 
 
               # ProteinMPNN Settings
-              ProteinMPNN_PROB=0.0, 
-              ProteinMPNN_BIAS=0.5, 
-              ProteinMPNN_T="0.1", 
+              ProteinMPNN_PROB = 0.0, 
+              ProteinMPNN_BIAS = 0.5, 
+              ProteinMPNN_T    = "0.1", 
 
               # LigandMPNN Settings
-              LigandMPNN_PROB=0.0,  
-              LigandMPNN_BIAS=0.5, 
-              LigandMPNN_T="0.1", 
+              LigandMPNN_PROB  = 0.0,  
+              LigandMPNN_BIAS  = 0.5, 
+              LigandMPNN_T     = "0.1", 
 
               # FieldTools Settings
-              FIELD_TARGET=":5TS@C9 :5TS@H04",
-              FIELDS_EXCL_CAT=False,
+              FIELD_TARGET     = ":5TS@C9 :5TS@H04",
+              FIELDS_EXCL_CAT  = False,
 
               # RosettaMatch Settings
-              FOLDER_MATCH=None,
+              FOLDER_MATCH     = None,
               
               ):
         """
