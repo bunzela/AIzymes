@@ -103,8 +103,8 @@ def check_running_jobs(self):
                 out_file.close()
                 err_file.close()
         self.processes = [(p, out_file, err_file) for p, out_file, err_file in self.processes if p.poll() is None]
-        
-        with open("test.txt", "a") as f: f.write(f"\nXXXXXXXXXXXX len(self.processes) : {len(self.processes)} in main_running_002.py XXXXXXXXXXXX\n")
+        logging.debug(f"{len(self.processes)} parallel jobs.")  
+                
         return len(self.processes)
    
     elif self.SYSTEM == 'GRID':

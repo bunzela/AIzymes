@@ -13,6 +13,24 @@ from main_scripts_001         import *
 
 def submit_controller_parallel(self):
 
+    if self.SYSTEM in ['SCC','RAVEN']: 
+
+        jobs = subprocess.run(["squeue", "--me"], capture_output=True, text=True, check=True)
+        jobs = jobs.stdout
+        if self.SUBMIT_PREFIX in jobs:
+            logging.error(f"ERROR! Job with prefix {self.SUBMIT_PREFIX} is already running. Refusing to start another job in parallel")
+            sys.exit(1)  
+            
+    else: 
+        
+        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in submit_controller_parallel() in main_startup.py.")
+        sys.exit()   
+
+    
+    if self.SUBMIT_PREFIX in jobs: 
+        logging.error(f"ERROR! Job with prefix {self.SUBMIT_PREFIX} is already running. Refusing to start another job in parallel")
+        sys.exit()
+
     cmd = f'''import sys, os
 sys.path.append(os.path.join(os.getcwd(), '../../src'))
 from AIzymes_014 import *
@@ -39,40 +57,54 @@ AIzymes.controller()
 #SBATCH --time=2-00:00:00
 #SBATCH --output={self.FOLDER_HOME}/controller.log
 #SBATCH --error={self.FOLDER_HOME}/controller.log
+"""
+        
+    elif self.SYSTEM == 'RAVEN': 
+
+        cmd = f"""#!/bin/bash
+#SBATCH --job-name={self.SUBMIT_PREFIX}_controller
+#SBATCH --partition=general
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task={self.MAX_JOBS}
+#SBATCH --mem=20G
+#SBATCH --time=1-00:00:00
+#SBATCH --output={self.FOLDER_HOME}/controller.log
+#SBATCH --error={self.FOLDER_HOME}/controller.log
+"""     
+
+    else: 
+        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in submit_controller_parallel() in main_startup.py.")
+        sys.exit()    
+     
+    cmd += f"""
 
 set -e  # Exit script on any error
 
 cd {self.FOLDER_HOME}/..
 
-echo "Current Working Directory:" > test.txt
-pwd >> test.txt
-echo "Timestamp:" >> test.txt
-date >> test.txt
+echo "Current Working Directory:" 
+pwd 
+echo "Job Started:" 
+date 
 
 python {self.FOLDER_HOME}/start_controller_parallel.py
 
-echo "Timestamp:" >> test.txt
-date >> test.txt
-
-"""      
-
-    else: 
-        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in start_controller_parallel() in main_startup.py.")
-        sys.exit()    
-        
+""" 
+    
     with open(f"{self.FOLDER_HOME}/submit_controller_parallel.sh", "w") as f:
         f.write(cmd)
         
     logging.info(f"Starting parallel controller.")
 
     ### Start job
-    if self.SYSTEM == 'SCC': 
+    if self.SYSTEM in ['SCC','RAVEN']: 
         output = subprocess.check_output(
     (f'sbatch {self.FOLDER_HOME}/submit_controller_parallel.sh'),
     shell=True, text=True
     )
     else: 
-        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in start_controller_parallel() in main_startup.py.")
+        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in submit_controller_parallel() in main_startup.py.")
         sys.exit()   
 
 

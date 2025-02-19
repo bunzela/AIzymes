@@ -260,13 +260,8 @@ bash {self.FOLDER_HOME}/{index}/scripts/{job}_{index}.sh
                                    stdout=out_file, 
                                    stderr=err_file)
         self.processes.append((process, out_file, err_file))  
-
-        
-        ###########
-        cmd = f'bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh'
-        with open("test.txt", "a") as f: f.write(f"\nXXXXXXXXXXXX {cmd} in helper_001.py XXXXXXXXXXXX\n")
-        ############
-        
+        logging.debug(f'Job started with {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh')  
+      
     else:
         
         #Submit the submission_script
