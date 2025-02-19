@@ -454,9 +454,9 @@ def get_best_structures(self, save_structures = False, include_catalytic_score =
     all_scores_df = pd.read_csv(self.ALL_SCORES_CSV)
 
     # Calculate the combined scores using the normalize_scores function
-    scores[score_type] = normalize_scores(self, unblocked_all_scores_df=all_scores_df, print_norm=False, norm_all=False)
+    scores = normalize_scores(self, unblocked_all_scores_df=all_scores_df, print_norm=False, norm_all=False)
     
-    all_scores_df['combined_score'] = scores["combined"]
+    all_scores_df['combined_score'] = scores["combined_score"]
     for score_type in self.SELECTED_SCORES: # Only include selected scores in combined score
         if score_type != "catalytic":  
             all_scores_df[f'norm_{score_type}_score'] = scores[f'{score_type}_score']
