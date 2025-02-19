@@ -11,6 +11,103 @@ from helper_001               import *
 from setup_system_001         import *
 from main_scripts_001         import *
 
+def submit_controller_parallel(self):
+
+    if self.SYSTEM in ['SCC','RAVEN']: 
+
+        jobs = subprocess.run(["squeue", "--me"], capture_output=True, text=True, check=True)
+        jobs = jobs.stdout
+        if self.SUBMIT_PREFIX in jobs:
+            print(f"ERROR! Job with prefix {self.SUBMIT_PREFIX} is already running. Refusing to start another job in parallel")
+            return f"ERROR! Job with prefix {self.SUBMIT_PREFIX} is already running. Refusing to start another job in parallel"
+            
+    else: 
+        
+        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in submit_controller_parallel() in main_startup.py.")
+        sys.exit()   
+
+    
+    if self.SUBMIT_PREFIX in jobs: 
+        logging.error(f"ERROR! Job with prefix {self.SUBMIT_PREFIX} is already running. Refusing to start another job in parallel")
+        sys.exit()
+
+    cmd = f'''import sys, os
+sys.path.append(os.path.join(os.getcwd(), '../../src'))
+from AIzymes_014 import *
+AIzymes = AIzymes_MAIN()
+AIzymes.initialize(FOLDER_HOME    = '{os.path.basename(self.FOLDER_HOME)}', 
+                   LOG            = '{self.LOG}',
+                   PRINT_VAR      = False,
+                   UNBLOCK_ALL    = True)
+AIzymes.controller()
+'''
+    with open(f"{self.FOLDER_HOME}/start_controller_parallel.py", "w") as f:
+        f.write(cmd)
+
+    ### Prepare submission script
+    if self.SYSTEM == 'SCC': 
+
+        cmd = f"""#!/bin/bash
+#SBATCH --job-name={self.SUBMIT_PREFIX}_controller
+#SBATCH --partition=scc-cpu
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task={self.MAX_JOBS}
+#SBATCH --mem=128G
+#SBATCH --time=2-00:00:00
+#SBATCH --output={self.FOLDER_HOME}/controller.log
+#SBATCH --error={self.FOLDER_HOME}/controller.log
+"""
+        
+    elif self.SYSTEM == 'RAVEN': 
+
+        cmd = f"""#!/bin/bash
+#SBATCH --job-name={self.SUBMIT_PREFIX}_controller
+#SBATCH --partition=general
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task={self.MAX_JOBS}
+#SBATCH --mem=20G
+#SBATCH --time=1-00:00:00
+#SBATCH --output={self.FOLDER_HOME}/controller.log
+#SBATCH --error={self.FOLDER_HOME}/controller.log
+"""     
+
+    else: 
+        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in submit_controller_parallel() in main_startup.py.")
+        sys.exit()    
+     
+    cmd += f"""
+
+set -e  # Exit script on any error
+
+cd {self.FOLDER_HOME}/..
+
+echo "Current Working Directory:" 
+pwd 
+echo "Job Started:" 
+date 
+
+python {self.FOLDER_HOME}/start_controller_parallel.py
+
+""" 
+    
+    with open(f"{self.FOLDER_HOME}/submit_controller_parallel.sh", "w") as f:
+        f.write(cmd)
+        
+    logging.info(f"Starting parallel controller.")
+
+    ### Start job
+    if self.SYSTEM in ['SCC','RAVEN']: 
+        output = subprocess.check_output(
+    (f'sbatch {self.FOLDER_HOME}/submit_controller_parallel.sh'),
+    shell=True, text=True
+    )
+    else: 
+        logging.error(f"ERROR! SYSTEM: {self.SYSTEM} not defined in submit_controller_parallel() in main_startup.py.")
+        sys.exit()   
+
+
 def initialize_controller(self, FOLDER_HOME):
     
     self.FOLDER_HOME = f'{os.getcwd()}/{FOLDER_HOME}'
@@ -42,6 +139,9 @@ def initialize_controller(self, FOLDER_HOME):
     # Read in current databases of AIzymes
     self.all_scores_df = pd.read_csv(self.ALL_SCORES_CSV)
 
+    if self.RUN_PARALLEL:
+        self.processes = []
+        
     if self.UNBLOCK_ALL: 
         print(f'Unblocking all')
         self.all_scores_df["blocked_ESMfold"] = False
@@ -105,10 +205,6 @@ def initialize_variables(self):
     self.ALL_SCORES_CSV  = f'{self.FOLDER_HOME}/all_scores.csv'
     self.VARIABLES_JSON  = f'{self.FOLDER_HOME}/variables.json'
     self.FOLDER_PLOT     = f'{self.FOLDER_HOME}/plots' 
-    
-    # All interactive jobs (jobs submitted in background while jupyter is running interactively) are parallel jobs (one jobs claiming MAX_JOBS CPUs)!
-    if self.RUN_INTERACTIVE: 
-        self.RUN_PARALLEL == True
         
     # Define system-specific settings
     set_system(self)    
@@ -159,13 +255,11 @@ def aizymes_setup(self):
     initialize_logging(self)
     
     # Check if the job uses the appropriate number of jobs
-    if self.RUN_INTERACTIVE:
-        total_cpus = os.cpu_count()
-        if total_cpus != self.MAX_JOBS:
-            logging.info(f"Job seems to be running in INTERACTIVE mode with {total_cpus} cpus. It is recommended to set MAX_JOBS to {total_cpus}.")
-        if total_cpus*2 != self.N_PARENT_JOBS:
-            logging.info(f"Job seems to be running in INTERACTIVE mode with {total_cpus} cpus. It is recommended to set N_PARENT_JOBS to {total_cpus*2}.")
-               
+    if self.RUN_PARALLEL:
+        if self.MAX_JOBS != self.N_PARENT_JOBS*2:
+            logging.info(f"Job will be run in PARALLEL mode with {self.MAX_JOBS} cpus. It is recommended to set N_PARENT_JOBS to at least {self.MAX_JOBS*2}.")
+        logging.info(f"Add a chheck here for GPU request, failing if GPUs are requested wrongly!")
+                           
     # Check if setup needs to run
     if input(f'''Do you really want to restart AIzymes from scratch? 
     This will delete all existing files in {self.FOLDER_HOME} [y/n]
@@ -183,7 +277,7 @@ def aizymes_setup(self):
     if self.LIGAND == None:
         logging.error("Please define the name of the ligand with [LIGAND].")
         sys.exit()
-    if self.SUBMIT_PREFIX == None and not self.RUN_INTERACTIVE: # Interactive runs are not submitted but executed in bash. no prefix needed
+    if self.SUBMIT_PREFIX == None: 
         logging.error("Please provide a unique prefix for job submission with [SUBMIT_PREFIX].")
         sys.exit()
     if self.SYSTEM == None:

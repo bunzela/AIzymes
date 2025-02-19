@@ -49,49 +49,43 @@ def start_controller(self):
     Each ofthese tasks is performed by the functions introduced before, and thereforer the start_controller function controls the flow of actions.
     '''
 
-    if self.RUN_PARALLEL and self.CHECK_PARALLEL and not self.RUN_INTERACTIVE: 
+    # Run this part of the function until the maximum number of designs has been reached.
+    while len(self.all_scores_df['index']) < int(self.MAX_DESIGNS): 
+            
+        # Check how many jobs are currently running
+        # Wait if the number is equal or bigger than the maximum number of parallel jobs allowed.
+        num_running_jobs = check_running_jobs(self)
+        
+        if num_running_jobs >= self.MAX_JOBS: 
+            time.sleep(20)
+        
+        #If the number of maximum parallel jobs is not reached, the AIzyme design protocol is executed.
+        else:
+            update_scores(self)
+                        
+            # Checks if all the parent designs needed, defined by the PARENT_JOB variable, are generated.
+            parent_done = check_parent_done(self)
+            
+            # If the parent designs are not generated, it continues design until the number PARENT_JOB is reached. 
+            if not parent_done:
+                start_parent_design(self)
 
-        start_controller_parallel(self)
-        
-    else:
-        
-        # Run this part of the function until the maximum number of designs has been reached.
-        while len(self.all_scores_df['index']) < int(self.MAX_DESIGNS): 
-                
-            # Check how many jobs are currently running
-            # Wait if the number is equal or bigger than the maximum number of parallel jobs allowed.
-            num_running_jobs = check_running_jobs(self)
-            
-            if num_running_jobs >= self.MAX_JOBS: 
-                time.sleep(20)
-            
-            #If the number of maximum parallel jobs is not reached, the AIzyme design protocol is executed.
             else:
-                update_scores(self)
-                            
-                # Checks if all the parent designs needed, defined by the PARENT_JOB variable, are generated.
-                parent_done = check_parent_done(self)
+                # Performs Boltzmann selection to select the parent index for the next design
+                selected_index = boltzmann_selection(self)
                 
-                # If the parent designs are not generated, it continues design until the number PARENT_JOB is reached. 
-                if not parent_done:
-                    start_parent_design(self)
+                # Checks whether a valid index is returned by the Boltzmann selection (error handling)
+                # Starts the design of the next variant using the selected index as parent
+                if selected_index is not None:
+                    start_calculation(self, selected_index)
     
-                else:
-                    # Performs Boltzmann selection to select the parent index for the next design
-                    selected_index = boltzmann_selection(self)
-                    
-                    # Checks whether a valid index is returned by the Boltzmann selection (error handling)
-                    # Starts the design of the next variant using the selected index as parent
-                    if selected_index is not None:
-                        start_calculation(self, selected_index)
+        # Sleep a bit for safety
+        time.sleep(0.1)
         
-            # Sleep a bit for safety
-            time.sleep(0.1)
-            
-        # When the maximum number of designs has been generated, the corresponding scores are calculated and added to the all_scores.csv file.
-        update_scores(self)
-        
-        print(f"Stopped because {len(self.all_scores_df['index'])}/{self.MAX_DESIGNS} designs have been made.")
+    # When the maximum number of designs has been generated, the corresponding scores are calculated and added to the all_scores.csv file.
+    update_scores(self)
+    
+    print(f"Stopped because {len(self.all_scores_df['index'])}/{self.MAX_DESIGNS} designs have been made.")
         
 def check_running_jobs(self):
     """
@@ -103,8 +97,15 @@ def check_running_jobs(self):
     """
    
     if self.RUN_PARALLEL:
-        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'r') as f: jobs = int(f.read())
-        with open("test_py.txt", "a") as f: f.write(f"Number of jobs {jobs} \n") ### CHECK TO SEE IF PYTHON IS RUNNING
+
+        for p, out_file, err_file in self.processes:
+            if p.poll() is not None: # Close finished files
+                out_file.close()
+                err_file.close()
+        self.processes = [(p, out_file, err_file) for p, out_file, err_file in self.processes if p.poll() is None]
+        logging.debug(f"{len(self.processes)} parallel jobs.")  
+                
+        return len(self.processes)
    
     elif self.SYSTEM == 'GRID': 
         command = ["ssh", "mdewaal@bs-submit04.ethz.ch", "qstat", "-u", "mdewaal"]
