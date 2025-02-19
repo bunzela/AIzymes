@@ -7,7 +7,7 @@ import pandas as pd
 import json
 import shutil
 
-from helper_001               import *
+from helper_002               import *
 from setup_system_001         import *
 from main_scripts_001         import *
 
@@ -61,15 +61,24 @@ AIzymes.controller()
         
     elif self.SYSTEM == 'RAVEN': 
 
+        if self.MAX_GPUS == 0: 
+            partitition='general'
+        else:
+            partitition='gpu'
+        
         cmd = f"""#!/bin/bash
 #SBATCH --job-name={self.SUBMIT_PREFIX}_controller
-#SBATCH --partition=general
+#SBATCH --partition={partitition}
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task={self.MAX_JOBS}
-#SBATCH --mem=20G
+#SBATCH --mem={self.MEMORY}G
 #SBATCH --time=1-00:00:00
-#SBATCH --output={self.FOLDER_HOME}/controller.log
+"""
+        if self.MAX_GPUS > 0:
+            cmd += f"""#SBATCH --gres=gpu:{self.MAX_GPUS}
+"""
+        cmd += f"""#SBATCH --output={self.FOLDER_HOME}/controller.log
 #SBATCH --error={self.FOLDER_HOME}/controller.log
 """     
 
@@ -141,7 +150,9 @@ def initialize_controller(self, FOLDER_HOME):
 
     if self.RUN_PARALLEL:
         self.processes = []
-        
+        if self.MAX_GPUS > 0:
+            self.gpus = {gpu_id: None for gpu_id in range(self.MAX_GPUS)}
+
     if self.UNBLOCK_ALL: 
         print(f'Unblocking all')
         self.all_scores_df["blocked_ESMfold"] = False
@@ -188,12 +199,7 @@ def prepare_input_files(self):
     seq = sequence_from_pdb(f"{self.FOLDER_PARENT}/{self.WT}")
     with open(f'{self.FOLDER_PARENT}/field_target.dat', "w") as f:
         f.write(f'{self.FIELD_TARGET}\n')    
-        
-    # For parallel runs, create blank number of running jobs file
-    if self.RUN_PARALLEL:
-        with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'w') as f:
-            f.write("0")
-            
+                    
 def initialize_variables(self):
 
     # Complete directories
@@ -240,7 +246,6 @@ def initialize_logging(self):
         console_handler.setLevel(logging.DEBUG)
     if self.LOG == "info":
         console_handler.setLevel(logging.INFO)
-
     console_handler.setFormatter(logging.Formatter(log_format, datefmt=date_format))
 
     # Add the console handler to the root logger
@@ -305,23 +310,44 @@ def aizymes_setup(self):
     
     prepare_input_files(self)
         
-    #make empyt all_scores_df
+    # Make empyt all_scores_df
     make_empty_all_scores_df(self)
-
+        
+    # Add parent designs to all_scores_df
+    schedlue_parent_design(self)
+    
     # Save varliables 
     save_main_variables(self)
 
 def make_empty_all_scores_df(self):
+    '''
+    Makes the starting all_scores_df dataframe that collects all information about an AI.zymes run
+    '''
     
-    self.all_scores_df = pd.DataFrame(columns=['index', 'sequence', 'parent_index', \
-                                              'interface_score', 'total_score', 'catalytic_score', 'efield_score', 'identical_score',\
-                                              'interface_potential', 'total_potential', 'catalytic_potential', 'efield_potential', 'identical_potential',\
-                                              'relax_interface_score', 'relax_total_score', 'relax_catalytic_score', 'relax_efield_score',\
-                                              'relax_identical_score',\
-                                              'design_interface_score', 'design_total_score', 'design_catalytic_score', 'design_efield_score', \
-                                              'design_identical_score',\
-                                              'generation', 'mutations', 'design_method', 'score_taken_from', \
-                                              'blocked_ESMfold', 'blocked_RosettaRelax', \
-                                               'cat_resi', 'cat_resn'], dtype=object)
-    
-    save_all_scores_df(self)
+    columns = ['sequence', 'parent_index', 'generation', 'total_mutations', 'parent_mutations',
+               'design_method', 'blocked_design', 'blocked_scoring', 
+               'cat_resi', 'cat_resn', 'next_steps', 'final_variant', 'input_variant']
+    for score in self.SELECTED_SCORES:
+        columns.append(f'{score}_potential')
+        columns.append(f'{score}_score')
+        columns.append(f'design_{score}_score')
+    self.all_scores_df = pd.DataFrame(columns=columns, dtype=object)
+
+def schedlue_parent_design(self):
+    '''
+    Adds all parent design runs to the all_score_df dataframe
+    '''
+
+    # Ancestral structures used for the experiment
+    parent_structures = [i for i in os.listdir(self.FOLDER_PARENT) if i[-4:] == ".pdb"]
+
+    # Add all parent indices to all_scores_df
+    for selected_index, parent_structure in enumerate(parent_structures):
+        for n_parent_job in range(self.N_PARENT_JOBS):          
+            new_index = create_new_index(self, 
+                                         parent_index  = "Parent", 
+                                         luca          = f'{self.FOLDER_PARENT}/{parent_structures[selected_index]}',
+                                         input_variant = f'{self.FOLDER_PARENT}/{parent_structures[selected_index]}',
+                                         final_variant = self.PARENT_DES_MED,
+                                         next_steps    = self.PARENT_DES_MED, 
+                                         design_method = self.PARENT_DES_MED)    

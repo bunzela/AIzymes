@@ -13,7 +13,7 @@ import os
 import shutil 
 import subprocess  
 
-from helper_001               import *
+from helper_002               import *
 
 def prepare_AlphaFold3(self, 
                        index, 

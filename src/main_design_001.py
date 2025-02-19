@@ -16,7 +16,7 @@ Modules Required:
 import logging
 import sys
 
-from helper_001               import *
+from helper_002               import *
 
 from design_match_001         import *
 from design_ProteinMPNN_001   import *

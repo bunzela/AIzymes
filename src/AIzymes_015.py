@@ -16,13 +16,18 @@ Functions:
 """
 
 # -------------------------------------------------------------------------------------------------------------------------
+# CHANGE COMPARED TO AIzymes_014: -----------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------------
+# Include GPUs
+# Adjusted Job Schedule, indivdual Jobs and GPU queue
+# -------------------------------------------------------------------------------------------------------------------------
 # Import AIzymes modules --------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------
     
-from main_running_002         import *
-from main_startup_001         import *
+from main_running_003         import *
+from main_startup_002         import *
 from plotting_001             import *
-from helper_001               import *
+from helper_002               import *
 
 # Imports used elsewhere --------------------------------------------------------------------------------------------------
 #from main_design_001          import *
@@ -67,10 +72,11 @@ class AIzymes_MAIN:
               
               # General Design Settings
               PARENT_DES_MED   = 'RosettaDesign',
-              DESIGN_METHODS   = [],
+              DESIGN_METHODS   = ['RosettaDesign','ProteinMPNN'],
               EXPLORE          = False,
               
               # General Scoring Settings
+              SCORING_METHODS  = ['MDmin','ESMfold','RosettaRelax','ElectricFields'], 
               SELECTED_SCORES  = ["total","catalytic","interface","efield"],
               MDMin            = False, 
               
@@ -139,8 +145,6 @@ class AIzymes_MAIN:
                 setattr(self, key, value)
         
         aizymes_setup(self)
-        
-        print("AIzymes initiated.")
 
     def initialize(self, FOLDER_HOME, UNBLOCK_ALL=False, PRINT_VAR=True, PLOT_DATA=False, LOG='debug'):
         """

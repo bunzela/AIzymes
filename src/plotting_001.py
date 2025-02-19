@@ -17,7 +17,7 @@ import torch
 import esm
 import math
 
-from helper_001               import *
+from helper_002               import *
 
 #plots = '/net/bs-gridfs/export/grid/scratch/vdegiorgi/AIzymes/design/VD/241025_VD_AlleyCat_cstweight_2.0/plots'
 #os.makedirs(plots)

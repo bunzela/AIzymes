@@ -20,7 +20,7 @@ import numpy as np
 from pandas import DataFrame  
 import re
 
-from helper_001               import *
+from helper_002               import *
     
 def prepare_ProteinMPNN(self, new_index, cmd):
     """
