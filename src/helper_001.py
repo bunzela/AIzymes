@@ -96,7 +96,8 @@ def normalize_scores(self,
 
         normalized_scores = neg_norm_array(scores[score_type], f"{score_type}_{extension}")
 
-        globals()[f"{score_type}_scores"] = normalized_scores # Save normalized scores in arrays called scoretype_scores
+        scores[score_type] = normalized_scores # Save normalized score into scores dictionary
+        # globals()[f"{score_type}_scores"] = normalized_scores # Save normalized score in corresponding f"{score_type}_scores" global variable
 
     if len(total_scores) == 0: 
         combined_scores = []
@@ -104,10 +105,11 @@ def normalize_scores(self,
         score_arrays = []
         for score_type in self.SELECTED_SCORES: # Only include selected scores in combined score
             if score_type != "catalytic":  
-                score_arrays.append(globals()[f"{score_type}_scores"])
+                score_arrays.append(scores[score_type])
 
         combined_scores = np.stack(score_arrays, axis=0)
         combined_scores = np.mean(combined_scores, axis=0)
+        scores["combined"] = combined_scores
         
     if print_norm:
         if combined_scores.size > 0:
@@ -116,7 +118,7 @@ def normalize_scores(self,
             parents = [i for i in os.listdir(self.FOLDER_PARENT) if i[-4:] == ".pdb"]
             print("Parents:",len(parents))
             
-    return catalytic_scores, total_scores, interface_scores, efield_scores, identical_scores, combined_scores
+    return scores[score_type]
 
 def one_to_three_letter_aa(one_letter_aa):
     
@@ -452,11 +454,12 @@ def get_best_structures(self, save_structures = False, include_catalytic_score =
     all_scores_df = pd.read_csv(self.ALL_SCORES_CSV)
 
     # Calculate the combined scores using the normalize_scores function
-    catalytic_scores, total_scores, interface_scores, efield_scores, identical_scores, combined_scores = normalize_scores(self, unblocked_all_scores_df=all_scores_df, print_norm=False, norm_all=False)
-    all_scores_df['combined_score'] = combined_scores
-    all_scores_df['norm_total_score'] = total_scores
-    all_scores_df['norm_interface_score'] = interface_scores
-    all_scores_df['norm_efield_score'] = efield_scores
+    scores[score_type] = normalize_scores(self, unblocked_all_scores_df=all_scores_df, print_norm=False, norm_all=False)
+    
+    all_scores_df['combined_score'] = scores["combined"]
+    for score_type in self.SELECTED_SCORES: # Only include selected scores in combined score
+        if score_type != "catalytic":  
+            all_scores_df[f'norm_{score_type}_score'] = scores[score_type]
     
     # Remove rows where 'sequence' is NaN
     all_scores_df = all_scores_df.dropna(subset=['sequence'])  
