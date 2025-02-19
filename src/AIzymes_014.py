@@ -49,12 +49,50 @@ class AIzymes_MAIN:
         return
 
     def setup(self, FOLDER_HOME, FOLDER_PARENT, CST_NAME, WT, LIGAND, DESIGN,
-              MAX_JOBS=100, N_PARENT_JOBS=3, MAX_DESIGNS=10000, KBT_BOLTZMANN=[0.5, 0.0003],
-              CST_WEIGHT=1.0, ProteinMPNN_PROB=0.0, ProteinMPNN_BIAS=0.0, LMPNN_PROB=0.0, 
-              FOLDER_MATCH=None, ProteinMPNN_T="0.1", LMPNN_T="0.1", LMPNN_BIAS=0.0, 
-              SUBMIT_PREFIX=None, SYSTEM=None, MATCH=None, RUN_PARALLEL=False, RUN_INTERACTIVE=False, FIELDS_EXCL_CAT=False,
-              EXPLORE=False, LOG='debug', PARENT_DES_MED='RosettaDesign', FIELD_TARGET=":5TS@C9 :5TS@H04", MDMin = False, 
-              SELECTED_SCORES = ["total","catalytic","interface","efield"]):
+
+              # General Job Settings
+              MAX_JOBS=100, 
+              N_PARENT_JOBS=3, 
+              MAX_DESIGNS=10000, 
+              KBT_BOLTZMANN=[0.5, 0.0003],
+              MATCH=None, 
+              
+              # System Settings
+              SUBMIT_PREFIX=None, 
+              SYSTEM=None,
+              RUN_PARALLEL=False, 
+              LOG='debug',   
+              
+              # General Design Settings
+              PARENT_DES_MED='RosettaDesign',
+              DESIGN_FUNCTIONS=[],
+              EXPLORE=False,
+              
+              # General Scoring Settings
+              SELECTED_SCORES = ["total","catalytic","interface","efield"],
+              MDMin = False, 
+              
+              # RosettaDesign Settings
+              CST_WEIGHT=1.0, 
+
+              # ProteinMPNN Settings
+              ProteinMPNN_PROB=0.0, 
+              ProteinMPNN_BIAS=0.5, 
+              ProteinMPNN_T="0.1", 
+
+              # LigandMPNN Settings
+              LigandMPNN_PROB=0.0,  
+              LigandMPNN_BIAS=0.5, 
+              LigandMPNN_T="0.1", 
+
+              # FieldTools Settings
+              FIELD_TARGET=":5TS@C9 :5TS@H04",
+              FIELDS_EXCL_CAT=False,
+
+              # RosettaMatch Settings
+              FOLDER_MATCH=None,
+              
+              ):
         """
         Sets up the AIzymes project environment with specified parameters.
 
@@ -70,13 +108,16 @@ class AIzymes_MAIN:
             MAX_DESIGNS (int):          Maximum number of designs.
             KBT_BOLTZMANN (list):       Boltzmann constant values.
             CST_WEIGHT (float):         Constraint weight.
+            
             ProteinMPNN_PROB (float):   Probability parameter for ProteinMPNN.
             ProteinMPNN_BIAS (float):   Bias parameter for ProteinMPNN.
-            LMPNN_PROB (float):         Probability parameter for LMPNN.
-            FOLDER_MATCH (str):         Path to match folder.
             ProteinMPNN_T (str):        Temperature for ProteinMPNN.
-            LMPNN_T (str):              Temperature for LMPNN.
-            LMPNN_BIAS (float):         Bias parameter for LMPNN.
+            
+            LigandMPNN_PROB (float):    Probability parameter for LMPNN.
+            LigandMPNN_BIAS (float):    Bias parameter for ProteinMPNN.
+            LigandMPNN_T (str):         Temperature for LMPNN.
+            
+            FOLDER_MATCH (str):         Path to match folder.
             SUBMIT_PREFIX (str):        Submission prefix.
             SYSTEM (str):               System information.
             MATCH (str):                Match specifications.
@@ -88,6 +129,8 @@ class AIzymes_MAIN:
             RUN_PARALLEL (bool):        If true, use a single job using MAX_JOBS CPUs that will constantly run for design.
             RUN_INTERACTIVE (bool):     If true, do not submit jobs but run in background.
             FIELDS_EXCL_CAT (bool):     If true, subtract the field of catalytic residue from the electric field score.
+
+            
         """
         for key, value in locals().items():
             if key not in ['self']:  

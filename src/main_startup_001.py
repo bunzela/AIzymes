@@ -18,8 +18,8 @@ def submit_controller_parallel(self):
         jobs = subprocess.run(["squeue", "--me"], capture_output=True, text=True, check=True)
         jobs = jobs.stdout
         if self.SUBMIT_PREFIX in jobs:
-            logging.error(f"ERROR! Job with prefix {self.SUBMIT_PREFIX} is already running. Refusing to start another job in parallel")
-            sys.exit(1)  
+            print(f"ERROR! Job with prefix {self.SUBMIT_PREFIX} is already running. Refusing to start another job in parallel")
+            return f"ERROR! Job with prefix {self.SUBMIT_PREFIX} is already running. Refusing to start another job in parallel"
             
     else: 
         
@@ -205,10 +205,6 @@ def initialize_variables(self):
     self.ALL_SCORES_CSV  = f'{self.FOLDER_HOME}/all_scores.csv'
     self.VARIABLES_JSON  = f'{self.FOLDER_HOME}/variables.json'
     self.FOLDER_PLOT     = f'{self.FOLDER_HOME}/plots' 
-    
-    # All interactive jobs (jobs submitted in background while jupyter is running interactively) are parallel jobs (one jobs claiming MAX_JOBS CPUs)!
-    if self.RUN_INTERACTIVE: 
-        self.RUN_PARALLEL == True
         
     # Define system-specific settings
     set_system(self)    
@@ -259,13 +255,11 @@ def aizymes_setup(self):
     initialize_logging(self)
     
     # Check if the job uses the appropriate number of jobs
-    if self.RUN_INTERACTIVE:
-        total_cpus = os.cpu_count()
-        if total_cpus != self.MAX_JOBS:
-            logging.info(f"Job seems to be running in INTERACTIVE mode with {total_cpus} cpus. It is recommended to set MAX_JOBS to {total_cpus}.")
-        if total_cpus*2 != self.N_PARENT_JOBS:
-            logging.info(f"Job seems to be running in INTERACTIVE mode with {total_cpus} cpus. It is recommended to set N_PARENT_JOBS to {total_cpus*2}.")
-               
+    if self.RUN_PARALLEL:
+        if self.MAX_JOBS != self.N_PARENT_JOBS*2:
+            logging.info(f"Job will be run in PARALLEL mode with {self.MAX_JOBS} cpus. It is recommended to set N_PARENT_JOBS to at least {self.MAX_JOBS*2}.")
+        logging.info(f"Add a chheck here for GPU request, failing if GPUs are requested wrongly!")
+                           
     # Check if setup needs to run
     if input(f'''Do you really want to restart AIzymes from scratch? 
     This will delete all existing files in {self.FOLDER_HOME} [y/n]
@@ -283,7 +277,7 @@ def aizymes_setup(self):
     if self.LIGAND == None:
         logging.error("Please define the name of the ligand with [LIGAND].")
         sys.exit()
-    if self.SUBMIT_PREFIX == None and not self.RUN_INTERACTIVE: # Interactive runs are not submitted but executed in bash. no prefix needed
+    if self.SUBMIT_PREFIX == None: 
         logging.error("Please provide a unique prefix for job submission with [SUBMIT_PREFIX].")
         sys.exit()
     if self.SYSTEM == None:
