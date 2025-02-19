@@ -106,9 +106,10 @@ def check_running_jobs(self):
         with open(f'{self.FOLDER_HOME}/n_running_jobs.dat', 'r') as f: jobs = int(f.read())
         with open("test_py.txt", "a") as f: f.write(f"Number of jobs {jobs} \n") ### CHECK TO SEE IF PYTHON IS RUNNING
    
-    elif self.SYSTEM == 'GRID':
-        command = f"ssh {self.USERNAME}@bs-submit04.ethz.ch 'qstat -u {self.USERNAME}'"
-        jobs = subprocess.check_output(command, shell=True).decode("utf-8").split("\n")
+    elif self.SYSTEM == 'GRID': 
+        command = ["ssh", "mdewaal@bs-submit04.ethz.ch", "qstat", "-u", "mdewaal"]
+        result = subprocess.run(command, capture_output=True, text=True)
+        jobs = result.stdout.split("\n")
         jobs = [job for job in jobs if self.SUBMIT_PREFIX in job]
         return len(jobs)
         
@@ -197,6 +198,7 @@ def update_scores(self):
                 self.all_scores_df.at[index, 'mutations'] = int(mutations)
 
         # Calculate identical score
+        identical_score = 0.0
         if "identical" in self.SELECTED_SCORES:
             
             sequence = self.all_scores_df.at[index, 'sequence']
@@ -210,9 +212,9 @@ def update_scores(self):
                     identical_count = (self.all_scores_df['sequence'] == sequence).sum()
                     identical_score = 1 / identical_count if identical_count > 0 else 0.0
         
-            # Update identical score and potential
-            self.all_scores_df.at[index, 'identical_score'] = identical_score
-            update_potential(self, score_type='identical', index=index)
+        # Update identical score and potential
+        self.all_scores_df.at[index, 'identical_score'] = identical_score
+        update_potential(self, score_type='identical', index=index)
         
         # Check what structure to score on
         if os.path.exists(f"{self.FOLDER_HOME}/{int(index)}/score_RosettaRelax.sc"): # Score based on RosettaRelax            
@@ -337,7 +339,6 @@ def boltzmann_selection(self):
     """
         
     parent_indices = set(self.all_scores_df['parent_index'].astype(str).values)
-    
     unblocked_all_scores_df = self.all_scores_df
     
     # Remove blocked indices
@@ -392,11 +393,9 @@ def boltzmann_selection(self):
         selected_index = filtered_indices[0]
         logging.info(f"{selected_index} selected because its relaxed but nothing was designed from it.")
         return int(selected_index)
-
-    display(unblocked_all_scores_df)
     
     # Do Boltzmann Selection if some scores exist
-    _, _, _, _, _, combined_potentials = normalize_scores(self, 
+    *_, combined_potentials = normalize_scores(self, 
                                                 unblocked_all_scores_df, 
                                                 norm_all=False, 
                                                 extension="potential", 
