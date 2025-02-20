@@ -725,8 +725,8 @@ def create_new_index(self,
                      parent_index: str, 
                      luca: str, 
                      input_variant: str,
-                     final_variant: str,
                      next_steps: str,
+                     final_method: str,
                      design_method: str):
       
     """
@@ -740,12 +740,18 @@ def create_new_index(self,
         next_steps (list): 
     """
 
+    # Get new index
+    if self.all_scores_df.empty:
+        new_index = 0  
+    else:
+        new_index = self.all_scores_df.index[-1] + 1 
+
     if parent_index == 'Parent':
         generation = 0
     else:
         generation = self.all_scores_df['generation'][int(parent_index)]+1
 
-    #Defines the values of the kbt_boltzmann and cst_weight based on the generation of the new index
+    # Defines the values of the kbt_boltzmann and cst_weight based on the generation of the new index
     if isinstance(self.KBT_BOLTZMANN, (float, int)):
         kbt_boltzmann = self.KBT_BOLTZMANN
     elif len(self.KBT_BOLTZMANN) == 2:
@@ -753,7 +759,7 @@ def create_new_index(self,
     elif len(self.KBT_BOLTZMANN) == 3:
         kbt_boltzmann = (self.KBT_BOLTZMANN[0] - self.KBT_BOLTZMANN[2]) * np.exp(-self.KBT_BOLTZMANN[1]*generation)+self.KBT_BOLTZMANN[2]
         
-    #Determines the cst_weight of the new index
+    # Determines the cst_weight of the new index
     if isinstance(self.CST_WEIGHT, (float, int)):
         cst_weight = self.CST_WEIGHT
     elif len(self.CST_WEIGHT) == 2:
@@ -761,26 +767,35 @@ def create_new_index(self,
     elif len(self.CST_WEIGHT) == 3:
         cst_weight = (self.CST_WEIGHT[0] - self.CST_WEIGHT[2])*np.exp(-self.CST_WEIGHT[1]*generation) + self.CST_WEIGHT[2]
 
-    #Creates a new dataframe with all the necessary columns for the new index, concatenes it with the existing all_scores dataframe and saves it
+    final_variant = f'{self.FOLDER_HOME}/{new_index}/{self.WT}_{final_method}_{new_index}.pdb',
+        
+    # Creates a new dataframe with all the necessary columns for the new index, concatenes it with the existing all_scores dataframe and saves it
     new_index_df = pd.DataFrame({
         'parent_index': parent_index,
         'kbt_boltzmann': kbt_boltzmann,
         'cst_weight': cst_weight,
         'generation': generation,
         'luca': luca,
-        'blocked_design': False,
-        'blocked_scoring': False,
+        'blocked': 'unblocked',
         'design_method': design_method,
         'next_steps': next_steps,
         'input_variant': input_variant,
         'final_variant': final_variant,
     }, index = [0] , dtype=object)  
     self.all_scores_df = pd.concat([self.all_scores_df, new_index_df], ignore_index=True)
+    
+    # Add catalytic residues
+    save_cat_res_into_all_scores_df(self, new_index, input_variant, save_resn=False)    
     save_all_scores_df(self)
 
+    display(self.all_scores_df)
+    
     # Create the folder for the new index
-    new_index = self.all_scores_df.index[-1]
     os.makedirs(f"{self.FOLDER_HOME}/{new_index}/scripts", exist_ok=True)
     logging.debug(f"Child index {new_index} created for parent index {parent_index}.")
 
     return new_index
+
+def count_mutations(seq1, seq2):
+    mutations = sum(1 for a, b in zip(seq1, seq2) if a != b)
+    return int(mutations)
