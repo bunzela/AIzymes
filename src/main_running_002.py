@@ -153,6 +153,7 @@ def update_potential(self, score_type, index):
     #Update parent potential
     if score_taken_from != "RosettaRelax": return                     # Only update the parent potential for RosettaRelax
     if parent_index == "Parent":           return                     # Do not update the parent potential of a variant from parent
+    if score_type == "Identical":          return                     # Do not update the potential of the identical score
     with open(parent_filename, "a") as f:  f.write(f"\n{str(score)}") # Appends to parent_filename
     with open(parent_filename, "r") as f:  potentials = f.readlines() # Reads in potential values 
     self.all_scores_df.at[int(parent_index), f'{score_type}_potential'] = np.average([float(i) for i in potentials])
@@ -186,7 +187,7 @@ def update_scores(self):
              
         seq_path = f"{self.FOLDER_HOME}/{index}/{self.WT}_{index}.seq"
         
-        # Update sequence and mutations if row does not yet contain a sequence
+        # Update sequence, central residues and mutations if row does not yet contain a sequence
         if pd.isna(self.all_scores_df.at[index, 'sequence']):
             if os.path.exists(seq_path):
                 with open(f"{self.FOLDER_PARENT}/{self.WT}.seq", "r") as f:
@@ -196,21 +197,22 @@ def update_scores(self):
                 mutations = sum(1 for a, b in zip(current_sequence, reference_sequence) if a != b)
                 self.all_scores_df['sequence'] = self.all_scores_df['sequence'].astype('object')
                 self.all_scores_df.at[index, 'sequence']  = current_sequence
+                self.all_scores_df.at[index, 'central_res']  = ''.join(current_sequence[int(pos)] for pos in self.DESIGN.split(','))
                 self.all_scores_df.at[index, 'mutations'] = int(mutations)
 
         # Calculate identical score
         identical_score = 0.0
         if "identical" in self.SELECTED_SCORES:
             
-            sequence = self.all_scores_df.at[index, 'sequence']
+            central_res = self.all_scores_df.at[index, 'central_res']
             parent_index = self.all_scores_df.at[index, 'parent_index']
             
-            if pd.notna(sequence):
+            if pd.notna(central_res):
                 if parent_index == 'Parent': # If it's a parent, set identical score to 1
                     identical_score = 1.0 
                 else:
-                    # Calculate the number of occurrences of the current sequence
-                    identical_count = (self.all_scores_df['sequence'] == sequence).sum()
+                    # Calculate the number of occurrences of the identical central residues
+                    identical_count = (self.all_scores_df['central_res'] == central_res).sum()
                     identical_score = 1 / identical_count if identical_count > 0 else 0.0
         
         # Update identical score and potential

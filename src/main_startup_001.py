@@ -322,6 +322,6 @@ def make_empty_all_scores_df(self):
                                               'design_identical_score',\
                                               'generation', 'mutations', 'design_method', 'score_taken_from', \
                                               'blocked_ESMfold', 'blocked_RosettaRelax', \
-                                               'cat_resi', 'cat_resn'], dtype=object)
+                                               'cat_resi', 'cat_resn','central_res'], dtype=object)
     
     save_all_scores_df(self)
