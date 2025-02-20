@@ -90,7 +90,7 @@ def normalize_scores(self,
     # Normalize and stack normalized scores in combined_scores
     scores = {}
     for score_type in ["total","catalytic","interface","efield", "identical"]:  
-        scores[score_type] = unblocked_all_scores_df[f"{score_type}_{extension}"]
+        scores[score_type] = unblocked_all_scores_df[f"{score_type}_{extension}"].to_numpy(dtype=np.float64)
         if score_type in ["efield", "identical"]: 
             scores[score_type] = -scores[score_type] # Adjust scale so that more negative is better for all score types
 

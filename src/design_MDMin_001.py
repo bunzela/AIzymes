@@ -3,7 +3,7 @@ import os
 import shutil 
 import subprocess  
 
-from helper_001 import get_PDB_in, generate_remark_from_all_scores_df
+from helper_002 import get_PDB_in, generate_remark_from_all_scores_df
               
 def prepare_MDMin(self, 
                   index,  
