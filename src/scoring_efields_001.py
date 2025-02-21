@@ -17,13 +17,11 @@ def prepare_efields(self, index:str, cmd:str):
     Returns:
     cmd (str): Command to be exected by run_design using submit_job.
     """
-   
-    pdb = [line.strip("#").strip() for line in cmd.splitlines() if line.startswith("###")]
-    pdb = [line for line in pdb if line in ["RosettaDesign", "RosettaRelax"]] # "ProteinMPNN", "LigandMPNN", 
-    pdb = f'{self.WT}_{pdb[0]}_{index}'
-        
-    filename_in = f'{self.FOLDER_HOME}/{index}/{pdb}'
-    filename_out = f'{self.FOLDER_HOME}/{index}/ElectricFields/{pdb}'
+    
+    # Define files and make empty directory
+    filename_in = self.all_scores_df.at[index, "final_variant"][:-4]
+    filename_out = f'{self.FOLDER_HOME}/{index}/ElectricFields/{os.path.basename(filename_in)}'
+    os.makedirs(f'{self.FOLDER_HOME}/{index}/ElectricFields', exist_ok=True)
     
     # Make tleap files to generate input
     with open(f"{filename_out}_tleap.in", "w") as f:
@@ -69,10 +67,10 @@ def get_efields_score(self, index, score_type):
     bond_field =  np.array(FIELDS[self.FIELD_TARGET.replace(" ", "_")]['Total'])
     
     if self.FIELDS_EXCL_CAT:
-        #print(f'original field {bond_field}')
         key = f"{self.all_scores_df.at[index, 'cat_resn']}_{self.all_scores_df.at[index, 'cat_resi']}"
-        #print(f'base field {FIELDS[self.FIELD_TARGET.replace(" ", "_")][key]}')
         bond_field = bond_field - np.array(FIELDS[self.FIELD_TARGET.replace(" ", "_")][key])
+        #print(f'original field {bond_field}')
+        #print(f'base field {FIELDS[self.FIELD_TARGET.replace(" ", "_")][key]}')
         #print(f'new field base subtraction {bond_field}')
         
     all_fields = FIELDS[self.FIELD_TARGET.replace(" ", "_")]

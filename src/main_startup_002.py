@@ -324,13 +324,13 @@ def make_empty_all_scores_df(self):
     Makes the starting all_scores_df dataframe that collects all information about an AI.zymes run
     '''
     
-    columns = ['sequence', 'parent_index', 'generation', 'total_mutations', 'parent_mutations',
-               'design_method', 'blocked_design', 'blocked_scoring', 
-               'cat_resi', 'cat_resn', 'next_steps', 'final_variant', 'input_variant']
+    columns = ['sequence', 'parent_index', 'generation', 'total_mutations', 'parent_mutations', 'score_taken_from',
+               'design_method', 'blocked', 'cat_resi', 'cat_resn', 'next_steps', 'final_variant', 'input_variant', 'latest_variant']
     for score in self.SELECTED_SCORES:
         columns.append(f'{score}_potential')
         columns.append(f'{score}_score')
         columns.append(f'design_{score}_score')
+        columns.append(f'relax_{score}_score')
     self.all_scores_df = pd.DataFrame(columns=columns, dtype=object)
 
 def schedlue_parent_design(self):
@@ -338,9 +338,11 @@ def schedlue_parent_design(self):
     Adds all parent design runs to the all_score_df dataframe
     '''
 
-    # Ancestral structures used for the experiment
+    # Define intial and final structures
     parent_structures = [i for i in os.listdir(self.FOLDER_PARENT) if i[-4:] == ".pdb"]
-
+    final_structure_method = [i for i in self.PARENT_DES_MED if i in self.SYS_STRUCT_METHODS][-1]
+    design_method = [i for i in self.PARENT_DES_MED if i in self.SYS_DESIGN_METHODS][0]
+    
     # Add all parent indices to all_scores_df
     for selected_index, parent_structure in enumerate(parent_structures):
         for n_parent_job in range(self.N_PARENT_JOBS):          
@@ -348,6 +350,6 @@ def schedlue_parent_design(self):
                                          parent_index  = "Parent", 
                                          luca          = f'{self.FOLDER_PARENT}/{parent_structures[selected_index]}',
                                          input_variant = f'{self.FOLDER_PARENT}/{parent_structures[selected_index]}',
-                                         final_variant = self.PARENT_DES_MED,
-                                         next_steps    = self.PARENT_DES_MED, 
-                                         design_method = self.PARENT_DES_MED)    
+                                         final_method  = final_structure_method,
+                                         next_steps    = ",".join(self.PARENT_DES_MED), 
+                                         design_method = design_method)    
