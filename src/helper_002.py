@@ -64,7 +64,6 @@ def normalize_scores(self,
             if norm_all:
                 if print_norm:
                     print(self.NORM[score_type])
-                    #print(score_type,self.NORM[score_type],end=" ")
 
                 array = (array-self.NORM[score_type][0])/(self.NORM[score_type][1]-self.NORM[score_type][0])
     
@@ -90,14 +89,12 @@ def normalize_scores(self,
     # Normalize and stack normalized scores in combined_scores
     scores = {}
     for score_type in ["total","catalytic","interface","efield", "identical"]:  
-        scores[score_type] = unblocked_all_scores_df[f"{score_type}_{extension}"].to_numpy(dtype=np.float64)
+        score = unblocked_all_scores_df[f"{score_type}_{extension}"].to_numpy(dtype=np.float64)
         if score_type in ["efield", "identical"]: 
-            scores[score_type] = -scores[score_type] # Adjust scale so that more negative is better for all score types
+            score = -score # Adjust scale so that more negative is better for all score types
 
-        normalized_scores = neg_norm_array(scores[score_type], f"{score_type}_{extension}")
-
+        normalized_scores = neg_norm_array(score, f"{score_type}_{extension}")
         scores[f'{score_type}_{extension}'] = normalized_scores # Save normalized score into scores dictionary
-        # globals()[f"{score_type}_scores"] = normalized_scores # Save normalized score in corresponding f"{score_type}_scores" global variable
 
     if len(scores[f'{score_type}_{extension}']) == 0: 
         combined_scores = []
@@ -117,7 +114,7 @@ def normalize_scores(self,
             print("Designs:",len(scores[f'combined_{extension}']),end=" ")
             parents = [i for i in os.listdir(self.FOLDER_PARENT) if i[-4:] == ".pdb"]
             print("Parents:",len(parents))
-            
+
     return scores
 
 def one_to_three_letter_aa(one_letter_aa):

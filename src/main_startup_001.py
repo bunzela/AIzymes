@@ -335,10 +335,5 @@ def make_empty_all_scores_df(self):
                                               'design_identical_score',\
                                               'generation', 'mutations', 'design_method', 'score_taken_from', \
                                               'blocked_ESMfold', 'blocked_RosettaRelax', \
-<<<<<<< HEAD:src/main_startup_001.py
-                                               'cat_resi', 'cat_resn','central_res'], dtype=object)
-=======
-                                               'cat_resi', 'cat_resn', 'next_steps'], dtype=object)
->>>>>>> 684836af810ee26f7b513bdc3e7db2e93b8b536a:src/HIDDEN main_startup_001.py
-    
+                                               'cat_resi', 'cat_resn','central_res', 'next_steps'], dtype=object)
     save_all_scores_df(self)
