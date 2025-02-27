@@ -22,10 +22,9 @@ def prepare_MDMin(self,
     # Make directories
     os.makedirs(f"{filename}/scripts", exist_ok=True)
     os.makedirs(f"{filename}/MDMin", exist_ok=True)
-    
+
     input_pdb_paths = get_PDB_in(self, index)
-    PDBfile_in = input_pdb_paths['MDMin_in']
-        
+    PDBfile_in = self.all_scores_df.at[int(index), "step_input_variant"]    
     working_dir_path = f"{filename}/MDMin/{self.WT}_{index}"
 
     cmd += f"""### MDMin ###

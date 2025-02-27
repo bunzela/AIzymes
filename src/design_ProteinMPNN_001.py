@@ -39,7 +39,9 @@ def prepare_ProteinMPNN(self, new_index, cmd):
         
     folder_proteinmpnn = f"{self.FOLDER_HOME}/{new_index}/ProteinMPNN"
     os.makedirs(folder_proteinmpnn, exist_ok=True)
-     
+
+    logging.debug(f'XXXXXXXXXXXXXXXXX TODO: remove get_PDB_in in design_ProteinMPNN.py')
+
     input_pdb_paths = get_PDB_in(self, new_index)
     PDB_input = input_pdb_paths['Design_in']
     seq_input = input_pdb_paths['Design_seq_in']

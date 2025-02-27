@@ -12,7 +12,7 @@ from setup_system_001         import *
 from main_scripts_001         import *
 
 def submit_controller_parallel(self):
-
+    
     if self.SYSTEM in ['SCC','RAVEN']: 
 
         jobs = subprocess.run(["squeue", "--me"], capture_output=True, text=True, check=True)
@@ -33,7 +33,7 @@ def submit_controller_parallel(self):
 
     cmd = f'''import sys, os
 sys.path.append(os.path.join(os.getcwd(), '../../src'))
-from AIzymes_014 import *
+from AIzymes_015 import *
 AIzymes = AIzymes_MAIN()
 AIzymes.initialize(FOLDER_HOME    = '{os.path.basename(self.FOLDER_HOME)}', 
                    LOG            = '{self.LOG}',
@@ -54,7 +54,7 @@ AIzymes.controller()
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task={self.MAX_JOBS}
 #SBATCH --mem=128G
-#SBATCH --time=2-00:00:00
+#SBATCH --time=1:00:00 #####=2-00:00:00
 #SBATCH --output={self.FOLDER_HOME}/controller.log
 #SBATCH --error={self.FOLDER_HOME}/controller.log
 """
@@ -155,8 +155,7 @@ def initialize_controller(self, FOLDER_HOME):
 
     if self.UNBLOCK_ALL: 
         print(f'Unblocking all')
-        self.all_scores_df["blocked_ESMfold"] = False
-        self.all_scores_df["blocked_RosettaRelax"] = False
+        self.all_scores_df["blocked"] = "unblocked"
    
     # Sleep a bit to make me feel secure. More sleep = less anxiety :)
     time.sleep(0.1)
@@ -325,7 +324,8 @@ def make_empty_all_scores_df(self):
     '''
     
     columns = ['sequence', 'parent_index', 'generation', 'total_mutations', 'parent_mutations', 'score_taken_from',
-               'design_method', 'blocked', 'cat_resi', 'cat_resn', 'next_steps', 'final_variant', 'input_variant', 'latest_variant']
+               'design_method', 'blocked', 'cat_resi', 'cat_resn', 'next_steps', 'final_variant', 'input_variant',
+               'step_input_variant', 'step_output_variant']
     for score in self.SELECTED_SCORES:
         columns.append(f'{score}_potential')
         columns.append(f'{score}_score')
@@ -347,9 +347,10 @@ def schedlue_parent_design(self):
     for selected_index, parent_structure in enumerate(parent_structures):
         for n_parent_job in range(self.N_PARENT_JOBS):          
             new_index = create_new_index(self, 
-                                         parent_index  = "Parent", 
-                                         luca          = f'{self.FOLDER_PARENT}/{parent_structures[selected_index]}',
-                                         input_variant = f'{self.FOLDER_PARENT}/{parent_structures[selected_index]}',
-                                         final_method  = final_structure_method,
-                                         next_steps    = ",".join(self.PARENT_DES_MED), 
-                                         design_method = design_method)    
+                                         parent_index        = "Parent", 
+                                         luca                = f'{self.FOLDER_PARENT}/{parent_structures[selected_index][:-4]}',
+                                         input_variant       = f'{self.FOLDER_PARENT}/{parent_structures[selected_index][:-4]}',
+                                         step_output_variant = f'{self.FOLDER_PARENT}/{parent_structures[selected_index][:-4]}',
+                                         final_method        = final_structure_method,
+                                         next_steps          = ",".join(self.PARENT_DES_MED), 
+                                         design_method       = design_method)    

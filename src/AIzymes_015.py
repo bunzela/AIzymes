@@ -77,7 +77,7 @@ class AIzymes_MAIN:
               EXPLORE             = False,
               
               # General Scoring Settings
-              SCORING_METHODS     = ['MDmin','ESMfold','RosettaRelax','ElectricFields'], 
+              SCORING_METHODS     = ['MDMin','ESMfold','RosettaRelax','ElectricFields'], 
               SELECTED_SCORES     = ["total","catalytic","interface","efield"],
               MDMin               = False, 
               
@@ -102,8 +102,12 @@ class AIzymes_MAIN:
               FOLDER_MATCH        = None,
 
               # Established Modules list
+              # All Methods that redesign a sequence
               SYS_DESIGN_METHODS  = ["RosettaDesign","ProteinMPNN","LigandMPNN"],
-              SYS_STRUCT_METHODS  = ["RosettaDesign","MDmin","ESMfold"],
+              # All Methods that create a structure
+              SYS_STRUCT_METHODS  = ["RosettaDesign","MDMin","ESMfold","RosettaRelax"], 
+              # All Methods that require GPUs
+              SYS_GPU_METHODS     = ["ESMfold"],
               ):
         """
         Sets up the AIzymes project environment with specified parameters.
@@ -238,7 +242,13 @@ class AIzymes_MAIN:
 
         return
 
-    def best_structures(self, save_structures = False, include_catalytic_score = False, seq_per_active_site = 100, DESIGN = None, WT = None):
+    def best_structures(self,
+                        save_structures = False, 
+                        include_catalytic_score = False, 
+                        seq_per_active_site = 100, 
+                        DESIGN = None, 
+                        WT = None):
+        
         get_best_structures(self, 
                             save_structures = save_structures, 
                             include_catalytic_score = include_catalytic_score,

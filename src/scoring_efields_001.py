@@ -19,7 +19,7 @@ def prepare_efields(self, index:str, cmd:str):
     """
     
     # Define files and make empty directory
-    filename_in = self.all_scores_df.at[index, "final_variant"][:-4]
+    filename_in = self.all_scores_df.at[index, "final_variant"]
     filename_out = f'{self.FOLDER_HOME}/{index}/ElectricFields/{os.path.basename(filename_in)}'
     os.makedirs(f'{self.FOLDER_HOME}/{index}/ElectricFields', exist_ok=True)
     

@@ -46,6 +46,7 @@ from Bio.PDB.PDBExceptions import PDBConstructionWarning
 warnings.simplefilter('ignore', PDBConstructionWarning)
 from Bio import BiopythonParserWarning
 warnings.simplefilter('ignore', BiopythonParserWarning)
+import re
 
 from setup_system_001         import *
 
@@ -261,7 +262,15 @@ bash {self.FOLDER_HOME}/{index}/scripts/{job}_{index}.sh
                                    shell=True, 
                                    stdout=out_file, 
                                    stderr=err_file)
-        self.processes.append((process, out_file, err_file))  
+        self.processes.append((process, out_file, err_file)) 
+
+        with open(f'{self.FOLDER_HOME}/{index}/scripts/{job}_{index}.sh', "r") as f: script = f.read()
+        match = re.search(r'CUDA_VISIBLE_DEVICES\s*=\s*([0-9]+)', script)
+        if match: 
+            gpu = int(match.group(1))
+            self.gpus[gpu] = process 
+            logging.debug(f'YYYYYYYYYYYYYYYYYY {gpu} helper_002')  
+        
         logging.debug(f'Job started with {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh')  
       
     else:
@@ -327,14 +336,14 @@ def generate_remark_from_all_scores_df(self, index):
         remarks.append(f'REMARK 666 MATCH TEMPLATE X {self.LIGAND}    0 MATCH MOTIF A {cat_resn}{str(cat_resi).rjust(5)}  {idx}  1')
     return "\n".join(remarks)
 
-def save_cat_res_into_all_scores_df(self, index, PDB_file_path, save_resn=True):
+def save_cat_res_into_all_scores_df(self, index, PDB_path, save_resn=True):
     
     '''Finds the indices and names of the catalytic residue from <PDB_file_path> 
        Saves indices and residues into <all_scores_df> in row <index> as lists.
        To make sure these are saved and loaded as list, ";".join() and .split(";") should be used
        If information is read from an input structure for design do not save cat_resn'''
 
-    with open(PDB_file_path, 'r') as f: 
+    with open(f'{PDB_path}.pdb', 'r') as f: 
         PDB = f.readlines()
     
     remarks = [i for i in PDB if i[:10] == 'REMARK 666']
@@ -727,7 +736,8 @@ def create_new_index(self,
                      input_variant: str,
                      next_steps: str,
                      final_method: str,
-                     design_method: str):
+                     design_method: str,
+                     step_output_variant = None):
       
     """
     The create_new_index function is responsible for generating a new index.
@@ -767,7 +777,10 @@ def create_new_index(self,
     elif len(self.CST_WEIGHT) == 3:
         cst_weight = (self.CST_WEIGHT[0] - self.CST_WEIGHT[2])*np.exp(-self.CST_WEIGHT[1]*generation) + self.CST_WEIGHT[2]
 
-    final_variant = f'{self.FOLDER_HOME}/{new_index}/{self.WT}_{final_method}_{new_index}.pdb',
+    final_variant = f'{self.FOLDER_HOME}/{new_index}/{self.WT}_{final_method}_{new_index}',
+
+    if step_output_variant == None:
+        step_output_variant = f'{self.FOLDER_HOME}/{new_index}/{self.WT}_{design_method.split(",")[0]}_{new_index}'
         
     # Creates a new dataframe with all the necessary columns for the new index, concatenes it with the existing all_scores dataframe and saves it
     new_index_df = pd.DataFrame({
@@ -780,6 +793,7 @@ def create_new_index(self,
         'design_method': design_method,
         'next_steps': next_steps,
         'input_variant': input_variant,
+        'step_output_variant': step_output_variant,
         'final_variant': final_variant,
     }, index = [0] , dtype=object)  
     self.all_scores_df = pd.concat([self.all_scores_df, new_index_df], ignore_index=True)
@@ -787,8 +801,6 @@ def create_new_index(self,
     # Add catalytic residues
     save_cat_res_into_all_scores_df(self, new_index, input_variant, save_resn=False)    
     save_all_scores_df(self)
-
-    display(self.all_scores_df)
     
     # Create the folder for the new index
     os.makedirs(f"{self.FOLDER_HOME}/{new_index}/scripts", exist_ok=True)

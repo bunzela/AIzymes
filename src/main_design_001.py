@@ -69,35 +69,44 @@ def run_design(self,
     cmd = ""
      
     for design_step in design_steps:
-                 
+
+        # Assign GPU!
+        if self.MAX_GPUS > 0:
+            if design_step in self.SYS_GPU_METHODS:
+                gpu_id = None
+                for idx, job in self.gpus.items():
+                    if job is None: 
+                        gpu_id = idx
+                        break
+                if gpu_id == None:
+                    logging.error(f"Failed to assign a GPU for {design_step} {index}. GPUs: {self.gpus}. Error in main_design.py")
+                    sys.exit()    
+
+                logging.debug(f"XXXXXXXXXXXXXXXXX {design_step} {index} {gpu_id} {self.gpus} main_design.py")
+
         if design_step == "ProteinMPNN":
-            
             cmd = prepare_ProteinMPNN(self, index, cmd)
-            logging.debug(f"Run ProteinMPNN for index {index}.")
+            logging.info(f"Run ProteinMPNN for index {index}.")
             
         elif design_step == "RosettaDesign":
-            
             cmd = prepare_RosettaDesign(self, index, cmd)
-            logging.debug(f"Run RosettaDesign for index {index} based on index {index}.")
+            logging.info(f"Run RosettaDesign for index {index} based on index {index}.")
             
         elif design_step == "RosettaRelax":
-            
             cmd = prepare_RosettaRelax(self, index, cmd)
-            logging.debug(f"Run RosettaRelax for index {index}.")
+            logging.info(f"Run RosettaRelax for index {index}.")
         
         elif design_step == "MDMin":
             cmd = prepare_MDMin(self, index, cmd)
-            logging.debug(f"Run MD minimise for index {index}.")
+            logging.info(f"Run MD minimise for index {index}.")
             
         elif design_step == "ESMfold":
-            
-            cmd = prepare_ESMfold(self, index, cmd)
-            logging.debug(f"Run ESMfold for index {index}.")
+            cmd = prepare_ESMfold(self, index, cmd, gpu_id = gpu_id)
+            logging.info(f"Run ESMfold for index {index}.")
             
         elif design_step == "ElectricFields":
-            
             cmd = prepare_efields(self, index, cmd)
-            logging.debug(f"Calculating ElectricFields for index {index}.")
+            logging.info(f"Calculating ElectricFields for index {index}.")
             
         else:
             logging.error(f"{design_step} is not defined!")

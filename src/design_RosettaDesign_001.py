@@ -14,15 +14,13 @@ import logging
 from helper_002               import *
 
 def prepare_RosettaDesign(self, 
-                          new_index,
+                          index,
                           cmd):
     """
-    Designs protein structure in {new_index} based on {parent_index} using RosettaDesign.
+    Designs protein structure in {index} using RosettaDesign.
     
     Args:
-    parent_index (str): Index of the parent protein variant to be designed.
-    new_index (str):    Index assigned to the resulting design.
-    input_suffix (str): Suffix of the input structure to be used for design.
+    index (str): Index assigned to the resulting design.
     
     Returns:
     cmd (str): Command to be exected by run_design using submit_job.
@@ -34,9 +32,7 @@ def prepare_RosettaDesign(self,
     else:
         ex = "-ex1 -ex2"
     
-    #PDB_input ,_ ,_ = get_PDB_in(self, new_index)
-    input_pdb_paths = get_PDB_in(self, new_index)
-    PDB_input = input_pdb_paths['Design_in']
+    PDB_input = self.all_scores_df.at[int(index), "step_input_variant"]
     
     cmd += f"""### RosettaDesign ###
    
@@ -48,21 +44,21 @@ def prepare_RosettaDesign(self,
     -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params \\
     -enzdes:cstfile                           {self.FOLDER_INPUT}/{self.CST_NAME}.cst \\
     -enzdes:cst_opt                           true \\
-    -parser:protocol                          {self.FOLDER_HOME}/{new_index}/scripts/RosettaDesign_{new_index}.xml \\
-    -out:file:scorefile                       {self.FOLDER_HOME}/{new_index}/score_RosettaDesign.sc \\
+    -parser:protocol                          {self.FOLDER_HOME}/{index}/scripts/RosettaDesign_{index}.xml \\
+    -out:file:scorefile                       {self.FOLDER_HOME}/{index}/score_RosettaDesign.sc \\
     -nstruct                                  1  \\
     -ignore_zero_occupancy                    false  \\
     -corrections::beta_nov16                  true \\
     -overwrite {ex}
 
 # Cleanup
-mv {self.FOLDER_HOME}/{new_index}/{os.path.basename(PDB_input)}_0001.pdb \\
-   {self.FOLDER_HOME}/{new_index}/{self.WT}_RosettaDesign_{new_index}.pdb 
+mv {self.FOLDER_HOME}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
+   {self.FOLDER_HOME}/{index}/{self.WT}_RosettaDesign_{index}.pdb 
    
 # Get sequence
 {self.bash_args}python {self.FOLDER_PARENT}/extract_sequence_from_pdb.py \\
-    --pdb_in       {self.FOLDER_HOME}/{new_index}/{self.WT}_RosettaDesign_{new_index}.pdb \\
-    --sequence_out {self.FOLDER_HOME}/{new_index}/{self.WT}_{new_index}.seq
+    --pdb_in       {self.FOLDER_HOME}/{index}/{self.WT}_RosettaDesign_{index}.pdb \\
+    --sequence_out {self.FOLDER_HOME}/{index}/{self.WT}_{index}.seq
 
 
 """
@@ -104,7 +100,7 @@ mv {self.FOLDER_HOME}/{new_index}/{os.path.basename(PDB_input)}_0001.pdb \\
 """
     
     # Add residue number constraints from REMARK (via all_scores_df['cat_resi'])
-    cat_resis = str(self.all_scores_df.at[new_index, 'cat_resi']).split(';')
+    cat_resis = str(self.all_scores_df.at[index, 'cat_resi']).split(';')
     for idx, cat_resi in enumerate(cat_resis): 
         
         RosettaDesign_xml += f"""
@@ -220,7 +216,7 @@ mv {self.FOLDER_HOME}/{new_index}/{os.path.basename(PDB_input)}_0001.pdb \\
 
 """
     # Write the XML script to a file
-    with open(f'{self.FOLDER_HOME}/{new_index}/scripts/RosettaDesign_{new_index}.xml', 'w') as f:
+    with open(f'{self.FOLDER_HOME}/{index}/scripts/RosettaDesign_{index}.xml', 'w') as f:
         f.writelines(RosettaDesign_xml)               
 
     return cmd

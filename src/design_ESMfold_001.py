@@ -15,7 +15,8 @@ from helper_002               import *
 
 def prepare_ESMfold(self, 
                     index, 
-                    cmd):
+                    cmd,
+                    gpu_id = None):
     """
     Predicts structure of sequence in {index} using ESMfold. Uses ligand coordinates from previous RosettaDesign.
     
@@ -37,21 +38,21 @@ def prepare_ESMfold(self,
     # Giving the ESMfold algorihm the needed inputs
     output_file = f'{working_dir_path}_ESMfold_bb.pdb'
     sequence_file = f'{self.FOLDER_HOME}/{index}/{self.WT}_{index}.seq'
-    
-    # Make sequence file exist
-    #if not os.path.isfile(sequence_file):      
-    #    logging.error(f"Sequence_file {sequence_file} not present!")
-    #    return False
-    #does not work anymore if run in batch!!!
-    
+        
     cmd += f"""### ESMfold ###
-    
+"""
+
+    if  gpu_id != None:
+        cmd += f"""
+export CUDA_VISIBLE_DEVICES={gpu_id}
+"""
+        
+    cmd += f"""
 {self.bash_args}python {self.FOLDER_PARENT}/ESMfold.py \
 --sequence_file {sequence_file} \
 --output_file   {output_file} 
 
-sed -i '/PARENT N\/A/d' {output_file}
-"""
+sed -i '/PARENT N\/A/d' {output_file}"""
     ##Add the ligand back in after running ESMfold for backbone
     input_pdb_paths = get_PDB_in(self, index)
     PDBfile_ligand = input_pdb_paths['ligand_in']
