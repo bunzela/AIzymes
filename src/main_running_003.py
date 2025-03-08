@@ -127,9 +127,10 @@ def check_running_jobs(self):
         self.processes = [(p, out_file, err_file) for p, out_file, err_file in self.processes if p.poll() is None]
         logging.debug(f"{len(self.processes)} parallel jobs.")       
 
-        for gpu, proc in self.gpus.items():
-            if proc is not None and proc.poll() is not None:
-                self.gpus[gpu] = None
+        if self.MAX_GPUS > 0:
+            for gpu, proc in self.gpus.items():
+                if proc is not None and proc.poll() is not None:
+                    self.gpus[gpu] = None
 
         return len(self.processes)
    

@@ -1,7 +1,6 @@
 
 """
-Handles RosettaDesign steps to optimize protein design scores and enhance stability
-within the AIzymes project.
+Manages all RosettaDesign methods for protein design
 
 Functions:
     prepare_RosettaDesign: Prepares RosettaDesign commands for job submission.
@@ -40,14 +39,19 @@ def prepare_RosettaDesign(self,
 {self.ROSETTA_PATH}/bin/rosetta_scripts.{self.rosetta_ext} \\
     -s                                        {PDB_input}.pdb \\
     -in:file:native                           {PDB_input}.pdb \\
-    -run:preserve_header                      true \\
-    -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params \\
+    -run:preserve_header                      true """
+    if self.LIGAND not in ['HEM']:
+        cmd += f"""\\
+    -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params """
+    if self.CST_NAME is not None:
+        cmd += f"""\\
     -enzdes:cstfile                           {self.FOLDER_INPUT}/{self.CST_NAME}.cst \\
-    -enzdes:cst_opt                           true \\
+    -enzdes:cst_opt                           true """
+    cmd += f"""\\
     -parser:protocol                          {self.FOLDER_HOME}/{index}/scripts/RosettaDesign_{index}.xml \\
     -out:file:scorefile                       {self.FOLDER_HOME}/{index}/score_RosettaDesign.sc \\
     -nstruct                                  1  \\
-    -ignore_zero_occupancy                    false  \\
+    -ignore_zero_occupancy                    false \\
     -corrections::beta_nov16                  true \\
     -overwrite {ex}
 
@@ -100,10 +104,10 @@ mv {self.FOLDER_HOME}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
 """
     
     # Add residue number constraints from REMARK (via all_scores_df['cat_resi'])
-    cat_resis = str(self.all_scores_df.at[index, 'cat_resi']).split(';')
-    for idx, cat_resi in enumerate(cat_resis): 
-        
-        RosettaDesign_xml += f"""
+    if self.CST_NAME is not None:
+        cat_resis = str(self.all_scores_df.at[index, 'cat_resi']).split(';')
+        for idx, cat_resi in enumerate(cat_resis): 
+            RosettaDesign_xml += f"""
         <Index                    name="sel_cat_{idx}"
                                   resnums="{int(float(cat_resi))}" />
 """
@@ -121,23 +125,29 @@ mv {self.FOLDER_HOME}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
 """
     
     # Add residue identity constraints from constraint file
-    with open(f'{self.FOLDER_HOME}/cst.dat', 'r') as f: cat_resns = f.read()
-    cat_resns = cat_resns.split(";")
+    if self.CST_NAME is not None:
+
+        with open(f'{self.FOLDER_HOME}/cst.dat', 'r') as f:
+            cat_resns = f.read()
+        cat_resns = cat_resns.split(";")
     
-    for idx, cat_resn in enumerate(cat_resns): 
-        RosettaDesign_xml += f"""
+        for idx, cat_resn in enumerate(cat_resns): 
+            RosettaDesign_xml += f"""
         <OperateOnResidueSubset   name="tsk_cat_{idx}"                   selector="sel_cat_{idx}" >
                                   <RestrictAbsentCanonicalAASRLT         aas="{cat_resn}" />
         </OperateOnResidueSubset>
 """
-    
-    tsk_cat = []
-    for idx, cat_res in enumerate(cat_resns): 
-        tsk_cat += [f"tsk_cat_{idx}"]
-    tsk_cat = ",".join(tsk_cat)
+
+    # Generate list of tsk_cat
+    if self.CST_NAME is not None:
+        tsk_cat = []
+        for idx, cat_res in enumerate(cat_resns): 
+            tsk_cat += [f"tsk_cat_{idx}"]
+        tsk_cat = f",{','.join(tsk_cat)}"
+    else:
+        tsk_cat = ''
         
     RosettaDesign_xml += f"""
-       
        
         <OperateOnResidueSubset   name="tsk_nothing"                     selector="sel_nothing" >
                                   <PreventRepackingRLT />
@@ -164,35 +174,38 @@ mv {self.FOLDER_HOME}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
                                   weight="{self.CST_WEIGHT}"
                                   use_native="true"
                                   matrix="IDENTITY"
-                                  scorefxns="score" />  
+                                  scorefxns="score" /> 
+"""
+    if self.CST_NAME is not None:
+        RosettaDesign_xml += f"""
+        <AddOrRemoveMatchCsts     name="mv_add_cst"
+                                  cst_instruction="add_new"
+                                  cstfile="{self.FOLDER_INPUT}/{self.CST_NAME}.cst" />
 
         <EnzRepackMinimize        name="mv_cst_opt"
                                   scorefxn_repack="score"
                                   scorefxn_minimize="score_final"
                                   cst_opt="true"
-                                  task_operations="tsk_design,tsk_nothing,{tsk_cat}" />
-                               
-        <AddOrRemoveMatchCsts     name="mv_add_cst"
-                                  cst_instruction="add_new"
-                                  cstfile="{self.FOLDER_INPUT}/{self.CST_NAME}.cst" />
-
+                                  task_operations="tsk_design,tsk_nothing{tsk_cat}" />
+"""
+    RosettaDesign_xml += f"""
         <FastDesign               name                   = "mv_design"
                                   disable_design         = "false"
-                                  task_operations        = "tsk_design,tsk_nothing,{tsk_cat}"
+                                  task_operations        = "tsk_design,tsk_nothing{tsk_cat}"
                                   repeats                = "{repeats}"
                                   ramp_down_constraints  = "false"
                                   scorefxn               = "score" />
         
         <FastDesign               name                   = "mv_design_no_native"
                                   disable_design         = "false"
-                                  task_operations        = "tsk_design,tsk_nothing,{tsk_cat}"
+                                  task_operations        = "tsk_design,tsk_nothing{tsk_cat}"
                                   repeats                = "1"
                                   ramp_down_constraints  = "false"
                                   scorefxn               = "score" />
                                   
         <FastRelax                name                   = "mv_relax"
                                   disable_design         = "true"
-                                  task_operations        = "tsk_design,tsk_nothing,{tsk_cat}"
+                                  task_operations        = "tsk_design,tsk_nothing{tsk_cat}"
                                   repeats                = "1"
                                   ramp_down_constraints  = "false"
                                   scorefxn               = "score_unconst" />  
@@ -203,9 +216,12 @@ mv {self.FOLDER_HOME}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
                                  
     </MOVERS>
 
-    <PROTOCOLS>
+    <PROTOCOLS>"""
+    if self.CST_NAME is not None:
+        RosettaDesign_xml += f"""
         <Add mover_name="mv_add_cst" />
-        <Add mover_name="mv_cst_opt" />
+        <Add mover_name="mv_cst_opt" />"""
+    RosettaDesign_xml += f"""
         <Add mover_name="mv_native" />
         <Add mover_name="mv_design" />
         <Add mover_name="mv_relax" />

@@ -79,8 +79,9 @@ def prepare_RosettaRelax(self,
 """
     
     # Add constraint if run is not used as PreMatchRelax
-    if not PreMatchRelax: RosettaRelax_xml += f"""
-        <AddOrRemoveMatchCsts     name="mv_add_cst" 
+    if self.CST_NAME is not None:
+        if not PreMatchRelax: RosettaRelax_xml += f"""
+            <AddOrRemoveMatchCsts     name="mv_add_cst" 
                                   cst_instruction="add_new" 
                                   cstfile="{self.FOLDER_INPUT}/{self.CST_NAME}.cst" />
 
@@ -99,7 +100,8 @@ def prepare_RosettaRelax(self,
 """
     
     # Add constraint if run is not used as PreMatchRelax
-    if not PreMatchRelax: RosettaRelax_xml += f"""                                  
+    if self.CST_NAME is not None:
+        if not PreMatchRelax: RosettaRelax_xml += f"""                                  
         <Add mover_name="mv_add_cst" />       
         <Add mover_name="mv_inter" />
 """
@@ -124,13 +126,16 @@ cat {PDBfile_in}.pdb > {working_dir_path}_input.pdb
 # Run Rosetta Relax
 {self.ROSETTA_PATH}/bin/rosetta_scripts.{self.rosetta_ext} \\
     -s                                        {working_dir_path}_input.pdb \\
-    -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params \\
     -parser:protocol                          {filename}/scripts/RosettaRelax_{index}.xml \\
     -out:file:scorefile                       {filename}/score_RosettaRelax.sc \\
     -nstruct                                  1 \\
     -ignore_zero_occupancy                    false \\
     -corrections::beta_nov16                  true \\
-    -run:preserve_header                      true \\
+    -run:preserve_header                      true \\"""
+    if self.LIGAND not in ['HEM']:
+        cmd += f"""\\
+    -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params """
+    cmd += f"""\\    
     -overwrite {ex}
 
 # Rename the output file

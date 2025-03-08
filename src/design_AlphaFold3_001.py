@@ -72,7 +72,7 @@ def prepare_AlphaFold3_MSA(self,
     working_dir = f"{working_dir}/AlphaFold3"
 
     # Create json from sequence
-    seq_to_json(self, seq_input, f"{filename}/AlphaFold3/{self.WT}_{index}")
+    seq_to_json(self, seq_input, f"{working_dir}/{self.WT}_{index}")
     
     cmd += f"""### AlphaFold3_MSA ###
 
@@ -84,7 +84,7 @@ module load alphafold/3.0.1
 # AlphaFold3 specific variables
 AF3_USER_DIR=${{HOME}}/bin/alphafold_3_0_1
 AF3_MODEL_DIR=${{AF3_USER_DIR}}/model
-AF3_JAX_CACHE_DIR={filename}/AlphaFold3/jaxcache
+AF3_JAX_CACHE_DIR={working_dir}/jaxcache
 
 # Model specific variables
 AF3_MSA_OUTPUT_DIR={working_dir}/MSA
@@ -166,7 +166,7 @@ apptainer --quiet exec --bind /u:/u,/ptmp:/ptmp,/raven:/raven --nv \
     --norun_data_pipeline
 
 {self.bash_args}python {self.FOLDER_PARENT}/cif_to_pdb.py \
---cif_file {filename}/AlphaFold3/INF/{self.WT}/{self.WT}/{self.WT}_model.cif \
---pdb_file {filename}/{self.WT}_AlphaFold3INF_{index}.pdb
+--cif_file {working_dir}/INF/{self.WT}/{self.WT}/{self.WT}_model.cif \
+--pdb_file {working_dir}/../{self.WT}_AlphaFold3INF_{index}.pdb
 """
     return cmd
