@@ -94,7 +94,7 @@ def select_scheduled_variant(self):
        
         if any(value is None for value in self.gpus.values()): # Check if there is a free GPU
             
-            for index, row in self.all_scores_df.iloc[::-1].iterrows():
+            for index, row in self.all_scores_df.iterrows():
                 if pd.isna(row['next_steps']) or row['next_steps'] == "": continue
                 if row['blocked'] != 'unblocked': continue  
                 if row['next_steps'].split(',')[0] not in self.SYS_GPU_METHODS: continue
@@ -102,7 +102,7 @@ def select_scheduled_variant(self):
                 return index
          
     # Iterate through dataframe to see if any variant is scheduled for calculation
-    for index, row in self.all_scores_df.iloc[::-1].iterrows():
+    for index, row in self.all_scores_df.iterrows():
         if pd.isna(row['next_steps']) or row['next_steps'] == "": continue        
         if row['blocked'] != 'unblocked': continue        
         if row['next_steps'].split(',')[0] in self.SYS_GPU_METHODS: continue    
@@ -214,9 +214,15 @@ def update_scores(self):
                 if os.path.isfile(f"{self.FOLDER_HOME}/{int(index)}/ElectricFields/{self.WT}_{score_type}_{index}_fields.pkl"):
                     self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")
+                    
+            # Unblock indices for Alphafold3MSA
+            if self.all_scores_df.at[int(index), "blocked"] == 'AlphaFold3MSA':
+                if os.path.isfile(f"{self.FOLDER_HOME}/{int(index)}/AlphaFold3/MSA/{self.WT}/{self.WT}_data.json"):
+                    self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
+                    logging.debug(f"Unblocked {score_type} index {int(index)}.")
 
             # Unblock indices for MPNN:
-            if self.all_scores_df.at[int(index), "blocked"] in ['ProteinMPNN','LigandMPNN']:
+            if self.all_scores_df.at[int(index), "blocked"] in ['ProteinMPNN','LigandMPNN','SolubleMPNN']:
                 if os.path.isfile(f"{self.FOLDER_HOME}/{index}/{self.WT}_{index}.seq"):
                     self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")
@@ -240,28 +246,30 @@ def update_scores(self):
 
             self.all_scores_df['sequence'] = self.all_scores_df['sequence'].astype('object')
             self.all_scores_df.at[index, 'sequence']  = current_sequence
+            self.all_scores_df.at[index, 'active_site_res']  = ''.join(current_sequence[int(pos)] for pos in self.DESIGN.split(','))
             self.all_scores_df.at[index, 'total_mutations'] = count_mutations(reference_sequence, current_sequence)
             self.all_scores_df.at[index, 'parent_mutations'] = count_mutations(parent_sequence, current_sequence)
         
             # Update catalytic residue identity
-            cat_resns = []
-            for cat_resi in str(self.all_scores_df.at[index, 'cat_resi']).split(";"): 
-                cat_resns += [one_to_three_letter_aa(current_sequence[int(float(cat_resi))-1])]
-            self.all_scores_df['cat_resn'] = self.all_scores_df['cat_resn'].astype(str)
-            self.all_scores_df.at[index, 'cat_resn'] = ";".join(cat_resns)
+            if self.CST_NAME != None:
+                cat_resns = []
+                for cat_resi in str(self.all_scores_df.at[index, 'cat_resi']).split(";"): 
+                    cat_resns += [one_to_three_letter_aa(current_sequence[int(float(cat_resi))-1])]
+                self.all_scores_df['cat_resn'] = self.all_scores_df['cat_resn'].astype(str)
+                self.all_scores_df.at[index, 'cat_resn'] = ";".join(cat_resns)
                     
         # Update identical score and potential
-        # (done every time at the moment -- might be better to only do this if scores are updated)
         identical_score = 0.0
-        if "identical" in self.SELECTED_SCORES:        
-            sequence = self.all_scores_df.at[index, 'sequence']
-            parent_index = self.all_scores_df.at[index, 'parent_index'] 
-            if pd.notna(sequence):
-                if parent_index == 'Parent':
+        if "identical" in self.SELECTED_SCORES:
+            central_res = self.all_scores_df.at[index, 'central_res']
+            parent_index = self.all_scores_df.at[index, 'parent_index']
+            if pd.notna(central_res):
+                if parent_index == 'Parent': # If it's a parent, set identical score to 1
                     identical_score = 1.0 
                 else:
-                    identical_count = (self.all_scores_df['sequence'] == sequence).sum()
+                    identical_count = (self.all_scores_df['active_site_res'] == central_res).sum()
                     identical_score = 1 / identical_count if identical_count > 0 else 0.0
+
         self.all_scores_df.at[index, 'identical_score'] = identical_score
         self.all_scores_df.at[index, 'identical_potential'] = identical_score
 
@@ -479,7 +487,7 @@ def schedule_design_method(self, parent_index):
         final_structure_method = [i for i in design_methods if i in self.SYS_STRUCT_METHODS][-1]
         design_method = [i for i in design_methods if i in self.SYS_DESIGN_METHODS][0]
 
-        # Make new index
+        # Make new index 
         new_index = create_new_index(self, 
                                      parent_index  = parent_index, 
                                      luca          = self.all_scores_df.at[parent_index, 'luca'],
@@ -507,16 +515,16 @@ def start_calculation(self, selected_index: int):
     
     self.all_scores_df.at[selected_index, "next_steps"] = ",".join(next_steps[1:])
     self.all_scores_df.at[selected_index, "blocked"] = next_steps[0]
-    
+
+    logging.debug(f"Starting calculation based on {self.all_scores_df.at[selected_index, 'step_input_variant']}")
     if next_steps[0] in self.SYS_STRUCT_METHODS:
-        
-        self.all_scores_df["step_input_variant"] = self.all_scores_df["step_input_variant"].astype(str)
+        logging.debug(f"Resulting in variant {self.all_scores_df.at[selected_index, 'step_output_variant']}")
+    
+    run_design(self, selected_index, [next_steps[0]])
+
+    if next_steps[0] in self.SYS_STRUCT_METHODS:
         self.all_scores_df.at[selected_index, "step_input_variant"] = self.all_scores_df.at[selected_index, "step_output_variant"]
-        
         step_output_variant = f'{self.FOLDER_HOME}/{selected_index}/{self.WT}_{next_steps[0]}_{selected_index}'
-        self.all_scores_df["step_output_variant"] = self.all_scores_df["step_output_variant"].astype(str)
         self.all_scores_df.at[selected_index, "step_output_variant"] = step_output_variant
     
     save_all_scores_df(self)
-    
-    run_design(self, selected_index, [next_steps[0]])

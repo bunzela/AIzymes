@@ -16,86 +16,59 @@ def set_system(self):
     
     if self.SYSTEM == 'GRID':       
         
-        self.rosetta_ext       = "linuxgccrelease"
-        self.bash_args         = ""
-        self.ROSETTA_PATH      = "/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/"
-        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
-        self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
-        self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
+        self.rosetta_ext          = "linuxgccrelease"
+        self.bash_args            = ""
+        self.ROSETTA_PATH         = "/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/"
+        self.FIELD_TOOLS          = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
+        self.FOLDER_ProteinMPNN   = f'{os.path.expanduser("~")}/ProteinMPNN'
+        self.FOLDER_ProteinMPNN_h = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
             
     elif self.SYSTEM == 'GRID_parallel':       
         
-        self.rosetta_ext       = "linuxgccrelease"
-        self.bash_args         = ""
-        self.ROSETTA_PATH      = "/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/"
-        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
-        self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
-        self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
+        self.rosetta_ext          = "linuxgccrelease"
+        self.bash_args            = ""
+        self.ROSETTA_PATH         = "/home/bunzelh/rosetta_src_2021.16.61629_bundle/main/source/"
+        self.FIELD_TOOLS          = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
+        self.FOLDER_ProteinMPNN   = f'{os.path.expanduser("~")}/ProteinMPNN'
+        self.FOLDER_ProteinMPNN_h = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
         
     elif self.SYSTEM == 'SCC':       
         
-        self.rosetta_ext       = "linuxgccrelease"
-        self.bash_args         = ""
-        self.ROSETTA_PATH      = "/scratch-scc/projects/scc_mmtm_bunzel/rosetta.source.release-371/main/source/"
-        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
-        self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
-        self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'  
+        self.rosetta_ext          = "linuxgccrelease"
+        self.bash_args            = ""
+        self.ROSETTA_PATH         = "/scratch-scc/projects/scc_mmtm_bunzel/rosetta.source.release-371/main/source/"
+        self.FIELD_TOOLS          = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
+        self.FOLDER_ProteinMPNN   = f'{os.path.expanduser("~")}/ProteinMPNN'
+        self.FOLDER_ProteinMPNN_h = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'  
         
     elif self.SYSTEM == 'RAVEN':       
         
-        self.rosetta_ext       = "linuxgccrelease"
-        self.bash_args         = ""
-        self.ROSETTA_PATH      = f"/u/{getpass.getuser()}/bin/rosetta.source.release-371/main/source/"
-        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
-        self.FOLDER_PMPNN      = f'/u/{getpass.getuser()}/bin/ProteinMPNN'
-        self.FOLDER_PMPNN_h    = f'/u/{getpass.getuser()}/bin/ProteinMPNN/helper_scripts'
-        
-    elif self.SYSTEM == 'EULER':     
-        
-        self.rosetta_ext       = "serialization.linuxgccrelease"
-        self.bash_args         = ""
-        self.ROSETTA_PATH      = "ERROR! NOT YET CONFIGURED"
-        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
-        self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
-        self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
-        
+        self.rosetta_ext          = "linuxgccrelease"
+        self.bash_args            = ""
+        self.ROSETTA_PATH         = f"/u/{getpass.getuser()}/bin/rosetta.source.release-371/main/source/"
+        self.FIELD_TOOLS          = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
+        self.FOLDER_ProteinMPNN   = f'/u/{getpass.getuser()}/bin/ProteinMPNN'
+        self.FOLDER_ProteinMPNN_h = f'/u/{getpass.getuser()}/bin/ProteinMPNN/helper_scripts'
+                
     elif self.SYSTEM == 'BLUEPEBBLE':     
         
-        self.rosetta_ext       = "linuxgccrelease"
-        self.bash_args         = ""
-        self.ROSETTA_PATH      = "/user/work/qz22231/rosetta.source.release-371/main/source"
-        self.FIELD_TOOLS       = "/user/work/qz22231/AIzymes/AIzymes_git/AIzymes/src/FieldTools.py" #'../../../src/FieldTools.py'
-        self.FOLDER_PMPNN      = "/user/work/qz22231/ProteinMPNN"
-        self.FOLDER_PMPNN_h    = "/user/work/qz22231/ProteinMPNN/helper_scripts"
-        self.BLUEPEBBLE_ACCOUNT= "ptch000721"
-        
-    elif self.SYSTEM == 'BACKGROUND_JOB': 
-        
-        self.rosetta_ext       = "serialization.linuxgccrelease"
-        self.bash_args         = ""
-        self.ROSETTA_PATH      = "ERROR! NOT YET CONFIGURED"
-        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}../../../src/FieldTools.py'
-        self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
-        self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
-        
+        self.rosetta_ext          = "linuxgccrelease"
+        self.bash_args            = ""
+        self.ROSETTA_PATH         = "/user/work/qz22231/rosetta.source.release-371/main/source"
+        self.FIELD_TOOLS          = "/user/work/qz22231/AIzymes/AIzymes_git/AIzymes/src/FieldTools.py" #'../../../src/FieldTools.py'
+        self.FOLDER_ProteinMPNN   = "/user/work/qz22231/ProteinMPNN"
+        self.FOLDER_ProteinMPNN_h = "/user/work/qz22231/ProteinMPNN/helper_scripts"
+        self.BLUEPEBBLE_ACCOUNT   = "ptch000721"
+                
     elif self.SYSTEM == 'ABBIE_LOCAL':    
         
-        self.rosetta_ext       = "linuxgccrelease"
-        self.bash_args         = "OMP_NUM_THREADS=1 "
-        self.ROSETTA_PATH      = "ERROR! NOT YET CONFIGURED"
-        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
-        self.SUBMIT_HEAD       = ""
-        self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
-        self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
-        
-    elif self.SYSTEM == 'CSCS_PARALLEL_INTERACTIVE':    
-        
-        self.rosetta_ext       = "linuxgccrelease"
-        self.bash_args         = "OMP_NUM_THREADS=1 "
-        self.ROSETTA_PATH      = "/users/abunzel/rosetta.source.release-371/main/source"
-        self.FIELD_TOOLS       = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
-        self.FOLDER_PMPNN      = f'{os.path.expanduser("~")}/ProteinMPNN'
-        self.FOLDER_PMPNN_h    = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
+        self.rosetta_ext          = "linuxgccrelease"
+        self.bash_args            = "OMP_NUM_THREADS=1 "
+        self.ROSETTA_PATH         = "ERROR! NOT YET CONFIGURED"
+        self.FIELD_TOOLS          = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
+        self.SUBMIT_HEAD          = ""
+        self.FOLDER_ProteinMPNN   = f'{os.path.expanduser("~")}/ProteinMPNN'
+        self.FOLDER_ProteinMPNN_h = f'{os.path.expanduser("~")}/ProteinMPNN/helper_scripts'
         
     else:
 

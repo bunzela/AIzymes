@@ -90,7 +90,7 @@ def normalize_scores(self,
 
     # Normalize and stack normalized scores in combined_scores
     scores = {}
-    for score_type in ["total","catalytic","interface","efield", "identical"]:  
+    for score_type in self.SELECTED_SCORES:  
         scores[score_type] = unblocked_all_scores_df[f"{score_type}_{extension}"].to_numpy(dtype=np.float64)
         if score_type in ["efield", "identical"]: 
             scores[score_type] = -scores[score_type] # Adjust scale so that more negative is better for all score types
@@ -258,7 +258,9 @@ bash {self.FOLDER_HOME}/{index}/scripts/{job}_{index}.sh
         # Bash submission script parallel in background
         out_file = open(f"{self.FOLDER_HOME}/{index}/scripts/{job}_{index}.out", "w")
         err_file = open(f"{self.FOLDER_HOME}/{index}/scripts/{job}_{index}.err", "w")
-        process = subprocess.Popen(f'source ~/.bashrc && bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', 
+
+        # BACKUP f'source ~/.bashrc && bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh' 
+        process = subprocess.Popen(f'bash -l -c "bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh"', 
                                    shell=True, 
                                    stdout=out_file, 
                                    stderr=err_file)
@@ -736,8 +738,7 @@ def create_new_index(self,
                      input_variant: str,
                      next_steps: str,
                      final_method: str,
-                     design_method: str,
-                     step_output_variant = None):
+                     design_method: str):
       
     """
     The create_new_index function is responsible for generating a new index.
@@ -779,8 +780,16 @@ def create_new_index(self,
 
     final_variant = f'{self.FOLDER_HOME}/{new_index}/{self.WT}_{final_method}_{new_index}',
 
+    step_input_variant = input_variant
+    
+    step_output_variant = None
+    for next_step in next_steps.split(","):
+        if next_step in self.SYS_STRUCT_METHODS:
+            step_output_variant = f'{self.FOLDER_HOME}/{new_index}/{self.WT}_{next_step}_{new_index}'
+            break
     if step_output_variant == None:
-        step_output_variant = f'{self.FOLDER_HOME}/{new_index}/{self.WT}_{design_method.split(",")[0]}_{new_index}'
+        logging.error(f"ERROR! New design at index {new_index} initated, but next_steps: {next_steps} does not prodce any output structure!")
+        sys.exit()   
         
     # Creates a new dataframe with all the necessary columns for the new index, concatenes it with the existing all_scores dataframe and saves it
     new_index_df = pd.DataFrame({
@@ -793,6 +802,7 @@ def create_new_index(self,
         'design_method': design_method,
         'next_steps': next_steps,
         'input_variant': input_variant,
+        'step_input_variant': step_input_variant,
         'step_output_variant': step_output_variant,
         'final_variant': final_variant,
     }, index = [0] , dtype=object)  

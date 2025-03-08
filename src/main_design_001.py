@@ -19,13 +19,13 @@ import sys
 from helper_002               import *
 
 from design_match_001         import *
-from design_ProteinMPNN_001   import *
-from design_LigandMPNN_001    import *
+from design_MPNN_001          import *
 from design_RosettaDesign_001 import *
 from design_ESMfold_001       import *
 from design_RosettaRelax_001  import *
 from scoring_efields_001      import *   
-from design_MDMin_001         import *      
+from design_MDMin_001         import *  
+from design_AlphaFold3_001    import *      
 
 
 def get_ram(design_steps):
@@ -35,6 +35,14 @@ def get_ram(design_steps):
     for design_step in design_steps:
         
         if design_step == "ProteinMPNN":
+            new_ram = 20
+        elif design_step == "SolubleMPNN":
+            new_ram = 20
+        elif design_step == "LigandMPNN":
+            new_ram = 20
+        elif design_step == "AlphaFold3MSA":
+            new_ram = 20
+        elif design_step == "AlphaFold3INF":
             new_ram = 20
         elif design_step == "RosettaDesign":
             new_ram = 10
@@ -82,11 +90,27 @@ def run_design(self,
                     logging.error(f"Failed to assign a GPU for {design_step} {index}. GPUs: {self.gpus}. Error in main_design.py")
                     sys.exit()    
 
-                logging.debug(f"XXXXXXXXXXXXXXXXX {design_step} {index} {gpu_id} {self.gpus} main_design.py")
+                logging.debug(f"Assigned GPU for step: {design_step} {index} {gpu_id} {self.gpus}.")
 
         if design_step == "ProteinMPNN":
             cmd = prepare_ProteinMPNN(self, index, cmd)
             logging.info(f"Run ProteinMPNN for index {index}.")
+        
+        elif design_step == "SolubleMPNN":
+            cmd = prepare_SolubleMPNN(self, index, cmd)
+            logging.info(f"Run SolubleMPNN for index {index}.")
+
+        elif design_step == "LigandMPNN":
+            cmd = prepare_LigandMPNN(self, index, cmd)
+            logging.info(f"Run LigandMPNN for index {index}.")
+        
+        elif design_step == "AlphaFold3MSA":
+            cmd = prepare_AlphaFold3_MSA(self, index, cmd)
+            logging.info(f"Run AlphaFold3MSA for index {index}.")
+
+        elif design_step == "AlphaFold3INF":
+            cmd = prepare_AlphaFold3_INF(self, index, cmd)
+            logging.info(f"Run AlphaFold3INF for index {index}.")
             
         elif design_step == "RosettaDesign":
             cmd = prepare_RosettaDesign(self, index, cmd)
@@ -109,7 +133,7 @@ def run_design(self,
             logging.info(f"Calculating ElectricFields for index {index}.")
             
         else:
-            logging.error(f"{design_step} is not defined!")
+            logging.error(f"{design_step} is not defined! Error in main_design.py")
             sys.exit()
                  
     # Write the shell command to a file and submit job                

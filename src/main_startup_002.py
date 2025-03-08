@@ -80,6 +80,8 @@ AIzymes.controller()
 """
         cmd += f"""#SBATCH --output={self.FOLDER_HOME}/controller.log
 #SBATCH --error={self.FOLDER_HOME}/controller.log
+
+export CLUSTER="RAVEN"
 """     
 
     else: 
@@ -187,12 +189,13 @@ def prepare_input_files(self):
         f.writelines(seq)    
     
     # Get the Constraint Residues from enzdes constraints file
-    with open(f'{self.FOLDER_INPUT}/{self.CST_NAME}.cst', 'r') as f:
-        cst = f.readlines()    
-    cst = [i.split()[-1] for i in cst if "TEMPLATE::   ATOM_MAP: 2 res" in i]
-    cst = ";".join(cst)
-    with open(f'{self.FOLDER_HOME}/cst.dat', 'w') as f:
-        f.write(cst)    
+    if self.CST_NAME != None:
+        with open(f'{self.FOLDER_INPUT}/{self.CST_NAME}.cst', 'r') as f:
+            cst = f.readlines()    
+        cst = [i.split()[-1] for i in cst if "TEMPLATE::   ATOM_MAP: 2 res" in i]
+        cst = ";".join(cst)
+        with open(f'{self.FOLDER_HOME}/cst.dat', 'w') as f:
+            f.write(cst)    
 
     # Save FIELD_TARGET
     seq = sequence_from_pdb(f"{self.FOLDER_PARENT}/{self.WT}")
@@ -324,8 +327,10 @@ def make_empty_all_scores_df(self):
     '''
     
     columns = ['sequence', 'parent_index', 'generation', 'total_mutations', 'parent_mutations', 'score_taken_from',
-               'design_method', 'blocked', 'cat_resi', 'cat_resn', 'next_steps', 'final_variant', 'input_variant',
+               'design_method', 'blocked', 'next_steps', 'final_variant', 'input_variant',
                'step_input_variant', 'step_output_variant']
+    if self.CST_NAME is not None:
+        columns.extend(['cat_resi', 'cat_resn'])
     for score in self.SELECTED_SCORES:
         columns.append(f'{score}_potential')
         columns.append(f'{score}_score')
@@ -350,7 +355,6 @@ def schedlue_parent_design(self):
                                          parent_index        = "Parent", 
                                          luca                = f'{self.FOLDER_PARENT}/{parent_structures[selected_index][:-4]}',
                                          input_variant       = f'{self.FOLDER_PARENT}/{parent_structures[selected_index][:-4]}',
-                                         step_output_variant = f'{self.FOLDER_PARENT}/{parent_structures[selected_index][:-4]}',
                                          final_method        = final_structure_method,
                                          next_steps          = ",".join(self.PARENT_DES_MED), 
                                          design_method       = design_method)    

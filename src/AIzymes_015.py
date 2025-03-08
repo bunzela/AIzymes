@@ -26,7 +26,7 @@ Functions:
     
 from main_running_003         import *
 from main_startup_002         import *
-from plotting_001             import *
+from plotting_002             import *
 from helper_002               import *
 
 # Imports used elsewhere --------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ class AIzymes_MAIN:
         """
         return
 
-    def setup(self, FOLDER_HOME, FOLDER_PARENT, CST_NAME, WT, LIGAND, DESIGN,
+    def setup(self, FOLDER_HOME, FOLDER_PARENT, WT, LIGAND, DESIGN,
 
               # General Job Settings
               MAX_JOBS            = 100, 
@@ -83,19 +83,22 @@ class AIzymes_MAIN:
               
               # RosettaDesign Settings
               CST_WEIGHT          = 1.0, 
-
+              CST_NAME            = None,
+              
               # ProteinMPNN Settings
-              ProteinMPNN_PROB    = 0.0, 
               ProteinMPNN_BIAS    = 0.5, 
               ProteinMPNN_T       = "0.1", 
 
               # LigandMPNN Settings
-              LigandMPNN_PROB     = 0.0,  
               LigandMPNN_BIAS     = 0.5, 
               LigandMPNN_T        = "0.1", 
+              
+              # SolubleMPNN Settings
+              SolubleMPNN_BIAS    = 0.5, 
+              SolubleMPNN_T       = "0.1", 
 
               # FieldTools Settings
-              FIELD_TARGET        = ":5TS@C9 :5TS@H04",
+              FIELD_TARGET        = None,
               FIELDS_EXCL_CAT     = True,
 
               # RosettaMatch Settings
@@ -103,11 +106,11 @@ class AIzymes_MAIN:
 
               # Established Modules list
               # All Methods that redesign a sequence
-              SYS_DESIGN_METHODS  = ["RosettaDesign","ProteinMPNN","LigandMPNN"],
+              SYS_DESIGN_METHODS  = ["RosettaDesign","ProteinMPNN","LigandMPNN","SolubleMPNN"],
               # All Methods that create a structure
-              SYS_STRUCT_METHODS  = ["RosettaDesign","MDMin","ESMfold","RosettaRelax"], 
+              SYS_STRUCT_METHODS  = ["RosettaDesign","MDMin","ESMfold","RosettaRelax",'AlphaFold3INF'], 
               # All Methods that require GPUs
-              SYS_GPU_METHODS     = ["ESMfold"],
+              SYS_GPU_METHODS     = ["ESMfold",'AlphaFold3INF'],
               ):
         """
         Sets up the AIzymes project environment with specified parameters.
