@@ -1,41 +1,114 @@
-
 """
 Manages all MPNN methods for protein design
 
-This function assumes the ProteinMPNN toolkit is available and properly set up in the specified location.
-It involves multiple subprocess calls to Python scripts for processing protein structures and generating new sequences.
-
 Functions:
-    prepare_ProteinMPNN: Sets up commands for ProteinMPNN job submission.
+    prepare_ProteinMPNN(self, index, cmd): Prepares commands for ProteinMPNN job submission.
+    prepare_SolubleMPNN(self, index, cmd): Prepares commands for SolubleMPNN job submission.
+    prepare_LigandMPNN(self, index, cmd): Prepares commands for LigandMPNN job submission.
+    make_bias_dict(self, PDB_input, folder_mpnn): Creates and writes a bias dictionary for MPNN based on an input PDB.
+    ProteinMPNN_check(self): Checks that ProteinMPNN is installed.
+    LigandMPNN_check(self): Checks that LigandMPNN is installed.
 
 Modules Required:
-    helper_001
+    helper_002
 """
 import os
 import logging
-import shutil
 import json
 import numpy as np
-from pandas import DataFrame  
-import re
+import sys
 
-from helper_002               import *
+from helper_002               import sequence_from_pdb
+
+def prepare_LigandMPNN(self, 
+                       index, 
+                       cmd,
+                       gpu_id = None):
+    """
+    Uses LigandMPNN to redesign the input structure with index.
+
+    Args:
+        index (str): The index of the designed variant.
+        cmd (str): Growing list of commands to be exected by run_design using submit_job.
+
+    Returns:
+        cmd (str): Command to be exected by run_design using submit_job
+    """
     
-def prepare_ProteinMPNN(self, index, cmd):
+    LigandMPNN_check(self)
+        
+    folder_ligandmpnn = f"{self.FOLDER_DESIGN}/{index}/LigandMPNN"
+    os.makedirs(folder_ligandmpnn, exist_ok=True)
+    
+    PDB_input = self.all_scores_df.at[int(index), "step_input_variant"]
+    if "parent" in PDB_input:
+        seq_input = PDB_input
+    else:
+        seq_input = "_".join(PDB_input.split("_")[:-2]+PDB_input.split("_")[-1:])
+        
+    make_bias_dict(self, PDB_input, folder_ligandmpnn)
+
+    cmd = f"""### LigandMPNN ###
+"""
+
+    if  gpu_id != None:
+        cmd += f"""
+export CUDA_VISIBLE_DEVICES={gpu_id}
+"""
+        
+    cmd += f"""    
+# Copy input PDB
+cp {PDB_input}.pdb {folder_ligandmpnn}
+
+echo 'XXXXXXXXXXXXXXXXXXXXXX Extract catalytic residue information -- TO DO!!!! FIX RESIDUES!!!'
+
+# Extract catalytic residue information -- TO DO!!!! FIX RESIDUES!!!
+# cat_resi = int(all_scores_df.at[parent_index, 'cat_resi'])
+fixed_residues = f"A1"
+
+echo 'XXXXXXXXXXXXXXXXXXXXXX ADD --use_soluble_model TAG???'
+echo 'XXXXXXXXXXXXXXXXXXXXXX ADD --bias_by_res_jsonl {os.path.join(folder_solublempnn, 'bias_by_res.jsonl')}'
+
+# Run LigandMPNN
+{self.bash_args} python {os.path.join(self.FOLDER_LigandMPNN, 'run.py')} \
+--model_type ligand_mpnn \
+--temperature {self.LigandMPNN_T} \
+--seed 37 \
+--pdb_path os.path.join(ligand_mpnn_folder, f"{WT}_Rosetta_Relax_{parent_index}.pdb"),
+--out_folder {folder_ligandmpnn} \
+--pack_side_chains 1 \
+--number_of_packs_per_design 100 \
+--fixed_residues fixed_residues
+
+# Find highest scoring sequence
+{self.bash_args} python {os.path.join(self.FOLDER_PARENT, 'find_highest_scoring_sequence.py')} \
+--sequence_wildcard {self.FOLDER_HOME}/{self.WT}_with_X_as_wildecard.seq \
+--sequence_parent   {seq_input}.seq \
+--sequence_in       {folder_ligandmpnn}/seqs/{os.path.splitext(os.path.basename(PDB_input))[0]}.fa \
+--sequence_out      {self.WT}_{index}.seq 
+
+"""                              
+    
+    return(cmd)
+    
+def prepare_ProteinMPNN(self,
+                        index, 
+                        cmd,
+                        gpu_id = None):
     """
     Uses ProteinMPNN to redesign the input structure with index.
 
     Args:
-    index (str): The index of the designed variant.
-    cmd (str): Growing list of commands to be exected by run_design using submit_job.
+        index (str): The index of the designed variant.
+        cmd (str): Growing list of commands to be exected by run_design using submit_job.
 
     Returns:
-    cmd (str): Command to be exected by run_design using submit_job
+        cmd (str): Command to be exected by run_design using submit_job
     """
     
     ProteinMPNN_check(self)
         
-    folder_proteinmpnn = f"{self.FOLDER_HOME}/{index}/ProteinMPNN"
+    folder_proteinmpnn = f"{self.FOLDER_DESIGN}/{index}/ProteinMPNN"
     os.makedirs(folder_proteinmpnn, exist_ok=True)
     
     PDB_input = self.all_scores_df.at[int(index), "step_input_variant"]
@@ -47,7 +120,14 @@ def prepare_ProteinMPNN(self, index, cmd):
     make_bias_dict(self, PDB_input, folder_proteinmpnn)
 
     cmd = f"""### ProteinMPNN ###
-    
+"""
+
+    if  gpu_id != None:
+        cmd += f"""
+export CUDA_VISIBLE_DEVICES={gpu_id}
+"""
+        
+    cmd += f"""    
 # Copy input PDB
 cp {PDB_input}.pdb {folder_proteinmpnn}
 
@@ -92,21 +172,24 @@ cp {PDB_input}.pdb {folder_proteinmpnn}
     
     return(cmd)
 
-def prepare_SolubleMPNN(self, index, cmd):
+def prepare_SolubleMPNN(self, 
+                        index,
+                        cmd,
+                        gpu_id = None):
     """
     Uses SolubleMPNN to redesign the input structure with index.
 
     Args:
-    index (str): The index of the designed variant.
-    cmd (str): Growing list of commands to be exected by run_design using submit_job.
+        index (str): The index of the designed variant.
+        cmd (str): Growing list of commands to be exected by run_design using submit_job.
 
     Returns:
-    cmd (str): Command to be exected by run_design using submit_job
+        cmd (str): Command to be exected by run_design using submit_job
     """
     
     ProteinMPNN_check(self)
         
-    folder_solublempnn = f"{self.FOLDER_HOME}/{index}/SolubleMPNN"
+    folder_solublempnn = f"{self.FOLDER_DESIGN}/{index}/SolubleMPNN"
     os.makedirs(folder_solublempnn, exist_ok=True)
     
     PDB_input = self.all_scores_df.at[int(index), "step_input_variant"]
@@ -118,7 +201,14 @@ def prepare_SolubleMPNN(self, index, cmd):
     make_bias_dict(self, PDB_input, folder_solublempnn)
 
     cmd = f"""### SolubleMPNN ###
-    
+"""
+
+    if  gpu_id != None:
+        cmd += f"""
+export CUDA_VISIBLE_DEVICES={gpu_id}
+"""
+        
+    cmd += f"""    
 # Copy input PDB
 cp {PDB_input}.pdb {folder_solublempnn}
 
@@ -165,14 +255,20 @@ cp {PDB_input}.pdb {folder_solublempnn}
     return(cmd)
     
 def make_bias_dict(self, PDB_input, folder_mpnn):
+    """
+    Creates a bias dictionary for the input PDB and writes it to a JSON file.
     
+    Args:
+        PDB_input (str): Path to the input PDB file.
+        folder_mpnn (str): Folder where the bias JSON will be saved.
+    """    
     # Prepare input JSON for bias dictionary creation
     seq = sequence_from_pdb(PDB_input)
     input_json = {"name": f"{os.path.basename(PDB_input)}", "seq_chain_A": seq}
 
     # Create bias dictionary
     mpnn_alphabet = 'ACDEFGHIKLMNPQRSTVWYX'
-    mpnn_alphabet_dict = {aa: idx for idx, aa in enumerate(mpnn_alphabet)}
+    mpnn_alphabet_dict = {aa: residue for residue, aa in enumerate(mpnn_alphabet)}
     
     bias_dict = {}
     for chain_key, sequence in input_json.items():
@@ -183,16 +279,35 @@ def make_bias_dict(self, PDB_input, folder_mpnn):
 
             # Apply a positive bias for the amino acid at each position
             for idx, aa in enumerate(sequence):
-                if aa in mpnn_alphabet_dict:  # Ensure the amino acid is in the defined alphabet
-                    aa_index = mpnn_alphabet_dict[aa]
-                    if "Soluble" in folder_mpnn:
-                        bias_per_residue[idx, aa_index] = self.SolubleMPNN_BIAS 
-                    elif "Protein" in folder_mpnn:
-                        bias_per_residue[idx, aa_index] = self.ProteinMPNN_BIAS 
-                    else:
-                        logging.error(f"MPNN method not recognized make_bias_dict(), designMPNN.py.")
-                        sys.exit()
-                        
+
+                # Ensure the amino acid is in the defined alphabet
+                if aa not in mpnn_alphabet_dict:  
+                    logging.error(f"Non-standard amino acid {aa} at residue {idx} in make_bias_dict() / designMPNN.py.")
+                    sys.exit()
+                    
+                # Forbid cysteine
+                cysteine_index = mpnn_alphabet_dict['C']
+                bias_per_residue[idx, cysteine_index] = -1e6
+                
+                # Add biase to input sequence
+                aa_index = mpnn_alphabet_dict[aa]
+                if "Soluble" in folder_mpnn:
+                    bias_per_residue[idx, aa_index] = self.SolubleMPNN_BIAS 
+                elif "Protein" in folder_mpnn:
+                    bias_per_residue[idx, aa_index] = self.ProteinMPNN_BIAS 
+                else:
+                    logging.error(f"MPNN_BIAS not defined. Error in make_bias_dict() / designMPNN.py.")
+                    sys.exit()  
+                
+            # Restrict aminoacids for restricted set
+            if self.RESTRICT_RESIDUES is not None:
+                for idx, resns in self.RESTRICT_RESIDUES:
+                    for aa_index, aa in enumerate(mpnn_alphabet):
+                        if aa in resns:
+                            bias_per_residue[idx-1, aa_index] = 1
+                        else:
+                            bias_per_residue[idx-1, aa_index] = -1
+                    
             bias_dict[input_json["name"]] = {chain: bias_per_residue.tolist()}
 
     # Write the bias dictionary to a JSON file
@@ -202,10 +317,25 @@ def make_bias_dict(self, PDB_input, folder_mpnn):
         f.write('\n')       
         
 def ProteinMPNN_check(self):
-      
-    # Ensure ProteinMPNN is available
+    """
+    Checks if ProteinMPNN is installed
+    """
     if not os.path.exists(self.FOLDER_ProteinMPNN):
         logging.error(f"ProteinMPNN not installed in {self.FOLDER_ProteinMPNN}.")
-        logging.error("Install using: git clone https://github.com/dauparas/ProteinMPNN.git")
-        return
+        logging.error(f"Install using: 'cd {self.FOLDER_ProteinMPNN} && git clone https://github.com/dauparas/ProteinMPNN.git'")
+        sys.exit()
+        
+def LigandMPNN_check(self):
+    """
+    Checks if LigandMPNN is installed
+    """
+    if not os.path.exists(self.FOLDER_LigandMPNN):
+        logging.error(f"LigandMPNN not installed in {self.FOLDER_LigandMPNN}.")
+        logging.error(f"Install using: 'cd {self.FOLDER_LigandMPNN} && git clone https://github.com/dauparas/LigandMPNN.git'")
+        sys.exit()
+    else:
+        logging.error("LigandMPNN NOT WORKING YET!!! Problem with introducing biasedict!!!")
+        sys.exit()
+        
+
     

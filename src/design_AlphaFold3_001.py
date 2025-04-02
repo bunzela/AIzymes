@@ -1,24 +1,37 @@
 """
-Design AlphaFold3 Module
-
-Manages the structure prediction of protein sequences using AlphaFold3 within the AIzymes project.
+Prepares commands to run protein structure prediction using AlphaFold3.
 
 Functions:
-    - prepare_AlphaFold3: Prepares commands for AlphaFold3 job submission.
+    - seq_to_json: Converts a sequence file into a JSON input for AlphaFold3.
+    - prepare_AlphaFold3_MSA: Prepares the AlphaFold3 MSA stage.
+    - prepare_AlphaFold3_INF: Prepares the AlphaFold3 inference stage.
 """
-import logging
-import os
-import shutil 
-import subprocess  
-import gemmi
 
-from helper_002               import *
+import os
+import time
 
 def seq_to_json(self, seq_input, working_dir):
+    
+    for attempt in range(10): 
+        try:
+            with open(f'{seq_input}.seq', "r") as f:
+                sequence = f.read()
+            break  
+        except IOError:
+            time.sleep(1)
+    else:
+        raise IOError(f"Failed to read {file_path} after 10 attempts.")
 
-    with open(f'{seq_input}.seq', "r") as f: 
-        sequence=f.read()
-
+    # Checks if AlphaFold3MSA is run with or without MSA
+    if ('AlphaFold3MSA' in self.DESIGN_METHODS) or (bool(self.SCORING_METHODS)):
+        MSA = ""
+    else:
+        MSA = """,
+        "unpairedMsa": "",
+        "pairedMsa": "",
+        "templates": []
+"""
+      
     json = f'''
     {{
   "name": "{self.WT}",
@@ -26,7 +39,7 @@ def seq_to_json(self, seq_input, working_dir):
     {{
       "protein": {{
         "id": ["A"],
-        "sequence": "{sequence}"
+        "sequence": "{sequence}"{MSA}
       }}
     }},
     {{
@@ -44,7 +57,7 @@ def seq_to_json(self, seq_input, working_dir):
     
     with open(f'{working_dir}.json', "w") as f: 
         f.write(json)
-    
+
 def prepare_AlphaFold3_MSA(self, 
                            index, 
                            cmd):
@@ -58,7 +71,8 @@ def prepare_AlphaFold3_MSA(self,
     Returns:
     cmd (str): Command to be exected by run_design using submit_job.
     """
-    working_dir = f'{self.FOLDER_HOME}/{index}'
+    
+    working_dir = f'{self.FOLDER_DESIGN}/{index}'
 
     # Find input sequence !!!! MIGHT NOT BE CORRECT !!!
     PDB_input = self.all_scores_df.at[int(index), "step_input_variant"]
@@ -88,9 +102,7 @@ AF3_JAX_CACHE_DIR={working_dir}/jaxcache
 
 # Model specific variables
 AF3_MSA_OUTPUT_DIR={working_dir}/MSA
-AF3_INFERENCE_OUTPUT_DIR={working_dir}/INF
 AF3_MSA_JSON_PATH={working_dir}/{self.WT}_{index}.json
-AF3_INFERENCE_JSON_PATH={working_dir}/MSA/{self.WT}/{self.WT}_data.json
 
 mkdir -p $AF3_JAX_CACHE_DIR $AF3_INFERENCE_OUTPUT_DIR
 
@@ -106,11 +118,11 @@ apptainer --quiet exec --bind /u:/u,/ptmp:/ptmp,/raven:/raven \
     --norun_inference
 """
     return cmd
-
     
 def prepare_AlphaFold3_INF(self, 
                            index, 
-                           cmd):
+                           cmd,
+                           gpu_id = None):
     """
     Performs MSA for structure prediction witt AlphaFold3.
     
@@ -121,16 +133,37 @@ def prepare_AlphaFold3_INF(self,
     Returns:
     cmd (str): Command to be exected by run_design using submit_job.
     """
-    working_dir = f'{self.FOLDER_HOME}/{index}'
-        
+    working_dir = f'{self.FOLDER_DESIGN}/{index}'
+
+    # Find input sequence !!!! MIGHT NOT BE CORRECT !!!
+    PDB_input = self.all_scores_df.at[int(index), "step_input_variant"]
+    seq_input = f"{working_dir}/{self.WT}_{index}"
+            
     # Make directories
     os.makedirs(f"{working_dir}/scripts", exist_ok=True)
     os.makedirs(f"{working_dir}/AlphaFold3", exist_ok=True)
 
+    # Update working dir
     working_dir = f"{working_dir}/AlphaFold3"
 
+    # Create json from sequence
+    seq_to_json(self, seq_input, f"{working_dir}/{self.WT}_{index}")
+    
     cmd += f"""### AlphaFold3_MSA ###
+"""
+    # Set GPU
+    if  gpu_id != None:
+        cmd += f"""
+export CUDA_VISIBLE_DEVICES={gpu_id}
+"""
 
+    # Checks if AlphaFold3MSA is run with or without MSA
+    if ('AlphaFold3MSA' in self.DESIGN_METHODS) or (bool(self.SCORING_METHODS)):
+        MSA = f"{working_dir}/MSA/{self.WT}/{self.WT}_data.json"
+    else:
+        MSA = f"{working_dir}/{self.WT}_{index}.json"
+       
+    cmd += f"""
 # Modules to load
 module purge
 module load apptainer/1.3.2
@@ -142,10 +175,8 @@ AF3_MODEL_DIR=${{AF3_USER_DIR}}/model
 AF3_JAX_CACHE_DIR={working_dir}/jaxcache
 
 # Model specific variables  
-AF3_MSA_OUTPUT_DIR={working_dir}/MSA
 AF3_INFERENCE_OUTPUT_DIR={working_dir}/INF
-AF3_MSA_JSON_PATH={working_dir}/{self.WT}_{index}.json
-AF3_INFERENCE_JSON_PATH={working_dir}/MSA/{self.WT}/{self.WT}_data.json
+AF3_INFERENCE_JSON_PATH={MSA}
 
 mkdir -p $AF3_JAX_CACHE_DIR $AF3_INFERENCE_OUTPUT_DIR
 
@@ -166,7 +197,7 @@ apptainer --quiet exec --bind /u:/u,/ptmp:/ptmp,/raven:/raven --nv \
     --norun_data_pipeline
 
 {self.bash_args}python {self.FOLDER_PARENT}/cif_to_pdb.py \
---cif_file {working_dir}/INF/{self.WT}/{self.WT}/{self.WT}_model.cif \
+--cif_file {working_dir}/INF/{self.WT}/{self.WT}_model.cif \
 --pdb_file {working_dir}/../{self.WT}_AlphaFold3INF_{index}.pdb
 """
-    return cmd
+    return cmd   

@@ -49,6 +49,7 @@ def set_system(self):
         self.FIELD_TOOLS          = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
         self.FOLDER_ProteinMPNN   = f'/u/{getpass.getuser()}/bin/ProteinMPNN'
         self.FOLDER_ProteinMPNN_h = f'/u/{getpass.getuser()}/bin/ProteinMPNN/helper_scripts'
+        self.FOLDER_LigandMPNN    = f'/u/{getpass.getuser()}/bin/LigandMPNN'
                 
     elif self.SYSTEM == 'BLUEPEBBLE':     
         

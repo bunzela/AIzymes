@@ -1,16 +1,12 @@
-
 """
-Manages all RosettaDesign methods for protein design
+Prepares commands to run RosettaDesign methods for protein design.
 
 Functions:
     prepare_RosettaDesign: Prepares RosettaDesign commands for job submission.
-
-Modules Required:
-    helper_001
 """
-import logging
 
-from helper_002               import *
+import os
+import logging
 
 def prepare_RosettaDesign(self, 
                           index,
@@ -48,22 +44,21 @@ def prepare_RosettaDesign(self,
     -enzdes:cstfile                           {self.FOLDER_INPUT}/{self.CST_NAME}.cst \\
     -enzdes:cst_opt                           true """
     cmd += f"""\\
-    -parser:protocol                          {self.FOLDER_HOME}/{index}/scripts/RosettaDesign_{index}.xml \\
-    -out:file:scorefile                       {self.FOLDER_HOME}/{index}/score_RosettaDesign.sc \\
+    -parser:protocol                          {self.FOLDER_DESIGN}/{index}/scripts/RosettaDesign_{index}.xml \\
+    -out:file:scorefile                       {self.FOLDER_DESIGN}/{index}/score_RosettaDesign.sc \\
     -nstruct                                  1  \\
     -ignore_zero_occupancy                    false \\
     -corrections::beta_nov16                  true \\
     -overwrite {ex}
 
 # Cleanup
-mv {self.FOLDER_HOME}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
-   {self.FOLDER_HOME}/{index}/{self.WT}_RosettaDesign_{index}.pdb 
+mv {self.FOLDER_DESIGN}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
+   {self.FOLDER_DESIGN}/{index}/{self.WT}_RosettaDesign_{index}.pdb 
    
 # Get sequence
 {self.bash_args}python {self.FOLDER_PARENT}/extract_sequence_from_pdb.py \\
-    --pdb_in       {self.FOLDER_HOME}/{index}/{self.WT}_RosettaDesign_{index}.pdb \\
-    --sequence_out {self.FOLDER_HOME}/{index}/{self.WT}_{index}.seq
-
+    --pdb_in       {self.FOLDER_DESIGN}/{index}/{self.WT}_RosettaDesign_{index}.pdb \\
+    --sequence_out {self.FOLDER_DESIGN}/{index}/{self.WT}_{index}.seq
 
 """
                 
@@ -111,7 +106,14 @@ mv {self.FOLDER_HOME}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
         <Index                    name="sel_cat_{idx}"
                                   resnums="{int(float(cat_resi))}" />
 """
-        
+
+    if self.RESTRICT_RESIDUES is not None:
+        for idx, rest_resi in enumerate(self.RESTRICT_RESIDUES): 
+            RosettaDesign_xml += f"""
+        <Index                    name="sel_rest_{idx}"
+                                  resnums="{int(float(rest_resi[0]))}" />
+"""
+     
     RosettaDesign_xml += f"""
         <Not                      name="sel_nothing"
                                   selector="sel_design" />
@@ -138,6 +140,14 @@ mv {self.FOLDER_HOME}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
         </OperateOnResidueSubset>
 """
 
+    if self.RESTRICT_RESIDUES is not None:
+        for idx, rest_resi in enumerate(self.RESTRICT_RESIDUES):
+            RosettaDesign_xml += f"""
+        <OperateOnResidueSubset   name="tsk_rest_{idx}"                  selector="sel_rest_{idx}" >
+                                  <RestrictAbsentCanonicalAASRLT         aas="{rest_resi[1]}" />
+        </OperateOnResidueSubset>
+"""
+    
     # Generate list of tsk_cat
     if self.CST_NAME is not None:
         tsk_cat = []
@@ -146,6 +156,15 @@ mv {self.FOLDER_HOME}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
         tsk_cat = f",{','.join(tsk_cat)}"
     else:
         tsk_cat = ''
+
+    # Generate list of tsk_rest
+    if self.RESTRICT_RESIDUES is not None:
+        tsk_rest = []
+        for idx, _ in enumerate(self.RESTRICT_RESIDUES): 
+            tsk_rest += [f"tsk_rest_{idx}"]
+        tsk_rest = f",{','.join(tsk_rest)}"
+    else:
+        tsk_rest = ''
         
     RosettaDesign_xml += f"""
        
@@ -186,26 +205,26 @@ mv {self.FOLDER_HOME}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
                                   scorefxn_repack="score"
                                   scorefxn_minimize="score_final"
                                   cst_opt="true"
-                                  task_operations="tsk_design,tsk_nothing{tsk_cat}" />
+                                  task_operations="tsk_design,tsk_nothing{tsk_cat}{tsk_rest}" />
 """
     RosettaDesign_xml += f"""
         <FastDesign               name                   = "mv_design"
                                   disable_design         = "false"
-                                  task_operations        = "tsk_design,tsk_nothing{tsk_cat}"
+                                  task_operations        = "tsk_design,tsk_nothing{tsk_cat}{tsk_rest}"
                                   repeats                = "{repeats}"
                                   ramp_down_constraints  = "false"
                                   scorefxn               = "score" />
         
         <FastDesign               name                   = "mv_design_no_native"
                                   disable_design         = "false"
-                                  task_operations        = "tsk_design,tsk_nothing{tsk_cat}"
+                                  task_operations        = "tsk_design,tsk_nothing{tsk_cat}{tsk_rest}"
                                   repeats                = "1"
                                   ramp_down_constraints  = "false"
                                   scorefxn               = "score" />
                                   
         <FastRelax                name                   = "mv_relax"
                                   disable_design         = "true"
-                                  task_operations        = "tsk_design,tsk_nothing{tsk_cat}"
+                                  task_operations        = "tsk_design,tsk_nothing{tsk_cat}{tsk_rest}"
                                   repeats                = "1"
                                   ramp_down_constraints  = "false"
                                   scorefxn               = "score_unconst" />  
@@ -232,7 +251,7 @@ mv {self.FOLDER_HOME}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
 
 """
     # Write the XML script to a file
-    with open(f'{self.FOLDER_HOME}/{index}/scripts/RosettaDesign_{index}.xml', 'w') as f:
+    with open(f'{self.FOLDER_DESIGN}/{index}/scripts/RosettaDesign_{index}.xml', 'w') as f:
         f.writelines(RosettaDesign_xml)               
 
     return cmd

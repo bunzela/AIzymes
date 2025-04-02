@@ -27,7 +27,7 @@ def prepare_ESMfold(self,
     Returns:
     cmd (str): Command to be exected by run_design using submit_job.
     """
-    filename = f'{self.FOLDER_HOME}/{index}'
+    filename = f'{self.FOLDER_DESIGN}/{index}'
         
     # Make directories
     os.makedirs(f"{filename}/scripts", exist_ok=True)
@@ -37,7 +37,7 @@ def prepare_ESMfold(self,
 
     # Giving the ESMfold algorihm the needed inputs
     output_file = f'{working_dir_path}_ESMfold_bb.pdb'
-    sequence_file = f'{self.FOLDER_HOME}/{index}/{self.WT}_{index}.seq'
+    sequence_file = f'{self.FOLDER_DESIGN}/{index}/{self.WT}_{index}.seq'
         
     cmd += f"""### ESMfold ###
 """

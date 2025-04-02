@@ -68,13 +68,14 @@ class AIzymes_MAIN:
               SUBMIT_PREFIX       = None, 
               SYSTEM              = None,
               RUN_PARALLEL        = False, 
-              LOG                 = 'debug',   
+              LOG                 = 'info',   
               
               # General Design Settings
               PARENT_DES_MED      = ['RosettaDesign','ElectricFields'],
               DESIGN_METHODS      = [[0.7,'RosettaDesign','ElectricFields'],\
                                      [0.3,'ProteinMPNN','ESMfold','RosettaRelax','ElectricFields']],
               EXPLORE             = False,
+              RESTRICT_RESIDUES   = None, #2D list defining restricted residues in 1 letter code, e.g.: [[99,'DE'],[103,'H']]
               
               # General Scoring Settings
               SCORING_METHODS     = ['MDMin','ESMfold','RosettaRelax','ElectricFields'], 
@@ -101,6 +102,9 @@ class AIzymes_MAIN:
               FIELD_TARGET        = None,
               FIELDS_EXCL_CAT     = True,
 
+              # BioDC Settings
+              TARGET_REDOX        = 10,
+              
               # RosettaMatch Settings
               FOLDER_MATCH        = None,
 
@@ -110,7 +114,7 @@ class AIzymes_MAIN:
               # All Methods that create a structure
               SYS_STRUCT_METHODS  = ["RosettaDesign","MDMin","ESMfold","RosettaRelax",'AlphaFold3INF'], 
               # All Methods that require GPUs
-              SYS_GPU_METHODS     = ["ESMfold",'AlphaFold3INF'],
+              SYS_GPU_METHODS     = ["ESMfold",'AlphaFold3INF',"ProteinMPNN","LigandMPNN","SolubleMPNN"],
               ):
         """
         Sets up the AIzymes project environment with specified parameters.
@@ -157,7 +161,7 @@ class AIzymes_MAIN:
         
         aizymes_setup(self)
 
-    def initialize(self, FOLDER_HOME, UNBLOCK_ALL=False, PRINT_VAR=True, PLOT_DATA=False, LOG='debug'):
+    def initialize(self, FOLDER_HOME, UNBLOCK_ALL=False, PRINT_VAR=False, PLOT_DATA=False, LOG='info'):
         """
         Initializes AIzymes with given parameters.
 
@@ -185,7 +189,6 @@ class AIzymes_MAIN:
                 
         start_controller(self)
 
-        
     def submit_controller(self):
         """
         Controls the AIzymes project based on scoring and normalization parameters.
@@ -193,69 +196,50 @@ class AIzymes_MAIN:
 
         submit_controller_parallel(self)
         
-    def plot(self, main_plots=True, tree_plot=True, landscape_plot=True, print_vals=True, NORM=None, HIGHSCORE_NEGBEST=None):
+    def plot(self, 
+             SCORES_V_INDEX=False, 
+             STATISTICS=False,
+             SCORES_V_GEN=False,
+             SCORES_HIST=False,
+             PRINT_VALS=False, 
+             RESOURCE_LOG=False,
+             NORM={},
+             HIGHSCORE={},
+             NEGBEST={},
+             PLOT_TREE=False,
+             landscape_plot=False,
+             PLOT_SIZE=3,
+             TREE_SCORE="combined_score"):
+        
         """
         Generates plots based on AIzymes data, including main, tree, and landscape plots.
 
         Args:
-            main_plots (bool): Flag to generate main plots.
+            SCORES_V_INDEX (bool): Flag to generate plots scores vs index.
+            SCORES_V_GEN (bool): Flag to generate plots scores vs generation.
             tree_plot (bool): Flag to generate tree plot.
             landscape_plot (bool): Flag to generate landscape plot.
-            print_vals (bool): Flag to print values on plots.
+            PRINT_VALS (bool): Flag to print values on plots.
             NORM (dict): Normalization values for different scores.
             HIGHSCORE_NEGBEST (dict): High score and negative best score for different metrics.
         """
-        if NORM is None:
-            NORM = {
-                'interface_score': [10, 35],
-                'total_score': [200, 500], 
-                'catalytic_score': [-40, 0], 
-                'efield_score': [10, 220],
-                'identical_score': [0, 1]
-            }
-        if HIGHSCORE_NEGBEST is None:
-            HIGHSCORE_NEGBEST = {
-                'HIGHSCORE_combined_score': 0.814,
-                'NEGBEST_combined_score': 0.503,
-                'HIGHSCORE_total_score': 0.954,
-                'NEGBEST_total_score': 0.209,
-                'HIGHSCORE_interface_score': 0.994,
-                'NEGBEST_interface_score': 0.935,
-                'HIGHSCORE_catalytic_score': 0.994,
-                'NEGBEST_catalytic_score': 0.935,
-                'HIGHSCORE_efield_score': 0.970,
-                'NEGBEST_efield_score': 0.807,
-               'HIGHSCORE_identical_score': 1,
-                'NEGBEST_identical_score': 0.935
-            }
+
+        for key, value in locals().items():
+            if key not in ['self']:
+                setattr(self, key, value)
+
+        make_plots(self)
+        
+        return
+
+    def best_structures(self,
+                        SEQ_PER_ACTIVE_SITE = None, 
+                        ACTIVE_SITE = None,
+                        N_HITS = 100):
 
         for key, value in locals().items():
             if key not in ['self']:
                 setattr(self, key, value)
                 
-        if main_plots:
-            plot_scores(self, print_vals=print_vals)
-            kbt_cst_weights_plotting_function(self)
-            
-        if tree_plot:
-            plot_tree(self)
-           
-        if landscape_plot:
-            landscape_plotting_function(self)
-
-        return
-
-    def best_structures(self,
-                        save_structures = False, 
-                        include_catalytic_score = False, 
-                        seq_per_active_site = 100, 
-                        DESIGN = None, 
-                        WT = None):
-        
-        get_best_structures(self, 
-                            save_structures = save_structures, 
-                            include_catalytic_score = include_catalytic_score,
-                            seq_per_active_site = seq_per_active_site,
-                            DESIGN = DESIGN,
-                            WT = WT)
+        get_best_structures(self)
 

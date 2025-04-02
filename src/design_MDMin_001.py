@@ -1,9 +1,15 @@
+"""
+Prepares commands to run MD minimization using Amber to refine protein structures.
+
+Functions:
+    - prepare_MDMin(): Sets up commands for sidechain building (Rosetta), generating Amber input files (tleap), and MD minimization (sander)
+"""
 import logging
 import os
 import shutil 
 import subprocess  
 
-from helper_002 import get_PDB_in, generate_remark_from_all_scores_df
+from helper_002 import generate_remark_from_all_scores_df
               
 def prepare_MDMin(self, 
                   index,  
@@ -17,13 +23,12 @@ def prepare_MDMin(self,
     - cmd (str): collection of commands to be run, this script wil append its commands to cmd
     """
     
-    filename = f'{self.FOLDER_HOME}/{index}'
+    filename = f'{self.FOLDER_DESIGN}/{index}'
         
     # Make directories
     os.makedirs(f"{filename}/scripts", exist_ok=True)
     os.makedirs(f"{filename}/MDMin", exist_ok=True)
 
-    input_pdb_paths = get_PDB_in(self, index)
     PDBfile_in = self.all_scores_df.at[int(index), "step_input_variant"]    
     working_dir_path = f"{filename}/MDMin/{self.WT}_{index}"
 
@@ -33,8 +38,7 @@ def prepare_MDMin(self,
 cat {PDBfile_in}.pdb > {working_dir_path}_input.pdb
 """
     
-
-#Write Rosetta input to build in sidechains
+# Write Rosetta input to build in sidechains
     Rosetta_xml = f"""
 <ROSETTASCRIPTS>
     <MOVERS>
@@ -48,12 +52,15 @@ cat {PDBfile_in}.pdb > {working_dir_path}_input.pdb
     with open(f'{filename}/scripts/Rosetta_buildPDB_{index}.xml', 'w') as f:
         f.write(Rosetta_xml)
 
-#Add Rosetta command to shell script
+# Add Rosetta command to shell script
     cmd += f"""
 # Run Rosetta Relax
 {self.ROSETTA_PATH}/bin/rosetta_scripts.{self.rosetta_ext} \\
-    -s                        {working_dir_path}_input.pdb \\
-    -extra_res_fa             {self.FOLDER_INPUT}/{self.LIGAND}.params \\
+    -s                        {working_dir_path}_input.pdb """
+    if self.LIGAND not in ['HEM']:
+        cmd += f"""\\
+    -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params """
+    cmd += f"""\\
     -parser:protocol          {filename}/scripts/Rosetta_buildPDB_{index}.xml \\
     -nstruct                  1 \\
     -ignore_zero_occupancy    false \\
@@ -72,20 +79,26 @@ rm {working_dir_path}_clean4amber_*
 
 """
 
-    with open(f"{working_dir_path}_tleap.in", "w") as f:
-        f.write(f"""source leaprc.protein.ff19SB 
-source leaprc.gaff
-loadamberprep   {self.FOLDER_INPUT}/5TS.prepi
-loadamberparams {self.FOLDER_INPUT}/5TS.frcmod
+    tleap = f"""source leaprc.protein.ff19SB 
+source leaprc.gaff"""
+    if self.LIGAND not in ['HEM']:
+        tleap += f"""
+loadamberprep   {self.FOLDER_INPUT}/{self.LIGAND}.prepi
+loadamberparams {self.FOLDER_INPUT}/{self.LIGAND}.frcmod
+"""
+    tleap += f"""        
 mol = loadpdb {working_dir_path}_clean4amber.pdb
 set default pbradii mbondi3
 saveamberparm mol {working_dir_path}.parm7 {working_dir_path}.rst7
 quit
-""")
-        
+"""
+
+    with open(f"{working_dir_path}_tleap.in", "w") as f:
+        f.write(tleap)
+
     cmd += f"""# Generate AMBER input files
 tleap -s -f {working_dir_path}_tleap.in &> {working_dir_path}_tleap.out
-    """
+"""
 
     # Create the input file    
     in_file = f"""
@@ -117,13 +130,16 @@ cpptraj -p {working_dir_path}.parm7 -y {working_dir_path}_MD_out.rst7 -x {workin
 # Clean the output file
 sed -i '/        H  /d' {working_dir_path}_MD_out.pdb
     """
-    remark = generate_remark_from_all_scores_df(self, index)
-
+    
+    if self.CST_NAME is not None:
+        remark = generate_remark_from_all_scores_df(self, index)
+        cmd += f"""
+echo '{remark}' > {self.WT}_MDMin_{index}.pdb"""
+    
     cmd += f"""
-echo '{remark}' > {self.WT}_MDMin_{index}.pdb
 cat {working_dir_path}_MD_out.pdb >> {self.WT}_MDMin_{index}.pdb
 sed -i -e 's/^\(ATOM.\{{17\}}\) /\\1A/' {self.WT}_MDMin_{index}.pdb
-sed -i -e 's/5TS A/5TS X/g' -e 's/HIE/HIS/g' -e 's/HID/HIS/g' {self.WT}_MDMin_{index}.pdb
+sed -i -e 's/{self.LIGAND} A/{self.LIGAND} X/g' -e 's/HIE/HIS/g' -e 's/HID/HIS/g' {self.WT}_MDMin_{index}.pdb
 
 """
 

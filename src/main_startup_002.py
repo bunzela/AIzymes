@@ -6,6 +6,7 @@ import logging
 import pandas as pd
 import json
 import shutil
+import datetime
 
 from helper_002               import *
 from setup_system_001         import *
@@ -123,7 +124,7 @@ def initialize_controller(self, FOLDER_HOME):
     
     self.FOLDER_HOME = f'{os.getcwd()}/{FOLDER_HOME}'
     load_main_variables(self, self.FOLDER_HOME)
-    
+
     # Starts the logger
     initialize_logging(self)
     
@@ -149,6 +150,7 @@ def initialize_controller(self, FOLDER_HOME):
         
     # Read in current databases of AIzymes
     self.all_scores_df = pd.read_csv(self.ALL_SCORES_CSV)
+    self.resource_log_df = pd.read_csv(self.RESOURCE_LOG_CSV)
 
     if self.RUN_PARALLEL:
         self.processes = []
@@ -156,7 +158,13 @@ def initialize_controller(self, FOLDER_HOME):
             self.gpus = {gpu_id: None for gpu_id in range(self.MAX_GPUS)}
 
     if self.UNBLOCK_ALL: 
-        print(f'Unblocking all')
+        logging.debug(f'Unblocking all')
+        for idx, row in self.all_scores_df.iterrows():
+            if self.all_scores_df.at[idx, "blocked"] != "unblocked":
+                self.all_scores_df.at[idx, "next_steps"] = f"{self.all_scores_df.at[idx, 'blocked']},{self.all_scores_df.at[idx, 'next_steps']}"
+                self.all_scores_df.at[idx, 'step_output_variant'] = self.all_scores_df.at[idx, 'step_input_variant']
+                self.all_scores_df.at[idx, 'step_input_variant'] = self.all_scores_df.at[idx, 'previous_input_variant_for_reset']
+                
         self.all_scores_df["blocked"] = "unblocked"
    
     # Sleep a bit to make me feel secure. More sleep = less anxiety :)
@@ -167,6 +175,7 @@ def prepare_input_files(self):
     os.makedirs(self.FOLDER_HOME, exist_ok=True)    
     os.makedirs(self.FOLDER_PARENT, exist_ok=True)
     os.makedirs(self.FOLDER_PLOT, exist_ok=True)
+    os.makedirs(self.FOLDER_DESIGN, exist_ok=True)
 
     # Creates general input scripts used by various programs 
     make_main_scripts(self)
@@ -205,14 +214,16 @@ def prepare_input_files(self):
 def initialize_variables(self):
 
     # Complete directories
-    self.FOLDER_HOME     = f'{os.getcwd()}/{self.FOLDER_HOME}'
-    self.FOLDER_PARENT   = f'{self.FOLDER_HOME}/{self.FOLDER_PARENT}'
-    self.FOLDER_INPUT    = f'{os.getcwd()}/Input'
-    self.USERNAME        = os.environ.get("USER", os.environ.get("LOGNAME", "unknown_user"))
-    self.LOG_FILE        = f'{self.FOLDER_HOME}/logfile.log'
-    self.ALL_SCORES_CSV  = f'{self.FOLDER_HOME}/all_scores.csv'
-    self.VARIABLES_JSON  = f'{self.FOLDER_HOME}/variables.json'
-    self.FOLDER_PLOT     = f'{self.FOLDER_HOME}/plots' 
+    self.FOLDER_HOME      = f'{os.getcwd()}/{self.FOLDER_HOME}'
+    self.FOLDER_PARENT    = f'{self.FOLDER_HOME}/{self.FOLDER_PARENT}'
+    self.FOLDER_INPUT     = f'{os.getcwd()}/Input'
+    self.USERNAME         = os.environ.get("USER", os.environ.get("LOGNAME", "unknown_user"))
+    self.LOG_FILE         = f'{self.FOLDER_HOME}/logfile.log'
+    self.ALL_SCORES_CSV   = f'{self.FOLDER_HOME}/all_scores.csv'
+    self.RESOURCE_LOG_CSV = f'{self.FOLDER_HOME}/resource_log.csv'
+    self.VARIABLES_JSON   = f'{self.FOLDER_HOME}/variables.json'
+    self.FOLDER_PLOT      = f'{self.FOLDER_HOME}/plots' 
+    self.FOLDER_DESIGN    = f'{self.FOLDER_HOME}/designs' 
         
     # Define system-specific settings
     set_system(self)    
@@ -314,6 +325,9 @@ def aizymes_setup(self):
         
     # Make empyt all_scores_df
     make_empty_all_scores_df(self)
+   
+    # Make empyt resource_log
+    make_empty_resource_log_df(self)
         
     # Add parent designs to all_scores_df
     schedlue_parent_design(self)
@@ -328,7 +342,7 @@ def make_empty_all_scores_df(self):
     
     columns = ['sequence', 'parent_index', 'generation', 'total_mutations', 'parent_mutations', 'score_taken_from',
                'design_method', 'blocked', 'next_steps', 'final_variant', 'input_variant',
-               'step_input_variant', 'step_output_variant']
+               'previous_input_variant_for_reset', 'step_input_variant', 'step_output_variant']
     if self.CST_NAME is not None:
         columns.extend(['cat_resi', 'cat_resn'])
     for score in self.SELECTED_SCORES:
@@ -337,7 +351,26 @@ def make_empty_all_scores_df(self):
         columns.append(f'design_{score}_score')
         columns.append(f'relax_{score}_score')
     self.all_scores_df = pd.DataFrame(columns=columns, dtype=object)
+    save_all_scores_df(self)
+    
+def make_empty_resource_log_df(self):
+    '''
+    Makes the starting resource_log dataframe to track jobs running over time
+    '''
 
+    self.resource_log_df = pd.DataFrame({
+        'time':               int(datetime.datetime.now().timestamp()),
+        'cpus_used':          np.nan,
+        'gpus_used':          np.nan,
+        'total_designs':      np.nan,
+        'finished_designs':   np.nan,
+        'unfinished_designs': np.nan,
+        'failed_designs':     np.nan,
+        'kbt_boltzmann':      np.nan,
+    }, index = [0] , dtype=object)  
+    
+    save_resource_log_df(self)
+    
 def schedlue_parent_design(self):
     '''
     Adds all parent design runs to the all_score_df dataframe
