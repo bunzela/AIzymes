@@ -23,3 +23,6 @@ IP_jupyter.IP
 # .pkl files from PLM learner
 fitness_landscapes/**/*.pkl
 
+*.specstory
+*.context
+
