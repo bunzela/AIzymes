@@ -278,6 +278,11 @@ def update_scores(self):
                     self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")
             
+            # Unblock indices for BoltzINF
+            if self.all_scores_df.at[int(index), "blocked"] == 'BoltzINF':
+                if os.path.isfile(f"{self.FOLDER_DESIGN}/{int(index)}/{self.WT}_BoltzINF_{index}.pdb"):
+                    self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
+                    logging.debug(f"Unblocked BoltzINF index {int(index)}.")
 
         # Paths for sequence-based information
         seq_path        = f"{self.FOLDER_DESIGN}/{index}/{self.WT}_{index}.seq"

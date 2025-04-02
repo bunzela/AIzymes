@@ -4,7 +4,6 @@ import time
 import json
 import logging
 import pandas as pd
-import json
 import shutil
 import datetime
 
@@ -231,7 +230,9 @@ def initialize_variables(self):
     if not os.path.isdir(self.FOLDER_INPUT):
         print(f"ERROR! Input folder missing! Should be {self.FOLDER_INPUT}")
         sys.exit()
-                    
+    
+    # Boltz methods are already included in the SYS_STRUCT_METHODS and SYS_GPU_METHODS lists in AIzymes_015.py
+
 def initialize_logging(self):
 
     os.makedirs(self.FOLDER_HOME, exist_ok=True)

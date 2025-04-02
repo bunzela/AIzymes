@@ -1,4 +1,3 @@
-
 """
 Main Design Module
 
@@ -27,6 +26,7 @@ from scoring_efields_001      import *
 from design_MDMin_001         import *  
 from design_AlphaFold3_001    import *   
 from scoring_BioDC_001        import *      
+from design_Boltz_001         import *
 
 def get_ram(design_steps):
     
@@ -43,6 +43,8 @@ def get_ram(design_steps):
         elif design_step == "AlphaFold3MSA":
             new_ram = 20
         elif design_step == "AlphaFold3INF":
+            new_ram = 20
+        elif design_step == "BoltzINF":
             new_ram = 20
         elif design_step == "RosettaDesign":
             new_ram = 10
@@ -116,6 +118,10 @@ def run_design(self,
         elif design_step == "AlphaFold3INF":
             cmd = prepare_AlphaFold3_INF(self, index, cmd, gpu_id = gpu_id)
             logging.info(f"Run AlphaFold3INF for index {index}.")
+            
+        elif design_step == "BoltzINF":
+            cmd = prepare_Boltz_INF(self, index, cmd, gpu_id = gpu_id)
+            logging.info(f"Run BoltzINF for index {index}.")
             
         elif design_step == "RosettaDesign":
             cmd = prepare_RosettaDesign(self, index, cmd)

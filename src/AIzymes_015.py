@@ -105,6 +105,14 @@ class AIzymes_MAIN:
               # BioDC Settings
               TARGET_REDOX        = 10,
               
+              # Boltz-1 Settings
+              BOLTZ_ENV_ACTIVATE  = "conda activate boltz",
+              BOLTZ_RECYCLING_STEPS = 3,
+              BOLTZ_SAMPLING_STEPS = 20,
+              BOLTZ_DIFFUSION_SAMPLES = 1,
+              BOLTZ_STEP_SCALE    = 1.0,
+              BOLTZ_USE_MSA_SERVER = False,
+              
               # RosettaMatch Settings
               FOLDER_MATCH        = None,
 
@@ -112,9 +120,9 @@ class AIzymes_MAIN:
               # All Methods that redesign a sequence
               SYS_DESIGN_METHODS  = ["RosettaDesign","ProteinMPNN","LigandMPNN","SolubleMPNN"],
               # All Methods that create a structure
-              SYS_STRUCT_METHODS  = ["RosettaDesign","MDMin","ESMfold","RosettaRelax",'AlphaFold3INF'], 
+              SYS_STRUCT_METHODS  = ["RosettaDesign","MDMin","ESMfold","RosettaRelax","AlphaFold3INF","BoltzINF"], 
               # All Methods that require GPUs
-              SYS_GPU_METHODS     = ["ESMfold",'AlphaFold3INF',"ProteinMPNN","LigandMPNN","SolubleMPNN"],
+              SYS_GPU_METHODS     = ["ESMfold","AlphaFold3INF","ProteinMPNN","LigandMPNN","SolubleMPNN","BoltzINF"],
               ):
         """
         Sets up the AIzymes project environment with specified parameters.

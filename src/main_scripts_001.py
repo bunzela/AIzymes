@@ -206,3 +206,109 @@ if __name__ == "__main__":
 
 ''')       
         
+    # ------------------------------------------------------------------------------------------------------------------------------
+    # Create the process_boltz_results.py script
+    # ------------------------------------------------------------------------------------------------------------------------------
+    with open(f'{self.FOLDER_PARENT}/process_boltz_results.py', 'w') as f:
+        f.write("""
+import argparse
+import os
+import glob
+import shutil
+import json
+from pathlib import Path
+import sys
+import subprocess
+
+def main(args):
+    \"\"\"Process Boltz prediction results and copy the final model to the expected location.\"\"\"
+    
+    boltz_dir = args.boltz_dir
+    output_pdb = args.output_pdb
+    
+    # Find the most recent results directory (it starts with 'boltz_results_')
+    results_dirs = sorted(glob.glob(os.path.join(boltz_dir, 'boltz_results_*')), key=os.path.getmtime, reverse=True)
+    
+    if not results_dirs:
+        # Try using shell pattern matching as a fallback
+        try:
+            results_dirs_cmd = subprocess.run(
+                f"ls -td {os.path.join(boltz_dir, 'boltz_results_*')} 2>/dev/null", 
+                shell=True, capture_output=True, text=True
+            )
+            if results_dirs_cmd.returncode == 0 and results_dirs_cmd.stdout.strip():
+                results_dirs = results_dirs_cmd.stdout.strip().split('\n')
+                print(f"Found results directories using shell pattern: {results_dirs}")
+            else:
+                print(f"Error: No boltz_results_* directory found in {boltz_dir}", file=sys.stderr)
+                sys.exit(1)
+        except Exception as e:
+            print(f"Error: Failed to find boltz_results_* directory: {e}", file=sys.stderr)
+            sys.exit(1)
+        
+    results_dir = results_dirs[0]
+    print(f"Using results directory: {results_dir}")
+    
+    # Find the prediction directory
+    prediction_dirs = glob.glob(os.path.join(results_dir, 'predictions', '*'))
+    
+    if not prediction_dirs:
+        # Try using shell pattern matching as a fallback
+        try:
+            prediction_dirs_cmd = subprocess.run(
+                f"ls -d {os.path.join(results_dir, 'predictions', '*')} 2>/dev/null", 
+                shell=True, capture_output=True, text=True
+            )
+            if prediction_dirs_cmd.returncode == 0 and prediction_dirs_cmd.stdout.strip():
+                prediction_dirs = prediction_dirs_cmd.stdout.strip().split('\n')
+                print(f"Found prediction directories using shell pattern: {prediction_dirs}")
+            else:
+                print(f"Error: No prediction directory found in {results_dir}/predictions", file=sys.stderr)
+                sys.exit(1)
+        except Exception as e:
+            print(f"Error: Failed to find prediction directory: {e}", file=sys.stderr)
+            sys.exit(1)
+        
+    prediction_dir = prediction_dirs[0]
+    run_id = os.path.basename(prediction_dir)
+    
+    # Look for the model_0.pdb file
+    model_path = os.path.join(prediction_dir, f"{run_id}_model_0.pdb")
+    
+    if not os.path.exists(model_path):
+        print(f"Error: Model file {model_path} not found", file=sys.stderr)
+        sys.exit(1)
+        
+    # Copy the model to the output location
+    os.makedirs(os.path.dirname(output_pdb), exist_ok=True)
+    shutil.copy(model_path, output_pdb)
+    print(f"Successfully copied model from {model_path} to {output_pdb}")
+    
+    # Check for confidence scores
+    confidence_path = os.path.join(prediction_dir, f"confidence_{run_id}_model_0.json")
+    if os.path.exists(confidence_path):
+        confidence_output = os.path.join(os.path.dirname(output_pdb), 
+                                        f"{os.path.splitext(os.path.basename(output_pdb))[0]}_confidence.json")
+        shutil.copy(confidence_path, confidence_output)
+        print(f"Copied confidence scores to {confidence_output}")
+        
+        # Print summary of confidence scores for logging
+        try:
+            with open(confidence_path, 'r') as f:
+                confidence = json.load(f)
+                if isinstance(confidence, dict):
+                    for key, value in confidence.items():
+                        if isinstance(value, (int, float)):
+                            print(f"Confidence {key}: {value}")
+        except Exception as e:
+            print(f"Warning: Failed to read confidence scores: {e}", file=sys.stderr)
+    
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Process Boltz results and copy the final model.")
+    parser.add_argument("--boltz_dir", type=str, required=True, help="Directory containing Boltz results")
+    parser.add_argument("--output_pdb", type=str, required=True, help="Path to save the final PDB model")
+    
+    args = parser.parse_args()
+    main(args)
+""")
+        
