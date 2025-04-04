@@ -1,58 +1,33 @@
-# Note to Reviewers
-In this code repository, you find the code for our manuscript: AI.zymes – A modular platform for evolutionary enzyme design.
+# 🧬 AI.zymes  
+*A Modular Platform for Evolutionary Enzyme Design*
 
-You can access the code used for the submitted manuscript under src/AIzymes_013.py. 
+Welcome to the source code repository for **AI.zymes** — a modular platform for evolutionary enzyme design.
 
-Example notebooks to test AI.zymes are given under AIzymes/design/TEST/
+**AI.zymes** integrates multiple tools for enzyme design, scoring, and structural prediction. It is designed with modularity in mind, making it easy to plug in new methods or tailor workflows for different design goals.
 
-Upon peer-reviewed publications, a seperate repository will be uploaded to the ETH Research Collection. This upload will be unmodifable and associated with a DOI. Because the upload will contain  data that may change during peer-review (e.g. additional analyses requested by reviewers), the upload to the ETH Research Collection will only be completed after peer review. 
+We are currently working on improving the accessibility of **AI.zymes**, including a full user manual and installation instructions. Stay tuned!
 
-# Future To Do
-| **Packages**                | **Description**                                                                                                  | **Person** |
-|-----------------------------|------------------------------------------------------------------------------------------------------------------|------------|
-| LigandMPNN                  | .                                                                                                                | ???        |
-| ChemNet                     | [AI tool to generate ensembles](https://doi.org/10.1101/2024.09.25.614868)                                       | ???        |
-| Additional Base Filter      | [Base vdW energy in Rosetta seems to correlate with activity?](https://onlinelibrary.wiley.com/doi/full/10.1002/pro.4400) | ???        |
-| ElektroNN                   | Not yet published, currently developed by Jens Meiler, NN tool generate electron density of full protein structure | ???        |
+---
 
-RiffDiff – Rotamer Inverted Fragment Finder Diffiusion
+## 📥 Getting Started
 
-# Related work
+If you're interested in using **AI.zymes** or collaborating with us, please don’t hesitate to get in touch:
 
-[REvoLd: Ultra-Large Library Screening with an Evolutionary Algorithm in Rosetta](https://pubmed.ncbi.nlm.nih.gov/38711437/)
-put other links here, please
+**Contact:**  
+📧 [Adrian Bunzel](mailto:Adrian.Bunzel@mpi-marburg.mpg.de)  
+Max Planck Institute for Terrestrial Microbiology
 
-# AIzymes
-This will be the AIzymes Github. Lets use the readme to collect notes.
+---
 
-> [!IMPORTANT]
-> Track all versions of AIzyme_Functions in ./src/README.md
+## 📝 Citation
 
-> [!TIP]
-> Read [AIzymes Manual.docx](https://github.com/bunzela/AIzymes/blob/main/AIzymes%20Manual.docx) for detailed information on AIzymes
-> 
-> Feel free to change the Manual, but always track changes!
+If you use AI.zymes in your research, please cite:
 
-> [!TIP]
-> See [How_to_push_and_pull.txt](https://github.com/bunzela/AIzymes/blob/main/How_to_push_and_pull.txt) for a quick manual how to push and pull changes to GitHub.
+**AI.zymes – A Modular Platform for Evolutionary Enzyme Design**  
+Lucas P. Merlicek, Jannik Neumann, Abbie Lear, Vivian Degiorgi, Moor M. de Waal, Tudor-Stefan Cotet, Adrian J. Mulholland, and H. Adrian Bunzel*  
+**Angewandte Chemie International Edition**, 2025 *(accepted)*
 
-# Requirements
-Download and install Rosetta from the following link, and set ROSETTA_PATH to point to rosetta_XXX/main/source/
-```
-https://www.rosettacommons.org/software/license-and-download
-```
-ESMfold through HuggingFace (https://huggingface.co/facebook/esmfold_v1)
-```
-pip install --upgrade transformers py3Dmol accelerate
-```
-ProteinMPNN might be used in the future and can be installed like this:
-```
-git clone https://github.com/dauparas/ProteinMPNN.git
-pip install --upgrade transformers py3Dmol accelerate torch
-```
+---
 
+> *This project is in active development. Contributions, feedback, and collaborations are very welcome!*
 
-To install everything necessary for AIzymes (except Rosetta) in a new conda environment (no ProteinMPNN) from Abbie:
-```
-conda env create -f environment.yml
-```
