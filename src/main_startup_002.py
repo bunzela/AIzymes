@@ -6,13 +6,14 @@ import logging
 import pandas as pd
 import json
 import shutil
+import datetime
 
 from helper_002               import *
 from setup_system_001         import *
 from main_scripts_001         import *
 
 def submit_controller_parallel(self):
-
+    
     if self.SYSTEM in ['SCC','RAVEN']: 
 
         jobs = subprocess.run(["squeue", "--me"], capture_output=True, text=True, check=True)
@@ -33,7 +34,7 @@ def submit_controller_parallel(self):
 
     cmd = f'''import sys, os
 sys.path.append(os.path.join(os.getcwd(), '../../src'))
-from AIzymes_014 import *
+from AIzymes_015 import *
 AIzymes = AIzymes_MAIN()
 AIzymes.initialize(FOLDER_HOME    = '{os.path.basename(self.FOLDER_HOME)}', 
                    LOG            = '{self.LOG}',
@@ -54,7 +55,7 @@ AIzymes.controller()
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task={self.MAX_JOBS}
 #SBATCH --mem=128G
-#SBATCH --time=2-00:00:00
+#SBATCH --time=1:00:00 #####=2-00:00:00
 #SBATCH --output={self.FOLDER_HOME}/controller.log
 #SBATCH --error={self.FOLDER_HOME}/controller.log
 """
@@ -80,6 +81,8 @@ AIzymes.controller()
 """
         cmd += f"""#SBATCH --output={self.FOLDER_HOME}/controller.log
 #SBATCH --error={self.FOLDER_HOME}/controller.log
+
+export CLUSTER="RAVEN"
 """     
 
     else: 
@@ -121,7 +124,7 @@ def initialize_controller(self, FOLDER_HOME):
     
     self.FOLDER_HOME = f'{os.getcwd()}/{FOLDER_HOME}'
     load_main_variables(self, self.FOLDER_HOME)
-    
+
     # Starts the logger
     initialize_logging(self)
     
@@ -147,6 +150,7 @@ def initialize_controller(self, FOLDER_HOME):
         
     # Read in current databases of AIzymes
     self.all_scores_df = pd.read_csv(self.ALL_SCORES_CSV)
+    self.resource_log_df = pd.read_csv(self.RESOURCE_LOG_CSV)
 
     if self.RUN_PARALLEL:
         self.processes = []
@@ -154,9 +158,14 @@ def initialize_controller(self, FOLDER_HOME):
             self.gpus = {gpu_id: None for gpu_id in range(self.MAX_GPUS)}
 
     if self.UNBLOCK_ALL: 
-        print(f'Unblocking all')
-        self.all_scores_df["blocked_ESMfold"] = False
-        self.all_scores_df["blocked_RosettaRelax"] = False
+        logging.debug(f'Unblocking all')
+        for idx, row in self.all_scores_df.iterrows():
+            if self.all_scores_df.at[idx, "blocked"] != "unblocked":
+                self.all_scores_df.at[idx, "next_steps"] = f"{self.all_scores_df.at[idx, 'blocked']},{self.all_scores_df.at[idx, 'next_steps']}"
+                self.all_scores_df.at[idx, 'step_output_variant'] = self.all_scores_df.at[idx, 'step_input_variant']
+                self.all_scores_df.at[idx, 'step_input_variant'] = self.all_scores_df.at[idx, 'previous_input_variant_for_reset']
+                
+        self.all_scores_df["blocked"] = "unblocked"
    
     # Sleep a bit to make me feel secure. More sleep = less anxiety :)
     time.sleep(0.1)
@@ -166,6 +175,7 @@ def prepare_input_files(self):
     os.makedirs(self.FOLDER_HOME, exist_ok=True)    
     os.makedirs(self.FOLDER_PARENT, exist_ok=True)
     os.makedirs(self.FOLDER_PLOT, exist_ok=True)
+    os.makedirs(self.FOLDER_DESIGN, exist_ok=True)
 
     # Creates general input scripts used by various programs 
     make_main_scripts(self)
@@ -188,12 +198,13 @@ def prepare_input_files(self):
         f.writelines(seq)    
     
     # Get the Constraint Residues from enzdes constraints file
-    with open(f'{self.FOLDER_INPUT}/{self.CST_NAME}.cst', 'r') as f:
-        cst = f.readlines()    
-    cst = [i.split()[-1] for i in cst if "TEMPLATE::   ATOM_MAP: 2 res" in i]
-    cst = ";".join(cst)
-    with open(f'{self.FOLDER_HOME}/cst.dat', 'w') as f:
-        f.write(cst)    
+    if self.CST_NAME != None:
+        with open(f'{self.FOLDER_INPUT}/{self.CST_NAME}.cst', 'r') as f:
+            cst = f.readlines()    
+        cst = [i.split()[-1] for i in cst if "TEMPLATE::   ATOM_MAP: 2 res" in i]
+        cst = ";".join(cst)
+        with open(f'{self.FOLDER_HOME}/cst.dat', 'w') as f:
+            f.write(cst)    
 
     # Save FIELD_TARGET
     seq = sequence_from_pdb(f"{self.FOLDER_PARENT}/{self.WT}")
@@ -203,14 +214,16 @@ def prepare_input_files(self):
 def initialize_variables(self):
 
     # Complete directories
-    self.FOLDER_HOME     = f'{os.getcwd()}/{self.FOLDER_HOME}'
-    self.FOLDER_PARENT   = f'{self.FOLDER_HOME}/{self.FOLDER_PARENT}'
-    self.FOLDER_INPUT    = f'{os.getcwd()}/Input'
-    self.USERNAME        = os.environ.get("USER", os.environ.get("LOGNAME", "unknown_user"))
-    self.LOG_FILE        = f'{self.FOLDER_HOME}/logfile.log'
-    self.ALL_SCORES_CSV  = f'{self.FOLDER_HOME}/all_scores.csv'
-    self.VARIABLES_JSON  = f'{self.FOLDER_HOME}/variables.json'
-    self.FOLDER_PLOT     = f'{self.FOLDER_HOME}/plots' 
+    self.FOLDER_HOME      = f'{os.getcwd()}/{self.FOLDER_HOME}'
+    self.FOLDER_PARENT    = f'{self.FOLDER_HOME}/{self.FOLDER_PARENT}'
+    self.FOLDER_INPUT     = f'{os.getcwd()}/Input'
+    self.USERNAME         = os.environ.get("USER", os.environ.get("LOGNAME", "unknown_user"))
+    self.LOG_FILE         = f'{self.FOLDER_HOME}/logfile.log'
+    self.ALL_SCORES_CSV   = f'{self.FOLDER_HOME}/all_scores.csv'
+    self.RESOURCE_LOG_CSV = f'{self.FOLDER_HOME}/resource_log.csv'
+    self.VARIABLES_JSON   = f'{self.FOLDER_HOME}/variables.json'
+    self.FOLDER_PLOT      = f'{self.FOLDER_HOME}/plots' 
+    self.FOLDER_DESIGN    = f'{self.FOLDER_HOME}/designs' 
         
     # Define system-specific settings
     set_system(self)    
@@ -312,6 +325,9 @@ def aizymes_setup(self):
         
     # Make empyt all_scores_df
     make_empty_all_scores_df(self)
+   
+    # Make empyt resource_log
+    make_empty_resource_log_df(self)
         
     # Add parent designs to all_scores_df
     schedlue_parent_design(self)
@@ -325,14 +341,36 @@ def make_empty_all_scores_df(self):
     '''
     
     columns = ['sequence', 'parent_index', 'generation', 'total_mutations', 'parent_mutations', 'score_taken_from',
-               'design_method', 'blocked', 'cat_resi', 'cat_resn', 'next_steps', 'final_variant', 'input_variant', 'latest_variant']
+               'design_method', 'blocked', 'next_steps', 'final_variant', 'input_variant',
+               'previous_input_variant_for_reset', 'step_input_variant', 'step_output_variant']
+    if self.CST_NAME is not None:
+        columns.extend(['cat_resi', 'cat_resn'])
     for score in self.SELECTED_SCORES:
         columns.append(f'{score}_potential')
         columns.append(f'{score}_score')
         columns.append(f'design_{score}_score')
         columns.append(f'relax_{score}_score')
     self.all_scores_df = pd.DataFrame(columns=columns, dtype=object)
+    save_all_scores_df(self)
+    
+def make_empty_resource_log_df(self):
+    '''
+    Makes the starting resource_log dataframe to track jobs running over time
+    '''
 
+    self.resource_log_df = pd.DataFrame({
+        'time':               int(datetime.datetime.now().timestamp()),
+        'cpus_used':          np.nan,
+        'gpus_used':          np.nan,
+        'total_designs':      np.nan,
+        'finished_designs':   np.nan,
+        'unfinished_designs': np.nan,
+        'failed_designs':     np.nan,
+        'kbt_boltzmann':      np.nan,
+    }, index = [0] , dtype=object)  
+    
+    save_resource_log_df(self)
+    
 def schedlue_parent_design(self):
     '''
     Adds all parent design runs to the all_score_df dataframe
@@ -347,9 +385,9 @@ def schedlue_parent_design(self):
     for selected_index, parent_structure in enumerate(parent_structures):
         for n_parent_job in range(self.N_PARENT_JOBS):          
             new_index = create_new_index(self, 
-                                         parent_index  = "Parent", 
-                                         luca          = f'{self.FOLDER_PARENT}/{parent_structures[selected_index]}',
-                                         input_variant = f'{self.FOLDER_PARENT}/{parent_structures[selected_index]}',
-                                         final_method  = final_structure_method,
-                                         next_steps    = ",".join(self.PARENT_DES_MED), 
-                                         design_method = design_method)    
+                                         parent_index        = "Parent", 
+                                         luca                = f'{self.FOLDER_PARENT}/{parent_structures[selected_index][:-4]}',
+                                         input_variant       = f'{self.FOLDER_PARENT}/{parent_structures[selected_index][:-4]}',
+                                         final_method        = final_structure_method,
+                                         next_steps          = ",".join(self.PARENT_DES_MED), 
+                                         design_method       = design_method)    

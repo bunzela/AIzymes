@@ -1,5 +1,36 @@
 def make_main_scripts(self):
+
+    # ------------------------------------------------------------------------------------------------------------------------------
+    # Create the cif_to_pdb.py script
+    # ------------------------------------------------------------------------------------------------------------------------------
+    with open(f'{self.FOLDER_PARENT}/cif_to_pdb.py', 'w') as f:
+        f.write("""
+import gemmi
+import argparse
+
+def main(args):
+
+    cif_file = args.cif_file
+    pdb_file = args.pdb_file
     
+    doc = gemmi.cif.read_file(cif_file)
+    block = doc.sole_block()  
+    structure = gemmi.make_structure_from_block(block)
+    structure.setup_entities()  
+    with open(pdb_file, "w") as f:
+        f.write(structure.make_pdb_string())
+    
+if __name__ == "__main__":
+
+    argparser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    argparser.add_argument("--cif_file", type=str, help="Input CIF file.")
+    argparser.add_argument("--pdb_file", type=str, help="Output PDB file.")
+
+    args = argparser.parse_args()
+    main(args)
+""")
+
     # ------------------------------------------------------------------------------------------------------------------------------
     # Create the ESMfold.py script
     # ------------------------------------------------------------------------------------------------------------------------------

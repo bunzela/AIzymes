@@ -15,7 +15,8 @@ from helper_002               import *
 
 def prepare_ESMfold(self, 
                     index, 
-                    cmd):
+                    cmd,
+                    gpu_id = None):
     """
     Predicts structure of sequence in {index} using ESMfold. Uses ligand coordinates from previous RosettaDesign.
     
@@ -26,7 +27,7 @@ def prepare_ESMfold(self,
     Returns:
     cmd (str): Command to be exected by run_design using submit_job.
     """
-    filename = f'{self.FOLDER_HOME}/{index}'
+    filename = f'{self.FOLDER_DESIGN}/{index}'
         
     # Make directories
     os.makedirs(f"{filename}/scripts", exist_ok=True)
@@ -36,26 +37,26 @@ def prepare_ESMfold(self,
 
     # Giving the ESMfold algorihm the needed inputs
     output_file = f'{working_dir_path}_ESMfold_bb.pdb'
-    sequence_file = f'{self.FOLDER_HOME}/{index}/{self.WT}_{index}.seq'
-    
-    # Make sequence file exist
-    #if not os.path.isfile(sequence_file):      
-    #    logging.error(f"Sequence_file {sequence_file} not present!")
-    #    return False
-    #does not work anymore if run in batch!!!
-    
+    sequence_file = f'{self.FOLDER_DESIGN}/{index}/{self.WT}_{index}.seq'
+        
     cmd += f"""### ESMfold ###
-    
+"""
+
+    if  gpu_id != None:
+        cmd += f"""
+export CUDA_VISIBLE_DEVICES={gpu_id}
+"""
+        
+    cmd += f"""
 {self.bash_args}python {self.FOLDER_PARENT}/ESMfold.py \
 --sequence_file {sequence_file} \
 --output_file   {output_file} 
 
-sed -i '/PARENT N\/A/d' {output_file}
-"""
-    ##Add the ligand back in after running ESMfold for backbone
-    input_pdb_paths = get_PDB_in(self, index)
-    PDBfile_ligand = input_pdb_paths['ligand_in']
+sed -i '/PARENT N\/A/d' {output_file}"""
     
+    # Add the ligand back in after running ESMfold for backbone
+    PDBfile_ligand = self.all_scores_df.at[int(index), "step_input_variant"]
+
     # Get the pdb file from the last step and strip away ligand and hydrogens 
     cpptraj = f'''parm {PDBfile_ligand}.pdb
 trajin  {PDBfile_ligand}.pdb
@@ -113,7 +114,7 @@ cat {working_dir_path}_aligned.pdb >> {working_dir_path}_input.pdb
 cat {working_dir_path}_lig.pdb     >> {working_dir_path}_input.pdb
 sed -i '/TER/d' {working_dir_path}_input.pdb
 
-cat {working_dir_path}_input.pdb > {self.FOLDER_HOME}/{index}/{self.WT}_ESMfold_{index}.pdb
+cat {working_dir_path}_input.pdb > {self.FOLDER_DESIGN}/{index}/{self.WT}_ESMfold_{index}.pdb
 
 """        
     return cmd

@@ -19,9 +19,9 @@ def prepare_efields(self, index:str, cmd:str):
     """
     
     # Define files and make empty directory
-    filename_in = self.all_scores_df.at[index, "final_variant"][:-4]
-    filename_out = f'{self.FOLDER_HOME}/{index}/ElectricFields/{os.path.basename(filename_in)}'
-    os.makedirs(f'{self.FOLDER_HOME}/{index}/ElectricFields', exist_ok=True)
+    filename_in = self.all_scores_df.at[index, "final_variant"]
+    filename_out = f'{self.FOLDER_DESIGN}/{index}/ElectricFields/{os.path.basename(filename_in)}'
+    os.makedirs(f'{self.FOLDER_DESIGN}/{index}/ElectricFields', exist_ok=True)
     
     # Make tleap files to generate input
     with open(f"{filename_out}_tleap.in", "w") as f:
@@ -61,7 +61,7 @@ python   {self.FIELD_TOOLS} \\
 
 def get_efields_score(self, index, score_type):
 
-    with open(f"{self.FOLDER_HOME}/{index}/ElectricFields/{self.WT}_{score_type}_{index}_fields.pkl", "rb") as f:
+    with open(f"{self.FOLDER_DESIGN}/{index}/ElectricFields/{self.WT}_{score_type}_{index}_fields.pkl", "rb") as f:
         FIELDS = pkl.load(f)
 
     bond_field =  np.array(FIELDS[self.FIELD_TARGET.replace(" ", "_")]['Total'])

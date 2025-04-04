@@ -1,19 +1,11 @@
-
 """
-Executes RosettaRelax to refine protein structures and improve stability in the AIzymes project.
+Prepares commands to run RosettaRelax methods to refine protein structures.
 
 Functions:
     prepare_RosettaRelax: Sets up commands for RosettaRelax job submission.
-
-Modules Required:
-    helper_001
 """
-import logging
-import os
-import shutil 
-import subprocess  
 
-from helper_002               import *
+import os 
               
 def prepare_RosettaRelax(self, 
                          index,  
@@ -32,11 +24,10 @@ def prepare_RosettaRelax(self,
 
     """
     
-    filename = f'{self.FOLDER_HOME}/{index}'
+    filename = f'{self.FOLDER_DESIGN}/{index}'
         
     # Make directories
     os.makedirs(f"{filename}/scripts", exist_ok=True)
-    os.makedirs(f"{filename}/RosettaRelax", exist_ok=True)
     
     # Options for EXPLORE, accelerated script for testing
     if self.EXPLORE:
@@ -45,13 +36,8 @@ def prepare_RosettaRelax(self,
     else:
         repeats = "3"
         ex = "-ex1 -ex2"
-      
-    #_, PDBfile, PDBfile_ligand = get_PDB_in(self, index)
 
-    input_pdb_paths = get_PDB_in(self, index)
-    PDBfile_in = input_pdb_paths['Relax_in']
-        
-    working_dir_path = f"{filename}/RosettaRelax/{self.WT}_{index}"
+    PDB_input = self.all_scores_df.at[int(index), "step_input_variant"]
   
     # Create the RosettaRelax.xml file    
     RosettaRelax_xml = f"""
@@ -79,8 +65,9 @@ def prepare_RosettaRelax(self,
 """
     
     # Add constraint if run is not used as PreMatchRelax
-    if not PreMatchRelax: RosettaRelax_xml += f"""
-        <AddOrRemoveMatchCsts     name="mv_add_cst" 
+    if self.CST_NAME is not None:
+        if not PreMatchRelax: RosettaRelax_xml += f"""
+            <AddOrRemoveMatchCsts     name="mv_add_cst" 
                                   cst_instruction="add_new" 
                                   cstfile="{self.FOLDER_INPUT}/{self.CST_NAME}.cst" />
 
@@ -97,10 +84,11 @@ def prepare_RosettaRelax(self,
 
         <Add mover_name="mv_relax" />
 """
-    
-    # Add constraint if run is not used as PreMatchRelax
-    if not PreMatchRelax: RosettaRelax_xml += f"""                                  
-        <Add mover_name="mv_add_cst" />       
+
+    if self.CST_NAME is not None:
+        RosettaRelax_xml += f"""                                  
+        <Add mover_name="mv_add_cst" /> """
+    RosettaRelax_xml += f""" 
         <Add mover_name="mv_inter" />
 """
         
@@ -111,9 +99,6 @@ def prepare_RosettaRelax(self,
 """
     
     cmd += f"""### RosettaRelax ###
-    
-# Assemble structure
-cat {PDBfile_in}.pdb > {working_dir_path}_input.pdb
 """
         
     # Write the RosettaRelax.xml to a file
@@ -123,20 +108,23 @@ cat {PDBfile_in}.pdb > {working_dir_path}_input.pdb
     cmd += f"""
 # Run Rosetta Relax
 {self.ROSETTA_PATH}/bin/rosetta_scripts.{self.rosetta_ext} \\
-    -s                                        {working_dir_path}_input.pdb \\
-    -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params \\
+    -s                                        {PDB_input}.pdb \\
     -parser:protocol                          {filename}/scripts/RosettaRelax_{index}.xml \\
     -out:file:scorefile                       {filename}/score_RosettaRelax.sc \\
     -nstruct                                  1 \\
     -ignore_zero_occupancy                    false \\
     -corrections::beta_nov16                  true \\
-    -run:preserve_header                      true \\
+    -run:preserve_header                      true """
+    if self.LIGAND not in ['HEM']:
+        cmd += f"""\\
+    -extra_res_fa                             {self.FOLDER_INPUT}/{self.LIGAND}.params """
+    cmd += f"""\\
     -overwrite {ex}
 
-# Rename the output file
-mv {filename}/{self.WT}_{index}_input_0001.pdb {self.WT}_RosettaRelax_{index}.pdb
-sed -i '/        H  /d' {self.WT}_RosettaRelax_{index}.pdb
-
+# Cleanup
+mv {self.FOLDER_DESIGN}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
+   {self.FOLDER_DESIGN}/{index}/{self.WT}_RosettaRelax_{index}.pdb
+sed -i '/        H  /d' {self.FOLDER_DESIGN}/{index}/{self.WT}_RosettaRelax_{index}.pdb
 """
     
     return cmd

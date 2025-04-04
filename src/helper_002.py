@@ -7,7 +7,6 @@ Functions:
     - normalize_scores
     - one_to_three_letter_aa
     - run_command
-    - get_PDB_in
     - load_main_variables
     - save_main_variables
     - submit_job
@@ -46,12 +45,12 @@ from Bio.PDB.PDBExceptions import PDBConstructionWarning
 warnings.simplefilter('ignore', PDBConstructionWarning)
 from Bio import BiopythonParserWarning
 warnings.simplefilter('ignore', BiopythonParserWarning)
+import re
 
 from setup_system_001         import *
 
 def normalize_scores(self, 
                      unblocked_all_scores_df, 
-                     print_norm=False, 
                      norm_all=False, # True is min max normalization, False is Z-score normalization
                      extension="score"):
 
@@ -59,21 +58,15 @@ def normalize_scores(self,
 
         if len(array) > 1:  ##check that it's not only one value
             
-            array    = -array
+            array = -array
             
             if norm_all:
-                if print_norm:
-                    print(self.NORM[score_type])
 
+                # Normalize using predefined min max range in self.NORM
                 array = (array-self.NORM[score_type][0])/(self.NORM[score_type][1]-self.NORM[score_type][0])
     
-                if np.any(array > 1.0):
-                    print(f"\nNORMALIZATION ERROR! {score_type} has a value >1! Max value is {max(array)}") 
-                if np.any(array < 0.0):
-                    print(f"\nNORMALIZATION ERROR! {score_type} has a value <0! Min value is {min(array)}")
             else:
-                if print_norm:
-                    print(score_type,[np.mean(array),np.std(array)],end=" ")
+                
                 # Normalize using mean and standard deviation
                 if np.std(array) == 0:
                     array = np.where(np.isnan(array), array, 0.0)  # Handle case where all values are the same
@@ -88,13 +81,14 @@ def normalize_scores(self,
 
     # Normalize and stack normalized scores in combined_scores
     scores = {}
-    for score_type in ["total","catalytic","interface","efield", "identical"]:  
-        score = unblocked_all_scores_df[f"{score_type}_{extension}"].to_numpy(dtype=np.float64)
+    for score_type in self.SELECTED_SCORES:  
+        scores[score_type] = unblocked_all_scores_df[f"{score_type}_{extension}"].to_numpy(dtype=np.float64)
         if score_type in ["efield", "identical"]: 
-            score = -score # Adjust scale so that more negative is better for all score types
+            scores[score_type] = -scores[score_type] # Adjust scale so that more negative is better for all score types
 
-        normalized_scores = neg_norm_array(score, f"{score_type}_{extension}")
-        scores[f'{score_type}_{extension}'] = normalized_scores # Save normalized score into scores dictionary
+        normalized_scores = neg_norm_array(scores[score_type], f"{score_type}_{extension}")
+
+        scores[f'{score_type}_{extension}'] = normalized_scores 
 
     if len(scores[f'{score_type}_{extension}']) == 0: 
         combined_scores = []
@@ -107,14 +101,7 @@ def normalize_scores(self,
         combined_scores = np.stack(score_arrays, axis=0)
         combined_scores = np.mean(combined_scores, axis=0)
         scores[f'combined_{extension}'] = combined_scores
-        
-    if print_norm:
-        if combined_scores.size > 0:
-            print("HIGHSCORE:","{:.2f}".format(np.amax(scores[f'combined_{extension}'])),end=" ")
-            print("Designs:",len(scores[f'combined_{extension}']),end=" ")
-            parents = [i for i in os.listdir(self.FOLDER_PARENT) if i[-4:] == ".pdb"]
-            print("Parents:",len(parents))
-
+                    
     return scores
 
 def one_to_three_letter_aa(one_letter_aa):
@@ -155,63 +142,6 @@ def run_command(command, cwd=None, capture_output=False):
     except Exception as e:
         logging.error(f"An error occurred while running command: {command}")
         raise
-        
-def get_PDB_in(self, index):
-    
-    """Based on index, find the input PDB files for the AIzymes modules
-    
-    Parameters:
-    - index: The index of the current design
-    
-    Output:
-    - input_pdb_paths (dict): Contains relevant paths for input PDBs. Keys: ligand_in, Relax_in, Design_in and if MDMin = True, MDMin_in
-    """
-    input_pdb_paths = {}
-    
-    parent_index  = self.all_scores_df.loc[index, 'parent_index']
-    design_method = self.all_scores_df.loc[index, 'design_method']
-    
-    # PDBfile_Relax_ligand_in
-    if design_method == "ProteinMPNN":        
-        if parent_index == "Parent":
-            # Take ligand for relax run from Parent strucutre
-            PDBfile_Relax_ligand_in = f"{self.FOLDER_PARENT}/{self.WT}"
-        else:
-            # Take ligand for relax run from parent_index RosettaRelaxed structure
-            PDBfile_Relax_ligand_in  = f'{self.FOLDER_HOME}/{parent_index}/{self.WT}_RosettaRelax_{parent_index}'  
-
-    else:
-        # Take ligand for relax run from designed structure
-        PDBfile_Relax_ligand_in  = f'{self.FOLDER_HOME}/{index}/{self.WT}_{design_method}_{index}'    
-        
-    # PDBfile_Relax_in 
-    if self.MDMin:
-        input_pdb_paths['MDMin_in'] = f'{self.FOLDER_HOME}/{index}/{self.WT}_ESMfold_{index}'  
-        PDBfile_Relax_in = f'{self.FOLDER_HOME}/{index}/{self.WT}_MDMin_{index}' 
-    
-    else:
-        PDBfile_Relax_in = f'{self.FOLDER_HOME}/{index}/{self.WT}_ESMfold_{index}'
-    
-    input_pdb_paths['ligand_in'] = PDBfile_Relax_ligand_in
-
-    # PDBfile_Design_in
-    if parent_index == "Parent":
-        PDBfile_Design_in = f'{self.FOLDER_PARENT}/{self.WT}'
-    else:
-        PDBfile_Design_in = f'{self.FOLDER_HOME}/{parent_index}/{self.WT}_RosettaRelax_{parent_index}'
-
-    if design_method == "ProteinMPNN": 
-        if parent_index == "Parent":
-            PDBfile_Design_seq_in = f'{self.FOLDER_PARENT}/{self.WT}'
-        else:
-            PDBfile_Design_seq_in = f'{self.FOLDER_HOME}/{parent_index}/{self.WT}_{parent_index}'
-        input_pdb_paths['Design_seq_in'] = PDBfile_Design_seq_in
-    
-    input_pdb_paths['ligand_in'] = PDBfile_Relax_ligand_in
-    input_pdb_paths['Relax_in'] = PDBfile_Relax_in
-    input_pdb_paths['Design_in'] = PDBfile_Design_in
-    
-    return input_pdb_paths
 
 def load_main_variables(self, FOLDER_HOME):
     
@@ -224,7 +154,7 @@ def load_main_variables(self, FOLDER_HOME):
 def save_main_variables(self):
     
     variables = self.__dict__.copy()
-    for key in ['all_scores_df','UNBLOCK_ALL','PRINT_VAR','PLOT_DATA','LOG','HIGHSCORE','NORM']:
+    for key in ['resource_log_df','all_scores_df','UNBLOCK_ALL','PRINT_VAR','PLOT_DATA','LOG','HIGHSCORE','NORM']:
         if key in variables:
             del variables[key]    
     with open(self.VARIABLES_JSON, 'w') as f: json.dump(variables, f, indent=4)
@@ -235,31 +165,39 @@ def submit_job(self, index, job, ram=16, bash=False):
 
     submission_script += f"""
 # Output folder
-cd {self.FOLDER_HOME}/{index}
+cd {self.FOLDER_DESIGN}/{index}
 pwd
-bash {self.FOLDER_HOME}/{index}/scripts/{job}_{index}.sh
+bash {self.FOLDER_DESIGN}/{index}/scripts/{job}_{index}.sh
 """ 
 
     # Create the submission_script
-    with open(f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', 'w') as file: file.write(submission_script)
+    with open(f'{self.FOLDER_DESIGN}/{index}/scripts/submit_{job}_{index}.sh', 'w') as file: file.write(submission_script)
     
     if bash:
         
         # Bash the submission_script for testing
         with open(f'{self.FOLDER_HOME}/n_running_jobs.dat') as f: cpu_id = int(f.read())-1
-        subprocess.run(f'taskset -c {cpu_id} bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', shell=True, text=True)
+        subprocess.run(f'taskset -c {cpu_id} bash {self.FOLDER_DESIGN}/{index}/scripts/submit_{job}_{index}.sh', shell=True, text=True)
 
     elif self.RUN_PARALLEL:
 
         # Bash submission script parallel in background
-        out_file = open(f"{self.FOLDER_HOME}/{index}/scripts/{job}_{index}.out", "w")
-        err_file = open(f"{self.FOLDER_HOME}/{index}/scripts/{job}_{index}.err", "w")
-        process = subprocess.Popen(f'source ~/.bashrc && bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', 
+        out_file = open(f"{self.FOLDER_DESIGN}/{index}/scripts/{job}_{index}.out", "w")
+        err_file = open(f"{self.FOLDER_DESIGN}/{index}/scripts/{job}_{index}.err", "w")
+
+        process = subprocess.Popen(f'bash -l -c "bash {self.FOLDER_DESIGN}/{index}/scripts/submit_{job}_{index}.sh"', 
                                    shell=True, 
                                    stdout=out_file, 
                                    stderr=err_file)
-        self.processes.append((process, out_file, err_file))  
-        logging.debug(f'Job started with {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh')  
+        self.processes.append((process, out_file, err_file)) 
+
+        with open(f'{self.FOLDER_DESIGN}/{index}/scripts/{job}_{index}.sh', "r") as f: script = f.read()
+        match = re.search(r'CUDA_VISIBLE_DEVICES\s*=\s*([0-9]+)', script)
+        if match: 
+            gpu = int(match.group(1))
+            self.gpus[gpu] = process 
+        
+        logging.debug(f'Job started with {self.FOLDER_DESIGN}/{index}/scripts/submit_{job}_{index}.sh')  
       
     else:
         
@@ -268,37 +206,37 @@ bash {self.FOLDER_HOME}/{index}/scripts/{job}_{index}.sh
             if "ESM" in job:
                 
                 output = subprocess.check_output(
-    (f'ssh $USER@bs-submit04.ethz.ch "qsub -l h=\'!bs-dsvr64&!bs-dsvr58&!bs-dsvr42&!bs-grid64&!bs-grid65&!bs-grid66&!bs-grid67&!bs-grid68&!bs-grid69&!bs-grid70&!bs-grid71&!bs-grid72&!bs-grid73&!bs-grid74&!bs-grid75&!bs-grid76&!bs-grid77&!bs-grid78&!bs-headnode04&!bs-stellcontrol05&!bs-stellsubmit05\' -q regular.q {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh"'),
+    (f'ssh $USER@bs-submit04.ethz.ch "qsub -l h=\'!bs-dsvr64&!bs-dsvr58&!bs-dsvr42&!bs-grid64&!bs-grid65&!bs-grid66&!bs-grid67&!bs-grid68&!bs-grid69&!bs-grid70&!bs-grid71&!bs-grid72&!bs-grid73&!bs-grid74&!bs-grid75&!bs-grid76&!bs-grid77&!bs-grid78&!bs-headnode04&!bs-stellcontrol05&!bs-stellsubmit05\' -q regular.q {self.FOLDER_DESIGN}/{index}/scripts/submit_{job}_{index}.sh"'),
     shell=True, text=True
 )
 
             else:
                 output = subprocess.check_output(f'ssh $USER@bs-submit04.ethz.ch qsub -q regular.q \
-                                                {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', \
+                                                {self.FOLDER_DESIGN}/{index}/scripts/submit_{job}_{index}.sh', \
                                                 shell=True, text=True)
             logging.debug(output[:-1]) #remove newline at end of output
             
         elif self.SYSTEM == 'BLUEPEBBLE':
-            output = subprocess.check_output(f'sbatch {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh', \
+            output = subprocess.check_output(f'sbatch {self.FOLDER_DESIGN}/{index}/scripts/submit_{job}_{index}.sh', \
                                              shell=True, text=True)
             logging.debug(output[:-1]) #remove newline at end of output
             
         elif self.SYSTEM == 'BACKGROUND_JOB':
 
-            stdout_log_file_path = f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}_stdout.log'
-            stderr_log_file_path = f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}_stderr.log'
+            stdout_log_file_path = f'{self.FOLDER_DESIGN}/{index}/scripts/submit_{job}_{index}_stdout.log'
+            stderr_log_file_path = f'{self.FOLDER_DESIGN}/{index}/scripts/submit_{job}_{index}_stderr.log'
 
             with open(stdout_log_file_path, 'w') as stdout_log_file, open(stderr_log_file_path, 'w') as stderr_log_file:
-                process = subprocess.Popen(f'bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh &', 
+                process = subprocess.Popen(f'bash {self.FOLDER_DESIGN}/{index}/scripts/submit_{job}_{index}.sh &', 
                                            shell=True, stdout=stdout_log_file, stderr=stderr_log_file)
         
         elif self.SYSTEM == 'ABBIE_LOCAL':
 
-            stdout_log_file_path = f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}_stdout.log'
-            stderr_log_file_path = f'{self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}_stderr.log'
+            stdout_log_file_path = f'{self.FOLDER_DESIGN}/{index}/scripts/submit_{job}_{index}_stdout.log'
+            stderr_log_file_path = f'{self.FOLDER_DESIGN}/{index}/scripts/submit_{job}_{index}_stderr.log'
 
             with open(stdout_log_file_path, 'w') as stdout_log_file, open(stderr_log_file_path, 'w') as stderr_log_file:
-                process = subprocess.Popen(f'bash {self.FOLDER_HOME}/{index}/scripts/submit_{job}_{index}.sh &', 
+                process = subprocess.Popen(f'bash {self.FOLDER_DESIGN}/{index}/scripts/submit_{job}_{index}.sh &', 
                                            shell=True, stdout=stdout_log_file, stderr=stderr_log_file)
             
         else:
@@ -324,14 +262,14 @@ def generate_remark_from_all_scores_df(self, index):
         remarks.append(f'REMARK 666 MATCH TEMPLATE X {self.LIGAND}    0 MATCH MOTIF A {cat_resn}{str(cat_resi).rjust(5)}  {idx}  1')
     return "\n".join(remarks)
 
-def save_cat_res_into_all_scores_df(self, index, PDB_file_path, save_resn=True):
+def save_cat_res_into_all_scores_df(self, index, PDB_path, save_resn=True):
     
     '''Finds the indices and names of the catalytic residue from <PDB_file_path> 
        Saves indices and residues into <all_scores_df> in row <index> as lists.
        To make sure these are saved and loaded as list, ";".join() and .split(";") should be used
        If information is read from an input structure for design do not save cat_resn'''
 
-    with open(PDB_file_path, 'r') as f: 
+    with open(f'{PDB_path}.pdb', 'r') as f: 
         PDB = f.readlines()
     
     remarks = [i for i in PDB if i[:10] == 'REMARK 666']
@@ -393,7 +331,7 @@ def reset_to_after_parent_design():
             all_scores_df['design_method'] = all_scores_df['design_method'].astype('object') 
             all_scores_df.at[new_index, 'design_method'] = "RosettaDesign"
             all_scores_df['luca'] = all_scores_df['luca'].astype('object') 
-            score_file_path = f"{FOLDER_HOME}/{int(index)}/score_rosetta_design.sc"
+            score_file_path = f"{FOLDER_DESIGN}/{int(index)}/score_rosetta_design.sc"
             with open(score_file_path, 'r') as f: score = f.readlines()[2]
             all_scores_df.at[new_index, 'luca'] = score.split()[-1][:-5]
     
@@ -427,7 +365,6 @@ def reset_to_after_index(index):
     
     print(f"Reset completed. All entries and folders after index {index} have been removed.")
 
-    
 def save_all_scores_df(self):
    
     temp_fd, temp_path = tempfile.mkstemp(dir=self.FOLDER_HOME) # Create a temporary file
@@ -440,144 +377,101 @@ def save_all_scores_df(self):
         os.close(temp_fd)                                  # Ensure file descriptor is closed in case of error
         os.unlink(temp_path)                               # Remove the temporary file if an error occurs
         raise e
+            
+def save_resource_log_df(self):
+   
+    temp_fd, temp_path = tempfile.mkstemp(dir=self.FOLDER_HOME) # Create a temporary file
 
-def get_best_structures(self, save_structures = False, include_catalytic_score = False, seq_per_active_site = 100, DESIGN = None, WT = None):
+    try:
+        self.resource_log_df.to_csv(temp_path, index=False)  # Save DataFrame to the temporary file
+        os.close(temp_fd)                                    # Close file descriptor
+        os.rename(temp_path, self.RESOURCE_LOG_CSV)          # Rename temporary file to final filename
+    except Exception as e:
+        os.close(temp_fd)                                  # Ensure file descriptor is closed in case of error
+        os.unlink(temp_path)                               # Remove the temporary file if an error occurs
+        raise e
+
+def get_best_structures(self):
 
     # Condition to check if the ALL_SCORES_CSV file exists, otherwise it returns the function.
     if not os.path.isfile(f'{self.FOLDER_HOME}/all_scores.csv'): 
         print(f"ERROR: {self.FOLDER_HOME}/all_scores.csv does not exist!")
-        return    
+        sys.exot()    
     
     all_scores_df = pd.read_csv(self.ALL_SCORES_CSV)
-
-    # Calculate the combined scores using the normalize_scores function
-    scores = normalize_scores(self, unblocked_all_scores_df=all_scores_df, print_norm=False, norm_all=False)
+    best_scores_df = all_scores_df.dropna(subset=['total_score']).copy()
     
-    all_scores_df['combined_score'] = scores["combined_score"]
-    for score_type in self.SELECTED_SCORES: # Only include selected scores in combined score
-        if score_type != "catalytic":  
-            all_scores_df[f'norm_{score_type}_score'] = scores[f'{score_type}_score']
-    
-    # Remove rows where 'sequence' is NaN
-    all_scores_df = all_scores_df.dropna(subset=['sequence'])  
-    
-    # Calculate the final score which excludes the catalytic and identical score
-    all_scores_df['final_score'] = all_scores_df[['norm_total_score', 'norm_interface_score', 'norm_efield_score']].mean(axis=1) 
-    
-    all_scores_df['replicate_sequences'] = 0  # Initialize to count duplicates
-    all_scores_df['replicate_sequences_final_score'] = 0.0  # To store the average score
-    all_scores_df['replicate_sequences_final_score_std'] = 0.0  # To store the standard deviation
-
-    # Loop to find duplicates, calculate average score, and standard deviation
-    for i, row in all_scores_df.iterrows():
-        duplicates = all_scores_df[all_scores_df['sequence'] == row['sequence']]
-
-        avg_score = duplicates['final_score'].mean()
-        std_dev = duplicates['final_score'].std()
-
-        all_scores_df.at[i, 'replicate_sequences'] = len(duplicates)
-        all_scores_df.at[i, 'replicate_sequences_final_score'] = avg_score
-        all_scores_df.at[i, 'replicate_sequences_final_score_std'] = std_dev
+    # Calculate the final_scores
+    scores = normalize_scores(self, unblocked_all_scores_df=best_scores_df, norm_all=False)
+    for score in scores:
+        best_scores_df[score] = scores[score]
+    best_scores_df['final_score'] = best_scores_df[[f'{score}_score' for score in self.SELECTED_SCORES if score != 'identical']].mean(axis=1)
+    best_scores_df['final_score_replicate_mean'] = best_scores_df.groupby('sequence')['final_score'].transform('mean')
+    best_scores_df['final_score_replicate_std'] = best_scores_df.groupby('sequence')['final_score'].transform('std')
 
     # Remove replicates and keep only highest final
-    all_scores_df.sort_values(by=['final_score'], ascending=[False], inplace=True)
+    best_scores_df.sort_values(by=['final_score'], ascending=[False], inplace=True)
+    best_scores_df.drop_duplicates(subset=['sequence'], keep='first', inplace=True)
 
-    all_scores_df.drop_duplicates(subset=['sequence'], keep='first', inplace=True)
+    # Filter by active site sequences
+    if self.SEQ_PER_ACTIVE_SITE is not None:
+        
+        def get_active_site_sequence(sequence, active_site_position):
+            return ''.join(sequence[pos - 1] for pos in active_site_position)
+        
+        # Get active_site_sequence
+        if self.ACTIVE_SITE is None: self.ACTIVE_SITE = self.DESIGN # Default to self.DESIGN if self.ACTIVE_SITE is not given
+        active_site_position = [int(pos) for pos in self.ACTIVE_SITE.split(',')]
+        best_scores_df['active_site_sequence'] = best_scores_df['sequence'].apply(lambda seq: get_active_site_sequence(seq, active_site_position))
 
-    # Define Design group
-    def get_design_sequence(sequence, design_positions):
-        return ''.join(sequence[pos - 1] for pos in design_positions)
-
-    design_positions = [int(pos) for pos in DESIGN.split(',')]
-    
-    all_scores_df['design_group'] = all_scores_df['sequence'].apply(lambda seq: get_design_sequence(seq, design_positions))
-
-    # Use the standard deviation selection for catalytic score
-    if not include_catalytic_score:
-        # Use the standard deviation selection for catalytic score
-        mean_catalytic_score = all_scores_df['catalytic_score'].mean()
-        std_catalytic_score = all_scores_df['catalytic_score'].std()
-        all_scores_df = all_scores_df[all_scores_df['catalytic_score'] < mean_catalytic_score + std_catalytic_score]
-
-    # Get the best variants while respecting the seq_per_active_site limit
-    top_variants = []
-    group_counts = {}
-
-    for _, row in all_scores_df.iterrows():
-        group = row['design_group']
-        if group not in group_counts:
-            group_counts[group] = 0
-        if group_counts[group] < seq_per_active_site:
-            top_variants.append(row)
-            group_counts[group] += 1
-        if len(top_variants) >= 100:
-            break
-
-    top100 = pd.DataFrame(top_variants)
-
-    selected_indices = np.array(top100['index'].tolist(), dtype=int)
-
-    print(selected_indices)
-    print(top100)
-
-    # Print average scores for top 100 and all data points
-    score_types = ['final_score', 'combined_score', 'total_score', 'norm_total_score', 'interface_score', 'norm_interface_score', 'efield_score', 'norm_efield_score', 'catalytic_score', 'identical_score', 'mutations']
-
-    print_average_scores(all_scores_df, top100, score_types)
-
-    # Create the destination folder if it doesn't exist
-    if include_catalytic_score:
-        best_structures_folder = os.path.join(self.FOLDER_HOME, 'best_structures')
+        # Filter out best variants
+        top_variants = []
+        group_counts = {}
+        for _, row in best_scores_df.iterrows():
+            group = row['active_site_sequence']
+            group_counts[group] = group_counts.get(group, 0)
+            if group_counts[group] < self.SEQ_PER_ACTIVE_SITE:
+                top_variants.append(row)
+                group_counts[group] += 1
+            if len(top_variants) >= self.N_HITS:
+                break
+                
+        best_scores_df = pd.DataFrame(top_variants)
+        
     else:
-        best_structures_folder = os.path.join(self.FOLDER_HOME, 'best_structures_nocat')
+        best_scores_df = best_scores_df.head(self.N_HITS)
+
+    # Save best structures
+    print("Saving...")
+    best_structures_folder = os.path.join(self.FOLDER_HOME, 'best_structures')
     os.makedirs(best_structures_folder, exist_ok=True)
 
-    # Create the plots folder
-    plots_folder = os.path.join(best_structures_folder, 'plots')
-    os.makedirs(plots_folder, exist_ok=True)
+    # Clean directory
+    for file in os.listdir(best_structures_folder):
+        file_path = os.path.join(best_structures_folder, file)
+        if os.path.isfile(file_path): os.remove(file_path)
+    
+    for index, row in best_scores_df.iterrows():
 
-    # Copy files based on the top100 'index'
-    print(best_structures_folder)
-    if save_structures:
-        print("Saving...")
-        for index, row in top100.iterrows():
+        # Define input filename 
+        geom_mean = "{:.3f}".format(row['final_score_replicate_mean'])
+        relax_file = f"{self.FOLDER_DESIGN}/{int(index)}/{self.WT}_RosettaRelax_{int(index)}.pdb"
+        design_file = f"{self.FOLDER_DESIGN}/{int(index)}/{self.WT}_RosettaDesign_{int(index)}.pdb"
+        if os.path.isfile(relax_file):
+            src_file = relax_file
+        else:
+            src_file = design_file
 
-            geom_mean = "{:.3f}".format(row['final_score'])
-            relax_file = f"{self.FOLDER_HOME}/{int(index)}/{WT}_RosettaRelax_{int(index)}.pdb"
-            design_file = f"{self.FOLDER_HOME}/{int(index)}/{WT}_RosettaDesign_{int(index)}.pdb"
+        # Copy file
+        dest_file = os.path.join(best_structures_folder, f"{geom_mean}_{self.WT}")
+        shutil.copy(src_file, dest_file)
+        
+    csv_path = os.path.join(best_structures_folder, "best_scores.csv")
+    best_scores_df.to_csv(csv_path, index=False)
+    
+    print("Saved structures and CSV to:", best_structures_folder)
+
             
-            if os.path.isfile(relax_file):
-                src_file = relax_file
-            else:
-                src_file = design_file
-            dest_file = os.path.join(best_structures_folder, f"{geom_mean}_{WT}_Rosetta_{os.path.basename(src_file)}")
-            shutil.copy(src_file, dest_file)
-        print("Saved structures to: ", best_structures_folder)
-            
-    # Plot sorted total score, interface score, and efield score distributions
-    def plot_elbow_curve(scores_dict, title, top_indices, filename):
-        sorted_scores = sorted(scores_dict.items(), key=lambda x: x[1], reverse=True)
-        indices, scores = zip(*sorted_scores)
-        colors = ['orange' if idx in top_indices else 'blue' for idx in indices]
-        alphas = [1.0 if idx in top_indices else 0.05 for idx in indices]
-        plt.figure(figsize=(10, 6))
-        plt.scatter(range(len(scores)), scores, color=colors, alpha=alphas, s=1)
-        plt.title(title)
-        plt.xlabel('Variants')
-        plt.ylabel('Score')
-        plt.savefig(filename)
-        plt.show()
-        plt.close()
-
-    top100_indices = set(top100['index'])
-
-    plot_elbow_curve(all_scores_df.set_index('index')['total_score'].to_dict(), 'Total Score Elbow Curve', top100_indices, os.path.join(plots_folder, 'total_score_elbow_curve.png'))
-    plot_elbow_curve(all_scores_df.set_index('index')['interface_score'].to_dict(), 'Interface Score Elbow Curve', top100_indices, os.path.join(plots_folder, 'interface_score_elbow_curve.png'))
-    plot_elbow_curve(all_scores_df.set_index('index')['efield_score'].to_dict(), 'Efield Score Elbow Curve', top100_indices, os.path.join(plots_folder, 'efield_score_elbow_curve.png'))
-    plot_elbow_curve(all_scores_df.set_index('index')['catalytic_score'].to_dict(), 'Catalytic Score Elbow Curve', top100_indices, os.path.join(plots_folder, 'catalytic_score_elbow_curve.png'))
-
-    return selected_indices
-
 def remove_intersection_best_structures():
     # Define the paths to the folders
     best_structures_folder = os.path.join(FOLDER_HOME, 'best_structures')
@@ -617,7 +511,7 @@ def trace_mutation_tree(all_scores_df, index):
     all_scores_df = all_scores_df.dropna(subset=['total_score'])
     
     # Calculate combined scores using normalized scores
-    scores = normalize_scores(all_scores_df, print_norm=True, norm_all=True)
+    scores = normalize_scores(all_scores_df, norm_all=True)
     combined_scores_normalized = scores['combined_score']
     
     # Add combined scores to the DataFrame
@@ -684,16 +578,6 @@ def trace_mutation_tree(all_scores_df, index):
     plt.show()
 
     return mutations[::-1], offspring_counts[::-1], combined_scores[::-1], total_scores[::-1], interface_scores[::-1], efield_scores[::-1]
-
-def print_average_scores(all_scores_df, top100, score_types):
-    print("\nSummary of Average Scores:")
-    print(f"{'Score Type':<20} {'Average of All':<20} {'Average of Top 100':<20}")
-    print("="*60)
-    for score_type in score_types:
-        avg_all = all_scores_df[score_type].mean()
-        avg_top100 = top100[score_type].mean()
-        print(f"{score_type.replace('_', ' ').title():<20} {avg_all:<20.4f} {avg_top100:<20.4f}")
-    print("\n")
 
 def wait_for_file(file_path, timeout=5):
     """Wait for a file to exist and have a non-zero size."""
@@ -764,7 +648,18 @@ def create_new_index(self,
     elif len(self.CST_WEIGHT) == 3:
         cst_weight = (self.CST_WEIGHT[0] - self.CST_WEIGHT[2])*np.exp(-self.CST_WEIGHT[1]*generation) + self.CST_WEIGHT[2]
 
-    final_variant = f'{self.FOLDER_HOME}/{new_index}/{self.WT}_{final_method}_{new_index}.pdb',
+    final_variant = f'{self.FOLDER_DESIGN}/{new_index}/{self.WT}_{final_method}_{new_index}',
+
+    step_input_variant = input_variant
+    
+    step_output_variant = None
+    for next_step in next_steps.split(","):
+        if next_step in self.SYS_STRUCT_METHODS:
+            step_output_variant = f'{self.FOLDER_DESIGN}/{new_index}/{self.WT}_{next_step}_{new_index}'
+            break
+    if step_output_variant == None:
+        logging.error(f"ERROR! New design at index {new_index} initated, but next_steps: {next_steps} does not prodce any output structure!")
+        sys.exit()   
         
     # Creates a new dataframe with all the necessary columns for the new index, concatenes it with the existing all_scores dataframe and saves it
     new_index_df = pd.DataFrame({
@@ -777,6 +672,8 @@ def create_new_index(self,
         'design_method': design_method,
         'next_steps': next_steps,
         'input_variant': input_variant,
+        'step_input_variant': step_input_variant,
+        'step_output_variant': step_output_variant,
         'final_variant': final_variant,
     }, index = [0] , dtype=object)  
     self.all_scores_df = pd.concat([self.all_scores_df, new_index_df], ignore_index=True)
@@ -784,11 +681,9 @@ def create_new_index(self,
     # Add catalytic residues
     save_cat_res_into_all_scores_df(self, new_index, input_variant, save_resn=False)    
     save_all_scores_df(self)
-
-    display(self.all_scores_df)
     
     # Create the folder for the new index
-    os.makedirs(f"{self.FOLDER_HOME}/{new_index}/scripts", exist_ok=True)
+    os.makedirs(f"{self.FOLDER_DESIGN}/{new_index}/scripts", exist_ok=True)
     logging.debug(f"Child index {new_index} created for parent index {parent_index}.")
 
     return new_index
