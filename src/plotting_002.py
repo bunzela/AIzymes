@@ -156,12 +156,7 @@ def plot_scores_hist(self):
         else:
             score_type = self.SELECTED_SCORES[idx - 1]
             
-        if score_type in ["redox"]:
-            score_plotted = "BioDC_redox"
-        else:
-            score_plotted = f'{score_type}_score'
-            
-        plot_score_hist(self, ax, score_plotted)
+        plot_score_hist(self, ax, f'{score_type}_score')
         
     plt.tight_layout()
     save_path = os.path.join(self.FOLDER_HOME, "plot_scores_hist.png")
@@ -234,15 +229,10 @@ def print_vals(self):
     rows = []
     for score_type in [score for score in self.scores if "score" in score]:
 
-        if score_type ==  "redox_score":
-            score_plotted = "BioDC_redox"
-        else:
-            score_plotted = score_type
-
         row = {
             "score_type": score_type,
-            "min": min(self.scores[score_plotted]),
-            "max": max(self.scores[score_plotted]),
+            "min": min(self.scores[score_type]),
+            "max": max(self.scores[score_type]),
             "highscore": self.HIGHSCORE.get(f'{score_type}', None),
             "negbest": self.NEGBEST.get(f'{score_type}', None)
         }
@@ -367,8 +357,7 @@ def plot_score_v_index(self, ax, score_type):
     moving_avg = pd.Series(normalized_scores).rolling(window=20).mean()
     ax.plot(range(len(moving_avg)),moving_avg,c="k")
 
-    if score_type ==  "BioDC_redox":
-        score_type = "redox_score"
+    if score_type == "BioDC_redox":
         ylim = (-1,1)
     else:
         ylim = (0,1)
@@ -382,7 +371,7 @@ def plot_score_v_index(self, ax, score_type):
     ax.set_xlabel('index')
     ax.set_ylim(ylim)
     ax.set_xlim(left=0)
-    if score_type not in ["redox_score"]:
+    if score_type not in ["BioDC_redox"]:
         ax.tick_params(axis='y', which='both', left=False, labelleft=False)
  
 def plot_score_hist(self, ax, score_type):
@@ -390,12 +379,9 @@ def plot_score_hist(self, ax, score_type):
     # Prepares data for the plot
     normalized_scores = self.scores[score_type]
 
-    if score_type ==  "BioDC_redox":
-        xmin = -1.1
-        xmax = 1.1
-    else:
-        xmin = -0.1
-        xmax = 1.1
+    xmin = -0.1
+    xmax = 1.1
+    
     # Plot score
     ax.hist(normalized_scores, bins=np.arange(xmin,xmax,0.02),color='grey')
 
@@ -427,10 +413,7 @@ def plot_score_hist(self, ax, score_type):
     ax.set_title(score_type.replace("_", " "))
     ax.set_xlabel(score_type)
     ax.set_ylim(bottom=0)
-    if score_type ==  "BioDC_redox":
-        ax.set_xlim(-1,1)
-    else:
-        ax.set_xlim(0,1)
+    ax.set_xlim(0,1)
     ax.tick_params(axis='y', which='both', left=False, labelleft=False)
     
 def plot_score_v_generation_violin(self, ax, score_type):
@@ -466,7 +449,6 @@ def plot_score_v_generation_violin(self, ax, score_type):
     ax.scatter(inds, means, marker='o', color='k', s=20, zorder=3)  
 
     if score_type ==  "BioDC_redox":
-        score_type = "redox_score"
         ylim = (-1,1)
     else:
         ylim = (0,1)
@@ -481,5 +463,5 @@ def plot_score_v_generation_violin(self, ax, score_type):
     ax.set_ylim(ylim)
     ax.set_xlim(left=-0.3)
     ax.set_xticks(range(0, max(generations)+1))
-    if score_type not in ["redox_score"]:
+    if score_type not in ["BioDC_redox"]:
         ax.tick_params(axis='y', which='both', left=False, labelleft=False)

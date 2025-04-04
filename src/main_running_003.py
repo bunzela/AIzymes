@@ -527,12 +527,16 @@ def boltzmann_selection(self):
         top_idx_arr = np.sort(top_idx_arr)  # preserve original order
         all_idx = set(unblocked_all_scores_df.index)
         unblocked_all_scores_df = unblocked_all_scores_df.iloc[top_idx_arr]
+        combined_potentials = combined_potentials[top_idx_arr]
         top_idx = set(unblocked_all_scores_df.index)
     
         # Compress folders for indices not in the top 1000
         for idx in all_idx - top_idx:
             folder = os.path.join(self.FOLDER_DESIGN, str(int(idx)))
             if not os.path.isdir(folder): continue
+            children = self.all_scores_df[self.all_scores_df["parent_index"] == idx]
+            if any(children["blocked"] != "unblocked"):
+                continue
             try:
                 with tarfile.open(f'{folder}.tar', "w") as tar:
                     tar.add(folder, arcname=os.path.basename(folder))
@@ -542,6 +546,7 @@ def boltzmann_selection(self):
                 shutil.rmtree(folder)
         
     if len(combined_potentials) > 0:
+        
         generation=self.all_scores_df['generation'].max()
                 
         if isinstance(self.KBT_BOLTZMANN, (float, int)):
@@ -561,7 +566,13 @@ def boltzmann_selection(self):
         probabilities = boltzmann_factors / sum(boltzmann_factors)
         
         if len(unblocked_all_scores_df) > 0:
+            
             selected_index = np.random.choice(unblocked_all_scores_df.index.to_numpy(), p=probabilities)
+
+            # If an index was selected that was tarred before, do not do the Boltzmann selection!
+            if os.path.isfile(f"{self.FOLDER_DESIGN}/{selected_index}.tar"):
+                return None
+                
         else:
             logging.debug(f'Boltzmann selection tries to select a variant for design, but all are blocked. Waiting 20 seconds')
             time.sleep(20)
@@ -569,7 +580,7 @@ def boltzmann_selection(self):
         
     else:
         selected_index = 0
-        
+    
     return selected_index
 
 def schedule_design_method(self, parent_index):

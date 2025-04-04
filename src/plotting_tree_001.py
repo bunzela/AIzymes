@@ -133,10 +133,9 @@ def plot_tree(self,
         values = [G.edges[edge][color] for edge in G.edges]
 
         if color ==  "BioDC_redox":
-            score_type = "redox_score"
-            vmin=self.HIGHSCORE["redox_score"]-0.5
-            vmax=self.HIGHSCORE["redox_score"]+0.5
-
+            vmin=-1
+            vmax=1
+            vmid=self.HIGHSCORE["BioDC_redox"]
             base_cmap = LinearSegmentedColormap.from_list(
                 "RedYellowBlue",
                 [
@@ -147,7 +146,7 @@ def plot_tree(self,
                     (1.0, (0, 0, 1))
                 ]
             )
-            norm = Normalize(vmin=vmin, vmax=vmax)     
+            norm = TwoSlopeNorm(vmin=vmin, vcenter=vmid, vmax=vmax)   
         else:
             norm = Normalize(vmin=0, vmax=1)
             base_cmap = LinearSegmentedColormap.from_list("WhiteToBlue", [(1, 1, 1), (0, 0, 1)])
@@ -222,10 +221,17 @@ def plot_tree(self,
         cbar.set_label('combined score')
     elif color == "BioDC_redox":
         cbar.set_label('Redox Potential')
-        tick_norm = [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.]
-        tick_vals = []
-        for p in tick_norm:
-            tick_vals.append(vmin + p * (vmax - vmin))
+        #tick_norm = [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.]
+        #tick_vals = []
+        #for p in tick_norm:
+        #    tick_vals.append(vmin + p * (vmax - vmin))
+        tick_vals = [
+            vmin,
+            vmin + 0.5 * (vmid - vmin),
+            vmid,
+            vmid + 0.5 * (vmax - vmid),
+            vmax
+        ]
         cbar.set_ticks(tick_vals)
         cbar.set_ticklabels([f"{tv:.2f}" for tv in tick_vals])
     elif color == "hamming_distance":
