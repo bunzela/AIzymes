@@ -1,4 +1,4 @@
-# 🧬 AI.zymes  
+# AI.zymes  
 *A Modular Platform for Evolutionary Enzyme Design*
 
 Welcome to the source code repository for **AI.zymes** — a modular platform for evolutionary enzyme design.
@@ -7,8 +7,6 @@ Welcome to the source code repository for **AI.zymes** — a modular platform fo
 
 We are currently working on improving the accessibility of **AI.zymes**, including a full user manual and installation instructions. Stay tuned!
 
----
-
 ## 📥 Getting Started
 
 If you're interested in using **AI.zymes** or collaborating with us, please don’t hesitate to get in touch:
@@ -16,8 +14,6 @@ If you're interested in using **AI.zymes** or collaborating with us, please don�
 **Contact:**  
 📧 [Adrian Bunzel](mailto:Adrian.Bunzel@mpi-marburg.mpg.de)  
 Max Planck Institute for Terrestrial Microbiology
-
----
 
 ## 📝 Citation
 
