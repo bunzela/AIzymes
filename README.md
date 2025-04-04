@@ -11,8 +11,6 @@ Built with modularity in mind, **AI.zymes** allows you to easily plug in new met
 
 We are currently working on improving the accessibility of **AI.zymes**, including a full user manual and installation instructions. Stay tuned!
 
----
-
 ## 📥 Getting Started
 
 We are actively looking for collaborators and enthusiastic users! If you're interested in using **AI.zymes** or exploring joint projects, **please reach out** — we'd love to hear from you:
@@ -20,8 +18,6 @@ We are actively looking for collaborators and enthusiastic users! If you're inte
 **Contact:**  
 📧 [Adrian Bunzel](mailto:Adrian.Bunzel@mpi-marburg.mpg.de)  
 Max Planck Institute for Terrestrial Microbiology
-
----
 
 ## 📝 Citation
 
