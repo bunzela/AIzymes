@@ -97,6 +97,14 @@ def plot_boltzmann_histogram(self, ax, combined_scores, score_min, score_max, sc
                                                        norm_all=False,
                                                        extension="score")
 
+    scores = normalize_scores(self,
+                              self.plot_scores_df,
+                              print_norm=False,
+                              norm_all=False,
+                              extension="potential")
+        
+    combined_potentials = scores['combined_potential']   
+
     # Some issue with numpy exp when calculating boltzman factors.
     combined_potentials_list = [float(x) for x in combined_potentials]
     combined_potentials = np.array(combined_potentials_list)
@@ -165,13 +173,20 @@ def plot_score_v_generation_violin(self, ax, score_type, ylim=(0,1)):
     max_gen = int(self.plot_scores_df['generation'].max())
     generations = np.arange(0, max_gen + 1)
 
-    catalytic_scores, total_scores, interface_scores, efield_scores, identical_scores, combined_scores = normalize_scores(self,
-                                                                                                            self.plot_scores_df,
-                                                                                                            print_norm=True,
-                                                                                                            norm_all=True)    
+    scores = normalize_scores(self,
+                              self.plot_scores_df,
+                              print_norm=True,
+                              norm_all=True)
+        
+    interface_scores = scores['interface_score']   
+    total_scores = scores['total_score']    
+    catalytic_scores = scores['catalytic_score']   
+    efield_scores = scores['efield_score']   
+    identical_scores = scores['identical_score']
+    combined_scores = scores['combined_score']   
+    
     if score_type=="total_score":
         normalized_violin_data = [total_scores[self.plot_scores_df['generation'] == gen] for gen in generations]
-
     elif score_type=="interface_score":
         normalized_violin_data = [interface_scores[self.plot_scores_df['generation'] == gen] for gen in generations]
     elif score_type=="catalytic_score":
@@ -366,10 +381,18 @@ def plot_scores(self, combined_score_min=0, combined_score_max=1, combined_score
             mut_max = len(self.plot_scores_df[self.plot_scores_df['sequence'] != 'nan']['sequence'].iloc[0])    
 
         # Defines the scores variables by running the normalize_scores function.
-        catalytic_scores, total_scores, interface_scores, efield_scores, identical_scores, combined_scores = normalize_scores(self,
-                                                                                                            self.plot_scores_df,
-                                                                                                            print_norm=True,
-                                                                                                            norm_all=True)
+        scores = normalize_scores(self,
+                                    self.plot_scores_df,
+                                    print_norm=True,
+                                    norm_all=True)
+        
+        interface_scores = scores['interface_score']   
+        total_scores = scores['total_score']    
+        catalytic_scores = scores['catalytic_score']   
+        efield_scores = scores['efield_score']   
+        identical_scores = scores['identical_score']
+        combined_scores = scores['combined_score']    
+        
         # Print normalized values
         if print_vals:            
             print(f'interface_score: {round(min(interface_scores),3)} , {round(max(interface_scores),3)}')
@@ -478,8 +501,15 @@ def plot_tree(self,
 
     # Read the input CSV
     all_scores_df = pd.read_csv(self.ALL_SCORES_CSV)
-    catalytic_scores, total_scores, interface_scores, efield_scores, identical_scores, combined_scores = normalize_scores(self, all_scores_df)
-    
+    scores = normalize_scores(self, all_scores_df)
+        
+    interface_scores = scores['interface_score']   
+    total_scores = scores['total_score']    
+    catalytic_scores = scores['catalytic_score']   
+    efield_scores = scores['efield_score']   
+    identical_scores = scores['identical_score']
+    combined_scores = scores['combined_score']   
+
     if max_generation == 0:
         max_generation = int(all_scores_df['generation'].max() + 1)  
         print('max_generation',max_generation)
@@ -1263,7 +1293,12 @@ def plot_delta_scores():
     all_scores_df = all_scores_df.dropna(subset=['total_score'])
     
     # Calculate combined scores using normalized scores
-    _, _, _, _, combined_scores = normalize_scores(all_scores_df, print_norm=True, norm_all=True)
+    scores = normalize_scores(self,
+                                self.plot_scores_df,
+                                print_norm=True,
+                                norm_all=True)
+    
+    combined_scores = scores['combined_score']   
     
     # Add combined scores to the DataFrame
     all_scores_df['combined_score'] = combined_scores
