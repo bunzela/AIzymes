@@ -53,10 +53,10 @@ export CUDA_VISIBLE_DEVICES={gpu_id}
 --output_file   {output_file} 
 
 sed -i '/PARENT N\/A/d' {output_file}"""
-    ##Add the ligand back in after running ESMfold for backbone
-    input_pdb_paths = get_PDB_in(self, index)
-    PDBfile_ligand = input_pdb_paths['ligand_in']
     
+    # Add the ligand back in after running ESMfold for backbone
+    PDBfile_ligand = self.all_scores_df.at[int(index), "step_input_variant"]
+
     # Get the pdb file from the last step and strip away ligand and hydrogens 
     cpptraj = f'''parm {PDBfile_ligand}.pdb
 trajin  {PDBfile_ligand}.pdb
@@ -114,7 +114,7 @@ cat {working_dir_path}_aligned.pdb >> {working_dir_path}_input.pdb
 cat {working_dir_path}_lig.pdb     >> {working_dir_path}_input.pdb
 sed -i '/TER/d' {working_dir_path}_input.pdb
 
-cat {working_dir_path}_input.pdb > {self.FOLDER_HOME}/{index}/{self.WT}_ESMfold_{index}.pdb
+cat {working_dir_path}_input.pdb > {self.FOLDER_DESIGN}/{index}/{self.WT}_ESMfold_{index}.pdb
 
 """        
     return cmd

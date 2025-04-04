@@ -64,7 +64,7 @@ def start_controller(self):
         # Wait if the number of running or scheduled jobs is equal or bigger than the maximum number of jobs.
         if num_running_jobs['running'] >= self.MAX_JOBS: 
             
-            time.sleep(10)
+            time.sleep(1)
             
         else:
           
@@ -220,10 +220,11 @@ def update_potential(self, score_type, index):
     self.all_scores_df.at[index, f'{score_type}_potential'] = score
 
     #Update parent potential
-    if score_taken_from != "RosettaRelax": return                     # Only update the parent potential for RosettaRelax
-    if parent_index == "Parent":           return                     # Do not update the parent potential of a variant from parent
-    with open(parent_filename, "a") as f:  f.write(f"\n{str(score)}") # Appends to parent_filename
-    with open(parent_filename, "r") as f:  potentials = f.readlines() # Reads in potential values 
+    if score_taken_from != "RosettaRelax":  return                     # Only update the parent potential for RosettaRelax
+    if parent_index == "Parent":            return                     # Do not update the parent potential of a variant from parent
+    if not os.path.isfile(parent_filename): return                     # Do not update if this is a potential not in the top1000 designs anymore
+    with open(parent_filename, "a") as f:  f.write(f"\n{str(score)}")  # Appends to parent_filename
+    with open(parent_filename, "r") as f:  potentials = f.readlines()  # Reads in potential values 
     self.all_scores_df.at[int(parent_index), f'{score_type}_potential'] = np.average([float(i) for i in potentials])
 
 def update_scores(self):
@@ -297,7 +298,7 @@ def update_scores(self):
 
             self.all_scores_df['sequence'] = self.all_scores_df['sequence'].astype('object')
             self.all_scores_df.at[index, 'sequence']  = current_sequence
-            self.all_scores_df.at[index, 'active_site_res']  = ''.join(current_sequence[int(pos)] for pos in self.DESIGN.split(','))
+            self.all_scores_df.at[index, 'active_site_res']  = ''.join(current_sequence[int(pos)-1] for pos in self.DESIGN.split(','))
             self.all_scores_df.at[index, 'total_mutations'] = count_mutations(reference_sequence, current_sequence)
             self.all_scores_df.at[index, 'parent_mutations'] = count_mutations(parent_sequence, current_sequence)
         
@@ -310,19 +311,24 @@ def update_scores(self):
                 self.all_scores_df.at[index, 'cat_resn'] = ";".join(cat_resns)
                     
         # Update identical score and potential
-        identical_score = 0.0
-        if "identical" in self.SELECTED_SCORES:
-            central_res = self.all_scores_df.at[index, 'central_res']
-            parent_index = self.all_scores_df.at[index, 'parent_index']
-            if pd.notna(central_res):
-                if parent_index == 'Parent': # If it's a parent, set identical score to 1
-                    identical_score = 1.0 
-                else:
-                    identical_count = (self.all_scores_df['active_site_res'] == central_res).sum()
-                    identical_score = 1 / identical_count if identical_count > 0 else 0.0
+        if pd.notna(self.all_scores_df.at[index, 'sequence']) and "identical" in self.SELECTED_SCORES:
 
-        self.all_scores_df.at[index, 'identical_score'] = identical_score
-        self.all_scores_df.at[index, 'identical_potential'] = identical_score
+            if self.IDENTICAL_DESIGN:
+                sequence_column = 'active_site_res'
+            else:
+                sequence_column = 'sequence'
+                
+            seq = self.all_scores_df.at[index, sequence_column]
+            parent_index = self.all_scores_df.at[index, 'parent_index']
+
+            if parent_index == 'Parent': # If it's a parent, identical score will be set to 1
+                identical_score = 1
+            else:
+                identical_count = (self.all_scores_df[sequence_column] == seq).sum()
+                identical_score = 1 / identical_count if identical_count > 0 else 0
+
+            self.all_scores_df.at[index, 'identical_score'] = identical_score
+            self.all_scores_df.at[index, 'identical_potential'] = identical_score
 
         # Check what structure to score on
         if os.path.exists(f"{self.FOLDER_DESIGN}/{int(index)}/score_RosettaRelax.sc"): # Score based on RosettaRelax            
@@ -391,19 +397,28 @@ def update_scores(self):
         redox_score = 0.0
         
         for idx_headers, header in enumerate(headers):
+
+            # Calculate total score
             if "total" in self.SELECTED_SCORES:
-                if header == 'total_score':                total_score      = float(scores[idx_headers])
+                if header == 'total_score':                total_score           = float(scores[idx_headers])
+                    
             # Subtract constraints from interface score
             if "interface" in self.SELECTED_SCORES:
-                if header == 'interface_delta_X':          interface_score += float(scores[idx_headers])
+                if header == 'interface_delta_X':          interface_score      += float(scores[idx_headers])
                 if header in ['if_X_angle_constraint', 
                           'if_X_atom_pair_constraint', 
-                          'if_X_dihedral_constraint']:     interface_score -= float(scores[idx_headers])   
+                          'if_X_dihedral_constraint']:     interface_score      -= float(scores[idx_headers])   
+                    
             # Calculate catalytic score by adding constraints
             if "catalytic" in self.SELECTED_SCORES:
-                if header in ['atom_pair_constraint']:     catalytic_score += float(scores[idx_headers])       
-                if header in ['angle_constraint']:         catalytic_score += float(scores[idx_headers])       
-                if header in ['dihedral_constraint']:      catalytic_score += float(scores[idx_headers]) 
+                
+                if header in ['atom_pair_constraint']:     catalytic_score      += float(scores[idx_headers])       
+                if header in ['angle_constraint']:         catalytic_score      += float(scores[idx_headers])       
+                if header in ['dihedral_constraint']:      catalytic_score      += float(scores[idx_headers]) 
+                    
+                if header in ['atom_pair_constraint']:     self.all_scores_df.at[index, 'atom_pair_constraint'] = float(scores[idx_headers]) 
+                if header in ['angle_constraint']:         self.all_scores_df.at[index, 'angle_constraint']     = float(scores[idx_headers]) 
+                if header in ['dihedral_constraint']:      self.all_scores_df.at[index, 'dihedral_constraint']  = float(scores[idx_headers]) 
         
         # Calculate efield score
         if "efield" in self.SELECTED_SCORES:
@@ -415,11 +430,11 @@ def update_scores(self):
             self.all_scores_df.at[index, 'BioDC_redox'] = redoxpotential
         
         # Update scores
-        if "total"     in self.SELECTED_SCORES: self.all_scores_df.at[index, 'total_score']     = total_score
-        if "interface" in self.SELECTED_SCORES: self.all_scores_df.at[index, 'interface_score'] = interface_score              
-        if "catalytic" in self.SELECTED_SCORES: self.all_scores_df.at[index, 'catalytic_score'] = catalytic_score
-        if "efield"    in self.SELECTED_SCORES: self.all_scores_df.at[index, 'efield_score']    = efield_score
-        if "redox"     in  self.SELECTED_SCORES: self.all_scores_df.at[index, 'redox_score']    = redox_score
+        if "total"     in self.SELECTED_SCORES: self.all_scores_df.at[index, 'total_score']          = total_score
+        if "interface" in self.SELECTED_SCORES: self.all_scores_df.at[index, 'interface_score']      = interface_score              
+        if "catalytic" in self.SELECTED_SCORES: self.all_scores_df.at[index, 'catalytic_score']      = catalytic_score         
+        if "efield"    in self.SELECTED_SCORES: self.all_scores_df.at[index, 'efield_score']         = efield_score
+        if "redox"     in  self.SELECTED_SCORES: self.all_scores_df.at[index, 'redox_score']         = redox_score
 
         # This is just for book keeping. AIzymes will always use the most up_to_date scores saved above
         if "RosettaRelax" in score_file_path:
@@ -500,7 +515,12 @@ def boltzmann_selection(self):
         mean_std_catalytic_score = mean_catalytic_score + std_catalytic_score
         if len(unblocked_all_scores_df) > 10:
             unblocked_all_scores_df = unblocked_all_scores_df[unblocked_all_scores_df['catalytic_score'] < mean_std_catalytic_score]
-        
+             
+    # Drop Variants with distances greater than self.DISTANCE_CUTOFF (in RosettaScores, NOT Angstrom!)
+    if "catalytic" in self.SELECTED_SCORES and self.CST_DIST_CUTOFF:
+        if len(unblocked_all_scores_df) > 10:
+            unblocked_all_scores_df = unblocked_all_scores_df[unblocked_all_scores_df['atom_pair_constraint'] < self.CST_DIST_CUTOFF]
+            
     # Remove indices without score (design running)
     unblocked_all_scores_df = unblocked_all_scores_df.dropna(subset=['total_score'])     
   
@@ -535,7 +555,7 @@ def boltzmann_selection(self):
             folder = os.path.join(self.FOLDER_DESIGN, str(int(idx)))
             if not os.path.isdir(folder): continue
             children = self.all_scores_df[self.all_scores_df["parent_index"] == idx]
-            if any(children["blocked"] != "unblocked"):
+            if not all(children["blocked"] == "unblocked"):
                 continue
             try:
                 with tarfile.open(f'{folder}.tar', "w") as tar:
@@ -574,8 +594,8 @@ def boltzmann_selection(self):
                 return None
                 
         else:
-            logging.debug(f'Boltzmann selection tries to select a variant for design, but all are blocked. Waiting 20 seconds')
-            time.sleep(20)
+            logging.debug(f'Boltzmann selection tries to select a variant for design, but all are blocked. Waiting 1 second')
+            time.sleep(1)
             return None
         
     else:

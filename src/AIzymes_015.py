@@ -86,28 +86,34 @@ class AIzymes_MAIN:
               CST_WEIGHT          = 1.0, 
               CST_NAME            = None,
               
-              # ProteinMPNN Settings
+              # ProteinMPNN settings
               ProteinMPNN_BIAS    = 0.5, 
               ProteinMPNN_T       = "0.1", 
 
-              # LigandMPNN Settings
+              # LigandMPNN settings
               LigandMPNN_BIAS     = 0.5, 
               LigandMPNN_T        = "0.1", 
               
-              # SolubleMPNN Settings
+              # SolubleMPNN settings
               SolubleMPNN_BIAS    = 0.5, 
               SolubleMPNN_T       = "0.1", 
 
-              # FieldTools Settings
+              # FieldTools settings
               FIELD_TARGET        = None,
               FIELDS_EXCL_CAT     = True,
 
-              # BioDC Settings
+              # BioDC settings
               TARGET_REDOX        = 10,
               
-              # RosettaMatch Settings
+              # RosettaMatch settings
               FOLDER_MATCH        = None,
 
+              # Identical score settings
+              IDENTICAL_DESIGN    = False,
+
+              # Catalytic score settings
+              CST_DIST_CUTOFF     = False,
+              
               # Established Modules list
               # All Methods that redesign a sequence
               SYS_DESIGN_METHODS  = ["RosettaDesign","ProteinMPNN","LigandMPNN","SolubleMPNN"],
