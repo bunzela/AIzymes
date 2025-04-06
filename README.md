@@ -24,10 +24,9 @@ Max Planck Institute for Terrestrial Microbiology
 If you use **AI.zymes** in your research, please cite:
 
 **AI.zymes – A Modular Platform for Evolutionary Enzyme Design**  
+
 Lucas P. Merlicek, Jannik Neumann, Abbie Lear, Vivian Degiorgi, Moor M. de Waal, Tudor-Stefan Cotet, Adrian J. Mulholland, and H. Adrian Bunzel
 **Angewandte Chemie International Edition**, 2025 *(accepted)*
-
----
 
 ## 🛠️ Developer Notes
 
