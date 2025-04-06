@@ -322,10 +322,10 @@ def update_scores(self):
             parent_index = self.all_scores_df.at[index, 'parent_index']
 
             if parent_index == 'Parent': # If it's a parent, identical score will be set to mean of scores
-                if len(self.all_scores_df) <= self.N_PARENT_JOBS:
+                if self.all_scores_df['identical_score'][self.N_PARENT_JOBS:].dropna().empty:
                     identical_score = 1
                 else:
-                    identical_score = self.all_scores_df['identical_score'][self.N_PARENT_JOBS:].mean()
+                    identical_score = self.all_scores_df['identical_score'][self.N_PARENT_JOBS:].dropna().mean()
                     
             else:
                 identical_count = (self.all_scores_df[sequence_column] == seq).sum()

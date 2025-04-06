@@ -216,7 +216,7 @@ class AIzymes_MAIN:
              PLOT_TREE=False,
              landscape_plot=False,
              PLOT_SIZE=3,
-             TREE_SCORE="combined_score"):
+             TREE_SCORE="final_score"):
         
         """
         Generates plots based on AIzymes data, including main, tree, and landscape plots.

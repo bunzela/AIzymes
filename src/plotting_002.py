@@ -63,7 +63,8 @@ def load_plot_scores_df(self):
                                    self.plot_scores_df, 
                                    norm_all=True, 
                                    extension="score") 
-    if "redox" in self.SELECTED_SCORES :self.scores['BioDC_redox'] = self.plot_scores_df["BioDC_redox"]
+
+    if "redox" in self.SELECTED_SCORES: self.scores['BioDC_redox'] = self.plot_scores_df["BioDC_redox"]
 
 # Combined plot functions --------------------------------------------------------------------------------------------------------------------------
 
@@ -171,7 +172,7 @@ def plot_scores_v_index(self):
     for idx, ax in enumerate(axes):
         
         if idx == 0:
-            score_type = "combined"
+            score_type = "final"
         else:
             score_type = self.SELECTED_SCORES[idx - 1]
             
@@ -194,7 +195,7 @@ def plot_scores_v_generation(self):
     
     for idx, ax in enumerate(axes):
         if idx == 0:
-            score_type = "combined"
+            score_type = "final"
         else:
             score_type = self.SELECTED_SCORES[idx - 1]
             

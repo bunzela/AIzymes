@@ -29,8 +29,9 @@ def plot_tree(self,
                hamming_distance=np.nan,
                BioDC_redox=np.nan,
                **{f"{score}_score": np.nan for score in self.SELECTED_SCORES}, 
+               final_score=np.nan, 
                combined_score=np.nan)
-
+    
     # Build a mapping from the original DataFrame index to a new sequential index (starting at 1)
     index_mapping = {old_idx: new_idx for new_idx, old_idx in enumerate(self.plot_scores_df.index, start=1)}
     
@@ -59,21 +60,23 @@ def plot_tree(self,
             BioDC_redox = row['BioDC_redox']
         else:
             BioDC_redox = np.nan            
-        
+
         G.add_node(new_idx,
-                   sequence=row['sequence'],
-                   generation=row['generation'] + 1,
-                   hamming_distance=distance,
-                   BioDC_redox=BioDC_redox,
-                   **{f"{score}_score": self.scores[f"{score}_score"][new_idx - 1] for score in self.SELECTED_SCORES},
-                   combined_score=self.scores['combined_score'][new_idx - 1])
+                   sequence            = row['sequence'],
+                   generation          = row['generation'] + 1,
+                   hamming_distance    = distance,
+                   BioDC_redox         = BioDC_redox,
+                   **{f"{score}_score" : self.scores[f"{score}_score"][new_idx - 1] for score in self.SELECTED_SCORES},
+                   final_score         = self.scores[f"final_score"][new_idx - 1],
+                   combined_score      = self.scores['combined_score'][new_idx - 1])
     
         G.add_edge(parent_idx,
                    new_idx,
-                   hamming_distance=distance,
-                   BioDC_redox=BioDC_redox,
-                   **{f"{score}_score": self.scores[f"{score}_score"][new_idx - 1] for score in self.SELECTED_SCORES},
-                   combined_score=self.scores['combined_score'][new_idx - 1])
+                   hamming_distance    = distance,
+                   BioDC_redox         = BioDC_redox,
+                   **{f"{score}_score" : self.scores[f"{score}_score"][new_idx - 1] for score in self.SELECTED_SCORES},
+                   final_score         = self.scores[f"final_score"][new_idx - 1],
+                   combined_score      = self.scores['combined_score'][new_idx - 1])
 
     # Calculate subtree sizes
     def calculate_subtree_sizes(graph, node, subtree_sizes):
@@ -219,12 +222,10 @@ def plot_tree(self,
     cbar = fig.colorbar(sm, ax=ax, fraction=0.046, pad=0.04)
     if color == "combined_score":
         cbar.set_label('combined score')
+    if color == "final_score":
+        cbar.set_label('final score')
     elif color == "BioDC_redox":
         cbar.set_label('Redox Potential')
-        #tick_norm = [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.]
-        #tick_vals = []
-        #for p in tick_norm:
-        #    tick_vals.append(vmin + p * (vmax - vmin))
         tick_vals = [
             vmin,
             vmin + 0.5 * (vmid - vmin),
@@ -236,7 +237,9 @@ def plot_tree(self,
         cbar.set_ticklabels([f"{tv:.2f}" for tv in tick_vals])
     elif color == "hamming_distance":
         cbar.set_label('Hamming Distance')
-
+    else:
+        cbar.set_label(color)
+        
     # Always save to self.FOLDER_HOME with the naming scheme
     save_path = os.path.join(self.FOLDER_HOME, f"plot_tree_{color}.png")
     fig.savefig(save_path, bbox_inches='tight', dpi=300)

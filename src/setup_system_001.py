@@ -46,7 +46,7 @@ def set_system(self):
         self.rosetta_ext          = "linuxgccrelease"
         self.bash_args            = ""
         self.ROSETTA_PATH         = f"/u/{getpass.getuser()}/bin/rosetta.source.release-371/main/source/"
-        self.FIELD_TOOLS          = f'{self.FOLDER_HOME}/../../../src/FieldTools.py'
+        self.FIELD_TOOLS          = f'/u/{getpass.getuser()}/AIzymes/src/FieldTools.py'
         self.FOLDER_ProteinMPNN   = f'/u/{getpass.getuser()}/bin/ProteinMPNN'
         self.FOLDER_ProteinMPNN_h = f'/u/{getpass.getuser()}/bin/ProteinMPNN/helper_scripts'
         self.FOLDER_LigandMPNN    = f'/u/{getpass.getuser()}/bin/LigandMPNN'

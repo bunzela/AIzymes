@@ -92,12 +92,18 @@ def normalize_scores(self,
 
     if len(scores[f'{score_type}_{extension}']) == 0: 
         combined_scores = []
+        final_scores = []
     else:
         score_arrays = []
-        for score_type in self.SELECTED_SCORES: # Only include selected scores in combined score
+        for score_type in self.SELECTED_SCORES:
             if score_type != "catalytic":  
                 score_arrays.append(scores[f'{score_type}_{extension}'])
+        final_scores = np.stack(score_arrays, axis=0)
+        final_scores = np.mean(final_scores, axis=0)
+        scores[f'final_{extension}'] = final_scores
 
+        if "catalytic" in self.SELECTED_SCORES:
+            score_arrays.append(scores[f'{score_type}_{extension}'])
         combined_scores = np.stack(score_arrays, axis=0)
         combined_scores = np.mean(combined_scores, axis=0)
         scores[f'combined_{extension}'] = combined_scores
