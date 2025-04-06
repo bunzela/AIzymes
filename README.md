@@ -29,4 +29,24 @@ Lucas P. Merlicek, Jannik Neumann, Abbie Lear, Vivian Degiorgi, Moor M. de Waal,
 
 ---
 
+## 🛠️ Developer Notes
+
+**AI.zymes** is currently not distributed as a Python package (e.g. via `pip`). To use the platform in your own scripts or Jupyter notebooks, you need to ensure the source directory is included in your Python module search path.
+
+Add the following line to your `.bashrc` (or `.bash_profile`) to permanently include the source directory:
+
+```
+export PYTHONPATH="$PYTHONPATH:$HOME/AIzymes/src"
+```
+
+This ensures that Python can locate modules like AIzymes_015.py when importing:
+
+```
+from AIzymes_015 import *
+```
+
+> **Note:** Replace $HOME/AIzymes/src with the actual path if you have cloned the repository elsewhere.
+
+---
+
 > *This project is in active development. Contributions, feedback, and collaborations are very welcome!*
