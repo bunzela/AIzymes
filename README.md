@@ -45,7 +45,8 @@ This ensures that Python can locate modules like AIzymes_015.py when importing:
 from AIzymes_015 import *
 ```
 
-> **Note:** Replace $HOME/AIzymes/src with the actual path if you have cloned the repository elsewhere.
+> [!NOTE]
+> Replace $HOME/AIzymes/src with the actual path if you have cloned the repository elsewhere.
 
 ---
 
