@@ -140,7 +140,12 @@ echo '{remark}' > {self.WT}_MDMin_{index}.pdb"""
 cat {working_dir_path}_MD_out.pdb >> {self.WT}_MDMin_{index}.pdb
 sed -i -e 's/^\(ATOM.\{{17\}}\) /\\1A/' {self.WT}_MDMin_{index}.pdb
 sed -i -e 's/{self.LIGAND} A/{self.LIGAND} X/g' -e 's/HIE/HIS/g' -e 's/HID/HIS/g' {self.WT}_MDMin_{index}.pdb
-
+"""
+        
+    if self.REMOVE_TMP_FILES:
+        cmd += f"""
+# Removing temporary directory
+rm -r MDMin
 """
 
     return cmd

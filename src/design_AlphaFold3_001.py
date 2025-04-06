@@ -200,4 +200,10 @@ apptainer --quiet exec --bind /u:/u,/ptmp:/ptmp,/raven:/raven --nv \
 --cif_file {working_dir}/INF/{self.WT}/{self.WT}_model.cif \
 --pdb_file {working_dir}/../{self.WT}_AlphaFold3INF_{index}.pdb
 """
+    
+    if self.REMOVE_TMP_FILES:
+        cmd += f"""# Removing temporary directory
+rm -r AlphaFold3
+"""
+
     return cmd   

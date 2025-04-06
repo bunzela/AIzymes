@@ -86,9 +86,14 @@ echo 'XXXXXXXXXXXXXXXXXXXXXX ADD --bias_by_res_jsonl {os.path.join(folder_solubl
 --sequence_parent   {seq_input}.seq \
 --sequence_in       {folder_ligandmpnn}/seqs/{os.path.splitext(os.path.basename(PDB_input))[0]}.fa \
 --sequence_out      {self.WT}_{index}.seq 
-
 """                              
     
+    if self.REMOVE_TMP_FILES:
+        cmd += f"""
+# Removing temporary directory
+rm -r LigandMPNN
+"""
+        
     return(cmd)
     
 def prepare_ProteinMPNN(self,
@@ -261,7 +266,8 @@ def make_bias_dict(self, PDB_input, folder_mpnn):
     Args:
         PDB_input (str): Path to the input PDB file.
         folder_mpnn (str): Folder where the bias JSON will be saved.
-    """    
+    """ 
+    
     # Prepare input JSON for bias dictionary creation
     seq = sequence_from_pdb(PDB_input)
     input_json = {"name": f"{os.path.basename(PDB_input)}", "seq_chain_A": seq}

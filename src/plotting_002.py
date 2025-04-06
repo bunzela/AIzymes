@@ -63,7 +63,7 @@ def load_plot_scores_df(self):
                                    self.plot_scores_df, 
                                    norm_all=True, 
                                    extension="score") 
-    self.scores['BioDC_redox'] = self.plot_scores_df["BioDC_redox"]
+    if "redox" in self.SELECTED_SCORES :self.scores['BioDC_redox'] = self.plot_scores_df["BioDC_redox"]
 
 # Combined plot functions --------------------------------------------------------------------------------------------------------------------------
 
@@ -396,7 +396,10 @@ def plot_score_hist(self, ax, score_type):
         elif len(self.KBT_BOLTZMANN) == 3:
             kbt_boltzmann = (self.KBT_BOLTZMANN[0]-self.KBT_BOLTZMANN[2])*np.exp(-self.KBT_BOLTZMANN[1]*generation)+self.KBT_BOLTZMANN[2]
 
+        """ THAT WAS A BAD IDEA! CAN BE REMOVED LIKELY SOON!!!
         normalized_scores = np.sort(normalized_scores)[-1000:]
+        """
+        
         boltzmann_factors = np.exp(normalized_scores / kbt_boltzmann)
         probabilities = boltzmann_factors / sum(boltzmann_factors)
         boltzmann_scores = np.random.choice(normalized_scores, size=100000, replace=True, p=probabilities)

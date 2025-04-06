@@ -238,53 +238,50 @@ def update_scores(self):
     logging.debug("Updating scores")
            
     for index, row in self.all_scores_df.iterrows():
-
+        
         parent_index = row['parent_index']         
         
         # Unblock indices
-        if self.all_scores_df.at[int(index), "blocked"] != 'unblocked': 
+        if self.all_scores_df.at[index, "blocked"] != 'unblocked': 
             
-            score_type = self.all_scores_df.at[int(index), "blocked"]
-            pdb_path = self.all_scores_df.at[int(index), "final_variant"]
+            score_type = self.all_scores_df.at[index, "blocked"]
+            pdb_path = self.all_scores_df.at[index, "final_variant"]
             final_method = os.path.basename(pdb_path)
-            final_method = final_method.split("_")[1]   
+            final_method = final_method.split("_")[-2]   
             
             # Unblock indices for runs that produce structures
             if self.all_scores_df.at[int(index), "blocked"] in self.SYS_STRUCT_METHODS:
-                if os.path.isfile(f"{self.FOLDER_DESIGN}/{int(index)}/{self.WT}_{score_type}_{index}.pdb"):
+                if os.path.isfile(f"{self.FOLDER_DESIGN}/{index}/{self.WT}_{score_type}_{index}.pdb"):
                     self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")
                     
             # Unblock indices for ElectricFields
             if self.all_scores_df.at[int(index), "blocked"] == 'ElectricFields':
-                if os.path.isfile(f"{self.FOLDER_DESIGN}/{int(index)}/ElectricFields/{self.WT}_{final_method}_{index}_fields.pkl"):
+                if os.path.isfile(f"{self.FOLDER_DESIGN}/{index}/ElectricFields/{self.WT}_{final_method}_{index}_fields.pkl"):
                     self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")                    
                     
             # Unblock indices for BioDC
             if self.all_scores_df.at[int(index), "blocked"] == 'BioDC':
-                if os.path.isfile(f"{self.FOLDER_DESIGN}/{int(index)}/BioDC/{self.WT}_{final_method}_{index}/EE/DG.txt"):
+                if os.path.isfile(f"{self.FOLDER_DESIGN}/{index}/BioDC/{self.WT}_{final_method}_{index}/EE/DG.txt"):
                     self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")
                     
             # Unblock indices for Alphafold3MSA
             if self.all_scores_df.at[int(index), "blocked"] == 'AlphaFold3MSA':
-                if os.path.isfile(f"{self.FOLDER_DESIGN}/{int(index)}/AlphaFold3/MSA/{self.WT}/{self.WT}_data.json"):
+                if os.path.isfile(f"{self.FOLDER_DESIGN}/{index}/AlphaFold3/MSA/{self.WT}/{self.WT}_data.json"):
                     self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")
 
             # Unblock indices for MPNN:
             if self.all_scores_df.at[int(index), "blocked"] in ['ProteinMPNN','LigandMPNN','SolubleMPNN']:
-                if os.path.isfile(f"{self.FOLDER_DESIGN}/{int(index)}/{self.WT}_{index}.seq"):
+                if os.path.isfile(f"{self.FOLDER_DESIGN}/{index}/{self.WT}_{index}.seq"):
                     self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")
             
-
         # Paths for sequence-based information
         seq_path        = f"{self.FOLDER_DESIGN}/{index}/{self.WT}_{index}.seq"
         ref_seq_path    = f"{self.FOLDER_PARENT}/{self.WT}.seq"
-        parent_seq_path = f"{self.FOLDER_DESIGN}/{parent_index}/{self.WT}_{parent_index}.seq"     
-        if parent_index == "Parent": parent_seq_path = ref_seq_path
         
         # Update sequence and mutations if not yet contained in dataframe
         if pd.isna(self.all_scores_df.at[index, 'sequence']) and os.path.exists(seq_path):
@@ -293,8 +290,11 @@ def update_scores(self):
                 reference_sequence = f.read()
             with open(seq_path, "r") as f:        
                 current_sequence = f.read()
-            with open(parent_seq_path, "r") as f:
-                parent_sequence = f.read()
+
+            if parent_index == "Parent":
+                parent_sequence = reference_sequence
+            else:
+                parent_sequence = self.all_scores_df.at[parent_index, 'sequence']
 
             self.all_scores_df['sequence'] = self.all_scores_df['sequence'].astype('object')
             self.all_scores_df.at[index, 'sequence']  = current_sequence
@@ -321,8 +321,12 @@ def update_scores(self):
             seq = self.all_scores_df.at[index, sequence_column]
             parent_index = self.all_scores_df.at[index, 'parent_index']
 
-            if parent_index == 'Parent': # If it's a parent, identical score will be set to 1
-                identical_score = 1
+            if parent_index == 'Parent': # If it's a parent, identical score will be set to mean of scores
+                if len(self.all_scores_df) <= self.N_PARENT_JOBS:
+                    identical_score = 1
+                else:
+                    identical_score = self.all_scores_df['identical_score'][self.N_PARENT_JOBS:].mean()
+                    
             else:
                 identical_count = (self.all_scores_df[sequence_column] == seq).sum()
                 identical_score = 1 / identical_count if identical_count > 0 else 0
@@ -356,7 +360,7 @@ def update_scores(self):
         score_file_path = f"{self.FOLDER_DESIGN}/{int(index)}/score_{score_type}.sc"
         pdb_path = self.all_scores_df.at[int(index), "final_variant"]
         final_method = os.path.basename(pdb_path)
-        final_method = final_method.split("_")[1]        
+        final_method = final_method.split("_")[-2]        
         field_path = f"{self.FOLDER_DESIGN}/{int(index)}/ElectricFields/{self.WT}_{final_method}_{index}_fields.pkl"
         redox_path = f"{self.FOLDER_DESIGN}/{int(index)}/BioDC/{self.WT}_{final_method}_{index}/EE/DG.txt"
         
@@ -461,6 +465,37 @@ def update_scores(self):
 
     save_all_scores_df(self)
 
+    # Packup folders   
+    for index, row in self.all_scores_df.iterrows():
+        
+        folder = f'{self.FOLDER_DESIGN}/{index}'
+        tar_path = f'{folder}/{index}.tar'
+        
+        if pd.isna(self.all_scores_df.at[index, 'next_steps']): continue
+        if self.all_scores_df.at[index, 'blocked'] != 'unblocked': continue    
+        if pd.isna(self.all_scores_df.at[index, 'total_score']): continue
+        if os.path.isfile(tar_path): continue
+        if not os.path.isfile(f"{self.all_scores_df.at[index, 'final_variant']}.pdb"): continue
+            
+        subdirs  = [d for d in os.listdir(folder) if os.path.isdir(os.path.join(folder, d))]
+        subfiles = [f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))]
+
+        with tarfile.open(tar_path, "w") as tar:
+            
+            # Tar subdirectories
+            for subdir in subdirs:
+                tar.add(f'{folder}/{subdir}', arcname=subdir)
+                shutil.rmtree(f'{folder}/{subdir}')
+
+            # Tar files
+            for filename in subfiles:
+                if '.tar' in filename: continue
+                if '.seq' in filename: continue
+                if 'potential' in filename: continue
+                if os.path.basename(self.all_scores_df.at[index, 'final_variant']) in filename: continue
+                tar.add(f'{folder}/{filename}', arcname="files")
+                os.remove(f'{folder}/{filename}')
+
     update_resource_log(self)
 
 def update_resource_log(self):
@@ -539,8 +574,11 @@ def boltzmann_selection(self):
                             extension="potential") 
         
     combined_potentials = scores["combined_potential"]
-  
+
+    """
+    THAT WAS A VERY BAD IDEA!!! FILE EXPLOSION IS HANDLED DIFFERENTLY!!!
     # Limit to top 1000 combined potential values
+    
     if len(combined_potentials) > 1000:
         combined_potentials = np.array(combined_potentials)
         top_idx_arr = np.argsort(combined_potentials)[-1000:]
@@ -564,7 +602,8 @@ def boltzmann_selection(self):
                 pass
             else:
                 shutil.rmtree(folder)
-        
+    """
+    
     if len(combined_potentials) > 0:
         
         generation=self.all_scores_df['generation'].max()

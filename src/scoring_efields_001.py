@@ -53,10 +53,13 @@ python   {self.FIELD_TOOLS} \\
 -out     {filename_out}_fields.pkl \\
 -target  {self.FOLDER_PARENT}/field_target.dat \\
 -solvent WAT
-
-
 """
     
+    if self.REMOVE_TMP_FILES:
+        cmd += f"""# Removing temporary directory
+rm -r ESMFold
+"""
+   
     return cmd
 
 def get_efields_score(self, index, score_type):

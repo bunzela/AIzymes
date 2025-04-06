@@ -93,7 +93,13 @@ kill %1
 
 cd ../..
 """
-
+    
+    if self.REMOVE_TMP_FILES:
+        cmd += f"""
+# Removing temporary directory
+rm -r BioDC
+"""
+        
     return cmd
 
 def get_redox_score(self, index, score_type):

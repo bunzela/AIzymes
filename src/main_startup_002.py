@@ -121,9 +121,10 @@ python {self.FOLDER_HOME}/start_controller_parallel.py
 
 
 def initialize_controller(self, FOLDER_HOME):
-    
-    self.FOLDER_HOME = f'{os.getcwd()}/{FOLDER_HOME}'
-    load_main_variables(self, self.FOLDER_HOME)
+
+    #FOLDER_HOME is the FOLDER_HOME given by user, self.FOLDER_HOME is the one storred in main_variable
+    if not os.path.isabs(FOLDER_HOME): FOLDER_HOME = f'{os.getcwd()}/{FOLDER_HOME}'         
+    load_main_variables(self, FOLDER_HOME)
 
     # Starts the logger
     initialize_logging(self)
@@ -141,8 +142,8 @@ def initialize_controller(self, FOLDER_HOME):
                 print(k.ljust(16), ':', v)
             
     # Stops run if FOLDER_HOME does not match
-    if FOLDER_HOME != os.path.basename(self.FOLDER_HOME):
-        print(f"Error, wrong FOLDER_HOME! Given {FOLDER_HOME}, required: {os.path.basename(self.FOLDER_HOME)}")
+    if FOLDER_HOME != self.FOLDER_HOME:
+        print(f"Error, wrong FOLDER_HOME! Given {FOLDER_HOME}, required: {self.FOLDER_HOME}")
         sys.exit()
         
     if self.PLOT_DATA:
@@ -214,7 +215,8 @@ def prepare_input_files(self):
 def initialize_variables(self):
 
     # Complete directories
-    self.FOLDER_HOME      = f'{os.getcwd()}/{self.FOLDER_HOME}'
+    if not os.path.isabs(self.FOLDER_HOME): # User can either give absolutel path or only folder name!
+        self.FOLDER_HOME  = f'{os.getcwd()}/{self.FOLDER_HOME}'
     self.FOLDER_PARENT    = f'{self.FOLDER_HOME}/{self.FOLDER_PARENT}'
     self.FOLDER_INPUT     = f'{os.getcwd()}/Input'
     self.USERNAME         = os.environ.get("USER", os.environ.get("LOGNAME", "unknown_user"))
@@ -304,7 +306,10 @@ def aizymes_setup(self):
     if self.N_PARENT_JOBS < self.MAX_JOBS:
         logging.error(f"N_PARENT_JOBS must be > MAX_JOBS. N_PARENT_JOBS: {self.N_PARENT_JOBS}, MAX_JOBS: {self.MAX_JOBS}.")
         sys.exit()
-          
+    if self.FIELD_TARGET == None and "ElectricFields" in self.DESIGN_METHODS:
+        logging.error(f"FIELD_TARGET must be defined for ElectricField calculation! FIELD_TARGET: {self.FIELD_TARGET}.")
+        sys.exit()
+        
     with open(self.LOG_FILE, 'w'): pass  #resets logfile
     
     logging.info(f"Running AI.zymes setup.")

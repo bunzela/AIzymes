@@ -115,6 +115,13 @@ cat {working_dir_path}_lig.pdb     >> {working_dir_path}_input.pdb
 sed -i '/TER/d' {working_dir_path}_input.pdb
 
 cat {working_dir_path}_input.pdb > {self.FOLDER_DESIGN}/{index}/{self.WT}_ESMfold_{index}.pdb
+""" 
+        
+    if self.REMOVE_TMP_FILES:
+        cmd += f"""
+# Removing temporary directory
+rm -r ESMFold
+"""
+        
 
-"""        
     return cmd

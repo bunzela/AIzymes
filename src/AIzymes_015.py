@@ -69,6 +69,7 @@ class AIzymes_MAIN:
               SYSTEM              = None,
               RUN_PARALLEL        = False, 
               LOG                 = 'info',   
+              REMOVE_TMP_FILES    = False,
               
               # General Design Settings
               PARENT_DES_MED      = ['RosettaDesign','ElectricFields'],
