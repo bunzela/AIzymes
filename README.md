@@ -1,6 +1,6 @@
 # AI.zymes
 
-Welcome to the source code repository for **AI.zymes — a modular platform for evolutionary enzyme design**.
+Welcome to the code repository for **AI.zymes — a modular platform for evolutionary enzyme design**.
 
 **AI.zymes** integrates a suite of state-of-the-art tools for enzyme engineering, including:
 - 🛠️ **Protein design** (e.g. RosettaDesign, ProteinMPNN, LigandMPNN)  
