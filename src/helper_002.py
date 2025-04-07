@@ -449,7 +449,9 @@ def get_best_structures(self):
 
     # Save best structures
     print("Saving...")
-    best_structures_folder = os.path.join(self.FOLDER_HOME, 'best_structures')
+    best_structures_folder = os.path.join(os.getcwd(), os.path.basename(self.FOLDER_HOME))
+    os.makedirs(best_structures_folder, exist_ok=True)
+    best_structures_folder = os.path.join(os.getcwd(), os.path.basename(self.FOLDER_HOME), 'best_structures')
     os.makedirs(best_structures_folder, exist_ok=True)
 
     # Clean directory
@@ -469,7 +471,7 @@ def get_best_structures(self):
             src_file = design_file
 
         # Copy file
-        dest_file = os.path.join(best_structures_folder, f"{geom_mean}_{self.WT}")
+        dest_file = os.path.join(best_structures_folder, f"{geom_mean}_{self.WT}.pdb")
         shutil.copy(src_file, dest_file)
         
     csv_path = os.path.join(best_structures_folder, "best_scores.csv")

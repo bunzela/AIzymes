@@ -47,12 +47,29 @@ class AIzymes_MAIN:
     Main class for managing AIzymes workflow, including setup, initialization, control, and plotting functions.
     """
 
-    def __init__(self):
+    def __init__(self, FOLDER_HOME, UNBLOCK_ALL=False, PRINT_VAR=False, PLOT_DATA=False, LOG='info'):
         """
-        Initializes an instance of the AIzymes_MAIN class.
-        """
-        return
+        Initializes AIzymes with given parameters.
 
+        Args:
+            FOLDER_HOME (str): Path to the main folder.
+            UNBLOCK_ALL (bool): Flag to unblock all processes.
+            PRINT_VAR (bool): Flag to print variables.
+            PLOT_DATA (bool): Flag to plot data.
+            LOG (str): Logging level.
+        """
+        for key, value in locals().items():
+            if key not in ['self']:  
+                setattr(self, key, value)
+
+        if os.path.isdir(FOLDER_HOME):
+            
+            initialize_controller(self, FOLDER_HOME)
+
+        else:
+
+            print(f"Folder {FOLDER_HOME} missing. Please run setup().")
+                  
     def setup(self, FOLDER_HOME, FOLDER_PARENT, WT, LIGAND, DESIGN,
 
               # General Job Settings
@@ -167,23 +184,6 @@ class AIzymes_MAIN:
                 setattr(self, key, value)
         
         aizymes_setup(self)
-
-    def initialize(self, FOLDER_HOME, UNBLOCK_ALL=False, PRINT_VAR=False, PLOT_DATA=False, LOG='info'):
-        """
-        Initializes AIzymes with given parameters.
-
-        Args:
-            FOLDER_HOME (str): Path to the main folder.
-            UNBLOCK_ALL (bool): Flag to unblock all processes.
-            PRINT_VAR (bool): Flag to print variables.
-            PLOT_DATA (bool): Flag to plot data.
-            LOG (str): Logging level.
-        """
-        for key, value in locals().items():
-            if key not in ['self']:  
-                setattr(self, key, value)
-                              
-        initialize_controller(self, FOLDER_HOME)
 
     def controller(self):
         """
