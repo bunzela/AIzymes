@@ -1,0 +1,512 @@
+
+<style>
+    body { font-family: Calibri, sans-serif; font-size: 12px; margin: 20px; }
+    h1, h2, h3, ul, li { color: #333; }
+    h1 { color: #4CAF50; font-size: 1.5em; margin-bottom: 0; }
+    h2 { color: #4CAF50; font-size: 1.2em; margin-bottom: 0; }
+    h3 { font-size: 1.0em; margin-bottom: 0; }
+    ul { padding-left: 20px; list-style-type: none; }
+    li { margin-bottom: 5px; font-size: 12px; }
+    @page { size: A4; margin: 1in; }
+    @page { @bottom-right { content: "Page " counter(page); } }
+</style>
+<h1>Table of Contents</h1><ul>
+<li><a href='#code'>1. Code</a></li>
+<li><a href='#AIzymes'>1.1 AIzymes</a><span style='float:right;'>2</span></li>
+<li style='margin-left: 20px;'><a href='#AIzymes_AIzymes_MAIN'>1.1.1 AIzymes_MAIN</a><span style='float:right;'>2</span></li>
+<li style='margin-left: 20px;'><a href='#AIzymes___init__'>1.1.2 __init__</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#AIzymes_setup'>1.1.3 setup</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#AIzymes_initialize'>1.1.4 initialize</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#AIzymes_controller'>1.1.5 controller</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#AIzymes_plot'>1.1.6 plot</a><span style='float:right;'>[page]</span></li>
+<li><a href='#design_ESMfold'>1.2 design_ESMfold</a><span style='float:right;'>3</span></li>
+<li style='margin-left: 20px;'><a href='#design_ESMfold_prepare_ESMfold'>1.2.1 prepare_ESMfold</a><span style='float:right;'>[page]</span></li>
+<li><a href='#design_LigandMPNN'>1.3 design_LigandMPNN</a><span style='float:right;'>3</span></li>
+<li style='margin-left: 20px;'><a href='#design_LigandMPNN_prepare_LigandMPNN'>1.3.1 prepare_LigandMPNN</a><span style='float:right;'>[page]</span></li>
+<li><a href='#design_match'>1.4 design_match</a><span style='float:right;'>4</span></li>
+<li><a href='#design_ProteinMPNN'>1.5 design_ProteinMPNN</a><span style='float:right;'>4</span></li>
+<li style='margin-left: 20px;'><a href='#design_ProteinMPNN_prepare_ProteinMPNN'>1.5.1 prepare_ProteinMPNN</a><span style='float:right;'>[page]</span></li>
+<li><a href='#design_RosettaDesign'>1.6 design_RosettaDesign</a><span style='float:right;'>4</span></li>
+<li style='margin-left: 20px;'><a href='#design_RosettaDesign_prepare_RosettaDesign'>1.6.1 prepare_RosettaDesign</a><span style='float:right;'>[page]</span></li>
+<li><a href='#design_RosettaRelax'>1.7 design_RosettaRelax</a><span style='float:right;'>5</span></li>
+<li style='margin-left: 20px;'><a href='#design_RosettaRelax_prepare_RosettaRelax'>1.7.1 prepare_RosettaRelax</a><span style='float:right;'>[page]</span></li>
+<li><a href='#helper'>1.8 helper</a><span style='float:right;'>5</span></li>
+<li style='margin-left: 20px;'><a href='#helper_run_command'>1.8.1 run_command</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#helper_get_PDB_in'>1.8.2 get_PDB_in</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#helper_save_cat_res_into_all_scores_df'>1.8.3 save_cat_res_into_all_scores_df</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#helper_reset_to_after_index'>1.8.4 reset_to_after_index</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#helper_wait_for_file'>1.8.5 wait_for_file</a><span style='float:right;'>[page]</span></li>
+<li><a href='#main_design'>1.9 main_design</a><span style='float:right;'>6</span></li>
+<li><a href='#main_running'>1.10 main_running</a><span style='float:right;'>6</span></li>
+<li style='margin-left: 20px;'><a href='#main_running_start_controller'>1.10.1 start_controller</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#main_running_check_running_jobs'>1.10.2 check_running_jobs</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#main_running_update_potential'>1.10.3 update_potential</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#main_running_update_potential'>1.10.4 update_potential</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#main_running_update_scores'>1.10.5 update_scores</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#main_running_boltzmann_selection'>1.10.6 boltzmann_selection</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#main_running_check_parent_done'>1.10.7 check_parent_done</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#main_running_start_parent_design'>1.10.8 start_parent_design</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#main_running_start_calculation'>1.10.9 start_calculation</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#main_running_create_new_index'>1.10.10 create_new_index</a><span style='float:right;'>[page]</span></li>
+<li><a href='#main_scripts'>1.11 main_scripts</a><span style='float:right;'>8</span></li>
+<li><a href='#main_startup'>1.12 main_startup</a><span style='float:right;'>8</span></li>
+<li><a href='#plotting'>1.13 plotting</a><span style='float:right;'>8</span></li>
+<li style='margin-left: 20px;'><a href='#plotting_plot_interface_v_total_score_selection'>1.13.1 plot_interface_v_total_score_selection</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#plotting_plot_interface_v_total_score_generation'>1.13.2 plot_interface_v_total_score_generation</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#plotting_plot_stacked_histogram_by_cat_resi'>1.13.3 plot_stacked_histogram_by_cat_resi</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#plotting_plot_stacked_histogram_by_cat_resn'>1.13.4 plot_stacked_histogram_by_cat_resn</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#plotting_plot_stacked_histogram_by_generation'>1.13.5 plot_stacked_histogram_by_generation</a><span style='float:right;'>[page]</span></li>
+<li><a href='#scoring_efields'>1.14 scoring_efields</a><span style='float:right;'>8</span></li>
+<li style='margin-left: 20px;'><a href='#scoring_efields_generate_AMBER_files'>1.14.1 generate_AMBER_files</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#scoring_efields_calc_efields_score'>1.14.2 calc_efields_score</a><span style='float:right;'>[page]</span></li>
+<li style='margin-left: 20px;'><a href='#scoring_efields_update_efieldsdf'>1.14.3 update_efieldsdf</a><span style='float:right;'>[page]</span></li>
+<li><a href='#setup_system'>1.15 setup_system</a><span style='float:right;'>9</span></li>
+</ul><br><h1 id='code'>1. Code</h1><br>
+<h2 id='AIzymes'>1.1 AIzymes</h2><br>
+<p>AIzymes Project Main Workflow
+<br>
+This script defines the main AIzymes workflow, including setup, initialization, control, and plotting functions.
+It manages the primary processes and configurations required to execute AIzymes functionalities.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Classes</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>AIzymes_MAIN                         </td><td style='font-size: 12px;'>Manages the main workflow for AIzymes, including setup, initialization, and various control functions.</td></tr>
+</table><br>
+<br>
+<br><span style='color:gray; font-weight:bold;'>Functions</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>__init__()                         </td><td style='font-size: 12px;'>Initializes an instance of the AIzymes_MAIN class.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>setup()                         </td><td style='font-size: 12px;'>Sets up the AIzymes project environment with specified parameters.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>initialize()                         </td><td style='font-size: 12px;'>Initializes AIzymes with provided configurations.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>controller()                         </td><td style='font-size: 12px;'>Controls the AIzymes project based on scoring and normalization parameters.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>plot()                         </td><td style='font-size: 12px;'>Generates various plots based on AIzymes data.</td></tr>
+</table><br></p><br>
+<h3 id='AIzymes_AIzymes_MAIN'>1.1.1 AIzymes_MAIN</h3><br>Main class for managing AIzymes workflow, including setup, initialization, control, and plotting functions.<br>
+<h3 id='AIzymes___init__'>1.1.2 __init__</h3><br>Initializes an instance of the AIzymes_MAIN class.<br>
+<h3 id='AIzymes_setup'>1.1.3 setup</h3><br>Sets up the AIzymes project environment with specified parameters.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Args</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>FOLDER_HOME (str)                         </td><td style='font-size: 12px;'>Path to the main folder.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>FOLDER_PARENT (str)                         </td><td style='font-size: 12px;'>Path to the parent folder.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>CST_NAME (str)                         </td><td style='font-size: 12px;'>Constraint name.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>WT (str)                         </td><td style='font-size: 12px;'>Wild type information.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>LIGAND (str)                         </td><td style='font-size: 12px;'>Ligand data.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>DESIGN (str)                         </td><td style='font-size: 12px;'>Design specifications.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>MAX_JOBS (int)                         </td><td style='font-size: 12px;'>Maximum number of jobs to run concurrently.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>N_PARENT_JOBS (int)                         </td><td style='font-size: 12px;'>Number of parent jobs.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>MAX_DESIGNS (int)                         </td><td style='font-size: 12px;'>Maximum number of designs.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>KBT_BOLTZMANN (list)                         </td><td style='font-size: 12px;'>Boltzmann constant values.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>CST_WEIGHT (float)                         </td><td style='font-size: 12px;'>Constraint weight.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>ProteinMPNN_PROB (float)                         </td><td style='font-size: 12px;'>Probability parameter for ProteinMPNN.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>ProteinMPNN_BIAS (float)                         </td><td style='font-size: 12px;'>Bias parameter for ProteinMPNN.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>LMPNN_PROB (float)                         </td><td style='font-size: 12px;'>Probability parameter for LMPNN.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>FOLDER_MATCH (str)                         </td><td style='font-size: 12px;'>Path to match folder.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>ProteinMPNN_T (str)                         </td><td style='font-size: 12px;'>Temperature for ProteinMPNN.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>LMPNN_T (str)                         </td><td style='font-size: 12px;'>Temperature for LMPNN.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>LMPNN_BIAS (float)                         </td><td style='font-size: 12px;'>Bias parameter for LMPNN.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>SUBMIT_PREFIX (str)                         </td><td style='font-size: 12px;'>Submission prefix.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>SYSTEM (str)                         </td><td style='font-size: 12px;'>System information.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>MATCH (str)                         </td><td style='font-size: 12px;'>Match specifications.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>ROSETTA_PATH (str)                         </td><td style='font-size: 12px;'>Path to Rosetta source.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>EXPLORE (bool)                         </td><td style='font-size: 12px;'>Whether to explore parameter space.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>FIELD_TOOLS (str)                         </td><td style='font-size: 12px;'>Path to FieldTools script.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>LOG (str)                         </td><td style='font-size: 12px;'>Logging level.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>PARENT_DES_MED (str)                         </td><td style='font-size: 12px;'>Parent design method.</td></tr>
+</table><br><br>
+<h3 id='AIzymes_initialize'>1.1.4 initialize</h3><br>Initializes AIzymes with given parameters.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Args</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>FOLDER_HOME (str)                         </td><td style='font-size: 12px;'>Path to the main folder.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>UNBLOCK_ALL (bool)                         </td><td style='font-size: 12px;'>Flag to unblock all processes.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>PRINT_VAR (bool)                         </td><td style='font-size: 12px;'>Flag to print variables.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>PLOT_DATA (bool)                         </td><td style='font-size: 12px;'>Flag to plot data.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>LOG (str)                         </td><td style='font-size: 12px;'>Logging level.</td></tr>
+</table><br><br>
+<h3 id='AIzymes_controller'>1.1.5 controller</h3><br>Controls the AIzymes project based on scoring and normalization parameters.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Args</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>HIGHSCORE (float)                         </td><td style='font-size: 12px;'>High score threshold for evaluation.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>NORM (dict)                         </td><td style='font-size: 12px;'>Normalization values for different scores.</td></tr>
+</table><br><br>
+<h3 id='AIzymes_plot'>1.1.6 plot</h3><br>Generates plots based on AIzymes data, including main, tree, and landscape plots.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Args</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>main_plots (bool)                         </td><td style='font-size: 12px;'>Flag to generate main plots.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>tree_plot (bool)                         </td><td style='font-size: 12px;'>Flag to generate tree plot.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>landscape_plot (bool)                         </td><td style='font-size: 12px;'>Flag to generate landscape plot.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>print_vals (bool)                         </td><td style='font-size: 12px;'>Flag to print values on plots.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>NORM (dict)                         </td><td style='font-size: 12px;'>Normalization values for different scores.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>HIGHSCORE_NEGBEST (dict)                         </td><td style='font-size: 12px;'>High score and negative best score for different metrics.</td></tr>
+</table><br><br>
+<h2 id='design_ESMfold'>1.2 design_ESMfold</h2><br>
+<p>Design ESMfold Module
+<br>
+Manages the structure prediction of protein sequences using ESMfold within the AIzymes project.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Functions</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>- prepare_ESMfold                         </td><td style='font-size: 12px;'>Prepares commands for ESMfold job submission.</td></tr>
+</table><br></p><br>
+<h3 id='design_ESMfold_prepare_ESMfold'>1.2.1 prepare_ESMfold</h3><br>Predicts structure of sequence in {index} using ESMfold.
+<br>
+Parameters:
+index (str): The index of the protein variant to be predicted.
+cmd (str): Growing list of commands to be exected by run_design using submit_job.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Returns</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>cmd (str)                         </td><td style='font-size: 12px;'>Command to be exected by run_design using submit_job.</td></tr>
+</table><br><br>
+<h2 id='design_LigandMPNN'>1.3 design_LigandMPNN</h2><br>
+<p>NOTE: NOT WORKING YET!
+<br>
+Integrates LigandMPNN for generating protein sequences adapted to specific ligand contexts.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Functions</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>prepare_LigandMPNN                         </td><td style='font-size: 12px;'>Executes LigandMPNN steps to adapt protein designs with ligand binding considerations.</td></tr>
+</table><br>
+<br>
+<br><span style='color:gray; font-weight:bold;'>Modules Required</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%;'> </th><th style='text-align:left;'> </th></tr>
+helper_001
+</table><br></p><br>
+<h3 id='design_LigandMPNN_prepare_LigandMPNN'>1.3.1 prepare_LigandMPNN</h3><br>Executes the LigandMPNN pipeline for a given protein-ligand structure and generates
+new protein sequences with potentially higher functional scores considering the ligand context.
+<br>
+Parameters:
+- parent_index (str): The index of the parent protein variant.
+- new_index (str): The index assigned to the new protein variant.
+- all_scores_df (DataFrame): A DataFrame containing information for protein variants.<br>
+<h2 id='design_match'>1.4 design_match</h2><br>
+<p>Design Match Module
+<br>
+Provides functionalities for matching protein designs with specific constraints
+and requirements in the AIzymes workflow.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Functions</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>- prepare_LigandMPNN                         </td><td style='font-size: 12px;'>Executes the LigandMPNN pipeline for protein-ligand structure adaptation.</td></tr>
+</table><br>
+<br>
+<br><span style='color:gray; font-weight:bold;'>Modules Required</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%;'> </th><th style='text-align:left;'> </th></tr>
+- helper_001
+</table><br></p><br>
+<h2 id='design_ProteinMPNN'>1.5 design_ProteinMPNN</h2><br>
+<p>Manages ProteinMPNN design steps to generate protein sequences tailored for specific
+functional and structural properties in the AIzymes project.
+<br>
+This function assumes the ProteinMPNN toolkit is available and properly set up in the specified location.
+It involves multiple subprocess calls to Python scripts for processing protein structures and generating new sequences.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Functions</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>prepare_ProteinMPNN                         </td><td style='font-size: 12px;'>Sets up commands for ProteinMPNN job submission.</td></tr>
+</table><br>
+<br>
+<br><span style='color:gray; font-weight:bold;'>Modules Required</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%;'> </th><th style='text-align:left;'> </th></tr>
+helper_001
+</table><br></p><br>
+<h3 id='design_ProteinMPNN_prepare_ProteinMPNN'>1.5.1 prepare_ProteinMPNN</h3><br>Executes the ProteinMPNN pipeline for a given protein structure and generates
+new protein sequences with potentially higher functional scores.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Args</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>new_index (str)                         </td><td style='font-size: 12px;'>The index of the designed variant.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>cmd (str)                         </td><td style='font-size: 12px;'>Growing list of commands to be exected by run_design using submit_job.</td></tr>
+</table><br>
+<br>
+<br><span style='color:gray; font-weight:bold;'>Returns</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>cmd (str)                         </td><td style='font-size: 12px;'>Command to be exected by run_design using submit_job</td></tr>
+</table><br><br>
+<h2 id='design_RosettaDesign'>1.6 design_RosettaDesign</h2><br>
+<p>Handles RosettaDesign steps to optimize protein design scores and enhance stability
+within the AIzymes project.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Functions</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>prepare_RosettaDesign                         </td><td style='font-size: 12px;'>Prepares RosettaDesign commands for job submission.</td></tr>
+</table><br>
+<br>
+<br><span style='color:gray; font-weight:bold;'>Modules Required</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%;'> </th><th style='text-align:left;'> </th></tr>
+helper_001
+</table><br></p><br>
+<h3 id='design_RosettaDesign_prepare_RosettaDesign'>1.6.1 prepare_RosettaDesign</h3><br>Designs protein structure in {new_index} based on {parent_index} using RosettaDesign.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Args</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>parent_index (str)                         </td><td style='font-size: 12px;'>Index of the parent protein variant to be designed.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>new_index (str)                         </td><td style='font-size: 12px;'>Index assigned to the resulting design.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>input_suffix (str)                         </td><td style='font-size: 12px;'>Suffix of the input structure to be used for design.</td></tr>
+</table><br>
+<br>
+<br><span style='color:gray; font-weight:bold;'>Returns</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>cmd (str)                         </td><td style='font-size: 12px;'>Command to be exected by run_design using submit_job.</td></tr>
+</table><br><br>
+<h2 id='design_RosettaRelax'>1.7 design_RosettaRelax</h2><br>
+<p>Executes RosettaRelax to refine protein structures and improve stability in the AIzymes project.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Functions</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>prepare_RosettaRelax                         </td><td style='font-size: 12px;'>Sets up commands for RosettaRelax job submission.</td></tr>
+</table><br>
+<br>
+<br><span style='color:gray; font-weight:bold;'>Modules Required</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%;'> </th><th style='text-align:left;'> </th></tr>
+helper_001
+</table><br></p><br>
+<h3 id='design_RosettaRelax_prepare_RosettaRelax'>1.7.1 prepare_RosettaRelax</h3><br>Relaxes protein structure in {index} using RosettaRelax.
+<br>
+Args index (str): The index of the protein variant to be relaxed.
+cmd (str): collection of commands to be run, this script wil append its commands to cmd
+<br>
+Optional parameters:
+PreMatchRelax (bool): True if ESMfold to be run without ligand (prior to RosettaMatch).<br>
+<h2 id='helper'>1.8 helper</h2><br>
+<p>Contains utility functions and supporting routines used across multiple modules
+within the AIzymes project.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Functions</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+- normalize_scores
+- one_to_three_letter_aa
+- run_command
+- get_PDB_in
+- load_main_variables
+- save_main_variables
+- submit_job
+- sequence_from_pdb
+- generate_remark_from_all_scores_df
+- save_cat_res_into_all_scores_df
+- reset_to_after_parent_design
+- reset_to_after_index
+- save_all_scores_df
+- get_best_structures
+- remove_intersection_best_structures
+- trace_mutation_tree
+- print_average_scores
+- wait_for_file
+- hamming_distance
+- exponential_func
+</table><br>
+<br>
+<br><span style='color:gray; font-weight:bold;'>Modules Required</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%;'> </th><th style='text-align:left;'> </th></tr>
+setup_system_001
+</table><br></p><br>
+<h3 id='helper_run_command'>1.8.1 run_command</h3><br>Wrapper to execute .py files in runtime with arguments, and print error messages if they occur.
+<br>
+Parameters:
+command: The command to run as a list of strings.
+cwd: Optional; The directory to execute the command in.
+capture_output: Optional; If True, capture stdout and stderr. Defaults to False (This is to conserve memory).<br>
+<h3 id='helper_get_PDB_in'>1.8.2 get_PDB_in</h3><br>Based on index, find the input PDB files for the AIzymes modules
+<br>
+Paramters:
+- index: The indix of the current design
+<br>
+Output:
+- PDBfile_Design_in: Input file for RosettaDesign
+- PDBfile_Relax_in: Input file for RosettaRelax
+- PDBfile_Relax_ligand_in: Input file for Ligand to be used in RosettaRelax<br>
+<h3 id='helper_save_cat_res_into_all_scores_df'>1.8.3 save_cat_res_into_all_scores_df</h3><br>Finds the indices and names of the catalytic residue from <PDB_file_path>
+Saves indices and residues into <all_scores_df> in row <index> as lists.
+To make sure these are saved and loaded as list, ";".join() and .split(";") should be used
+If information is read from an input structure for design do not save cat_resn<br>
+<h3 id='helper_reset_to_after_index'>1.8.4 reset_to_after_index</h3><br>This function resets the run back to a chosen index. It removes all later entries from the all_scores.csv and the home dir.
+index: The last index to keep, after which everything will be deleted.<br>
+<h3 id='helper_wait_for_file'>1.8.5 wait_for_file</h3><br>Wait for a file to exist and have a non-zero size.<br>
+<h2 id='main_design'>1.9 main_design</h2><br>
+<p>Main Design Module
+<br>
+Coordinates various design steps, managing the workflow of Rosetta, ProteinMPNN, and other modules
+within the AIzymes project.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Functions</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>- get_ram                         </td><td style='font-size: 12px;'>Determines RAM allocation for design steps.</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>- run_design                         </td><td style='font-size: 12px;'>Runs the selected design steps based on configuration.</td></tr>
+</table><br>
+<br>
+<br><span style='color:gray; font-weight:bold;'>Modules Required</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%;'> </th><th style='text-align:left;'> </th></tr>
+- helper_001, design_match_001, design_ProteinMPNN_001, design_LigandMPNN_001,
+design_RosettaDesign_001, design_ESMfold_001, design_RosettaRelax_001
+</table><br></p><br>
+<h2 id='main_running'>1.10 main_running</h2><br>
+<p>main_running_001.py
+<br>
+This module contains the main control functions for managing the AIzymes workflow, including job submission,
+score updating, and Boltzmann selection. The functions in this file are responsible for the high-level management
+of the design process, interacting with the AIzymes_MAIN class to initiate, control, and evaluate design variants.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Classes</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+None
+</table><br>
+<br>
+<br><span style='color:gray; font-weight:bold;'>Functions</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+start_controller(self)
+check_running_jobs(self)
+update_potential(self, score_type, index)
+update_scores(self)
+boltzmann_selection(self)
+check_parent_done(self)
+start_parent_design(self)
+start_calculation(self, parent_index)
+create_new_index(self, parent_index)
+</table><br></p><br>
+<h3 id='main_running_start_controller'>1.10.1 start_controller</h3><br>Runs the main loop to manage the design process until the maximum number of designs is reached.
+<br>
+Continues submitting jobs, monitoring running processes, and updating scores based on Boltzmann selection
+until `MAX_DESIGNS` is achieved. The function pauses or starts new designs based on system resources.
+<br>
+Parameters:
+self: An instance of the AIzymes_MAIN class with setup attributes and properties.<br>
+<h3 id='main_running_check_running_jobs'>1.10.2 check_running_jobs</h3><br>Checks the current number of running jobs based on the system type.
+<br>
+Depending on the value of `SYSTEM`, this function counts the active jobs in GRID, BLUEPEBBLE, BACKGROUND_JOB,
+or ABBIE_LOCAL systems.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Returns</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>int                         </td><td style='font-size: 12px;'>Number of running jobs for the specific system.</td></tr>
+</table><br><br>
+<h3 id='main_running_update_potential'>1.10.3 update_potential</h3><br>Updates the potential file for a given score type at the specified variant index.
+<br>
+Creates or appends to a `<score_type>_potential.dat` file in `FOLDER_HOME/<index>`, calculating and
+updating potentials for the parent variant if necessary.
+<br>
+Parameters:
+score_type (str): Type of score to update (e.g., total, interface, catalytic, efield).
+index (int): Variant index to update potential data.<br>
+<h3 id='main_running_update_potential'>1.10.4 update_potential</h3><br>Creates a <score_type>_potential.dat file in FOLDER_HOME/<index>
+<br>
+If latest score comes from Rosetta Relax - then the score for variant <index>
+will be added to the <score_type>_potential.dat of the parent index
+and the <score_type>_potential value of the dataframe for the parent
+will be updated with the average of the parent and child scores.
+<br>
+Parameters:
+- score_type(str): Type of score to update, one of these options: total, interface, catalytic, efield
+- index (int): variant index to update<br>
+<h3 id='main_running_update_scores'>1.10.5 update_scores</h3><br>Updates various scores, including total, interface, catalytic, and efield scores for each design variant.
+<br>
+This function iterates over design variants, updating scores based on files generated by different processes.
+It also updates sequence information, tracks mutations, and saves the updated DataFrame.
+<br>
+Parameters:
+self: An instance of the AIzymes_MAIN class with setup attributes and properties.<br>
+<h3 id='main_running_boltzmann_selection'>1.10.6 boltzmann_selection</h3><br>Selects a design variant based on a Boltzmann-weighted probability distribution.
+<br>
+Filters variants based on certain conditions (e.g., scores, block status), then computes probabilities
+using Boltzmann factors with a temperature factor (`KBT_BOLTZMANN`) to select a variant for further design steps.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Returns</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>int                         </td><td style='font-size: 12px;'>Index of the selected design variant.</td></tr>
+</table><br><br>
+<h3 id='main_running_check_parent_done'>1.10.7 check_parent_done</h3><br>Determines if parent designs are complete based on the number of generated designs and parent jobs.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Returns</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>bool                         </td><td style='font-size: 12px;'>True if parent designs are complete, otherwise False.</td></tr>
+</table><br><br>
+<h3 id='main_running_start_parent_design'>1.10.8 start_parent_design</h3><br>Initiates a new design process for a parent structure by creating a new variant entry.
+<br>
+Sets up the required files and configuration for designing a parent structure, then calls the design method
+specified in `PARENT_DES_MED`.
+<br>
+Parameters:
+self: An instance of the AIzymes_MAIN class with setup attributes and properties.<br>
+<h3 id='main_running_start_calculation'>1.10.9 start_calculation</h3><br>Decides the next calculation step for the specified design variant index.
+<br>
+Based on the current design state, this function decides to run ESMfold, RosettaRelax, or a design method
+for the given index.
+<br>
+Parameters:
+parent_index (int): Index of the variant to evaluate for further calculations.<br>
+<h3 id='main_running_create_new_index'>1.10.10 create_new_index</h3><br>Creates a new design entry in `all_scores_df` with a unique index, inheriting attributes from a parent variant.
+<br>
+Updates the DataFrame with new index information, saves the updated file, and sets up the directory structure
+for the new design variant.
+<br>
+Parameters:
+parent_index (str): The index of the parent variant or "Parent" for initial designs.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Returns</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>int                         </td><td style='font-size: 12px;'>The newly created index for the variant.</td></tr>
+</table><br><br>
+<h2 id='main_scripts'>1.11 main_scripts</h2><br>
+<h2 id='main_startup'>1.12 main_startup</h2><br>
+<h2 id='plotting'>1.13 plotting</h2><br>
+<h3 id='plotting_plot_interface_v_total_score_selection'>1.13.1 plot_interface_v_total_score_selection</h3><br>Plots a scatter plot of total_scores vs interface_scores and highlights the points
+corresponding to the selected indices.
+<br>
+Parameters:
+- ax (matplotlib.axes.Axes): The Axes object to plot on.
+- total_scores (list or np.array): The total scores of the structures.
+- interface_scores (list or np.array): The interface scores of the structures.
+- selected_indices (list of int): Indices of the points to highlight.<br>
+<h3 id='plotting_plot_interface_v_total_score_generation'>1.13.2 plot_interface_v_total_score_generation</h3><br>Plots a scatter plot of total_scores vs interface_scores and colors the points
+according to the generation for all data points, using categorical coloring.
+Adds a legend to represent each unique generation with its corresponding color.
+<br>
+Parameters:
+- ax (matplotlib.axes.Axes): The Axes object to plot on.
+- total_scores (list or np.array): The total scores of the structures.
+- interface_scores (list or np.array): The interface scores of the structures.
+- generation (pd.Series or np.array): Generation numbers for all data points.<br>
+<h3 id='plotting_plot_stacked_histogram_by_cat_resi'>1.13.3 plot_stacked_histogram_by_cat_resi</h3><br>Plots a stacked bar plot of interface scores colored by cat_resi on the given Axes object,
+where each bar's segments represent counts of different cat_resi values in that bin.
+<br>
+Parameters:
+- ax (matplotlib.axes.Axes): The Axes object to plot on.
+- all_scores_df (pd.DataFrame): DataFrame containing 'cat_resi' and 'interface_score' columns.
+- color_map (dict): Optional; A dictionary mapping catalytic residue indices to colors.
+- show_legend (bool): Optional; Whether to show the legend. Defaults to False.<br>
+<h3 id='plotting_plot_stacked_histogram_by_cat_resn'>1.13.4 plot_stacked_histogram_by_cat_resn</h3><br>Plots a stacked bar plot of interface scores colored by cat_resn on the given Axes object,
+where each bar's segments represent counts of different cat_resn values in that bin.
+<br>
+Parameters:
+- ax (matplotlib.axes.Axes): The Axes object to plot on.
+- all_scores_df (pd.DataFrame): DataFrame containing 'cat_resn' and 'interface_score' columns.<br>
+<h3 id='plotting_plot_stacked_histogram_by_generation'>1.13.5 plot_stacked_histogram_by_generation</h3><br>Plots a stacked bar plot of interface scores colored by generation on the given Axes object,
+where each bar's segments represent counts of different generation values in that bin.
+<br>
+Parameters:
+- ax (matplotlib.axes.Axes): The Axes object to plot on.
+- all_scores_df (pd.DataFrame): DataFrame containing 'generation' and 'interface_score' columns.<br>
+<h2 id='scoring_efields'>1.14 scoring_efields</h2><br>
+<h3 id='scoring_efields_generate_AMBER_files'>1.14.1 generate_AMBER_files</h3><br>Uses tleap to create a .parm7 and .rst7 file from a pdb. Requires ambertools.
+Also requires 5TS.prepi and 5TS.frcmod in the INPUT folder
+TODO: Add script to generate these if not present.
+<br>
+Parameters:
+- filename (str): The path to the pdb file to analyse without the file extension.<br>
+<h3 id='scoring_efields_calc_efields_score'>1.14.2 calc_efields_score</h3><br>Executes the FieldTools.py script to calculate the electric field across the C-H bond of 5TS.
+Requires a field_target.dat in the Input folder. Currently hard-coded based on 5TS
+TODO: Make this function agnostic to contents of field_target
+<br>
+Parameters:
+- pdb_path (str): The path to the pdb structure to analyse - either from design or relax.
+<br>
+<br><span style='color:gray; font-weight:bold;'>Returns</span><br>
+<table style='width:100%; border-collapse: collapse;'><tr><th style='text-align:left; width:30%; border-bottom: 1px solid #999;'> </th><th style='text-align:left; border-bottom: 1px solid #999;'> </th></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>- bond_field (float)                         </td><td style='font-size: 12px;'>The total electric field across the 5TS@C9_:5TS@H04 bond in MV/cm. (Currently hard coded to these atoms)</td></tr>
+<tr><td style='padding-right: 10px; font-size: 12px;'>- all_fields (dict)                         </td><td style='font-size: 12px;'>The components of the electric field across the 5TS@C9_:5TS@H04 bond per residue.</td></tr>
+</table><br><br>
+<h3 id='scoring_efields_update_efieldsdf'>1.14.3 update_efieldsdf</h3><br>Adds a new row to "{FOLDER_HOME}/electric_fields.csv" containing the electric fields
+generated by FieldTools.py for all residues in the protein<br>
+<h2 id='setup_system'>1.15 setup_system</h2><br>
