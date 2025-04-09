@@ -64,7 +64,9 @@ def load_plot_scores_df(self):
                                    norm_all=True, 
                                    extension="score") 
 
-    if "redox" in self.SELECTED_SCORES: self.scores['BioDC_redox'] = self.plot_scores_df["BioDC_redox"]
+    if "redox" in self.SELECTED_SCORES:
+        self.scores['BioDC_redox'] = self.plot_scores_df["BioDC_redox"]
+        self.HIGHSCORE['BioDC_redox'] = self.TARGET_REDOX
 
 # Combined plot functions --------------------------------------------------------------------------------------------------------------------------
 

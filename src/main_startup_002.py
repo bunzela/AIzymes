@@ -35,11 +35,10 @@ def submit_controller_parallel(self):
     cmd = f'''import sys, os
 sys.path.append(os.path.join(os.getcwd(), '../../src'))
 from AIzymes_015 import *
-AIzymes = AIzymes_MAIN()
-AIzymes.initialize(FOLDER_HOME    = '{os.path.basename(self.FOLDER_HOME)}', 
-                   LOG            = '{self.LOG}',
-                   PRINT_VAR      = False,
-                   UNBLOCK_ALL    = True)
+AIzymes = AIzymes_MAIN(FOLDER_HOME    = '{os.path.basename(self.FOLDER_HOME)}', 
+                       LOG            = '{self.LOG}',
+                       PRINT_VAR      = False,
+                       UNBLOCK_ALL    = True)
 AIzymes.controller()
 '''
     with open(f"{self.FOLDER_HOME}/start_controller_parallel.py", "w") as f:
@@ -309,6 +308,11 @@ def aizymes_setup(self):
     if self.FIELD_TARGET == None and "ElectricFields" in self.DESIGN_METHODS:
         logging.error(f"FIELD_TARGET must be defined for ElectricField calculation! FIELD_TARGET: {self.FIELD_TARGET}.")
         sys.exit()
+    if len(self.SUBMIT_PREFIX) > 8:
+        logging.error(f"SUBMIT_PREFIX cannot be longer than 8 characters. SUBMIT_PREFIX: {self.SUBMIT_PREFIX}.")
+        sys.exit()
+
+
         
     with open(self.LOG_FILE, 'w'): pass  #resets logfile
     

@@ -15,7 +15,7 @@ def plot_tree(self,
     import networkx as nx
     import math
 
-    from matplotlib.colors import ListedColormap, BoundaryNorm, TwoSlopeNorm
+    from matplotlib.colors import ListedColormap, BoundaryNorm, TwoSlopeNorm, PowerNorm
     from matplotlib.colors import LinearSegmentedColormap, Normalize
 
     if max_generation == 0:
@@ -65,7 +65,7 @@ def plot_tree(self,
                    sequence            = row['sequence'],
                    generation          = row['generation'] + 1,
                    hamming_distance    = distance,
-                   BioDC_redox         = BioDC_redox,
+                   BioDC_redox         = abs(BioDC_redox-self.TARGET_REDOX),
                    **{f"{score}_score" : self.scores[f"{score}_score"][new_idx - 1] for score in self.SELECTED_SCORES},
                    final_score         = self.scores[f"final_score"][new_idx - 1],
                    combined_score      = self.scores['combined_score'][new_idx - 1])
@@ -73,7 +73,7 @@ def plot_tree(self,
         G.add_edge(parent_idx,
                    new_idx,
                    hamming_distance    = distance,
-                   BioDC_redox         = BioDC_redox,
+                   BioDC_redox         = abs(BioDC_redox-self.TARGET_REDOX),
                    **{f"{score}_score" : self.scores[f"{score}_score"][new_idx - 1] for score in self.SELECTED_SCORES},
                    final_score         = self.scores[f"final_score"][new_idx - 1],
                    combined_score      = self.scores['combined_score'][new_idx - 1])
@@ -136,6 +136,8 @@ def plot_tree(self,
         values = [G.edges[edge][color] for edge in G.edges]
 
         if color ==  "BioDC_redox":
+
+            """
             vmin=-1
             vmax=1
             vmid=self.HIGHSCORE["BioDC_redox"]
@@ -150,6 +152,37 @@ def plot_tree(self,
                 ]
             )
             norm = TwoSlopeNorm(vmin=vmin, vcenter=vmid, vmax=vmax)   
+            """
+
+            #vmax = abs(np.amax(self.scores['BioDC_redox'] - self.TARGET_REDOX))
+            #norm = PowerNorm(gamma=0.5, vmin=0, vmax=vmax)
+            #base_cmap = LinearSegmentedColormap.from_list("BlueToWhie", [(0, 0, 1), (1, 1, 1)])
+            
+            # Grab your edge values
+            color_values = [G.edges[edge][color] for edge in G.edges]
+            
+            # Pride flag colors
+            pride_colors = [
+                "#750787",  # violet
+                "#004dff",  # blue
+                "#008026",  # green
+                "#ffed00",  # yellow
+                "#ff8c00",  # orange
+                "#e40303"   # red
+            ]
+            n_colors = len(pride_colors)
+            
+            # Compute max value for bounds
+            vmax = max(color_values)
+            boundaries = np.linspace(0, vmax, n_colors + 1)
+            
+            # Set colormap and normalization
+            base_cmap = ListedColormap(pride_colors)
+            norm = BoundaryNorm(boundaries, base_cmap.N)
+            
+            # Apply to edges
+            edge_colors = [base_cmap(norm(val)) for val in color_values]
+
         else:
             norm = Normalize(vmin=0, vmax=1)
             base_cmap = LinearSegmentedColormap.from_list("WhiteToBlue", [(1, 1, 1), (0, 0, 1)])
@@ -225,7 +258,9 @@ def plot_tree(self,
     if color == "final_score":
         cbar.set_label('final score')
     elif color == "BioDC_redox":
-        cbar.set_label('Redox Potential')
+        cbar.set_label('Difference to target potential')
+        cbar.ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.2f}'))
+        """
         tick_vals = [
             vmin,
             vmin + 0.5 * (vmid - vmin),
@@ -235,6 +270,8 @@ def plot_tree(self,
         ]
         cbar.set_ticks(tick_vals)
         cbar.set_ticklabels([f"{tv:.2f}" for tv in tick_vals])
+        """
+        
     elif color == "hamming_distance":
         cbar.set_label('Hamming Distance')
     else:

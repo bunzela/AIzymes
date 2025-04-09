@@ -35,7 +35,7 @@ def Field_of_ABC_at_XYZ_projected_onto_VEC(_ABC,_XYZ,_VEC,_Charge,arg_energy_out
     _Field = np.dot(_Field,_VEC)
     ### 1 a.u. = 5.14x10^9 V/cm
     ### 1 a.u. = 5.14x10^3 MV/cm
-    _Field=_Field*5.14*1000
+    _Field=_Field*5.14*1000 / 100
 
     _Energy = 0.0               
     return _Field,_Energy
@@ -50,7 +50,7 @@ def Field_of_ABC_at_XYZ(_ABC,_XYZ,_Charge,arg_energy_out,Target_Charges,arg_vect
     _Field = (-1)*(_Couloumb_Const*float(_Charge)/(_Length_Bohr**2))
     ### 1 a.u. = 5.14x10^9 V/cm
     ### 1 a.u. = 5.14x10^3 MV/cm
-    _Field=_Field*5.14*1000
+    _Field=_Field*5.14*1000 / 100
     
     _Energy = 0.0
     _Field_Vectors = []
