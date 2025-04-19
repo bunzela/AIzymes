@@ -26,7 +26,7 @@ If you use **AI.zymes** in your research, please cite:
 **AI.zymes – A Modular Platform for Evolutionary Enzyme Design**  
 
 Lucas P. Merlicek, Jannik Neumann, Abbie Lear, Vivian Degiorgi, Moor M. de Waal, Tudor-Stefan Cotet, Adrian J. Mulholland, and H. Adrian Bunzel
-**Angewandte Chemie International Edition**, 2025 *(accepted)*
+**Angewandte Chemie International Edition** 2025, https://doi.org/10.1002/anie.202507031, *(accepted)*
 
 ## 🛠️ Developer Notes
 
@@ -49,4 +49,4 @@ from AIzymes_015 import *
 
 ---
 
-> *This project is in active development. Contributions, feedback, and collaborations are very welcome!*
+> *AI.zymes is in active development! Contributions, feedback, and collaborations are very welcome! We are happy to assist you with geting AI.zymes to run on your systems.*

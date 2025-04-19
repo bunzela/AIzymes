@@ -1,15 +1,3 @@
-# Ignore everything in the design/ directory
-design/*
-
-# Allow tracking of notebooks and Input folder in design/TEST
-!design/TEST/
-!design/TEST/*.ipynb
-!design/TEST/Input/
-
-# Ignore everything in design/TEST subfolders, except Input
-design/TEST/*/
-!design/TEST/Input/**
-
 # Ignore all log files and checkpoint files
 **.log
 **/.ipynb_checkpoints
@@ -20,6 +8,28 @@ qsub_jupyter.err
 qsub_jupyter.out
 IP_jupyter.IP
 
-# .pkl files from PLM learner
-fitness_landscapes/**/*.pkl
+# Ignore all subdirectories (directories only) in example_notebooks
+example_notebooks/*/
+!example_notebooks/*.*
+example_notebooks/*.config
 
+# Do not ignore the "input" directory and its contents
+!example_notebooks/Input/
+!example_notebooks/Input/**
+archive/1_AIzymes_run.tar
+
+
+# FOR FITNESS LANDSCAPES
+# 1) Ignore _everything_ under fitness_landscapes (files & dirs)
+fitness_landscapes/**
+
+# 2) Re‑include all items immediately under fitness_landscapes/
+!fitness_landscapes/*
+
+# 3) Re‑include only these file types in subdirector, where
+!fitness_landscapes/*/*.png
+!fitness_landscapes/*/*.csv
+!fitness_landscapes/*/*.xls
+!fitness_landscapes/*/*.zip
+!fitness_landscapes/*/*.py
+!fitness_landscapes/*/*.seq
