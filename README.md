@@ -28,20 +28,36 @@ If you use **AI.zymes** in your research, please cite:
 Lucas P. Merlicek, Jannik Neumann, Abbie Lear, Vivian Degiorgi, Moor M. de Waal, Tudor-Stefan Cotet, Adrian J. Mulholland, and H. Adrian Bunzel
 **Angewandte Chemie International Edition** 2025, https://doi.org/10.1002/anie.202507031, *(accepted)*
 
-## 🛠️ Developer Notes
+## 🛠️ Installation
 
-**AI.zymes** is currently not distributed as a Python package (e.g. via `pip`). To use the platform in your own scripts or Jupyter notebooks, you need to ensure the source directory is included in your Python module search path.
+Check AIzymes_Manual.pdf for detailed installation instructions.
 
-Add the following line to your `.bashrc` (or `.bash_profile`) to permanently include the source directory:
-
-```
-export PYTHONPATH="$PYTHONPATH:$HOME/AIzymes/src"
-```
-
-This ensures that Python can locate modules like AIzymes_015.py when importing:
+Briefly, we recommend installing **AI.zymes** with pip. 
 
 ```
-from AIzymes_015 import *
+pip install aizymes
+```
+
+To use **AI.zymes** in Python, import:
+
+```
+from aizymes import *
+```
+
+For code development, AI.zymes can also be cloned from the GitHub repository:
+
+```
+git clone https://github.com/bunzela/AIzymes.git
+```
+
+You can either create your own AI.zymes environment, or install all required packages in your existing environment.
+
+```
+cd AIzymes
+# To build new environemnt
+conda env create -f environment.yml --name AIzymes 
+# Alternative to install packages in curent environemnt:
+# conda env update -f environment.yml --prune
 ```
 
 > [!NOTE]
