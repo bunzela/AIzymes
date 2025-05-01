@@ -1,5 +1,11 @@
 # AI.zymes
 
+> [!NOTE]
+> We are happy to tailor **AI.zymes** to your system! Contact [Adrian Bunzel](mailto:Adrian.Bunzel@mpi-marburg.mpg.de) for specific requests!
+
+> [!NOTE]
+> The **AIzymes_Manual.pdf** contains all information to get started. The manual is still work in progess. Feel free to reach out if you have any specific questions.
+
 Welcome to the code repository for **AI.zymes — a modular platform for evolutionary enzyme design**.
 
 **AI.zymes** integrates a suite of state-of-the-art tools for enzyme engineering, including:
@@ -13,7 +19,7 @@ We are currently working on improving the accessibility of **AI.zymes**, includi
 
 ## 📥 Getting Started
 
-We are actively looking for collaborators and enthusiastic users! If you're interested in using **AI.zymes** or exploring joint projects, **please reach out** — we'd love to hear from you:
+**AIzymes_Manual.pdf** contains all information to get started with **AI.zymes**. We are actively looking for collaborators and enthusiastic users! If you're interested in using **AI.zymes** or exploring joint projects, **please reach out** — we'd love to hear from you:
 
 **Contact:**  
 📧 [Adrian Bunzel](mailto:Adrian.Bunzel@mpi-marburg.mpg.de)  
@@ -26,11 +32,11 @@ If you use **AI.zymes** in your research, please cite:
 **AI.zymes – A Modular Platform for Evolutionary Enzyme Design**  
 
 Lucas P. Merlicek, Jannik Neumann, Abbie Lear, Vivian Degiorgi, Moor M. de Waal, Tudor-Stefan Cotet, Adrian J. Mulholland, and H. Adrian Bunzel
-**Angewandte Chemie International Edition** 2025, https://doi.org/10.1002/anie.202507031, *(accepted)*
+**Angewandte Chemie International Edition** 2025, https://doi.org/10.1002/anie.202507031
 
 ## 🛠️ Installation
 
-Check AIzymes_Manual.pdf for detailed installation instructions.
+Check **AIzymes_Manual.pdf** for detailed installation instructions.
 
 Briefly, we recommend installing **AI.zymes** with pip. 
 
@@ -66,3 +72,7 @@ conda env create -f environment.yml --name AIzymes
 ---
 
 > *AI.zymes is in active development! Contributions, feedback, and collaborations are very welcome! We are happy to assist you with geting AI.zymes to run on your systems.*
+
+---
+
+> *License: MIT-NC – non-commercial academic use only. Commercial use requires permission. See LICENSE.txt.*
