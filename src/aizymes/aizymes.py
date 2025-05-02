@@ -80,13 +80,15 @@ class AIzymes_MAIN:
               
               # ProteinMPNN settings
               ProteinMPNN_T       = "0.1", 
+              ProteinMPNN_BIAS    = 0.5,
 
               # LigandMPNN settings
               LigandMPNN_T        = "0.1", 
               
               # SolubleMPNN settings
               SolubleMPNN_T       = "0.1", 
-
+              SolubleMPNN_BIAS    = 0.5,
+              
               # FieldTools settings
               FIELD_TARGET        = None,
               FIELDS_EXCL_CAT     = True,
