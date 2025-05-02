@@ -100,6 +100,10 @@ pwd
     elif design_step == "BioDC":
         cmd = prepare_BioDC(self, index, cmd)
         logging.info(f"Calculating Redoxpotentials for index {index}.")
+
+    elif design_step == "Null":
+        cmd = prepare_null(self, index)
+        logging.info(f"Prepare Null for index {index}.")
         
     else:
         logging.error(f"{design_step} is not defined! Error in run_design() / main_design.py")

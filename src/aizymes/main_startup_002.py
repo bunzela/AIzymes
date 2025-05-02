@@ -356,7 +356,7 @@ def aizymes_setup(self):
     make_empty_resource_log_df(self)
         
     # Add parent designs to all_scores_df
-    schedlue_parent_design(self)
+    schedule_parent_design(self)
     
     # Save varliables 
     save_main_variables(self)
@@ -397,7 +397,7 @@ def make_empty_resource_log_df(self):
     
     save_resource_log_df(self)
     
-def schedlue_parent_design(self):
+def schedule_parent_design(self):
     '''
     Adds all parent design runs to the all_score_df dataframe
     '''

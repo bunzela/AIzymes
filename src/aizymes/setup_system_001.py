@@ -83,10 +83,10 @@ def set_system(self):
             sys.exit()
 
         default = standard_settings["FOLDER_Alphafold"]
-        self.FOLDER_ALPHAFOLD = input(f"Path to Alphafold [leavel blank for default: {default}]") or default
-        print(f"FOLDER_ALPHAFOLD set to {self.FOLDER_ALPHAFOLD}\n")
-        if not os.path.isdir(self.FOLDER_ALPHAFOLD):
-            print(f"ERROR, FOLDER_ALPHAFOLD {self.FOLDER_ALPHAFOLD} does not exist!")
+        self.FOLDER_Alphafold = input(f"Path to Alphafold [leavel blank for default: {default}]") or default
+        print(f"FOLDER_ALPHAFOLD set to {self.FOLDER_Alphafold}\n")
+        if not os.path.isdir(self.FOLDER_Alphafold):
+            print(f"ERROR, FOLDER_ALPHAFOLD {self.FOLDER_Alphafold} does not exist!")
             sys.exit()
 
         default = standard_settings["rosetta_ext"]
@@ -116,6 +116,7 @@ Do not include --job-name, --output, and --error flags!
             "FOLDER_ProteinMPNN"   : self.FOLDER_ProteinMPNN,
             "FOLDER_ProteinMPNN_h" : self.FOLDER_ProteinMPNN_h,
             "FOLDER_LigandMPNN"    : self.FOLDER_LigandMPNN,
+            "FOLDER_Alphafold"     : self.FOLDER_Alphafold,
             "SUBMIT_HEAD"          : self.SUBMIT_HEAD
         }
         with open(self.SYSTEM, 'w') as f:

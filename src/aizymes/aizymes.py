@@ -2,7 +2,7 @@
 The AIzymes script defines the main AIzymes workflow, including setup, initialization, control, and plotting functions.
 It manages the primary processes and configurations required to execute AIzymes functionalities.
 """
-    
+
 from main_running_003         import *
 from main_startup_002         import *
 from plotting_002             import *
@@ -32,28 +32,28 @@ class AIzymes_MAIN:
             LOG (str):          Logging level.
         """
         for key, value in locals().items():
-            if key not in ['self']:  
+            if key not in ['self']:
                 setattr(self, key, value)
 
         if os.path.isdir(FOLDER_HOME):
             initialize_controller(self, FOLDER_HOME)
         else:
             print(f"Folder {FOLDER_HOME} missing. Please run setup().")
-                  
-    def setup(self, 
+
+    def setup(self,
 
               # General Design Settings
-              WT                  = None, 
+              WT                  = None,
               LIGAND              = None,
               DESIGN              = None,
               PARENT_DES_MED      = ['RosettaDesign','ElectricFields'],
               DESIGN_METHODS      = [[0.7,'RosettaDesign','ElectricFields'],\
                                      [0.3,'ProteinMPNN','ESMfold','RosettaRelax','ElectricFields']],
               EXPLORE             = False,
-              RESTRICT_RESIDUES   = None,     
+              RESTRICT_RESIDUES   = None,
               FOLDER_PARENT       = 'parent',
               FOLDER_PAR_STRUC    = None,
-              
+
               # General Scoring Settings
               SELECTED_SCORES     = ["total","catalytic","interface","efield"],
               WEIGHT_TOTAL        = 1.0,
@@ -82,11 +82,9 @@ class AIzymes_MAIN:
               ProteinMPNN_T       = "0.1", 
 
               # LigandMPNN settings
-              LigandMPNN_BIAS     = 0.5, 
               LigandMPNN_T        = "0.1", 
               
               # SolubleMPNN settings
-              SolubleMPNN_BIAS    = 0.5, 
               SolubleMPNN_T       = "0.1", 
 
               # FieldTools settings
@@ -103,9 +101,9 @@ class AIzymes_MAIN:
 
               # Established Modules list
               # All Methods that redesign a sequence
-              SYS_DESIGN_METHODS  = ["RosettaDesign","ProteinMPNN","LigandMPNN","SolubleMPNN"],
+              SYS_DESIGN_METHODS  = ["RosettaDesign","ProteinMPNN","LigandMPNN","SolubleMPNN", "Null"],
               # All Methods that create a structure
-              SYS_STRUCT_METHODS  = ["RosettaDesign","MDMin","ESMfold","RosettaRelax",'AlphaFold3INF'], 
+              SYS_STRUCT_METHODS  = ["RosettaDesign","MDMin","ESMfold","RosettaRelax",'AlphaFold3INF', "Null"], 
               # All Methods that require GPUs
               SYS_GPU_METHODS     = ["ESMfold",'AlphaFold3INF',"ProteinMPNN","LigandMPNN","SolubleMPNN"],
               
