@@ -41,7 +41,7 @@ def prepare_BioDC(self,
             if "OXT" in line: continue
             if line.split()[-1] == "H": continue
             if "HEM X   1" in line:
-                line = line.replace("HEM X   1", "HEM B 113")
+                line = line.replace("HEM X   1", f"HEM B {int(self.HEME_RESI[2])}")
                 line = line.replace("HETATM", "ATOM  ")
             f.write(line)
             

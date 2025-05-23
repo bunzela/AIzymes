@@ -38,7 +38,7 @@ def prepare_RosettaRelax(self,
         ex = "-ex1 -ex2"
 
     PDB_input = self.all_scores_df.at[int(index), "step_input_variant"]
-  
+     
     # Create the RosettaRelax.xml file    
     RosettaRelax_xml = f"""
 <ROSETTASCRIPTS>
@@ -66,7 +66,7 @@ def prepare_RosettaRelax(self,
     
     # Add constraint if run is not used as PreMatchRelax
     if self.CST_NAME is not None:
-        if not PreMatchRelax: RosettaRelax_xml += f"""
+        RosettaRelax_xml += f"""
             <AddOrRemoveMatchCsts     name="mv_add_cst" 
                                   cst_instruction="add_new" 
                                   cstfile="{self.FOLDER_PARENT}/{self.CST_NAME}.cst" />
@@ -81,11 +81,17 @@ def prepare_RosettaRelax(self,
     </MOVERS>
     
     <PROTOCOLS>  
+"""
 
+    if 'HEM' in self.LIGAND:
+        RosettaRelax_xml += f"""                                  
+        <Add mover_name="mv_add_cst" /> """
+        
+    RosettaRelax_xml += f"""
         <Add mover_name="mv_relax" />
 """
 
-    if self.CST_NAME is not None:
+    if self.CST_NAME is not None and 'HEM' not in self.LIGAND:
         RosettaRelax_xml += f"""                                  
         <Add mover_name="mv_add_cst" /> """
     RosettaRelax_xml += f""" 

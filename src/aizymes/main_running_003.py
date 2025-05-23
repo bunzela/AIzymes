@@ -57,7 +57,10 @@ def start_controller(self):
 
     # Run this part of the function until the maximum number of designs has been reached.
     while self.all_scores_df[f'{self.SELECTED_SCORES[0]}_score'].notna().sum() < int(self.MAX_DESIGNS): 
-            
+
+        # Update the all_scores_df dataframe
+        update_scores(self)
+        
         # Check how many jobs are currently running
         num_running_jobs = check_running_jobs(self)
         
@@ -66,13 +69,12 @@ def start_controller(self):
             
             time.sleep(1)
             
-        else:
-          
-            # Update the all_scores_df dataframe
-            update_scores(self)
+        else:           
             
             # Selects variant based on calculations scheduled in all_scores_df
             selected_index = select_scheduled_variant(self)
+
+            logging.info(f"selected_index {selected_index} xxxxxxxxxxxxxx.")
             
             if selected_index != None:
 
@@ -84,8 +86,14 @@ def start_controller(self):
                 # Schedules calculations based on boltzmann selection                
                 parent_index = boltzmann_selection(self)
 
+                logging.info(f"parent_index {parent_index} xxxxxxxxxxxxxx.")
+            
                 # Ensure design does not "run ahead" without completing design
                 if parent_index != None and num_running_jobs['scheduled'] < self.MAX_JOBS*2: 
+                    
+
+                    logging.info(f"scheduling job xxxxxxxxxxxxxx.")
+                
                     schedule_design_method(self, parent_index)
 
         # Wait a bit for safety
@@ -125,50 +133,6 @@ def select_scheduled_variant(self):
         return index
     
     return None
-
-def check_running_jobs(self):
-    """
-    The check_running_job function returns the number of parallel jobs that are running by counting how many lines in the qstat output are present which correspond to the
-    job prefix. This is true when working on the GRID, for the other system the same concept is being used but the terminology differs.
-
-    Returns:
-        int: Number of running jobs for the specific system.
-    """
-
-    num_running_jobs={}
-    num_running_jobs['scheduled']=0 # Set default value for backwards compatability
-    
-    # Count number of running CPU jobs
-    for p, out_file, err_file in self.processes:
-        if p.poll() is not None: # Close finished files
-            out_file.close()
-            err_file.close()
-    self.processes = [(p, out_file, err_file) for p, out_file, err_file in self.processes if p.poll() is None]
-    logging.debug(f"{len(self.processes)} parallel jobs.")       
-    num_running_jobs['running_gpu'] = sum(1 for value in self.gpus.values() if value is None)
-    num_running_jobs['running'] = len(self.processes) +  num_running_jobs['running_gpu']
-
-    # Count number of scheduled jobs - remove all that are failed (contain error!)
-    num_running_jobs['scheduled'] = 0
-    na_rows = self.all_scores_df[self.all_scores_df[f'{self.SELECTED_SCORES[0]}_score'].isna()]
-    for index, row in na_rows.iterrows():
-        error_files = glob.glob(os.path.join(self.FOLDER_HOME, str(index), "scripts", "*.err"))
-        has_error = False
-        for err_file in error_files:
-            with open(err_file, "r", errors="ignore") as f:
-                if any("error" in line.lower() for line in f):
-                    has_error = True
-                    break 
-        if not error_files or not has_error:
-            num_running_jobs['scheduled'] += 1
-
-    # Free the GPUs
-    if self.MAX_GPUS > 0:
-        for gpu, proc in self.gpus.items():
-            if proc is not None and proc.poll() is not None:
-                self.gpus[gpu] = None
-                
-    return num_running_jobs
        
 def update_potential(self, score_type, index): 
     """
@@ -212,7 +176,20 @@ def update_scores(self):
     for index, row in self.all_scores_df.iterrows():
         
         parent_index = row['parent_index']         
-        
+
+        # Find failed designs
+        if self.all_scores_df.at[index, "blocked"] == 'failed': continue
+        if self.all_scores_df.at[index, "blocked"] != 'unblocked': 
+            
+            if os.path.isfile(f"{self.FOLDER_DESIGN}/{index}/ROSETTA_CRASH.log"):   
+                self.all_scores_df.at[int(index), "blocked"] = 'failed'
+
+            error_files = glob.glob(os.path.join(self.FOLDER_HOME, str(index), "scripts", "*.err"))
+            for err_file in error_files:
+                with open(err_file, "r", errors="ignore") as f:
+                    if any("error" in line.lower() for line in f):
+                        self.all_scores_df.at[int(index), "blocked"] = 'failed'
+                
         # Unblock indices
         if self.all_scores_df.at[index, "blocked"] != 'unblocked': 
             
@@ -250,7 +227,7 @@ def update_scores(self):
                 if os.path.isfile(f"{self.FOLDER_DESIGN}/{index}/{self.WT}_{index}.seq"):
                     self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")
-            
+                          
         # Paths for sequence-based information
         seq_path        = f"{self.FOLDER_DESIGN}/{index}/{self.WT}_{index}.seq"
         ref_seq_path    = f"{self.FOLDER_PARENT}/{self.WT}.seq"
@@ -488,7 +465,7 @@ def update_resource_log(self):
         'total_designs': total_designs,
         'finished_designs': finished_designs,
         'unfinished_designs': num_running_jobs['scheduled'],
-        'failed_designs': total_designs-num_running_jobs['scheduled'],
+        'failed_designs': num_running_jobs['failed'],
         'kbt_boltzmann': self.all_scores_df["kbt_boltzmann"].iloc[-1],
     }, index = [0] , dtype=object)  
                                       
@@ -508,7 +485,7 @@ def boltzmann_selection(self):
 
     # Remove indices for which calculations have been scheduled
     filtered_all_scores_df = self.all_scores_df[self.all_scores_df['next_steps'].isna() | (self.all_scores_df['next_steps'] == "")]
-
+    
     # Get list of all indices (blocked and unblocked_
     parent_indices = set(filtered_all_scores_df['parent_index'].astype(str).values)
 
@@ -603,12 +580,12 @@ def schedule_design_method(self, parent_index):
 
     # Make new index 
     new_index = create_new_index(self, 
-                                 parent_index  = parent_index, 
-                                 luca          = self.all_scores_df.at[parent_index, 'luca'],
-                                 input_variant = self.all_scores_df.at[parent_index, 'final_variant'],
-                                 final_method  = final_structure_method,
-                                 next_steps    = ",".join(design_methods), 
-                                 design_method = design_method)    
+                                 parent_index   = parent_index, 
+                                 luca           = self.all_scores_df.at[parent_index, 'luca'],
+                                 input_variant  = self.all_scores_df.at[parent_index, 'final_variant'],
+                                 final_method   = final_structure_method,
+                                 next_steps     = ",".join(design_methods), 
+                                 design_method  = design_method)    
 
     return 
     
@@ -632,12 +609,24 @@ def start_calculation(self, selected_index: int):
     if next_steps[0] in self.SYS_STRUCT_METHODS:
         logging.debug(f"Resulting in variant {self.all_scores_df.at[selected_index, 'step_output_variant']}")
     
-    run_design(self, selected_index, next_steps[0])
-
     if next_steps[0] in self.SYS_STRUCT_METHODS:
-        self.all_scores_df.at[selected_index, "previous_input_variant_for_reset"] = self.all_scores_df.at[selected_index, "step_input_variant"] # Keep track to reset job!
+
+        logging.debug(f"before update {selected_index}")
+        logging.debug(f'previous_input_variant_for_reset {self.all_scores_df.at[selected_index, "previous_input_variant_for_reset"]}')
+        logging.debug(f'step_input_variant {self.all_scores_df.at[selected_index, "step_input_variant"]}')
+        logging.debug(f'step_output_variant {self.all_scores_df.at[selected_index, "step_output_variant"]}')
+        
+        self.all_scores_df.at[selected_index, "previous_input_variant_for_reset"] = self.all_scores_df.at[selected_index, "step_input_variant"]
+            # Keep track to reset job!
         self.all_scores_df.at[selected_index, "step_input_variant"] = self.all_scores_df.at[selected_index, "step_output_variant"]
         step_output_variant = f'{self.FOLDER_DESIGN}/{selected_index}/{self.WT}_{next_steps[0]}_{selected_index}'
         self.all_scores_df.at[selected_index, "step_output_variant"] = step_output_variant
-    
+
+        logging.debug(f"after update {selected_index}")
+        logging.debug(f'previous_input_variant_for_reset {self.all_scores_df.at[selected_index, "previous_input_variant_for_reset"]}')
+        logging.debug(f'step_input_variant {self.all_scores_df.at[selected_index, "step_input_variant"]}')
+        logging.debug(f'step_output_variant {self.all_scores_df.at[selected_index, "step_output_variant"]}')
+
+    run_design(self, selected_index, next_steps[0]) ### MOVED DOWN  BY HAB - BUG OR NOT????
+
     save_all_scores_df(self)

@@ -38,8 +38,8 @@ if __name__ == "__main__":
         f.write("""
 import argparse
 import sys
-from transformers import AutoTokenizer, EsmForProteinFolding, EsmConfig
 import torch
+from transformers import AutoTokenizer, EsmForProteinFolding, EsmConfig
 from transformers.models.esm.openfold_utils.protein import to_pdb, Protein as OFProtein
 from transformers.models.esm.openfold_utils.feats import atom14_to_atom37
 
@@ -205,4 +205,168 @@ if __name__ == "__main__":
     main(args)
 
 ''')       
+
+    # ------------------------------------------------------------------------------------------------------------------------------
+    # Create the reorder_heme.py script
+    # ------------------------------------------------------------------------------------------------------------------------------
+    with open(f'{self.FOLDER_PARENT}/reorder_heme.py', 'w') as f:
+        f.write('''
+import sys
+import argparse
+
+PROP1 = {"CAA","CBA","CGA","O1A","O2A"}
+PROP2 = {"CAD","CBD","CGD","O1D","O2D"}
+
+## Map PRN labels
+#PRN_MAP = {
+#    "C1A":"CA", "C2A":"CB", "C3A":"CG", "O1A":"O1", "O2A":"O2",
+#    "C1D":"CA", "C2D":"CB", "C3D":"CG", "O1D":"O1", "O2D":"O2"
+#}
+
+# Map PRN labels
+PRN_MAP = {
+    "CAA":"CA", "CBA":"CB", "CGA":"CG", "O1A":"O1", "O2A":"O2",
+    "CAD":"CA", "CBD":"CB", "CGD":"CG", "O1D":"O1", "O2D":"O2"
+}
+
+## Map HBO labels
+#HBO_MAP = {
+#    "CAA": "C1A", "CBA": "C2A", "CGA": "C3A", "O1A": "O1A", "O2A": "O2A",
+#    "CAD": "C1D", "CBD": "C2D", "CGD": "C3D", "O1D": "O1D", "O2D": "O2D"
+#}
+
+def main(args):
+
+    pdb_in = args.pdb
+    heme   = int(args.heme)
+    his1   = int(args.his1)
+    his2   = int(args.his2)
+    mode   = args.mode
+
+    print(f"Loaded structure from {pdb_in}.pdb")
+    with open(f'{pdb_in}.pdb','r') as f:
+        pdb = f.readlines()
+
+    # ensure exactly one HEM/FE
+    heme_count = 0
+    for line in pdb:
+        if line.startswith(("ATOM  ", "HETATM")):
+            resname = line[17:20]
+            atom    = line[12:16].strip()
+            if resname in ("HEM", "HBO") and atom == "FE":
+                heme_count += 1
+    if heme_count != 1:
+        print(f"ERROR! Expected exactly one HEM, found {heme_count}")
+        sys.exit(1)
+
+    # --- SEPARATE ---
+    if mode=="separate":
+
+        print("Starting reorder_heme.py with mode='separate'")
         
+        structure = []
+        macro     = []
+        prn1      = []
+        prn2      = []
+
+        for line in pdb:
+            if line.startswith(("ATOM  ","HETATM")):
+                resname = line[17:20]
+                atom    = line[12:16].strip()
+                resnum  = int(line[22:26].strip())
+        
+                if resname == "HEM":
+                
+                    # propionate A
+                    if atom in PROP1:
+                        new =  f"ATOM  {line[6:11]}{PRN_MAP[atom]:>4} {line[16]}PRN A{heme+1:4d}{line[26:]}"
+                        prn1.append(new)
+        
+                    # propionate D
+                    elif atom in PROP2:
+                        new = f"ATOM  {line[6:11]}{PRN_MAP[atom]:>4} {line[16]}PRN A{heme+2:4d}{line[26:]}"      
+                        prn2.append(new)
+
+                    # macrocycle
+                    else:
+                        new = f"ATOM  {line[6:16]} HBO A{heme:4d}{line[26:]}"   
+                        macro.append(new)
+                    
+                    continue
+        
+                # rename histidines
+                if resname in ("HIE","HID","HIS"):
+                
+                    if resnum == his1:
+                        new = f"{line[:17]}FHO{line[20:]}"
+                        structure.append(new)
+                        continue
+                        
+                    if resnum == his2:
+                        new = f"{line[:17]}RHO{line[20:]}"
+                        structure.append(new)
+                        continue
+        
+            # everything else
+            structure.append(line)
+            
+        out_pdb = structure + macro + prn1 + prn2
+
+    # --- COMBINE ---
+    elif mode == "combine":
+
+        print("Starting reorder_heme.py with mode='combine'")
+
+        out_pdb = []
+        for line in pdb:
+            if line.startswith(("ATOM  ", "HETATM")):
+                resname = line[17:20]
+                atom    = line[12:16].strip()
+                resnum  = int(line[22:26])
+                chain   = line[21]
+                serial  = line[6:12]
+                altloc  = line[16]
+
+                # PRN → HEM X   1, restore original atom name based on PRN residue
+                if resname == "PRN" and atom in PRN_MAP.values():
+                    inv1 = {v: k for k, v in PRN_MAP.items() if k in PROP1}
+                    inv2 = {v: k for k, v in PRN_MAP.items() if k in PROP2}
+
+                    # differentiate based on residue number or chain
+                    if resnum == heme + 1:  # PRN1
+                        orig = inv1.get(atom, atom)
+                    elif resnum == heme + 2:  # PRN2
+                        orig = inv2.get(atom, atom)
+
+                    atom_fmt = orig.rjust(4)
+                    line = f"ATOM  {serial}{atom_fmt}{altloc}HEM X   1{line[26:]}"
+                
+                elif resname == "HBO":
+                    line = f"ATOM  {serial}{line[12:16]}{altloc}HEM X   1{line[26:]}"
+                
+                elif resname in ("FHO", "RHO"):
+                    line = f"{line[:17]}HIS{line[20:]}"
+
+            out_pdb.append(line)
+            
+    else:
+        print("ERROR! mode must be 'separate' or 'combine'.")
+        sys.exit(1)
+
+    print(f"Saving structure to {pdb_in}.pdb")
+    with open(f'{pdb_in}.pdb','w') as f:
+        f.writelines(out_pdb)
+    
+    print(f"Saved {pdb_in}.pdb")
+
+if __name__=="__main__":
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--pdb",  required=True, help="Prefix of the PDB file (without .pdb)")
+    parser.add_argument("--heme", required=True, help="Residue Number heme")
+    parser.add_argument("--his1", required=True, help="Residue Number His1")
+    parser.add_argument("--his2", required=True, help="Residue Number His2")
+    parser.add_argument("--mode", required=True, help="Either 'separate' or 'combine'")
+    args = parser.parse_args()
+    main(args)
+''')       
+    

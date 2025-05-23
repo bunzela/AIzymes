@@ -3,6 +3,9 @@ The AIzymes script defines the main AIzymes workflow, including setup, initializ
 It manages the primary processes and configurations required to execute AIzymes functionalities.
 """
 
+import warnings
+warnings.filterwarnings("ignore")
+
 from main_running_003         import *
 from main_startup_002         import *
 from plotting_002             import *
@@ -97,6 +100,9 @@ class AIzymes_MAIN:
               # BioDC settings
               TARGET_REDOX        = None,
               WEIGHT_REDOX        = 1.0,
+
+              # Heme settings
+              HEME_RESI           = [],
 
               # Identical score settings
               IDENTICAL_DESIGN    = False,
@@ -220,7 +226,7 @@ class AIzymes_MAIN:
                         PRINT_COLUMN=True,
                         PRINT_RUNNING=True,
                         PRINT_ROW=True,
-                        index=0):
+                        INDEX=0):
         """
         Prints a range of information from all_scores_df
         """
@@ -251,15 +257,20 @@ class AIzymes_MAIN:
     def tar_designs(self):
         
         import tarfile, os, shutil
-
-        with tarfile.open(f"{self.FOLDER_HOME}/designs.tar", "w") as tar:
-            tar.add(f"{self.FOLDER_HOME}/designs", arcname="design")
+        
+        folder_name = os.path.basename(self.FOLDER_HOME.rstrip("/"))    
+        tar_path = os.path.join(folder_name, "designs.tar")
+        
+        os.makedirs(folder_name, exist_ok=True)
+        with tarfile.open(tar_path, "w") as tar:
+            tar.add(os.path.join(self.FOLDER_HOME, "designs"), arcname="design")
     
     def untar_designs(self):
         
         import tarfile, os, shutil, sys
 
-        tar_path     = os.path.join(self.FOLDER_HOME, "designs.tar")
+        folder_name = os.path.basename(self.FOLDER_HOME.rstrip("/"))    
+        tar_path = os.path.join(folder_name, "designs.tar")
         extract_root = self.FOLDER_HOME
     
         if not os.path.isfile(tar_path):
@@ -269,3 +280,13 @@ class AIzymes_MAIN:
         # Open for reading and extract all
         with tarfile.open(tar_path, mode="r:*") as tar:
             tar.extractall(path=extract_root)
+
+    def display_design(self,
+                       index=None,
+                       SCORE="total_score"):
+
+        for key, value in locals().items():
+            if key not in ['self']:
+                setattr(self, key, value)
+                
+        display_variants(self)

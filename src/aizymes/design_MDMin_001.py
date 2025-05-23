@@ -68,26 +68,82 @@ cat {PDBfile_in}.pdb > {working_dir_path}_input.pdb
     -run:preserve_header      true \\
                     
 # Tidy up the output file
-sed -i -e '/[0-9]H/d' -e '/H[0-9]/d' -e '/CONECT/Q' {working_dir_path}_wRosetta_sidechains.pdb
-
-#Remove Rosetta output 
+sed -i -e '/H[[:space:]]*$/d' -e '/CONECT/Q' {working_dir_path}_wRosetta_sidechains.pdb
+"""
+    
+    if self.LIGAND == 'HEM':
+        cmd += f"""
+python {self.FOLDER_PARENT}/reorder_heme.py --pdb {working_dir_path}_wRosetta_sidechains --mode separate --his1 {int(self.HEME_RESI[0])} --his2 {int(self.HEME_RESI[1])} --heme {int(self.HEME_RESI[2])}    
+"""
+    
+    cmd += f"""
+# Remove Rosetta output 
 rm {self.WT}_{index}_input_0001.pdb
 
-#Clean PDB for amber
+# Clean PDB for amber
 pdb4amber -i {working_dir_path}_wRosetta_sidechains.pdb -o {working_dir_path}_clean4amber.pdb 2> {working_dir_path}_pdb4amber.log
 rm {working_dir_path}_clean4amber_*
-
 """
 
-    tleap = f"""source leaprc.protein.ff19SB 
-source leaprc.gaff"""
+    tleap = ""
+
+    if self.LIGAND == 'HEM':
+        tleap += f"""source leaprc.constph
+source leaprc.conste
+source leaprc.gaff
+"""
+    else:
+        tleap += f"""source leaprc.protein.ff19SB 
+source leaprc.gaff
+"""
+        
     if self.LIGAND not in ['HEM']:
         tleap += f"""
 loadamberprep   {self.FOLDER_INPUT}/{self.LIGAND}.prepi
 loadamberparams {self.FOLDER_INPUT}/{self.LIGAND}.frcmod
 """
+        
+    if self.LIGAND == 'HEM':
+        tleap += f"""
+
+addAtomTypes {{
+    {{ "M1"  "Fe" "sp3" }} #M1&Y1-Y6:
+    {{ "Y1"  "N" "sp3" }}  #Oxidized
+    {{ "Y2"  "N" "sp3" }}  #His-His
+    {{ "Y3"  "N" "sp3" }}  #Ligated
+    {{ "Y4"  "N" "sp3" }}  #b-Heme
+    {{ "Y5"  "N" "sp3" }}
+    {{ "Y6"  "N" "sp3" }}
+}}
+
+loadAmberParams {self.FOLDER_INPUT}/Oxidized_HisHisLigated_b-heme.frcmod
+loadoff         {self.FOLDER_INPUT}/Oxidized_HisHisLigated_b-heme_RESP.lib
+"""
+        
     tleap += f"""        
 mol = loadpdb {working_dir_path}_clean4amber.pdb
+"""
+
+    if self.LIGAND == 'HEM':
+        tleap += f"""
+
+#Bond ligating atoms to Fe center
+bond mol.{int(self.HEME_RESI[0])}.NE2 mol.{int(self.HEME_RESI[2])}.FE
+bond mol.{int(self.HEME_RESI[1])}.NE2 mol.{int(self.HEME_RESI[2])}.FE
+
+#Bond propionic acids to heme
+bond mol.{int(self.HEME_RESI[2])}.C2A mol.{int(self.HEME_RESI[2])+1}.CA
+bond mol.{int(self.HEME_RESI[2])}.C3D mol.{int(self.HEME_RESI[2])+2}.CA
+
+#Bond axially coordinated residues to preceeding and proceeding residues
+bond mol.{int(self.HEME_RESI[0])-1}.C mol.{int(self.HEME_RESI[0])}.N
+bond mol.{int(self.HEME_RESI[0])}.C mol.{int(self.HEME_RESI[0])+1}.N
+bond mol.{int(self.HEME_RESI[1])-1}.C mol.{int(self.HEME_RESI[1])}.N
+bond mol.{int(self.HEME_RESI[1])}.C mol.{int(self.HEME_RESI[1])+1}.N
+
+"""
+
+    tleap += f""" 
 set default pbradii mbondi3
 saveamberparm mol {working_dir_path}.parm7 {working_dir_path}.rst7
 quit
@@ -128,18 +184,34 @@ sander -O -i {filename}/scripts/MDmin_{index}.in \
 cpptraj -p {working_dir_path}.parm7 -y {working_dir_path}_MD_out.rst7 -x {working_dir_path}_MD_out.pdb
 
 # Clean the output file
-sed -i '/        H  /d' {working_dir_path}_MD_out.pdb
-    """
-    
+sed -i -e '/        H  /d' \
+       -e '/SEQRES/d' \
+       -e '/HEADER/d' {working_dir_path}_MD_out.pdb
+"""
+
+    if self.LIGAND == 'HEM':
+        cmd += f"""
+python {self.FOLDER_PARENT}/reorder_heme.py --pdb {working_dir_path}_MD_out --mode combine --his1 {int(self.HEME_RESI[0])} --his2 {int(self.HEME_RESI[1])} --heme {int(self.HEME_RESI[2])}              
+"""
+        
     if self.CST_NAME is not None:
         remark = generate_remark_from_all_scores_df(self, index)
         cmd += f"""
 echo '{remark}' > {self.WT}_MDMin_{index}.pdb"""
-    
+
+    if self.LIGAND == 'HEM':
+        cmd += f"""
+echo 'HETNAM     HEM X   1  HEM  ' >> {self.WT}_MDMin_{index}.pdb"""
+
     cmd += f"""
 cat {working_dir_path}_MD_out.pdb >> {self.WT}_MDMin_{index}.pdb
-sed -i -e 's/^\(ATOM.\{{17\}}\) /\\1A/' {self.WT}_MDMin_{index}.pdb
-sed -i -e 's/{self.LIGAND} A/{self.LIGAND} X/g' -e 's/HIE/HIS/g' -e 's/HID/HIS/g' {self.WT}_MDMin_{index}.pdb
+
+sed -i -e 's/^\(ATOM.\{{17\}}\) /\\1A/'\
+       -e '/        H  /d' -e '/TER/d'\
+       -e '/ HEM /s/^HETATM/ATOM  /'\
+       -e 's/{self.LIGAND} A/{self.LIGAND} X/g'\
+       -e 's/HIE/HIS/g' \
+       -e 's/HID/HIS/g' {self.WT}_MDMin_{index}.pdb
 """
         
     if self.REMOVE_TMP_FILES:

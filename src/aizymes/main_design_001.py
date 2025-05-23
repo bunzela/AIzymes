@@ -21,6 +21,7 @@ from design_RosettaDesign_001 import *
 from design_ESMfold_001       import *
 from design_RosettaRelax_001  import *
 from scoring_efields_001      import *   
+from scoring_Null_001         import *
 from design_MDMin_001         import *  
 from design_AlphaFold3_001    import *   
 from scoring_BioDC_001        import *      
@@ -102,7 +103,7 @@ pwd
         logging.info(f"Calculating Redoxpotentials for index {index}.")
 
     elif design_step == "Null":
-        cmd = prepare_null(self, index)
+        cmd = prepare_Null(self, index)
         logging.info(f"Prepare Null for index {index}.")
         
     else:

@@ -48,8 +48,56 @@ from Bio import BiopythonParserWarning
 warnings.simplefilter('ignore', BiopythonParserWarning)
 import re
 
-from setup_system_001         import *
+from setup_system_001              import *
+from helper_display_structures_001 import *
 
+def check_running_jobs(self):
+    """
+    The check_running_job function returns the number of parallel jobs that are running by counting how many lines in the qstat output are present which correspond to the
+    job prefix. This is true when working on the GRID, for the other system the same concept is being used but the terminology differs.
+
+    Returns:
+        int: Number of running jobs for the specific system.
+    """
+
+    num_running_jobs={}
+    
+    # Count number of running CPU jobs
+    #3for p, out_file, err_file in self.processes:
+    #    if p.poll() is not None: # Close finished files
+    #        out_file.close()
+    #        err_file.close()
+    #self.processes = [(p, out_file, err_file) for p, out_file, err_file in self.processes if p.poll() is None]
+    #logging.debug(f"{len(self.processes)} parallel jobs.")       
+    #num_running_jobs['running'] = len(self.processes) 
+    
+    # Count number of running GPU jobs
+    if self.MAX_GPUS > 0:
+        for gpu, proc in self.gpus.items():
+            if proc is not None and proc.poll() is not None:
+                self.gpus[gpu] = None
+        num_running_jobs['running_gpu'] = sum(1 for value in self.gpus.values() if value is not None)
+        
+    # Count total number of jobs (rows)
+    num_running_jobs['all'] = len(self.all_scores_df)
+    
+    # Count number of failed jobs
+    num_running_jobs['failed'] = int((self.all_scores_df['blocked'] == 'failed').sum())
+    
+    # Count number of completed jobs (where next_steps is NaN)
+    mask = (self.all_scores_df['next_steps'].isna() | self.all_scores_df['next_steps'].eq("")) & self.all_scores_df[f'{self.SELECTED_SCORES[0]}_score'].notna()
+    num_running_jobs['completed'] = int(mask.sum())
+    
+    # Count number of scheduled jobs
+    num_running_jobs['scheduled'] = int(num_running_jobs['all'] - num_running_jobs['completed'] - num_running_jobs['failed'])
+    
+    # Count number of running jobs (not unblocked and not failed)
+    num_running_jobs['running'] = int((self.all_scores_df['blocked'] != 'unblocked').sum()) - int(num_running_jobs['failed'])
+
+    logging.debug(f"num_running_jobs: {num_running_jobs}")
+
+    return num_running_jobs
+    
 def normalize_scores(self, 
                      unblocked_all_scores_df, 
                      norm_all=False, # True is min max normalization, False is Z-score normalization
@@ -697,16 +745,16 @@ def create_new_index(self,
 
     final_variant = f'{self.FOLDER_DESIGN}/{new_index}/{self.WT}_{final_method}_{new_index}',
 
-    step_input_variant = input_variant
-    
-    step_output_variant = None
-    for next_step in next_steps.split(","):
-        if next_step in self.SYS_STRUCT_METHODS:
-            step_output_variant = f'{self.FOLDER_DESIGN}/{new_index}/{self.WT}_{next_step}_{new_index}'
-            break
-    if step_output_variant == None:
-        logging.error(f"ERROR! New design at index {new_index} initated, but next_steps: {next_steps} does not prodce any output structure!")
-        sys.exit()   
+    ### some checks and balances need to be contorlled
+    #step_input_variant = input_variant
+    #step_output_variant = None
+    #for next_step in next_steps.split(","):
+    #    if next_step in self.SYS_STRUCT_METHODS:
+    #        step_output_variant = f'{self.FOLDER_DESIGN}/{new_index}/{self.WT}_{next_step}_{new_index}'
+    #        break
+    #if step_output_variant == None:
+    #    logging.error(f"ERROR! New design at index {new_index} initated, but next_steps: {next_steps} does not prodce any output structure!")
+    #    sys.exit()   
         
     # Creates a new dataframe with all the necessary columns for the new index, concatenes it with the existing all_scores dataframe and saves it
     new_index_df = pd.DataFrame({
@@ -719,8 +767,8 @@ def create_new_index(self,
         'design_method': design_method,
         'next_steps': next_steps,
         'input_variant': input_variant,
-        'step_input_variant': step_input_variant,
-        'step_output_variant': step_output_variant,
+        'step_input_variant': input_variant,
+        'step_output_variant': input_variant,
         'final_variant': final_variant,
     }, index = [0] , dtype=object)  
     self.all_scores_df = pd.concat([self.all_scores_df, new_index_df], ignore_index=True)
@@ -752,14 +800,18 @@ def count_mutations(seq1, seq2):
 def print_statistics_df(self):
     
     self.all_scores_df = pd.read_csv(self.ALL_SCORES_CSV)
+
+    num_running_jobs = check_running_jobs(self)
     
     pd.set_option("display.max_colwidth", 100)
     pd.set_option("display.max_columns", None)   
 
     if self.PRINT_NUMBERS:
-        print(f"All designs: {len(self.all_scores_df)}", end = " ")
-        print(f"- Completed designs: {self.all_scores_df[f'{self.SELECTED_SCORES[0]}_score'].notna().sum()}", end = " ") 
-        print(f"- Running designs: {self.all_scores_df[f'{self.SELECTED_SCORES[0]}_score'].isna().sum()}")
+        print(f"All designs: {num_running_jobs['all']}", end = " ")
+        print(f"- Completed designs: {num_running_jobs['completed']}", end = " ") 
+        print(f"- Scheduled designs: {num_running_jobs['scheduled']}", end = " ") 
+        print(f"- Running designs: {num_running_jobs['running']}", end = " ") 
+        print(f"- Failed designs: {num_running_jobs['failed']}")
     
     if self.PRINT_COLUMN:
         pd.set_option("display.max_rows", 4)
@@ -770,5 +822,5 @@ def print_statistics_df(self):
         display(self.all_scores_df[self.all_scores_df[f'{self.SELECTED_SCORES[0]}_score'].isna()][['design_method', 'blocked', 'next_steps']])
     
     if self.PRINT_ROW:
-        for col, value in self.all_scores_df.iloc[0].items():
+        for col, value in self.all_scores_df.iloc[self.INDEX].items():
             print(f"{col:33}: {(str(value)[:100] + '...') if len(str(value)) > 100 else str(value)}")

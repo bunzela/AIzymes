@@ -10,6 +10,8 @@ Functions:
 import os
 import time
 
+from helper_002 import generate_remark_from_all_scores_df
+
 def seq_to_json(self, seq_input, working_dir):
     
     """
@@ -203,8 +205,32 @@ apptainer --quiet exec --bind /u:/u,/ptmp:/ptmp,/raven:/raven --nv \
     --norun_data_pipeline
 
 {self.bash_args}python {self.FOLDER_PARENT}/cif_to_pdb.py \
---cif_file {working_dir}/INF/{self.WT}/{self.WT}_model.cif \
---pdb_file {working_dir}/../{self.WT}_AlphaFold3INF_{index}.pdb
+--cif_file {working_dir}/INF/{self.WT.lower()}/{self.WT.lower()}_model.cif \
+--pdb_file {working_dir}/{self.WT}_AlphaFold3INF_{index}.pdb
+
+sed -i -e '/        H  /d' \
+       -e '/SEQRES/d' \
+       -e '/HEADER/d' {working_dir}/../{self.WT}_AlphaFold3INF_{index}.pdb       
+"""
+
+    if self.CST_NAME is not None:
+        remark = generate_remark_from_all_scores_df(self, index)
+        cmd += f"""
+echo '{remark}' > {self.WT}_AlphaFold3INF_{index}.pdb"""
+
+    if self.LIGAND == 'HEM':
+        cmd += f"""
+echo 'HETNAM     HEM X   1  HEM  ' >> {self.WT}_AlphaFold3INF_{index}.pdb"""
+
+    cmd += f"""
+cat {working_dir}/{self.WT}_AlphaFold3INF_{index}.pdb >> {self.WT}_AlphaFold3INF_{index}.pdb
+
+sed -i -e 's/^\(ATOM.\{{17\}}\) /\\1A/'\
+       -e '/        H  /d' -e '/TER/d'\
+       -e '/ HEM /s/^HETATM/ATOM  /'\
+       -e 's/{self.LIGAND} A/{self.LIGAND} X/g'\
+       -e 's/HIE/HIS/g' \
+       -e 's/HID/HIS/g' {self.WT}_MDMin_{index}.pdb
 """
     
     if self.REMOVE_TMP_FILES:

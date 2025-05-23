@@ -253,7 +253,7 @@ cp {PDB_input}.pdb {folder_solublempnn}
 {self.bash_args} python {os.path.join(self.FOLDER_PARENT, 'find_highest_scoring_sequence.py')} \
 --sequence_wildcard {self.FOLDER_HOME}/{self.WT}_with_X_as_wildecard.seq \
 --sequence_parent   {seq_input}.seq \
---sequence_in       {folder_solublempnn}/seqs/{os.path.splitext(os.path.basename(PDB_input))[0]}.fa \
+--sequence_in       {folder_solublempnn}/seqs/{os.path.basename(PDB_input)}.fa \
 --sequence_out      {self.FOLDER_DESIGN}/{index}/{self.WT}_{index}.seq 
 
 """                              

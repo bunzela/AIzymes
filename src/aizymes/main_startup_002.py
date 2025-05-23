@@ -406,18 +406,24 @@ def schedule_parent_design(self):
     if len(self.all_scores_df) != 0: return
         
     # Define intial and final structures
-    parent_structures = [i for i in os.listdir(self.FOLDER_PARENT) if i[-4:] == ".pdb"]
+    parent_structures = [i[:-4] for i in os.listdir(self.FOLDER_PARENT) if i[-4:] == ".pdb"]
     final_structure_method = [i for i in self.PARENT_DES_MED if i in self.SYS_STRUCT_METHODS][-1]
     design_method = [i for i in self.PARENT_DES_MED if i in self.SYS_DESIGN_METHODS][0]
 
+    # Make all .seq files
+    for parent_structure in parent_structures:
+        seq = sequence_from_pdb(f"{self.FOLDER_PARENT}/{parent_structure}")
+        with open(f'{self.FOLDER_PARENT}/{parent_structure}.seq', "w") as f:
+            f.write(seq) 
+            
     # Add all parent indices to all_scores_df
-    for selected_index, parent_structure in enumerate(parent_structures):
+    for parent_structure in parent_structures:
         for n_parent_job in range(self.N_PARENT_JOBS):  
 
             new_index = create_new_index(self, 
                                          parent_index        = "Parent", 
-                                         luca                = f'{self.FOLDER_PARENT}/{parent_structures[selected_index][:-4]}',
-                                         input_variant       = f'{self.FOLDER_PARENT}/{parent_structures[selected_index][:-4]}',
+                                         luca                = f'{self.FOLDER_PARENT}/{parent_structure}',
+                                         input_variant       = f'{self.FOLDER_PARENT}/{parent_structure}',
                                          final_method        = final_structure_method,
                                          next_steps          = ",".join(self.PARENT_DES_MED), 
                                          design_method       = design_method)    
