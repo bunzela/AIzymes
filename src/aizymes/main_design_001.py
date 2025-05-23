@@ -1,4 +1,3 @@
-
 """
 Main Design Module. Coordinates various design steps, managing the workflow of Rosetta, ProteinMPNN, and other modules
 within the AIzymes project.
@@ -7,13 +6,16 @@ Functions:
     run_design: Runs the selected design step based for the given index.
 
 Modules Required:
-    helper_002, design_match_001, design_ProteinMPNN_001, design_LigandMPNN_001,
-    design_RosettaDesign_001, design_ESMfold_001, design_RosettaRelax_001
+    helper_002, design_match_001, design_MPNN_001, design_RosettaDesign_001, 
+    design_ESMfold_001, design_RosettaRelax_001, design_MDMin_001, 
+    design_AlphaFold3_001, scoring_efields_001, scoring_BioDC_001, design_Boltz_001, design_Chai1_001
 """
 import logging
 import sys
+import subprocess
+import re
 
-from helper_002               import *
+from helper_002               import *  # type: ignore
 
 from design_match_001         import *
 from design_MPNN_001          import *
@@ -25,6 +27,8 @@ from scoring_Null_001         import *
 from design_MDMin_001         import *  
 from design_AlphaFold3_001    import *   
 from scoring_BioDC_001        import *      
+from design_Boltz_001         import *   
+from design_Chai1_001         import *
 
 def run_design(self, 
                index : int,
@@ -93,6 +97,14 @@ pwd
     elif design_step == "ESMfold":
         cmd = prepare_ESMfold(self, index, cmd, gpu_id = gpu_id)
         logging.info(f"Run ESMfold for index {index}.")
+        
+    elif design_step == "Boltz":
+        cmd = prepare_Boltz(self, index, cmd, gpu_id = gpu_id)
+        logging.info(f"Run Boltz for index {index}.")
+        
+    elif design_step == "Chai1":
+        cmd = prepare_Chai1(self, index, cmd, gpu_id = gpu_id)
+        logging.info(f"Run Chai-1 for index {index}.")
         
     elif design_step == "ElectricFields":
         cmd = prepare_efields(self, index, cmd)

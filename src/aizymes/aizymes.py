@@ -2,14 +2,11 @@
 The AIzymes script defines the main AIzymes workflow, including setup, initialization, control, and plotting functions.
 It manages the primary processes and configurations required to execute AIzymes functionalities.
 """
-
-import warnings
-warnings.filterwarnings("ignore")
-
-from main_running_003         import *
-from main_startup_002         import *
-from plotting_002             import *
-from helper_002               import *
+    
+from main_running_003         import *  # type: ignore
+from main_startup_002         import *  # type: ignore
+from plotting_002             import *  # type: ignore
+from helper_002               import *  # type: ignore
 
 class AIzymes_MAIN:
     """
@@ -91,6 +88,32 @@ class AIzymes_MAIN:
               # SolubleMPNN settings
               SolubleMPNN_T       = "0.1", 
               SolubleMPNN_BIAS    = 0.5,
+
+              # Boltz settings
+              BOLTZ_LIGAND_TYPE        = "smiles",
+              BOLTZ_LIGAND_IDENTIFIER  = None,
+              BOLTZ_ENV_ACTIVATE       = None,
+              BOLTZ_OUTPUT_FORMAT      = "pdb",
+              BOLTZ_RECYCLING_STEPS    = 3,
+              BOLTZ_SAMPLING_STEPS     = 200,
+              BOLTZ_DIFFUSION_SAMPLES  = 1,
+              BOLTZ_USE_MSA_SERVER     = False,
+              BOLTZ_MSA_SERVER_URL     = "https://api.colabfold.com",
+              BOLTZ_MSA_PAIRING_STRATEGY = "greedy",
+              BOLTZ_MSA_PATH           = None,
+              BOLTZ_OVERRIDE           = False,
+              BOLTZ_WRITE_FULL_PAE     = False,
+              BOLTZ_WRITE_FULL_PDE     = False,
+
+              # Chai-1 settings
+              CHAI1_ENV_ACTIVATE          = None,
+              CHAI1_DIFFUSION_SAMPLES     = 1,
+              CHAI1_TRUNK_RECYCLES        = 3,
+              CHAI1_USE_MSA_SERVER        = False,
+              CHAI1_MSA_SERVER_URL        = None,
+              CHAI1_USE_TEMPLATES_SERVER  = False,
+              CHAI1_LOW_MEMORY            = True,
+              CHAI1_LIGAND_IDENTIFIER     = None,
               
               # FieldTools settings
               FIELD_TARGET        = None,
@@ -111,9 +134,9 @@ class AIzymes_MAIN:
               # All Methods that redesign a sequence
               SYS_DESIGN_METHODS  = ["RosettaDesign","ProteinMPNN","LigandMPNN","SolubleMPNN", "Null"],
               # All Methods that create a structure
-              SYS_STRUCT_METHODS  = ["RosettaDesign","MDMin","ESMfold","RosettaRelax",'AlphaFold3INF', "Null"], 
+              SYS_STRUCT_METHODS  = ["RosettaDesign","MDMin","ESMfold","RosettaRelax",'AlphaFold3INF',"Boltz","Chai1", "Null"], 
               # All Methods that require GPUs
-              SYS_GPU_METHODS     = ["ESMfold",'AlphaFold3INF',"ProteinMPNN","LigandMPNN","SolubleMPNN"],
+              SYS_GPU_METHODS     = ["ESMfold",'AlphaFold3INF',"ProteinMPNN","LigandMPNN","SolubleMPNN","Boltz","Chai1"],
               
               ):
         """
@@ -152,6 +175,25 @@ class AIzymes_MAIN:
             LigandMPNN_T (str):         Temperature for LigandMPNN.
             SolubleMPNN_BIAS (float):   Bias for SolubleMPNN.
             SolubleMPNN_T (str):        Temperature for SolubleMPNN.
+            BOLTZ_LIGAND_TYPE (str):    Ligand type for Boltz, either 'smiles' (recommended) or 'ccd'. 
+                                        'smiles' allows direct specification of molecules with SMILES notation.
+                                        'ccd' uses PDB Chemical Component Dictionary identifiers.
+            BOLTZ_LIGAND_IDENTIFIER (str): Identifier for the ligand in Boltz.
+                                        When BOLTZ_LIGAND_TYPE='smiles', this should be a valid SMILES string.
+                                        When BOLTZ_LIGAND_TYPE='ccd', this should be a valid CCD identifier.
+                                        If None, uses the value from LIGAND.
+            BOLTZ_ENV_ACTIVATE (str):   Command to activate Boltz environment.
+            BOLTZ_OUTPUT_FORMAT (str):  Output format for Boltz predictions.
+            BOLTZ_RECYCLING_STEPS (int): Number of recycling steps in Boltz.
+            BOLTZ_SAMPLING_STEPS (int): Number of sampling steps in Boltz.
+            BOLTZ_DIFFUSION_SAMPLES (int): Number of diffusion samples in Boltz.
+            BOLTZ_USE_MSA_SERVER (bool): Whether to use MSA server for Boltz.
+            BOLTZ_MSA_SERVER_URL (str): MSA server URL for Boltz.
+            BOLTZ_MSA_PAIRING_STRATEGY (str): Strategy for MSA pairing in Boltz.
+            BOLTZ_MSA_PATH (str):       Path to MSA file if not using server.
+            BOLTZ_OVERRIDE (bool):      Whether to override existing Boltz outputs.
+            BOLTZ_WRITE_FULL_PAE (bool): Whether to write full PAE matrix.
+            BOLTZ_WRITE_FULL_PDE (bool): Whether to write full PDE matrix.
             FIELD_TARGET (str):         Target for field calculations.
             FIELDS_EXCL_CAT (bool):     Exclude catalytic field.
             TARGET_REDOX (int):         Target redox value.

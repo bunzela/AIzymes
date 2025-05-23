@@ -1,4 +1,3 @@
-
 """
 Contains utility functions and supporting routines used across multiple modules
 within the AIzymes project.
@@ -294,7 +293,14 @@ def generate_remark_from_all_scores_df(self, index):
     
     remarks = []
     for idx, (cat_resi, cat_resn) in enumerate(zip(cat_resis, cat_resns), start=1):
-        remarks.append(f'REMARK 666 MATCH TEMPLATE X {self.LIGAND}    0 MATCH MOTIF A {cat_resn}{str(cat_resi).rjust(5)}  {idx}  1')
+        # Check if cat_resn is valid before generating remark
+        if cat_resn and cat_resn.strip().lower() != 'nan':
+            # Format the REMARK line only if resn is valid
+            remarks.append(f'REMARK 666 MATCH TEMPLATE X {self.LIGAND}    0 MATCH MOTIF A {cat_resn}{str(cat_resi).rjust(5)}  {idx}  1')
+        else:
+            # Log a warning if a catalytic residue entry is skipped due to invalid name
+            logging.warning(f"Index {index}: Skipping REMARK 666 generation for catalytic residue entry {idx} due to invalid residue name: '{cat_resn}'")
+            
     return "\n".join(remarks)
 
 def save_cat_res_into_all_scores_df(self, index, PDB_path, save_resn=True):
@@ -781,7 +787,7 @@ def create_new_index(self,
     self.all_scores_df = pd.concat([self.all_scores_df, new_index_df], ignore_index=True)
     
     # Add catalytic residues
-    save_cat_res_into_all_scores_df(self, new_index, input_variant, save_resn=False)    
+    save_cat_res_into_all_scores_df(self, new_index, input_variant, save_resn=True)    
     save_all_scores_df(self)
     
     # Create the folder for the new index
