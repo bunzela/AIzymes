@@ -73,8 +73,6 @@ def start_controller(self):
             
             # Selects variant based on calculations scheduled in all_scores_df
             selected_index = select_scheduled_variant(self)
-
-            logging.info(f"selected_index {selected_index} xxxxxxxxxxxxxx.")
             
             if selected_index != None:
 
@@ -85,15 +83,10 @@ def start_controller(self):
                 
                 # Schedules calculations based on boltzmann selection                
                 parent_index = boltzmann_selection(self)
-
-                logging.info(f"parent_index {parent_index} xxxxxxxxxxxxxx.")
-            
+                
                 # Ensure design does not "run ahead" without completing design
                 if parent_index != None and num_running_jobs['scheduled'] < self.MAX_JOBS*2: 
-                    
-
-                    logging.info(f"scheduling job xxxxxxxxxxxxxx.")
-                
+                                    
                     schedule_design_method(self, parent_index)
 
         # Wait a bit for safety

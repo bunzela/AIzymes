@@ -121,6 +121,13 @@ def make_score_plot(self):
 def display_variants(self):
     # filter and sort
     self.plot_scores_df = self.all_scores_df[self.all_scores_df[self.SCORE].notna()]
+
+    # remove outliers beyond ±5 standard deviations
+    score_values = self.plot_scores_df[self.SCORE]
+    mean = score_values.mean()
+    std = score_values.std()
+    self.plot_scores_df = self.plot_scores_df[(score_values >= mean - 5 * std) & (score_values <= mean + 5 * std)]
+    
     self.plot_scores_df = self.plot_scores_df.sort_values(by=self.SCORE, ascending=True)
     opts = self.plot_scores_df.index.tolist()
 

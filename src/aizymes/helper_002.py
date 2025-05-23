@@ -443,7 +443,7 @@ def get_best_structures(self):
     temp_df = pd.read_csv(self.ALL_SCORES_CSV)
     temp_df = temp_df.dropna(subset=['total_score']).copy()
     statistics += f'All designs: {len(temp_df)}'
-    
+
     # Calculate normalized scores using your normalize_scores function.
     scores = normalize_scores(self, unblocked_all_scores_df=temp_df, norm_all=False)
     for score in scores:
@@ -467,7 +467,14 @@ def get_best_structures(self):
         if self.ACTIVE_SITE is None: self.ACTIVE_SITE = self.DESIGN # Default to self.DESIGN if self.ACTIVE_SITE is not given
         active_site_position = [int(pos) for pos in self.ACTIVE_SITE.split(',')]
         best_scores_df['active_site_sequence'] = best_scores_df['sequence'].apply(lambda seq: get_active_site_sequence(seq, active_site_position))
-            
+
+    # Filter outliers beyond ±5 standard deviations
+    for score in ['final']+[i for i in self.SELECTED_SCORES if i not in ['identical','catalytic']]:
+       if score in best_scores_df.columns:
+        mean = best_scores_df[score].mean()
+        std = best_scores_df[score].std()
+        best_scores_df = best_scores_df[(best_scores_df[score] >= mean - 5 * std) & (best_scores_df[score] <= mean + 5 * std)]
+           
     # Filter dataframe for each SELECTED_SCORES
     filtered_best_scores_df = []
     for score in ['final']+[i for i in self.SELECTED_SCORES if i not in ['identical','catalytic']]:
