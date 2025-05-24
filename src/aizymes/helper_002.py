@@ -61,12 +61,12 @@ def check_running_jobs(self):
 
     num_running_jobs={}
     
-    # Count number of running CPU jobs
-    #3for p, out_file, err_file in self.processes:
-    #    if p.poll() is not None: # Close finished files
-    #        out_file.close()
-    #        err_file.close()
-    #self.processes = [(p, out_file, err_file) for p, out_file, err_file in self.processes if p.poll() is None]
+    # Clean list of processes (not used anymore, but could be helpful at some point)
+    for p, out_file, err_file in self.processes:
+        if p.poll() is not None: # Close finished files
+            out_file.close()
+            err_file.close()
+    self.processes = [(p, out_file, err_file) for p, out_file, err_file in self.processes if p.poll() is None]
     #logging.debug(f"{len(self.processes)} parallel jobs.")       
     #num_running_jobs['running'] = len(self.processes) 
     
