@@ -3,10 +3,11 @@ The AIzymes script defines the main AIzymes workflow, including setup, initializ
 It manages the primary processes and configurations required to execute AIzymes functionalities.
 """
     
-from main_running_003         import *  # type: ignore
-from main_startup_002         import *  # type: ignore
-from plotting_002             import *  # type: ignore
-from helper_002               import *  # type: ignore
+from main_running_003              import *  # type: ignore
+from main_startup_002              import *  # type: ignore
+from plotting_002                  import *  # type: ignore
+from helper_002                    import *  # type: ignore
+from helper_display_structures_001 import *  # type: ignore
 
 class AIzymes_MAIN:
     """
@@ -51,6 +52,7 @@ class AIzymes_MAIN:
                                      [0.3,'ProteinMPNN','ESMfold','RosettaRelax','ElectricFields']],
               EXPLORE             = False,
               RESTRICT_RESIDUES   = None,
+              FORBIDDEN_AA        = 'C',
               FOLDER_PARENT       = 'parent',
               FOLDER_PAR_STRUC    = None,
 
@@ -60,6 +62,8 @@ class AIzymes_MAIN:
               WEIGHT_CATALYTIC    = 1.0,
               WEIGHT_INTERFACE    = 1.0,
               WEIGHT_IDENTICAL    = 1.0,
+              TOTAL_SCORE_PERRES  = True,
+              NORM_BY_LAST        = False,
               
               # General Job Settings
               MAX_JOBS            = 72, 

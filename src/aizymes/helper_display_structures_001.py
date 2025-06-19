@@ -7,10 +7,10 @@ from bqplot import Figure, Scatter, LinearScale, Axis
 import py3Dmol
 from IPython.display import clear_output
 
+from helper_002 import normalize_scores
+
 def make_structure_viewer(self):
-    out = widgets.Output(layout=widgets.Layout(
-        height='300px', flex='1 1 auto', overflow='hidden'
-    ))
+    out = widgets.Output(layout=widgets.Layout(height='300px', flex='1 1 auto', overflow='hidden'))
     with out:
         pdb = self.all_scores_df.loc[self.index, "final_variant"]
         pdb_file = os.path.abspath(f"{pdb}.pdb")
@@ -120,36 +120,61 @@ def make_score_plot(self):
 
 def display_variants(self):
     # filter and sort
-    self.plot_scores_df = self.all_scores_df[self.all_scores_df[self.SCORE].notna()]
+    self.plot_scores_df = self.all_scores_df[self.all_scores_df[f'{self.SELECTED_SCORES[0]}_score'].notna()]
 
     # remove outliers beyond ±5 standard deviations
-    score_values = self.plot_scores_df[self.SCORE]
-    mean = score_values.mean()
-    std = score_values.std()
-    self.plot_scores_df = self.plot_scores_df[(score_values >= mean - 5 * std) & (score_values <= mean + 5 * std)]
-    
+    for score in self.SELECTED_SCORES:
+        score_values = self.plot_scores_df[f'{score}_score']
+        mean = score_values.mean()
+        std = score_values.std()
+        self.plot_scores_df = self.plot_scores_df[(score_values >= mean - 5 * std) & (score_values <= mean + 5 * std)]
+
+    # Calculate normalized scores using your normalize_scores function.
+    scores = normalize_scores(self, unblocked_all_scores_df=self.plot_scores_df, norm_all=False)
+    for score in scores:
+        self.plot_scores_df[score] = scores[score]
+        
+    # Remove bad structures below 3 standard deviations
+    for score in ['final']+[i for i in self.SELECTED_SCORES if i not in ['identical','catalytic']]:
+        score = f'{score}_score'
+        mean = self.plot_scores_df[score].mean()
+        std = self.plot_scores_df[score].std()
+        self.plot_scores_df = self.plot_scores_df[(self.plot_scores_df[score] >= mean - 3 * std)]
+
+    # Sort df
     self.plot_scores_df = self.plot_scores_df.sort_values(by=self.SCORE, ascending=True)
     opts = self.plot_scores_df.index.tolist()
 
     # Pre-select best scoring (first in sorted list)
     if self.index == None: 
-        self.index = opts[0]
-    
+        self.index = opts[-1]
+
     # controls
     if not hasattr(self, 'index_slider'):
+        
         self.index_slider = widgets.SelectionSlider(
             options=opts, value=self.index,
             description="Index:", continuous_update=False,
             layout=widgets.Layout(flex='1 1 auto')
         )
-        prev_btn = widgets.Button(description='← Prev')
-        next_btn = widgets.Button(description='Next →')
+        first_btn = widgets.Button(description='⏮ First')
+        prev_btn = widgets.Button(description='◀ Prev')
+        next_btn = widgets.Button(description='Next ▶')
+        last_btn = widgets.Button(description='Last ⏭') 
 
+        def on_first(_):
+            if opts:
+                self.index_slider.value = opts[0]
+        
+        def on_last(_):
+            if opts:
+                self.index_slider.value = opts[-1]
+        
         def on_prev(_):
             if self.index in opts:
                 i = opts.index(self.index)
             else:
-                i = 0  # fallback to first if current index not in opts
+                i = 0
             if i > 0:
                 self.index_slider.value = opts[i - 1]
         
@@ -157,14 +182,19 @@ def display_variants(self):
             if self.index in opts:
                 i = opts.index(self.index)
             else:
-                i = 0  # fallback to first if current index not in opts
+                i = 0
             if i < len(opts) - 1:
                 self.index_slider.value = opts[i + 1]
 
+        first_btn.on_click(on_first)
+        last_btn.on_click(on_last)
         prev_btn.on_click(on_prev)
         next_btn.on_click(on_next)
-        control = widgets.HBox([self.index_slider, prev_btn, next_btn],
-                               layout=widgets.Layout(width='100%'))
+        
+        control = widgets.HBox(
+            [self.index_slider, first_btn, prev_btn, next_btn, last_btn],
+            layout=widgets.Layout(width='100%')
+        )
 
         def slider_cb(change):
             if change['name'] == 'value' and change['new'] != self.index:

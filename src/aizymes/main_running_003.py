@@ -138,15 +138,15 @@ def update_potential(self, score_type, index):
         score_type (str): Type of score to update (e.g., total, interface, catalytic, efield).
         index (int): Variant index to update potential data.
     """
-    score = self.all_scores_df.at[index, f'{score_type}_score']
-    score_taken_from = self.all_scores_df.at[index, 'score_taken_from']    
-    parent_index = self.all_scores_df.at[index, "parent_index"] 
-    parent_filename = f"{self.FOLDER_DESIGN}/{parent_index}/{score_type}_potential.dat"  
+    score            = self.all_scores_df.loc[self.all_scores_df['index']==index, f'{score_type}_score'].item()
+    score_taken_from = self.all_scores_df.loc[self.all_scores_df['index']==index, 'score_taken_from'].item()    
+    parent_index     = self.all_scores_df.loc[self.all_scores_df['index']==index, "parent_index"].item() 
+    parent_filename   = f"{self.FOLDER_DESIGN}/{parent_index}/{score_type}_potential.dat"  
 
     # Update current potential
     with open(f"{self.FOLDER_DESIGN}/{index}/{score_type}_potential.dat", "w") as f: 
         f.write(str(score))
-    self.all_scores_df.at[index, f'{score_type}_potential'] = score
+    self.all_scores_df.loc[self.all_scores_df['index']==index, f'{score_type}_potential'] = score
 
     #Update parent potential
     if score_taken_from != "RosettaRelax":  return                     # Only update the parent potential for RosettaRelax
@@ -154,7 +154,7 @@ def update_potential(self, score_type, index):
     if not os.path.isfile(parent_filename): return                     # Do not update if this is a potential not in the top1000 designs anymore
     with open(parent_filename, "a") as f:  f.write(f"\n{str(score)}")  # Appends to parent_filename
     with open(parent_filename, "r") as f:  potentials = f.readlines()  # Reads in potential values 
-    self.all_scores_df.at[int(parent_index), f'{score_type}_potential'] = np.average([float(i) for i in potentials])
+    self.all_scores_df.loc[self.all_scores_df['index']==int(parent_index), f'{score_type}_potential'] = np.average([float(i) for i in potentials])
 
 def update_scores(self):
     """
@@ -165,60 +165,63 @@ def update_scores(self):
     """
 
     logging.debug("Updating scores")
-           
-    for index, row in self.all_scores_df.iterrows():
-        
+    self.all_scores_df['index'] = self.all_scores_df['index'].astype(int)
+
+
+    for _, row in self.all_scores_df.iterrows():
+
+        index = row['index']   
         parent_index = row['parent_index']         
 
         # Find failed designs
-        if self.all_scores_df.at[index, "blocked"] == 'failed': continue
-        if self.all_scores_df.at[index, "blocked"] != 'unblocked': 
+        if self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"].item() == 'failed': continue
+        if self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"].item() != 'unblocked': 
             
             if os.path.isfile(f"{self.FOLDER_DESIGN}/{index}/ROSETTA_CRASH.log"):   
-                self.all_scores_df.at[int(index), "blocked"] = 'failed'
+                self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"] = 'failed'
 
             error_files = glob.glob(os.path.join(self.FOLDER_HOME, str(index), "scripts", "*.err"))
             for err_file in error_files:
                 with open(err_file, "r", errors="ignore") as f:
                     if any("error" in line.lower() for line in f):
-                        self.all_scores_df.at[int(index), "blocked"] = 'failed'
+                        self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"] = 'failed'
                 
         # Unblock indices
-        if self.all_scores_df.at[index, "blocked"] != 'unblocked': 
+        if self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"].item() != 'unblocked': 
             
-            score_type = self.all_scores_df.at[index, "blocked"]
-            pdb_path = self.all_scores_df.at[index, "final_variant"]
+            score_type = self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"].item()
+            pdb_path = self.all_scores_df.loc[self.all_scores_df['index']==index, "final_variant"].item()
             final_method = os.path.basename(pdb_path)
             final_method = final_method.split("_")[-2]   
             
             # Unblock indices for runs that produce structures
-            if self.all_scores_df.at[int(index), "blocked"] in self.SYS_STRUCT_METHODS:
+            if self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"].item() in self.SYS_STRUCT_METHODS:
                 if os.path.isfile(f"{self.FOLDER_DESIGN}/{index}/{self.WT}_{score_type}_{index}.pdb"):
-                    self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
+                    self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")
                     
             # Unblock indices for ElectricFields
-            if self.all_scores_df.at[int(index), "blocked"] == 'ElectricFields':
+            if self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"].item() == 'ElectricFields':
                 if os.path.isfile(f"{self.FOLDER_DESIGN}/{index}/ElectricFields/{self.WT}_{final_method}_{index}_fields.pkl"):
-                    self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
+                    self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")                    
                     
             # Unblock indices for BioDC
-            if self.all_scores_df.at[int(index), "blocked"] == 'BioDC':
+            if self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"].item() == 'BioDC':
                 if os.path.isfile(f"{self.FOLDER_DESIGN}/{index}/BioDC/{self.WT}_{final_method}_{index}/EE/DG.txt"):
-                    self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
+                    self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")
                     
             # Unblock indices for Alphafold3MSA
-            if self.all_scores_df.at[int(index), "blocked"] == 'AlphaFold3MSA':
+            if self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"].item() == 'AlphaFold3MSA':
                 if os.path.isfile(f"{self.FOLDER_DESIGN}/{index}/AlphaFold3/MSA/{self.WT}/{self.WT}_data.json"):
-                    self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
+                    self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")
 
             # Unblock indices for MPNN:
-            if self.all_scores_df.at[int(index), "blocked"] in ['ProteinMPNN','LigandMPNN','SolubleMPNN']:
+            if self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"].item() in ['ProteinMPNN','LigandMPNN','SolubleMPNN']:
                 if os.path.isfile(f"{self.FOLDER_DESIGN}/{index}/{self.WT}_{index}.seq"):
-                    self.all_scores_df.at[int(index), "blocked"] = 'unblocked'
+                    self.all_scores_df.loc[self.all_scores_df['index']==index, "blocked"] = 'unblocked'
                     logging.debug(f"Unblocked {score_type} index {int(index)}.")
                           
         # Paths for sequence-based information
@@ -226,7 +229,7 @@ def update_scores(self):
         ref_seq_path    = f"{self.FOLDER_PARENT}/{self.WT}.seq"
         
         # Update sequence and mutations if not yet contained in dataframe
-        if pd.isna(self.all_scores_df.at[index, 'sequence']) and os.path.exists(seq_path):
+        if pd.isna(self.all_scores_df.loc[self.all_scores_df['index']==index, 'sequence'].item()) and os.path.exists(seq_path):
    
             with open(ref_seq_path, "r") as f:    
                 reference_sequence = f.read()
@@ -236,32 +239,34 @@ def update_scores(self):
             if parent_index == "Parent":
                 parent_sequence = reference_sequence
             else:
-                parent_sequence = self.all_scores_df.at[parent_index, 'sequence']
+                parent_sequence = self.all_scores_df.loc[self.all_scores_df['index']==int(parent_index), 'sequence'].item()
 
             self.all_scores_df['sequence'] = self.all_scores_df['sequence'].astype('object')
-            self.all_scores_df.at[index, 'sequence']  = current_sequence
-            self.all_scores_df.at[index, 'active_site_res']  = ''.join(current_sequence[int(pos)-1] for pos in self.DESIGN.split(','))
-            self.all_scores_df.at[index, 'total_mutations'] = count_mutations(reference_sequence, current_sequence)
-            self.all_scores_df.at[index, 'parent_mutations'] = count_mutations(parent_sequence, current_sequence)
+            self.all_scores_df.loc[self.all_scores_df['index']==index, 'sequence']  = current_sequence
+            self.all_scores_df.loc[self.all_scores_df['index']==index, 'active_site_res']  = ''.join(current_sequence[int(pos)-1] for pos in self.DESIGN.split(','))
+            self.all_scores_df.loc[self.all_scores_df['index']==index, 'total_mutations'] = count_mutations(reference_sequence, current_sequence)
+            self.all_scores_df.loc[self.all_scores_df['index']==index, 'parent_mutations'] = count_mutations(parent_sequence, current_sequence)
         
             # Update catalytic residue identity
             if self.CST_NAME != None:
                 cat_resns = []
-                for cat_resi in str(self.all_scores_df.at[index, 'cat_resi']).split(";"): 
+
+                cat_resi_val = self.all_scores_df.loc[self.all_scores_df['index']==index,'cat_resi'].item()
+                for cat_resi in str(cat_resi_val).split(";"):
                     cat_resns += [one_to_three_letter_aa(current_sequence[int(float(cat_resi))-1])]
                 self.all_scores_df['cat_resn'] = self.all_scores_df['cat_resn'].astype(str)
-                self.all_scores_df.at[index, 'cat_resn'] = ";".join(cat_resns)
+                self.all_scores_df.loc[self.all_scores_df['index']==index, 'cat_resn'] = ";".join(cat_resns)
                     
         # Update identical score and potential
-        if pd.notna(self.all_scores_df.at[index, 'sequence']) and "identical" in self.SELECTED_SCORES:
+        if pd.notna(self.all_scores_df.loc[self.all_scores_df['index']==index, 'sequence'].item()) and "identical" in self.SELECTED_SCORES:
 
             if self.IDENTICAL_DESIGN:
                 sequence_column = 'active_site_res'
             else:
                 sequence_column = 'sequence'
                 
-            seq = self.all_scores_df.at[index, sequence_column]
-            parent_index = self.all_scores_df.at[index, 'parent_index']
+            seq = self.all_scores_df.loc[self.all_scores_df['index']==index, sequence_column].item()
+            parent_index = self.all_scores_df.loc[self.all_scores_df['index']==index, 'parent_index'].item()
 
             if parent_index == 'Parent': # If it's a parent, identical score will be set to mean of scores
                 if self.all_scores_df['identical_score'][self.N_PARENT_JOBS:].dropna().empty:
@@ -273,8 +278,8 @@ def update_scores(self):
                 identical_count = (self.all_scores_df[sequence_column] == seq).sum()
                 identical_score = 1 / identical_count if identical_count > 0 else 0
 
-            self.all_scores_df.at[index, 'identical_score'] = identical_score
-            self.all_scores_df.at[index, 'identical_potential'] = identical_score
+            self.all_scores_df.loc[self.all_scores_df['index']==index, 'identical_score'] = identical_score
+            self.all_scores_df.loc[self.all_scores_df['index']==index, 'identical_potential'] = identical_score
 
         # Check what structure to score on
         if os.path.exists(f"{self.FOLDER_DESIGN}/{int(index)}/score_RosettaRelax.sc"): # Score based on RosettaRelax            
@@ -300,7 +305,7 @@ def update_scores(self):
         
         # Set paths
         score_file_path = f"{self.FOLDER_DESIGN}/{int(index)}/score_{score_type}.sc"
-        pdb_path = self.all_scores_df.at[int(index), "final_variant"]
+        pdb_path = self.all_scores_df.loc[self.all_scores_df['index']==index, "final_variant"].item()
         final_method = os.path.basename(pdb_path)
         final_method = final_method.split("_")[-2]        
         field_path = f"{self.FOLDER_DESIGN}/{int(index)}/ElectricFields/{self.WT}_{final_method}_{index}_fields.pkl"
@@ -313,9 +318,9 @@ def update_scores(self):
         if not os.path.exists(redox_path) and "redox" in self.SELECTED_SCORES: continue 
         
         # Unblock structures
-        if self.all_scores_df.at[int(index), f"blocked"] != 'unblocked':
-            logging.debug(f"Unblocked {self.all_scores_df.at[int(index), f'blocked']} index {int(index)}.")
-            self.all_scores_df.at[int(index), f"blocked"] = 'unblocked'
+        if self.all_scores_df.loc[self.all_scores_df['index']==index, f"blocked"].item() != 'unblocked':
+            logging.debug(f"Unblocked {self.all_scores_df.loc[self.all_scores_df['index']==index, f'blocked']} index {int(index)}.")
+            self.all_scores_df.loc[self.all_scores_df['index']==index, f"blocked"] = 'unblocked'
 
         # Save cat resn
         if self.CST_NAME is not None:
@@ -331,9 +336,9 @@ def update_scores(self):
         # Update score_taken_from
         self.all_scores_df['score_taken_from'] = self.all_scores_df['score_taken_from'].astype(str)
         if "RosettaRelax" in score_file_path:
-            self.all_scores_df.at[index, 'score_taken_from'] = 'RosettaRelax'
+            self.all_scores_df.loc[self.all_scores_df['index']==index, 'score_taken_from'] = 'RosettaRelax'
         if "RosettaDesign" in score_file_path:
-            self.all_scores_df.at[index, 'score_taken_from'] = 'RosettaDesign'
+            self.all_scores_df.loc[self.all_scores_df['index']==index, 'score_taken_from'] = 'RosettaDesign'
         
         # Calculate scores
         catalytic_score = 0.0
@@ -362,10 +367,14 @@ def update_scores(self):
                 if header in ['angle_constraint']:         catalytic_score      += float(scores[idx_headers])       
                 if header in ['dihedral_constraint']:      catalytic_score      += float(scores[idx_headers]) 
                     
-                if header in ['atom_pair_constraint']:     self.all_scores_df.at[index, 'atom_pair_constraint'] = float(scores[idx_headers]) 
-                if header in ['angle_constraint']:         self.all_scores_df.at[index, 'angle_constraint']     = float(scores[idx_headers]) 
-                if header in ['dihedral_constraint']:      self.all_scores_df.at[index, 'dihedral_constraint']  = float(scores[idx_headers]) 
-        
+                if header in ['atom_pair_constraint']:     self.all_scores_df.loc[self.all_scores_df['index']==index, 'atom_pair_constraint'] = float(scores[idx_headers]) 
+                if header in ['angle_constraint']:         self.all_scores_df.loc[self.all_scores_df['index']==index, 'angle_constraint']     = float(scores[idx_headers]) 
+                if header in ['dihedral_constraint']:      self.all_scores_df.loc[self.all_scores_df['index']==index, 'dihedral_constraint']  = float(scores[idx_headers]) 
+
+        # Normalize total_score by length
+        if self.TOTAL_SCORE_PERRES:
+            total_score = total_score/len(row['sequence'])
+            
         # Calculate efield score
         if "efield" in self.SELECTED_SCORES:
             efield_score, index_efields_dict = get_efields_score(self, index, final_method)  
@@ -373,37 +382,37 @@ def update_scores(self):
 
         if "redox" in self.SELECTED_SCORES:
             redox_score, redoxpotential = get_redox_score(self, index, final_method) 
-            self.all_scores_df.at[index, 'BioDC_redox'] = redoxpotential
+            self.all_scores_df.loc[self.all_scores_df['index']==index, 'BioDC_redox'] = redoxpotential
         
         # Update scores
-        if "total"     in self.SELECTED_SCORES: self.all_scores_df.at[index, 'total_score']          = total_score
-        if "interface" in self.SELECTED_SCORES: self.all_scores_df.at[index, 'interface_score']      = interface_score              
-        if "catalytic" in self.SELECTED_SCORES: self.all_scores_df.at[index, 'catalytic_score']      = catalytic_score         
-        if "efield"    in self.SELECTED_SCORES: self.all_scores_df.at[index, 'efield_score']         = efield_score
-        if "redox"     in  self.SELECTED_SCORES: self.all_scores_df.at[index, 'redox_score']         = redox_score
+        if "total"     in self.SELECTED_SCORES: self.all_scores_df.loc[self.all_scores_df['index']==index, 'total_score']          = total_score
+        if "interface" in self.SELECTED_SCORES: self.all_scores_df.loc[self.all_scores_df['index']==index, 'interface_score']      = interface_score              
+        if "catalytic" in self.SELECTED_SCORES: self.all_scores_df.loc[self.all_scores_df['index']==index, 'catalytic_score']      = catalytic_score         
+        if "efield"    in self.SELECTED_SCORES: self.all_scores_df.loc[self.all_scores_df['index']==index, 'efield_score']         = efield_score
+        if "redox"     in  self.SELECTED_SCORES: self.all_scores_df.loc[self.all_scores_df['index']==index, 'redox_score']         = redox_score
 
         # This is just for book keeping. AIzymes will always use the most up_to_date scores saved above
         if "RosettaRelax" in score_file_path:
-            if "total" in self.SELECTED_SCORES:     self.all_scores_df.at[index, 'relax_total_score']     = total_score
-            if "interface" in self.SELECTED_SCORES: self.all_scores_df.at[index, 'relax_interface_score'] = interface_score         
-            if "catalytic" in self.SELECTED_SCORES: self.all_scores_df.at[index, 'relax_catalytic_score'] = catalytic_score
-            if "efield" in self.SELECTED_SCORES:    self.all_scores_df.at[index, 'relax_efield_score']    = efield_score
-            if "redox" in self.SELECTED_SCORES:     self.all_scores_df.at[index, 'relax_redox_score']     = redox_score
+            if "total" in self.SELECTED_SCORES:     self.all_scores_df.loc[self.all_scores_df['index']==index, 'relax_total_score']     = total_score
+            if "interface" in self.SELECTED_SCORES: self.all_scores_df.loc[self.all_scores_df['index']==index, 'relax_interface_score'] = interface_score         
+            if "catalytic" in self.SELECTED_SCORES: self.all_scores_df.loc[self.all_scores_df['index']==index, 'relax_catalytic_score'] = catalytic_score
+            if "efield" in self.SELECTED_SCORES:    self.all_scores_df.loc[self.all_scores_df['index']==index, 'relax_efield_score']    = efield_score
+            if "redox" in self.SELECTED_SCORES:     self.all_scores_df.loc[self.all_scores_df['index']==index, 'relax_redox_score']     = redox_score
             
         if "RosettaDesign" in score_file_path:
-            if "total" in self.SELECTED_SCORES:     self.all_scores_df.at[index, 'design_total_score']     = total_score
-            if "interface" in self.SELECTED_SCORES: self.all_scores_df.at[index, 'design_interface_score'] = interface_score        
-            if "catalytic" in self.SELECTED_SCORES: self.all_scores_df.at[index, 'design_catalytic_score'] = catalytic_score
-            if "efield" in self.SELECTED_SCORES:    self.all_scores_df.at[index, 'design_efield_score']    = efield_score
-            if "redox" in self.SELECTED_SCORES:     self.all_scores_df.at[index, 'design_redox_score']     = redox_score
+            if "total" in self.SELECTED_SCORES:     self.all_scores_df.loc[self.all_scores_df['index']==index, 'design_total_score']     = total_score
+            if "interface" in self.SELECTED_SCORES: self.all_scores_df.loc[self.all_scores_df['index']==index, 'design_interface_score'] = interface_score        
+            if "catalytic" in self.SELECTED_SCORES: self.all_scores_df.loc[self.all_scores_df['index']==index, 'design_catalytic_score'] = catalytic_score
+            if "efield" in self.SELECTED_SCORES:    self.all_scores_df.loc[self.all_scores_df['index']==index, 'design_efield_score']    = efield_score
+            if "redox" in self.SELECTED_SCORES:     self.all_scores_df.loc[self.all_scores_df['index']==index, 'design_redox_score']     = redox_score
 
         for score_type in self.SELECTED_SCORES: 
             if score_type != "identical":
                 update_potential(self, score_type=score_type, index= index)   
 
         logging.info(f"Updated scores and potentials of index {index}.")
-        if self.all_scores_df.at[index, 'score_taken_from'] == 'Relax' and self.all_scores_df.at[index, 'parent_index'] != "Parent":
-            logging.info(f"Adjusted potentials of {self.all_scores_df.at[index, 'parent_index']}, parent of {int(index)}).")
+        if self.all_scores_df.loc[self.all_scores_df['index']==index, 'score_taken_from'].item() == 'Relax' and self.all_scores_df.loc[self.all_scores_df['index']==index, 'parent_index'].item() != "Parent":
+            logging.info(f"Adjusted potentials of {self.all_scores_df.loc[self.all_scores_df['index']==index, 'parent_index'].item()}, parent of {int(index)}).")
 
     save_all_scores_df(self)
 
@@ -413,14 +422,15 @@ def update_scores(self):
         folder = f'{self.FOLDER_DESIGN}/{index}'
         tar_path = f'{folder}/{index}.tar'
         
-        if pd.isna(self.all_scores_df.at[index, 'next_steps']): continue
-        if self.all_scores_df.at[index, 'blocked'] != 'unblocked': continue    
-        if pd.isna(self.all_scores_df.at[index, f'{self.SELECTED_SCORES[0]}_score']): continue
+        if pd.isna(self.all_scores_df.loc[self.all_scores_df['index']==index, 'next_steps'].item()): continue
+        if self.all_scores_df.loc[self.all_scores_df['index']==index, 'blocked'].item() != 'unblocked': continue    
+        if pd.isna(self.all_scores_df.loc[self.all_scores_df['index']==index, f'{self.SELECTED_SCORES[0]}_score'].item()): continue
         if os.path.isfile(tar_path): continue
-        if not os.path.isfile(f"{self.all_scores_df.at[index, 'final_variant']}.pdb"): continue
+        if not os.path.isfile(f"{self.all_scores_df.loc[self.all_scores_df['index']==index, 'final_variant'].item()}.pdb"): continue
             
         subdirs  = [d for d in os.listdir(folder) if os.path.isdir(os.path.join(folder, d))]
         subfiles = [f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))]
+        subfiles = [f for f in subfiles if '.' in f]
 
         with tarfile.open(tar_path, "w") as tar:
             
@@ -431,11 +441,11 @@ def update_scores(self):
 
             # Tar files
             for filename in subfiles:
+                tar.add(f'{folder}/{filename}', arcname=filename)
                 if '.tar' in filename: continue
                 if '.seq' in filename: continue
                 if 'potential' in filename: continue
-                if os.path.basename(self.all_scores_df.at[index, 'final_variant']) in filename: continue
-                tar.add(f'{folder}/{filename}', arcname="files")
+                if os.path.basename(self.all_scores_df.loc[self.all_scores_df['index']==index, 'final_variant'].item()) in filename: continue
                 os.remove(f'{folder}/{filename}')
 
     update_resource_log(self)
@@ -501,15 +511,6 @@ def boltzmann_selection(self):
     # Remove indices without score (design running)
     unblocked_all_scores_df = unblocked_all_scores_df.dropna(subset=[f'{self.SELECTED_SCORES[0]}_score'])     
   
-    # If there are structures that ran through RosettaRelax but have never been used for design, run design
-    # CANNOT HAPPEN ANYMORE! LIKELY NOT NEEDED> COMMENTED OUT BY AB
-    #unrelaxed_indices = unblocked_all_scores_df[unblocked_all_scores_df[f'{self.SELECTED_SCORES[0]}_score'].isna()]
-    #filtered_indices = [index for index in unrelaxed_indices.index if index not in parent_indices]
-    #if len(filtered_indices) >= 1:
-    #    selected_index = filtered_indices[-1]
-    #    logging.info(f"{selected_index} selected because it's relaxed but nothing was designed from it.")
-    #    return selected_index
-    
     # Do Boltzmann Selection if some scores exist
     scores = normalize_scores(self, 
                             unblocked_all_scores_df, 
@@ -537,10 +538,17 @@ def boltzmann_selection(self):
         
         boltzmann_factors = np.exp(combined_potentials / kbt_boltzmann)
         probabilities = boltzmann_factors / sum(boltzmann_factors)
-        
+
+        # Count and log number of NaNs before replacement
+        nan_count = np.isnan(probabilities).sum()
+        if nan_count != 0:
+            logging.debug(f"ATTENTION!!! Number of NaNs in Boltzmann probabilities: {nan_count}")
+            probabilities = np.nan_to_num(probabilities, nan=0.0)
+            probabilities = probabilities/np.sum(probabilities) # Normalize for safety
+            
         if len(unblocked_all_scores_df) > 0:
             
-            selected_index = np.random.choice(unblocked_all_scores_df.index.to_numpy(), p=probabilities)
+            selected_index = np.random.choice(unblocked_all_scores_df['index'].to_numpy(), p=probabilities)
 
             # If an index was selected that was tarred before, do not do the Boltzmann selection!
             if os.path.isfile(f"{self.FOLDER_DESIGN}/{selected_index}.tar"):
@@ -574,8 +582,8 @@ def schedule_design_method(self, parent_index):
     # Make new index 
     new_index = create_new_index(self, 
                                  parent_index   = parent_index, 
-                                 luca           = self.all_scores_df.at[parent_index, 'luca'],
-                                 input_variant  = self.all_scores_df.at[parent_index, 'final_variant'],
+                                 luca           = self.all_scores_df.loc[self.all_scores_df['index']==int(parent_index), 'luca'].item(),
+                                 input_variant  = self.all_scores_df.loc[self.all_scores_df['index']==int(parent_index), 'final_variant'].item(),
                                  final_method   = final_structure_method,
                                  next_steps     = ",".join(design_methods), 
                                  design_method  = design_method)    
@@ -587,39 +595,39 @@ def start_calculation(self, selected_index: int):
     logging.debug(f"Starting new calculation for index {selected_index}.")
      
     # Check if index is still blocked, if yes --> STOP. This shouldn't happen!
-    if self.all_scores_df.at[selected_index, "blocked"] != 'unblocked':
+    if self.all_scores_df.loc[self.all_scores_df['index']==selected_index, "blocked"].item() != 'unblocked':
         logging.error(f"Index {selected_index} is being worked on. Skipping index.")
         logging.error(f"Note: This should not happen! Check blocking and Boltzman selection.")        
         return
 
-    next_steps = self.all_scores_df.at[selected_index, "next_steps"]
+    next_steps = self.all_scores_df.loc[self.all_scores_df['index']==selected_index, "next_steps"].item()
     next_steps = next_steps.split(",")
     
-    self.all_scores_df.at[selected_index, "next_steps"] = ",".join(next_steps[1:])
-    self.all_scores_df.at[selected_index, "blocked"] = next_steps[0]
+    self.all_scores_df.loc[self.all_scores_df['index']==selected_index, "next_steps"] = ",".join(next_steps[1:])
+    self.all_scores_df.loc[self.all_scores_df['index']==selected_index, "blocked"] = next_steps[0]
 
-    logging.debug(f"Starting calculation based on {self.all_scores_df.at[selected_index, 'step_input_variant']}")
+    logging.debug(f"Starting calculation based on {self.all_scores_df.loc[self.all_scores_df['index']==selected_index, 'step_input_variant'].item()}")
     if next_steps[0] in self.SYS_STRUCT_METHODS:
-        logging.debug(f"Resulting in variant {self.all_scores_df.at[selected_index, 'step_output_variant']}")
+        logging.debug(f"Resulting in variant {self.all_scores_df.loc[self.all_scores_df['index']==selected_index, 'step_output_variant'].item()}")
     
     if next_steps[0] in self.SYS_STRUCT_METHODS:
 
         logging.debug(f"before update {selected_index}")
-        logging.debug(f'previous_input_variant_for_reset {self.all_scores_df.at[selected_index, "previous_input_variant_for_reset"]}')
-        logging.debug(f'step_input_variant {self.all_scores_df.at[selected_index, "step_input_variant"]}')
-        logging.debug(f'step_output_variant {self.all_scores_df.at[selected_index, "step_output_variant"]}')
+        logging.debug(f'previous_input_variant_for_reset {self.all_scores_df.loc[self.all_scores_df["index"]==selected_index, "previous_input_variant_for_reset"].item()}')
+        logging.debug(f'step_input_variant {self.all_scores_df.loc[self.all_scores_df["index"]==selected_index, "step_input_variant"].item()}')
+        logging.debug(f'step_output_variant {self.all_scores_df.loc[self.all_scores_df["index"]==selected_index, "step_output_variant"].item()}')
         
-        self.all_scores_df.at[selected_index, "previous_input_variant_for_reset"] = self.all_scores_df.at[selected_index, "step_input_variant"]
+        self.all_scores_df.loc[self.all_scores_df['index']==selected_index, "previous_input_variant_for_reset"] = self.all_scores_df.loc[self.all_scores_df['index']==selected_index, "step_input_variant"].item()
             # Keep track to reset job!
-        self.all_scores_df.at[selected_index, "step_input_variant"] = self.all_scores_df.at[selected_index, "step_output_variant"]
+        self.all_scores_df.loc[self.all_scores_df['index']==selected_index, "step_input_variant"] = self.all_scores_df.loc[self.all_scores_df['index']==selected_index, "step_output_variant"].item()
         step_output_variant = f'{self.FOLDER_DESIGN}/{selected_index}/{self.WT}_{next_steps[0]}_{selected_index}'
-        self.all_scores_df.at[selected_index, "step_output_variant"] = step_output_variant
+        self.all_scores_df.loc[self.all_scores_df['index']==selected_index, "step_output_variant"] = step_output_variant
 
         logging.debug(f"after update {selected_index}")
-        logging.debug(f'previous_input_variant_for_reset {self.all_scores_df.at[selected_index, "previous_input_variant_for_reset"]}')
-        logging.debug(f'step_input_variant {self.all_scores_df.at[selected_index, "step_input_variant"]}')
-        logging.debug(f'step_output_variant {self.all_scores_df.at[selected_index, "step_output_variant"]}')
+        logging.debug(f'previous_input_variant_for_reset {self.all_scores_df.loc[self.all_scores_df["index"]==selected_index, "previous_input_variant_for_reset"].item()}')
+        logging.debug(f'step_input_variant {self.all_scores_df.loc[self.all_scores_df["index"]==selected_index, "step_input_variant"].item()}')
+        logging.debug(f'step_output_variant {self.all_scores_df.loc[self.all_scores_df["index"]==selected_index, "step_output_variant"].item()}')
 
-    run_design(self, selected_index, next_steps[0]) ### MOVED DOWN  BY HAB - BUG OR NOT????
+    run_design(self, selected_index, next_steps[0]) 
 
     save_all_scores_df(self)

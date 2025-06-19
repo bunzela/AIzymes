@@ -48,7 +48,6 @@ warnings.simplefilter('ignore', BiopythonParserWarning)
 import re
 
 from setup_system_001              import *
-from helper_display_structures_001 import *
 
 def check_running_jobs(self):
     """
@@ -61,15 +60,14 @@ def check_running_jobs(self):
 
     num_running_jobs={}
     
-    # Clean list of processes (not used anymore, but could be helpful at some point)
-    for p, out_file, err_file in self.processes:
-        if p.poll() is not None: # Close finished files
-            out_file.close()
-            err_file.close()
-    self.processes = [(p, out_file, err_file) for p, out_file, err_file in self.processes if p.poll() is None]
-    #logging.debug(f"{len(self.processes)} parallel jobs.")       
-    #num_running_jobs['running'] = len(self.processes) 
-    
+    # Clean list of processes
+    if hasattr(self, 'processes'):
+        for p, out_file, err_file in self.processes:
+            if p.poll() is not None: # Close finished files
+                out_file.close()
+                err_file.close()
+        self.processes = [(p, out_file, err_file) for p, out_file, err_file in self.processes if p.poll() is None]
+
     # Count number of running GPU jobs
     if self.MAX_GPUS > 0:
         for gpu, proc in self.gpus.items():
@@ -114,29 +112,47 @@ def normalize_scores(self,
 
     def neg_norm_array(array, score_type):
 
-        if len(array) > 1:  ##check that it's not only one value
-            
-            array = -array
-            
-            if norm_all:
+        if len(array) <= 1: return [1] # check that it's not only one value
+                        
+        array = -array
 
-                # Normalize using predefined min max range in self.NORM
-                array = (array-self.NORM[score_type][0])/(self.NORM[score_type][1]-self.NORM[score_type][0])
-    
-            else:
-                
-                # Normalize using mean and standard deviation
-                if np.std(array) == 0:
-                    array = np.where(np.isnan(array), array, 0.0)  # Handle case where all values are the same
-                else:
-                    array = (array - np.mean(array)) / np.std(array)
-
+        # Normalize using predefined min max range in self.NORM
+        if norm_all:
+            array = (array-self.NORM[score_type][0])/(self.NORM[score_type][1]-self.NORM[score_type][0])
             return array
-        
-        else:
-            # do not normalize if array only contains 1 value
-            return [1]
 
+        normalization_array = array.copy()
+        
+        # Take only NORM_BY_LAST items
+        if isinstance(self.NORM_BY_LAST, int):
+            if len(normalization_array) > self.NORM_BY_LAST:
+                normalization_array = normalization_array[-self.NORM_BY_LAST:]   
+
+        #import matplotlib.pyplot as plt
+        #print('XXXXXXXXXXXXXXXXXXX raw data', score_type, array.mean(), array.std())
+        #plt.show()
+        #plt.scatter(range(len(array)),array)
+        #plt.show()
+
+        p_low, p_high = np.percentile(normalization_array, [5, 95])
+        normalization_array = np.clip(normalization_array, p_low, p_high)
+        mean = normalization_array.mean()
+        std  = normalization_array.std()
+
+        if std == 0:
+            array = array - mean
+        else:            
+            array = (array - mean) / std
+            
+        #import matplotlib.pyplot as plt
+        #print('XXXXXXXXXXXXXXXXXXX normalized data', score_type, array.mean(), array.std())
+        #plt.show()
+        #plt.scatter(range(len(array)),array)
+        #plt.ylim(-1,1)
+        #plt.show()
+        
+        return array
+        
     # Normalize and stack normalized scores in combined_scores
     scores = {}
     for score_type in self.SELECTED_SCORES:  
@@ -153,9 +169,6 @@ def normalize_scores(self,
     if "efield" in self.SELECTED_SCORES:     
         scores[f'efield_{extension}']     = [x * self.WEIGHT_EFIELD for x in scores[f'efield_{extension}']]
         weight_sum += self.WEIGHT_EFIELD
-    if "catalytic" in self.SELECTED_SCORES:  
-        scores[f'catalytic_{extension}']     = [x * self.WEIGHT_CATALYTIC for x in scores[f'catalytic_{extension}']]
-        weight_sum += self.WEIGHT_CATALYTIC
     if "total" in self.SELECTED_SCORES:      
         scores[f'total_{extension}']     = [x * self.WEIGHT_TOTAL for x in scores[f'total_{extension}']]
         weight_sum += self.WEIGHT_TOTAL
@@ -165,13 +178,13 @@ def normalize_scores(self,
     if "interface" in self.SELECTED_SCORES: 
         scores[f'interface_{extension}']     = [x * self.WEIGHT_INTERFACE for x in scores[f'interface_{extension}']]
         weight_sum += self.WEIGHT_INTERFACE
-    
+
     # Calculate Final and Combined Score
     score_arrays = []
     for score_type in self.SELECTED_SCORES:
         if score_type not in ["catalytic","identical"]:  
             score_arrays.append(scores[f'{score_type}_{extension}'])
-    final_scores = np.stack(score_arrays, axis=0)
+    final_scores = np.stack(score_arrays, axis=0)    
     final_scores = np.sum(final_scores, axis=0)
     scores[f'final_{extension}'] = final_scores / weight_sum
 
@@ -179,10 +192,11 @@ def normalize_scores(self,
         scores[f'identical_{extension}']     = [x * self.WEIGHT_IDENTICAL for x in scores[f'identical_{extension}']]
         weight_sum += self.WEIGHT_IDENTICAL
         score_arrays.append(scores[f'identical_{extension}'])
+
     combined_scores = np.stack(score_arrays, axis=0)
     combined_scores = np.sum(combined_scores, axis=0)
     scores[f'combined_{extension}'] = combined_scores / weight_sum
-                
+    
     return scores
 
 def one_to_three_letter_aa(one_letter_aa):
@@ -287,9 +301,11 @@ def generate_remark_from_all_scores_df(self, index):
         str:    A multi-line string containing REMARK lines for each catalytic residue.
     """
 
-    remark = ''
-    cat_resns = str(self.all_scores_df.at[index, 'cat_resn']).split(';')
-    cat_resis = [int(float(x)) for x in str(self.all_scores_df.at[index, 'cat_resi']).split(';')]
+    remark = ''    
+    cat_resns = self.all_scores_df.loc[self.all_scores_df['index']==index, 'cat_resn'].item()
+    cat_resns = str(cat_resns).split(';')
+    cat_resis = self.all_scores_df.loc[self.all_scores_df['index']==index, 'cat_resi'].item()
+    cat_resis = [int(float(x)) for x in str(cat_resis).split(';')]
     
     remarks = []
     for idx, (cat_resi, cat_resn) in enumerate(zip(cat_resis, cat_resns), start=1):
@@ -438,6 +454,11 @@ def save_resource_log_df(self):
         raise e
 
 def get_best_structures(self):
+
+    print('SEQ_PER_ACTIVE_SITE: number of variants per unique active site sequence.')
+    print('N_HITS:              number of top variants to select in total for each score type.')
+
+          
     statistics = ""
     
     # Check for the CSV file; exit if not found.
@@ -445,25 +466,33 @@ def get_best_structures(self):
         print(f"ERROR: {self.FOLDER_HOME}/all_scores.csv does not exist!")
         sys.exit()
     
-    # Read the CSV into temp_df and drop rows with missing total_score.
-    temp_df = pd.read_csv(self.ALL_SCORES_CSV)
-    temp_df = temp_df.dropna(subset=['total_score']).copy()
-    statistics += f'All designs: {len(temp_df)}'
+    # Read the CSV into unique_scores_df and drop rows with missing total_score.
+    unique_scores_df = pd.read_csv(self.ALL_SCORES_CSV)
+    unique_scores_df = unique_scores_df.dropna(subset=['total_score']).copy()
+    statistics += f'All designs: {len(unique_scores_df)}'
 
     # Calculate normalized scores using your normalize_scores function.
-    scores = normalize_scores(self, unblocked_all_scores_df=temp_df, norm_all=False)
+    scores = normalize_scores(self, unblocked_all_scores_df=unique_scores_df, norm_all=False)
     for score in scores:
-        temp_df[score] = scores[score]
-    
+        unique_scores_df[score] = scores[score]
+        
+    # Remove bad structures below 3 standard deviations
+    for score in ['final']+[i for i in self.SELECTED_SCORES if i not in ['identical','catalytic']]:
+        score = f'{score}_score'
+        mean = unique_scores_df[score].mean()
+        std = unique_scores_df[score].std()
+        unique_scores_df = unique_scores_df[(unique_scores_df[score] >= mean - 3 * std)]
+
     # Compute group statistics based on final_score.
-    temp_df['final_score_replicate_mean'] = temp_df.groupby('sequence')['final_score'].transform('mean')
-    temp_df['final_score_replicate_std'] = temp_df.groupby('sequence')['final_score'].transform('std')
+    unique_scores_df['final_score_replicate_mean'] = unique_scores_df.groupby('sequence')['final_score'].transform('mean')
+    unique_scores_df['final_score_replicate_std'] = unique_scores_df.groupby('sequence')['final_score'].transform('std')
     
     # Create best_scores_df by sorting on final_score and keeping only one variant per sequence.
-    best_scores_df = temp_df.sort_values('final_score', ascending=False).drop_duplicates(subset=['sequence'], keep='first').copy()
-    best_scores_df.reset_index(drop=True, inplace=True)
-    statistics += f' - Unique designs: {len(best_scores_df)}'
+    unique_scores_df = unique_scores_df.sort_values('final_score', ascending=False).drop_duplicates(subset=['sequence'], keep='first')
+    statistics += f' - Unique designs: {len(unique_scores_df)}'
 
+    best_scores_df = unique_scores_df.copy()
+    
     # Get active site sequences
     if self.SEQ_PER_ACTIVE_SITE is not None:
         
@@ -474,13 +503,6 @@ def get_best_structures(self):
         active_site_position = [int(pos) for pos in self.ACTIVE_SITE.split(',')]
         best_scores_df['active_site_sequence'] = best_scores_df['sequence'].apply(lambda seq: get_active_site_sequence(seq, active_site_position))
 
-    # Filter outliers beyond ±5 standard deviations
-    for score in ['final']+[i for i in self.SELECTED_SCORES if i not in ['identical','catalytic']]:
-       if score in best_scores_df.columns:
-        mean = best_scores_df[score].mean()
-        std = best_scores_df[score].std()
-        best_scores_df = best_scores_df[(best_scores_df[score] >= mean - 5 * std) & (best_scores_df[score] <= mean + 5 * std)]
-           
     # Filter dataframe for each SELECTED_SCORES
     filtered_best_scores_df = []
     for score in ['final']+[i for i in self.SELECTED_SCORES if i not in ['identical','catalytic']]:
@@ -512,10 +534,7 @@ def get_best_structures(self):
     best_scores_df = pd.concat(filtered_best_scores_df).drop_duplicates()
     statistics += f' - Filtered designs: {len(best_scores_df)}'
     print(statistics)
-    
-    # Mark in temp_df which variants are considered best.
-    temp_df['is_best'] = temp_df['sequence'].isin(best_scores_df['sequence'])
-    
+ 
     # Plotting setup.
     score_types = [i for i in self.SELECTED_SCORES if i not in ['identical','catalytic']]
     nplots = len(score_types)
@@ -525,10 +544,8 @@ def get_best_structures(self):
     for idx, score in enumerate(score_types):
         score_col = f'{score}_score'   
         score_label = score_col.replace("_", " ")
-        sorted_by_final = temp_df.sort_values('final_score', ascending=False).copy()
-        best_by_final = sorted_by_final[sorted_by_final['is_best']]
-        axes[idx].scatter(sorted_by_final['final_score'], sorted_by_final[score_col], s=5, c="grey", label="all")
-        axes[idx].scatter(best_by_final['final_score'], best_by_final[score_col], s=5, c="b", label="best")
+        axes[idx].scatter(unique_scores_df['final_score'], unique_scores_df[score_col], s=5, c="grey", label="all")
+        axes[idx].scatter(best_scores_df['final_score'], best_scores_df[score_col], s=5, c="b", label="best")
         final_label = "final score"  # replacing final_score with "final score"
         axes[idx].set_xlabel(final_label)
         axes[idx].set_ylabel(score_label)
@@ -563,7 +580,7 @@ def get_best_structures(self):
             src_file = relax_file
         else:
             src_file = design_file
-        dest_file = os.path.join(best_structures_folder, f"{geom_mean}_{self.WT}.pdb")
+        dest_file = os.path.join(best_structures_folder, f"{geom_mean}_{self.WT}_{index}.pdb")
         shutil.copy(src_file, dest_file)
     
     # Save best scores CSV.
@@ -733,7 +750,7 @@ def create_new_index(self,
     if self.all_scores_df.empty:
         new_index = 0  
     else:
-        new_index = self.all_scores_df.index[-1] + 1 
+        new_index = self.all_scores_df['index'].max() + 1 
 
     if parent_index == 'Parent':
         generation = 0
@@ -758,20 +775,10 @@ def create_new_index(self,
 
     final_variant = f'{self.FOLDER_DESIGN}/{new_index}/{self.WT}_{final_method}_{new_index}',
 
-    ### some checks and balances need to be contorlled
-    #step_input_variant = input_variant
-    #step_output_variant = None
-    #for next_step in next_steps.split(","):
-    #    if next_step in self.SYS_STRUCT_METHODS:
-    #        step_output_variant = f'{self.FOLDER_DESIGN}/{new_index}/{self.WT}_{next_step}_{new_index}'
-    #        break
-    #if step_output_variant == None:
-    #    logging.error(f"ERROR! New design at index {new_index} initated, but next_steps: {next_steps} does not prodce any output structure!")
-    #    sys.exit()   
-        
-    # Creates a new dataframe with all the necessary columns for the new index, concatenes it with the existing all_scores dataframe and saves it
+    # Creates a new dataframe with all the necessary columns for the new index, concatenates it with the existing all_scores dataframe, and saves it
     new_index_df = pd.DataFrame({
         'parent_index': parent_index,
+        'index': new_index,
         'kbt_boltzmann': kbt_boltzmann,
         'cst_weight': cst_weight,
         'generation': generation,

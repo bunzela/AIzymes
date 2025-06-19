@@ -113,7 +113,9 @@ mv {self.FOLDER_DESIGN}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
         <Index                    name="sel_rest_{idx}"
                                   resnums="{int(float(rest_resi[0]))}" />
 """
-     
+
+    allowed_aa = ''.join(sorted(set('ACDEFGHIKLMNPQRSTVWY') - set(self.FORBIDDEN_AA)))
+    
     RosettaDesign_xml += f"""
         <Not                      name="sel_nothing"
                                   selector="sel_design" />
@@ -122,7 +124,7 @@ mv {self.FOLDER_DESIGN}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
     <TASKOPERATIONS>
    
         <OperateOnResidueSubset   name="tsk_design"                      selector="sel_design" >
-                                  <RestrictAbsentCanonicalAASRLT         aas="GPAVLIMFYWHKRQNEDST" />
+                                  <RestrictAbsentCanonicalAASRLT         aas="{allowed_aa}" />
         </OperateOnResidueSubset>
 """
     
@@ -212,13 +214,6 @@ mv {self.FOLDER_DESIGN}/{index}/{os.path.basename(PDB_input)}_0001.pdb \\
                                   disable_design         = "false"
                                   task_operations        = "tsk_design,tsk_nothing{tsk_cat}{tsk_rest}"
                                   repeats                = "{repeats}"
-                                  ramp_down_constraints  = "false"
-                                  scorefxn               = "score" />
-        
-        <FastDesign               name                   = "mv_design_no_native"
-                                  disable_design         = "false"
-                                  task_operations        = "tsk_design,tsk_nothing{tsk_cat}{tsk_rest}"
-                                  repeats                = "1"
                                   ramp_down_constraints  = "false"
                                   scorefxn               = "score" />
                                   

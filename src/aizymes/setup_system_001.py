@@ -140,7 +140,7 @@ def submit_head(self):
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task={self.MAX_JOBS}
 #SBATCH --mem={self.MEMORY}G
-#SBATCH --time=1-00:00:00
+#SBATCH --time=15:00:00
 """
     if self.MAX_GPUS > 0:
         cmd += f"""#SBATCH --gres=gpu:{self.MAX_GPUS}

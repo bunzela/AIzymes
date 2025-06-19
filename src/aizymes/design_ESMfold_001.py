@@ -83,7 +83,7 @@ trajout {working_dir_path}_new_bb.pdb
     with open(f'{working_dir_path}_CPPTraj_new_bb.in','w') as f: f.write(cpptraj)
 
     # Align substrate and ESM prediction of scaffold without hydrogens
-    cpptraj = f'''parm    {working_dir_path}_old_bb.pdb
+    cpptraj = f'''parm    {working_dir_path}_new_bb.pdb
 reference {working_dir_path}_old_bb.pdb [ref]
 trajin    {working_dir_path}_new_bb.pdb
 rmsd      @CA ref [ref]

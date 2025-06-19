@@ -80,7 +80,7 @@ def load_plot_scores_df(self):
                                    norm_all=False, 
                                    extension="score") 
     self.scores["combined_score"] = scores_tmp["combined_score"]
-    
+
     if "redox" in self.SELECTED_SCORES:
         self.scores['BioDC_redox'] = self.plot_scores_df["BioDC_redox"]
         self.HIGHSCORE['BioDC_redox'] = self.TARGET_REDOX
@@ -373,10 +373,10 @@ def plot_score_v_index(self, ax, score_type):
     normalized_scores = self.scores[score_type]
     
     # Plot score
-    ax.scatter(self.plot_scores_df.index, normalized_scores, c='lightgrey', s=5) 
-    moving_avg = pd.Series(normalized_scores).rolling(window=20).mean()
-    ax.plot(range(len(moving_avg)),moving_avg,c="k")
-
+    ax.scatter(self.plot_scores_df.index, normalized_scores, c='lightgrey', s=5)     
+    moving_avg = pd.Series(normalized_scores).rolling(window=int(len(normalized_scores)/50)).max()    
+    ax.plot(self.plot_scores_df.index,moving_avg,c="k")
+   
     if score_type == "BioDC_redox":
         ylim = (-1,1)
     else:
@@ -399,9 +399,13 @@ def plot_score_hist(self, ax, score_type):
     # Prepares data for the plot
     normalized_scores = self.scores[score_type]
 
-    xmin = -0.1
-    xmax = 1.1
-    
+    if score_type != "combined_score":
+        xmin = -0.1
+        xmax = 1.1
+    else:
+        xmin = np.percentile(normalized_scores, 5)-0.5
+        xmax = np.max(normalized_scores)+0.1
+        
     # Plot score
     ax.hist(normalized_scores, bins=np.arange(xmin,xmax,0.02),color='grey')
 
@@ -415,22 +419,19 @@ def plot_score_hist(self, ax, score_type):
             kbt_boltzmann = self.KBT_BOLTZMANN[0] * np.exp(-self.KBT_BOLTZMANN[1]*generation)
         elif len(self.KBT_BOLTZMANN) == 3:
             kbt_boltzmann = (self.KBT_BOLTZMANN[0]-self.KBT_BOLTZMANN[2])*np.exp(-self.KBT_BOLTZMANN[1]*generation)+self.KBT_BOLTZMANN[2]
-
-        """ THAT WAS A BAD IDEA! CAN BE REMOVED LIKELY SOON!!!
-        normalized_scores = np.sort(normalized_scores)[-1000:]
-        """
         
         boltzmann_factors = np.exp(normalized_scores / kbt_boltzmann)
         probabilities = boltzmann_factors / sum(boltzmann_factors)
         boltzmann_scores = np.random.choice(normalized_scores, size=100000, replace=True, p=probabilities)
         ax_dup = ax.twinx()
-        ax_dup.hist(boltzmann_scores, bins=np.arange(-0.1,1.1,0.02), density=True, alpha=0.7, color='orange', label=f'kbt = {kbt_boltzmann:.2f}')
+        ax_dup.hist(boltzmann_scores, bins=np.arange(xmin,xmax,0.02), density=True, alpha=0.7, color='orange', label=f'kbt = {kbt_boltzmann:.2f}')
         ax_dup.tick_params(axis='y', which='both', right=False, labelright=False)
         ax_dup.legend()  
 
     # Adds the two values HIGHSCORE and NEG_BEST as reference values for the top ever design and the best ever negative control value.
-    if score_type in self.HIGHSCORE: ax.axvline(self.HIGHSCORE[score_type], color='b', label='Highest Score', alpha=0.5)
-    if score_type in self.NEGBEST:   ax.axvline(self.NEGBEST[score_type], color='r', label='Negative Best', alpha=0.5)
+    if score_type != "combined_score":
+        if score_type in self.HIGHSCORE: ax.axvline(self.HIGHSCORE[score_type], color='b', label='Highest Score', alpha=0.5)
+        if score_type in self.NEGBEST:   ax.axvline(self.NEGBEST[score_type], color='r', label='Negative Best', alpha=0.5)
 
     # Sets the plot details
     ax.set_title(score_type.replace("_", " "))
@@ -478,8 +479,8 @@ def plot_score_v_generation_violin(self, ax, score_type):
         ylim = (0,1)
 
     #Adds the two values HIGHSCORE and NEG_BEST as reference values for the top ever design and the best ever negative control value.
-    if score_type in self.HIGHSCORE: ax.axhline(self.HIGHSCORE[score_type], color='b', label='Highest Score', alpha=0.5)
-    if score_type in self.NEGBEST:   ax.axhline(self.NEGBEST[score_type], color='r', label='Negative Best', alpha=0.5)
+    if score_type in self.HIGHSCORE: ax.axhline(self.HIGHSCORE[score_type], color='b', label='K3', alpha=0.5)
+    if score_type in self.NEGBEST:   ax.axhline(self.NEGBEST[score_type], color='r', label='WT', alpha=0.5)
 
     #Sets the plot details
     ax.set_title(score_type.replace("_", " "))

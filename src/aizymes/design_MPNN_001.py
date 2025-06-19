@@ -291,12 +291,8 @@ def make_bias_dict(self, PDB_input, folder_mpnn):
                 if aa not in mpnn_alphabet_dict:  
                     logging.error(f"Non-standard amino acid {aa} at residue {idx} in make_bias_dict() / designMPNN.py.")
                     sys.exit()
-                    
-                # Forbid cysteine
-                cysteine_index = mpnn_alphabet_dict['C']
-                bias_per_residue[idx, cysteine_index] = -1e6
                 
-                # Add biase to input sequence
+                # Add bias to input sequence
                 aa_index = mpnn_alphabet_dict[aa]
                 if "Soluble" in folder_mpnn:
                     bias_per_residue[idx, aa_index] = self.SolubleMPNN_BIAS 
@@ -305,15 +301,20 @@ def make_bias_dict(self, PDB_input, folder_mpnn):
                 else:
                     logging.error(f"MPNN_BIAS not defined. Error in make_bias_dict() / designMPNN.py.")
                     sys.exit()  
-                
-            # Restrict aminoacids for restricted set
+
+                # Forbidden residues
+                for forbidden_aa in self.FORBIDDEN_AA:
+                    aa_index = mpnn_alphabet_dict[forbidden_aa]
+                    bias_per_residue[idx, aa_index] = -1e6
+                    
+            # Restrict amino acids to the restricted set
             if self.RESTRICT_RESIDUES is not None:
                 for idx, resns in self.RESTRICT_RESIDUES:
                     for aa_index, aa in enumerate(mpnn_alphabet):
                         if aa in resns:
                             bias_per_residue[idx-1, aa_index] = 1
                         else:
-                            bias_per_residue[idx-1, aa_index] = -1
+                            bias_per_residue[idx-1, aa_index] = -1e6
                     
             bias_dict[input_json["name"]] = {chain: bias_per_residue.tolist()}
 

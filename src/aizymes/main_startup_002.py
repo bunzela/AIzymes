@@ -114,15 +114,17 @@ def initialize_controller(self, FOLDER_HOME):
         logging.info(f'Unblocking all')
         
         for idx, row in self.all_scores_df.iterrows():
-            if self.all_scores_df.at[idx, "blocked"] != "unblocked":
 
-                # Update "next_steps" --> make sure to remove NaN if "next_steps" is NaN
-                if pd.isna(self.all_scores_df.at[idx, "next_steps"]):
-                    self.all_scores_df.at[idx, "next_steps"] = self.all_scores_df.at[idx, "blocked"]
-                else:
-                    self.all_scores_df.at[idx, "next_steps"] = f"{self.all_scores_df.at[idx, 'blocked']},{self.all_scores_df.at[idx, 'next_steps']}"
-                self.all_scores_df.at[idx, 'step_output_variant'] = self.all_scores_df.at[idx, 'step_input_variant']
-                self.all_scores_df.at[idx, 'step_input_variant'] = self.all_scores_df.at[idx, 'previous_input_variant_for_reset']
+            if self.all_scores_df.at[idx, "blocked"] == "failed": continue
+            if self.all_scores_df.at[idx, "blocked"] == "unblocked": continue
+
+            # Update "next_steps" --> make sure to remove NaN if "next_steps" is NaN
+            if pd.isna(self.all_scores_df.at[idx, "next_steps"]):
+                self.all_scores_df.at[idx, "next_steps"] = self.all_scores_df.at[idx, "blocked"]
+            else:
+                self.all_scores_df.at[idx, "next_steps"] = f"{self.all_scores_df.at[idx, 'blocked']},{self.all_scores_df.at[idx, 'next_steps']}"
+            self.all_scores_df.at[idx, 'step_output_variant'] = self.all_scores_df.at[idx, 'step_input_variant']
+            self.all_scores_df.at[idx, 'step_input_variant'] = self.all_scores_df.at[idx, 'previous_input_variant_for_reset']
 
         self.all_scores_df["blocked"] = "unblocked"
         save_all_scores_df(self)
@@ -215,7 +217,21 @@ def initialize_variables(self):
     self.VARIABLES_JSON   = f'{self.FOLDER_HOME}/variables.json'
     self.FOLDER_PLOT      = f'{self.FOLDER_HOME}/plots' 
     self.FOLDER_DESIGN    = f'{self.FOLDER_HOME}/designs' 
-        
+
+    # Set weights to 0 if not used
+    if "efield" not in self.SELECTED_SCORES:     
+        self.WEIGHT_EFIELD = 0
+    if "total" not in self.SELECTED_SCORES:      
+        self.WEIGHT_TOTAL = 0 
+    if "redox" not in self.SELECTED_SCORES:
+        self.WEIGHT_REDOX = 0
+    if "interface" not in self.SELECTED_SCORES: 
+        self.WEIGHT_INTERFACE = 0
+    if "catalytic" not in self.SELECTED_SCORES:  
+        self.WEIGHT_CATALYTIC = 0
+    if "identical" not in self.SELECTED_SCORES:
+        self.WEIGHT_IDENTICAL = 0
+
     # Define system-specific settings
     set_system(self)    
                             
@@ -303,7 +319,7 @@ def check_settings(self):
             if not os.path.isfile(f'{self.FOLDER_INPUT}/{self.LIGAND}.{extension}'):
                 logging.error(f'File missing: {self.FOLDER_INPUT}/{self.LIGAND}.{extension}')
                 sys.exit()
-                
+
     for design_method in self.DESIGN_METHODS:
         if "RosettaDesign" not in design_method:
             if "RosettaRelax" not in design_method: 
@@ -312,6 +328,18 @@ def check_settings(self):
     if "RosettaDesign" not in self.PARENT_DES_MED:
         if "RosettaRelax" not in self.PARENT_DES_MED: 
             logging.error(f"Each Design Method must contain either RosettaDesign or RosettaRelax. PARENT_DES_MED {self.PARENT_DES_MED}")
+            sys.exit()  
+
+    for design_method in self.DESIGN_METHODS:
+        methods = [method for method in design_method if method not in self.SYS_STRUCT_METHODS]
+        for method in set(methods):
+            if methods.count(method) > 1:
+                logging.error(f"Non-structural methods must not be duplicated! Duplicate method: {method}")
+                sys.exit()              
+    methods = [method for method in self.PARENT_DES_MED if method not in self.SYS_STRUCT_METHODS]
+    for method in set(methods):
+        if methods.count(method) > 1:
+            logging.error(f"Non-structural methods must not be duplicated! Duplicate method: {method}")
             sys.exit()  
 
 def aizymes_setup(self):
@@ -365,10 +393,10 @@ def make_empty_all_scores_df(self):
     '''
     Makes the starting all_scores_df dataframe that collects all information about an AI.zymes run
     '''
-    
-    columns = ['sequence', 'parent_index', 'generation', 'total_mutations', 'parent_mutations', 'score_taken_from',
-               'design_method', 'blocked', 'next_steps', 'final_variant', 'input_variant',
-               'previous_input_variant_for_reset', 'step_input_variant', 'step_output_variant']
+    columns = ['index', 'parent_index', 'generation', 'total_mutations', 'parent_mutations', 'score_taken_from',
+               'design_method', 'blocked', 'next_steps', 
+               'final_variant', 'input_variant', 'previous_input_variant_for_reset', 'step_input_variant', 'step_output_variant',
+               'sequence']
     if self.CST_NAME is not None:
         columns.extend(['cat_resi', 'cat_resn'])
     for score in self.SELECTED_SCORES:

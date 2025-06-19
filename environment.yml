@@ -150,7 +150,7 @@ dependencies:
       - babel==2.17.0
       - bcrypt==4.2.1
       - beautifulsoup4==4.13.3
-      - biodc==3.0.0
+    # - biodc==3.0.0
       - biopython==1.84
       - bleach==6.2.0
       - boltz==0.4.1
@@ -307,4 +307,3 @@ dependencies:
       - websocket-client==1.8.0
       - widgetsnbextension==4.0.13
       - yarl==1.19.0
-prefix: /u/bunzela/conda-envs/py311

@@ -38,7 +38,7 @@ def prepare_RosettaRelax(self,
         ex = "-ex1 -ex2"
 
     PDB_input = self.all_scores_df.at[int(index), "step_input_variant"]
-     
+       
     # Create the RosettaRelax.xml file    
     RosettaRelax_xml = f"""
 <ROSETTASCRIPTS>

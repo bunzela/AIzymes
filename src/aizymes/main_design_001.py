@@ -14,6 +14,8 @@ import logging
 import sys
 import subprocess
 import re
+import shutil
+import os
 
 from helper_002               import *  # type: ignore
 
@@ -60,6 +62,18 @@ pwd
                 logging.error(f"Failed to assign a GPU for {design_step} {index}. GPUs: {self.gpus}. Error in run_design() / main_design.py")
                 sys.exit()    
             logging.debug(f"Assigned GPU for {index}_{design_step}. GPUs: {self.gpus}")
+
+    # Some methods might be run multiple times (i.e., RosettaRelax). Rename output structures to not confuse the job scheduler
+    if design_step in self.SYS_STRUCT_METHODS:
+        PDB_output = self.all_scores_df.at[int(index), "step_output_variant"]
+        if os.path.isfile(f'{PDB_output}.pdb'):
+            i = 1
+            while True:
+                if not os.path.isfile(f'{PDB_output}_previous{i}.pdb'):
+                    shutil.move(f'{PDB_output}.pdb', f'{PDB_output}_previous{i}.pdb')
+                    break
+                else:
+                    i += 1
 
     # Add correct design method
     if design_step == "ProteinMPNN":
