@@ -3,6 +3,9 @@
 **/.ipynb_checkpoints
 **/__pycache__
 
+# dist
+dist
+
 #Qsub stuff from grid
 qsub_jupyter.err
 qsub_jupyter.out
@@ -18,6 +21,9 @@ example_notebooks/*.config
 !example_notebooks/Input/**
 archive/1_AIzymes_run.tar
 
+# Stuff from chai
+.specstory
+.DS_store
 
 # FOR FITNESS LANDSCAPES
 # 1) Ignore _everything_ under fitness_landscapes (files & dirs)
@@ -26,7 +32,10 @@ fitness_landscapes/**
 # 2) Re‑include all items immediately under fitness_landscapes/
 !fitness_landscapes/*
 
-# 3) Re‑include only these file types in subdirector, where
+# 3) Re-include subdirectories themselves
+!fitness_landscapes/*/
+
+# 4) Re‑include only these file types in subdirector, where
 !fitness_landscapes/*/*.png
 !fitness_landscapes/*/*.csv
 !fitness_landscapes/*/*.xls

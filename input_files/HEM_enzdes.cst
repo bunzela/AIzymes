@@ -1,0 +1,25 @@
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name: FE NA C1A
+  TEMPLATE::   ATOM_MAP: 1 residue3:  HEM 
+  TEMPLATE::   ATOM_MAP: 2 atom_name: NE2 CE1 ND1
+  TEMPLATE::   ATOM_MAP: 2 residue1:  H
+  CONSTRAINT:: distanceAB:     2.0 0.0 100.0   1  0
+  CONSTRAINT::    angle_A:    90.0 0.0  50.0 180. 0
+  CONSTRAINT::    angle_B:   120.0 0.0  50.0 120. 0
+  CONSTRAINT::  torsion_A:     0.0 0.0  35.0  90. 0
+  CONSTRAINT:: torsion_AB:     0.0 0.0   0.0  45. 0
+  CONSTRAINT::  torsion_B:   180.0 0.0  35.0 360. 0
+CST::END
+
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name: FE NA C1A
+  TEMPLATE::   ATOM_MAP: 1 residue3:  HEM 
+  TEMPLATE::   ATOM_MAP: 2 atom_name: NE2 CE1 ND1
+  TEMPLATE::   ATOM_MAP: 2 residue1:  H
+  CONSTRAINT:: distanceAB:     2.0 0.0 100.0   1  0
+  CONSTRAINT::    angle_A:    90.0 0.0  50.0 180. 0
+  CONSTRAINT::    angle_B:   120.0 0.0  50.0 120. 0
+  CONSTRAINT::  torsion_A:     0.0 0.0  35.0  90. 0
+  CONSTRAINT:: torsion_AB:     0.0 0.0   0.0  45. 0
+  CONSTRAINT::  torsion_B:   180.0 0.0  35.0 360. 0
+CST::END

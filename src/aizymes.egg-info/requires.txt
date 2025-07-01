@@ -1,0 +1,5 @@
+numpy
+pandas
+biopython
+scikit-learn
+matplotlib

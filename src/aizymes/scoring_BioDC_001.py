@@ -7,13 +7,13 @@ Functions:
 
 import os
 import shutil
+import numpy as np
 
 def prepare_BioDC(self, 
                        index, 
                        cmd):
     """
     Redox potential calculation for {index} with BioDC
-    Currently hardcoded for m4D2
     
     Parameters:
     index (str): The index of the protein variant to be analyzed.
@@ -107,7 +107,9 @@ def get_redox_score(self, index, score_type):
     with open(f"{self.FOLDER_DESIGN}/{int(index)}/BioDC/{self.WT}_{score_type}_{index}/EE/DG.txt", "r") as f:
         redoxpotential = f.read()
     redoxpotential = float(redoxpotential.split()[-2])
-    redox_score = (self.TARGET_REDOX-redoxpotential)**2
+    #redox_score = (self.TARGET_REDOX-redoxpotential)**2 # previously used. likely junk. makred for deletion by HAB
+    redox_score = np.log(abs(self.TARGET_REDOX-redoxpotential))
+    
     return redox_score, redoxpotential
 
 def BioDC_check(self):

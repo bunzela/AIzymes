@@ -518,52 +518,45 @@ def boltzmann_selection(self):
                             extension="potential") 
         
     combined_potentials = scores["combined_potential"]
-    
-    if len(combined_potentials) > 0:
-        
-        generation=self.all_scores_df['generation'].max()
-                
-        if isinstance(self.KBT_BOLTZMANN, (float, int)):
-            kbt_boltzmann = self.KBT_BOLTZMANN
 
-        elif len(self.KBT_BOLTZMANN) == 2:
-            kbt_boltzmann = self.KBT_BOLTZMANN[0] * np.exp(-self.KBT_BOLTZMANN[1]*generation)
+    if len(unblocked_all_scores_df) == 0:
+        logging.debug(f'Boltzmann selection tries to select a variant for design, but all are blocked. Waiting 1 second')
+        time.sleep(1)
+        return None
 
-        elif len(self.KBT_BOLTZMANN) == 3:
-            kbt_boltzmann = (self.KBT_BOLTZMANN[0]-self.KBT_BOLTZMANN[2])*np.exp(-self.KBT_BOLTZMANN[1]*generation)+self.KBT_BOLTZMANN[2]
-        
-        # Some issue with numpy exp when calculating boltzman factors.
-        combined_potentials_list = [float(x) for x in combined_potentials]
-        combined_potentials = np.array(combined_potentials_list)
-        
-        boltzmann_factors = np.exp(combined_potentials / kbt_boltzmann)
-        probabilities = boltzmann_factors / sum(boltzmann_factors)
-
-        # Count and log number of NaNs before replacement
-        nan_count = np.isnan(probabilities).sum()
-        if nan_count != 0:
-            logging.debug(f"ATTENTION!!! Number of NaNs in Boltzmann probabilities: {nan_count}")
-            probabilities = np.nan_to_num(probabilities, nan=0.0)
-            probabilities = probabilities/np.sum(probabilities) # Normalize for safety
-            
-        if len(unblocked_all_scores_df) > 0:
-            
-            selected_index = np.random.choice(unblocked_all_scores_df['index'].to_numpy(), p=probabilities)
-
-            # If an index was selected that was tarred before, do not do the Boltzmann selection!
-            if os.path.isfile(f"{self.FOLDER_DESIGN}/{selected_index}.tar"):
-                return None
-                
-        else:
-            logging.debug(f'Boltzmann selection tries to select a variant for design, but all are blocked. Waiting 1 second')
-            time.sleep(1)
-            return None
-        
-    else:
+    #### HAB says: this might be junk. delete? Lets figure out later :))) Does not harm...
+    if len(combined_potentials) == 0:
         selected_index = 0
-    
-    return selected_index
+        return selected_index
+        
+    generation=self.all_scores_df['generation'].max()
+            
+    if isinstance(self.KBT_BOLTZMANN, (float, int)):
+        kbt_boltzmann = self.KBT_BOLTZMANN
 
+    elif len(self.KBT_BOLTZMANN) == 2:
+        kbt_boltzmann = self.KBT_BOLTZMANN[0] * np.exp(-self.KBT_BOLTZMANN[1]*generation)
+
+    elif len(self.KBT_BOLTZMANN) == 3:
+        kbt_boltzmann = (self.KBT_BOLTZMANN[0]-self.KBT_BOLTZMANN[2])*np.exp(-self.KBT_BOLTZMANN[1]*generation)+self.KBT_BOLTZMANN[2]
+
+    # Some issue with numpy exp when calculating boltzman factors.
+    combined_potentials_list = [float(x) for x in combined_potentials]
+    combined_potentials = np.array(combined_potentials_list)
+    
+    boltzmann_factors = np.exp(combined_potentials / kbt_boltzmann)
+    boltzmann_factors[~np.isfinite(boltzmann_factors)] = 0
+    probabilities = boltzmann_factors / sum(boltzmann_factors)
+
+    # can be deleted. HAB
+    #logging.info(f'xxxx sum(boltzmann_factors) {sum(boltzmann_factors)}')
+    #logging.info(f'xxxx combined_potentials {combined_potentials}')
+    #logging.info(f'xxxx boltzmann_factors {boltzmann_factors}')
+
+    selected_index = np.random.choice(unblocked_all_scores_df['index'].to_numpy(), p=probabilities)
+
+    return selected_index
+    
 def schedule_design_method(self, parent_index):
 
     # Select design method from self.DESIGN_METHOD

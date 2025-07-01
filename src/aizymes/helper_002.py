@@ -123,17 +123,24 @@ def normalize_scores(self,
 
         normalization_array = array.copy()
         
-        # Take only NORM_BY_LAST items
-        if isinstance(self.NORM_BY_LAST, int):
-            if len(normalization_array) > self.NORM_BY_LAST:
-                normalization_array = normalization_array[-self.NORM_BY_LAST:]   
-
         #import matplotlib.pyplot as plt
         #print('XXXXXXXXXXXXXXXXXXX raw data', score_type, array.mean(), array.std())
         #plt.show()
         #plt.scatter(range(len(array)),array)
         #plt.show()
 
+        # For identical score, remove parents because they all have the same score
+        if score_type == 'identical':
+            if len(normalization_array) > self.N_PARENTS:
+                normalization_array = normalization_array[self.N_PARENTS:] 
+            else:
+                return array # just return the values in the identical array
+
+        # Take only NORM_BY_LAST items
+        if isinstance(self.NORM_BY_LAST, int):    
+            if len(normalization_array) > self.NORM_BY_LAST:
+                normalization_array = normalization_array[-self.NORM_BY_LAST:]   
+                
         p_low, p_high = np.percentile(normalization_array, [5, 95])
         normalization_array = np.clip(normalization_array, p_low, p_high)
         mean = normalization_array.mean()
@@ -539,7 +546,8 @@ def get_best_structures(self):
     score_types = [i for i in self.SELECTED_SCORES if i not in ['identical','catalytic']]
     nplots = len(score_types)
     fig, axes = plt.subplots(1, nplots, figsize=(nplots * self.PLOT_SIZE, self.PLOT_SIZE))
-    
+    axes = np.atleast_1d(axes)
+
     # For each score type, build plots.
     for idx, score in enumerate(score_types):
         score_col = f'{score}_score'   

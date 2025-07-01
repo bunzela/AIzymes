@@ -118,6 +118,11 @@ def initialize_controller(self, FOLDER_HOME):
             if self.all_scores_df.at[idx, "blocked"] == "failed": continue
             if self.all_scores_df.at[idx, "blocked"] == "unblocked": continue
 
+            # Remove CRASH.log. Else, the variant will be marked as failed later during update scores
+            filename = os.path.join(self.FOLDER_DESIGN, str(index), 'ROSETTA_CRASH.log')
+            if os.path.exists(filename):
+                os.remove(filename)
+    
             # Update "next_steps" --> make sure to remove NaN if "next_steps" is NaN
             if pd.isna(self.all_scores_df.at[idx, "next_steps"]):
                 self.all_scores_df.at[idx, "next_steps"] = self.all_scores_df.at[idx, "blocked"]
@@ -148,7 +153,7 @@ def prepare_input_files(self):
         if not os.path.isfile(f'{self.FOLDER_INPUT}/{self.WT}.pdb'):
             logging.error(f"Input structure {self.FOLDER_INPUT}/{self.WT}.pdb is missing!")
             sys.exit()  
-        n_input_structures = 1
+        self.N_INPUT_STRUCTURES = 1
         shutil.copy(f'{self.FOLDER_INPUT}/{self.WT}.pdb', f'{self.FOLDER_PARENT}/{self.WT}.pdb')
 
     else:
@@ -157,13 +162,13 @@ def prepare_input_files(self):
         if not pdb_files:
             logging.error(f"No pdb files found in {self.FOLDER_PAR_STRUC}.")
             sys.exit()  
-        n_input_structures = len(pdb_files)
+        self.N_INPUT_STRUCTURES = len(pdb_files)
         for pdb_file in pdb_files:
             shutil.copy(pdb_file, self.FOLDER_PARENT)
 
-    n_parents = self.N_PARENT_JOBS * n_input_structures
-    if n_parents < self.MAX_JOBS:
-        logging.error(f"Attention! N_PARENT_JOBS * n_input_structures must be > MAX_JOBS. n_parents: {n_parents}, MAX_JOBS: {self.MAX_JOBS}.")
+    self.N_PARENTS = self.N_PARENT_JOBS * self.N_INPUT_STRUCTURES
+    if self.N_PARENTS < self.MAX_JOBS:
+        logging.error(f"Attention! N_PARENT_JOBS * self.N_INPUT_STRUCTURES must be > MAX_JOBS. N_PARENTS: {self.N_PARENTS}, MAX_JOBS: {self.MAX_JOBS}.")
         
     # Copy .cst file
     if self.CST_NAME is not None:
@@ -356,7 +361,7 @@ def aizymes_setup(self):
     ''') != 'y': 
         print("AIzymes reset aborted.")
         return # Do not reset. 
-
+        
     # Check all settings
     check_settings(self)
             

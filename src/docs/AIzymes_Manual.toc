@@ -1,0 +1,161 @@
+\contentsline {section}{\numberline {1}Installation}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Installation via GitHub}{1}{subsection.1.1}%
+\contentsline {section}{\numberline {2}Quick Start}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Create an Instance of the AI.zymes class}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Set up AI.zymes for design}{2}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Submit controller to run AI.zymes}{3}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Analysis tools to check AI.zymes}{4}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Extract best structures after AI.zymes run}{4}{subsection.2.5}%
+\contentsline {section}{\numberline {3}Available Tools}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Protein Design Tolls}{6}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Rosetta}{6}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}LigandMPNN}{6}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}SolubleMPNN and ProteinMPNN}{6}{subsubsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.2}Structure Prediction Tools}{6}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}AlphaFold3}{7}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}ESMFold}{7}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}AmberTools}{7}{subsubsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.3}Scoring Tools}{7}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}FieldTools}{7}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}BioDC}{7}{subsubsection.3.3.2}%
+\contentsline {section}{\numberline {4}Introduction}{8}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Coding philosophy}{8}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Basic concepts}{9}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Evolutionary "rounds" in AI.zymes}{9}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Scoring metrics}{9}{subsubsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.3}System startup}{9}{subsubsection.4.2.3}%
+\contentsline {subsubsection}{\numberline {4.2.4}Controller}{10}{subsubsection.4.2.4}%
+\contentsline {subsubsection}{\numberline {4.2.5}Boltzmann selection}{10}{subsubsection.4.2.5}%
+\contentsline {subsubsection}{\numberline {4.2.6}Database}{11}{subsubsection.4.2.6}%
+\contentsline {subsection}{\numberline {4.3}Available Modules in AI.zymes}{11}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Design with RosettaDesign}{11}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}Design using ProteinMPNN}{11}{subsubsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.3}Structure prediction with ESMfold, RosettaRelax and MDMin}{12}{subsubsection.4.3.3}%
+\contentsline {subsubsection}{\numberline {4.3.4}Electric field calculations}{12}{subsubsection.4.3.4}%
+\contentsline {section}{\numberline {5}Full Manual}{13}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Input preperation}{13}{subsection.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.1}Input files for Rosettta}{13}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}Input files Amber (MDMin, FieldTools)}{13}{subsubsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.2}Create an Instance of the AI.zymes class}{13}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Set up AI.zymes for design}{13}{subsection.5.3}%
+\contentsline {subsubsection}{\numberline {5.3.1}General settings}{14}{subsubsection.5.3.1}%
+\contentsline {subsubsection}{\numberline {5.3.2}General design settings}{14}{subsubsection.5.3.2}%
+\contentsline {subsubsection}{\numberline {5.3.3}RosettaDesign settings}{14}{subsubsection.5.3.3}%
+\contentsline {subsubsection}{\numberline {5.3.4}RosettaDRelax settings}{14}{subsubsection.5.3.4}%
+\contentsline {subsubsection}{\numberline {5.3.5}ProteinMPNN settings}{14}{subsubsection.5.3.5}%
+\contentsline {subsubsection}{\numberline {5.3.6}AlphaFold3 settings}{14}{subsubsection.5.3.6}%
+\contentsline {subsubsection}{\numberline {5.3.7}ESMFold settings}{14}{subsubsection.5.3.7}%
+\contentsline {subsubsection}{\numberline {5.3.8}MDMin settings}{14}{subsubsection.5.3.8}%
+\contentsline {subsubsection}{\numberline {5.3.9}Electric Field settings}{14}{subsubsection.5.3.9}%
+\contentsline {subsubsection}{\numberline {5.3.10}BioDC settings}{15}{subsubsection.5.3.10}%
+\contentsline {subsection}{\numberline {5.4}Submit controller to run AI.zymes}{15}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Analysis tools to check AI.zymes}{15}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Extract best structures after AI.zymes run}{15}{subsection.5.6}%
+\contentsline {section}{\numberline {6}Code}{16}{section.6}%
+\contentsline {subsection}{\numberline {6.1}design\_AlphaFold3.py}{16}{subsection.6.1}%
+\contentsline {subsubsection}{\numberline {6.1.1}seq\_to\_json()}{16}{subsubsection.6.1.1}%
+\contentsline {subsubsection}{\numberline {6.1.2}prepare\_AlphaFold3\_MSA()}{16}{subsubsection.6.1.2}%
+\contentsline {subsubsection}{\numberline {6.1.3}prepare\_AlphaFold3\_INF()}{16}{subsubsection.6.1.3}%
+\contentsline {subsection}{\numberline {6.2}design\_ESMfold.py}{16}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}prepare\_ESMfold()}{17}{subsubsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.3}design\_match.py}{17}{subsection.6.3}%
+\contentsline {subsubsection}{\numberline {6.3.1}run\_RosettaMatch()}{17}{subsubsection.6.3.1}%
+\contentsline {subsubsection}{\numberline {6.3.2}run\_Matcher()}{17}{subsubsection.6.3.2}%
+\contentsline {subsubsection}{\numberline {6.3.3}run\_Matcher\_apo()}{17}{subsubsection.6.3.3}%
+\contentsline {subsubsection}{\numberline {6.3.4}separate\_matches()}{17}{subsubsection.6.3.4}%
+\contentsline {subsection}{\numberline {6.4}design\_MDMin.py}{17}{subsection.6.4}%
+\contentsline {subsubsection}{\numberline {6.4.1}prepare\_MDMin()}{17}{subsubsection.6.4.1}%
+\contentsline {subsection}{\numberline {6.5}design\_MPNN.py}{18}{subsection.6.5}%
+\contentsline {subsubsection}{\numberline {6.5.1}prepare\_LigandMPNN()}{18}{subsubsection.6.5.1}%
+\contentsline {subsubsection}{\numberline {6.5.2}prepare\_ProteinMPNN()}{18}{subsubsection.6.5.2}%
+\contentsline {subsubsection}{\numberline {6.5.3}prepare\_SolubleMPNN()}{18}{subsubsection.6.5.3}%
+\contentsline {subsubsection}{\numberline {6.5.4}make\_bias\_dict()}{18}{subsubsection.6.5.4}%
+\contentsline {subsubsection}{\numberline {6.5.5}ProteinMPNN\_check()}{19}{subsubsection.6.5.5}%
+\contentsline {subsubsection}{\numberline {6.5.6}LigandMPNN\_check()}{19}{subsubsection.6.5.6}%
+\contentsline {subsection}{\numberline {6.6}design\_RosettaDesign.py}{19}{subsection.6.6}%
+\contentsline {subsubsection}{\numberline {6.6.1}prepare\_RosettaDesign()}{19}{subsubsection.6.6.1}%
+\contentsline {subsection}{\numberline {6.7}design\_RosettaRelax.py}{19}{subsection.6.7}%
+\contentsline {subsubsection}{\numberline {6.7.1}prepare\_RosettaRelax()}{19}{subsubsection.6.7.1}%
+\contentsline {subsection}{\numberline {6.8}helper.py}{19}{subsection.6.8}%
+\contentsline {subsubsection}{\numberline {6.8.1}normalize\_scores()}{20}{subsubsection.6.8.1}%
+\contentsline {subsubsection}{\numberline {6.8.2}one\_to\_three\_letter\_aa()}{20}{subsubsection.6.8.2}%
+\contentsline {subsubsection}{\numberline {6.8.3}run\_command()}{21}{subsubsection.6.8.3}%
+\contentsline {subsubsection}{\numberline {6.8.4}load\_main\_variables()}{21}{subsubsection.6.8.4}%
+\contentsline {subsubsection}{\numberline {6.8.5}save\_main\_variables()}{21}{subsubsection.6.8.5}%
+\contentsline {subsubsection}{\numberline {6.8.6}sequence\_from\_pdb()}{21}{subsubsection.6.8.6}%
+\contentsline {subsubsection}{\numberline {6.8.7}generate\_remark\_from\_all\_scores\_df()}{21}{subsubsection.6.8.7}%
+\contentsline {subsubsection}{\numberline {6.8.8}save\_cat\_res\_into\_all\_scores\_df()}{21}{subsubsection.6.8.8}%
+\contentsline {subsubsection}{\numberline {6.8.9}reset\_to\_after\_parent\_design()}{22}{subsubsection.6.8.9}%
+\contentsline {subsubsection}{\numberline {6.8.10}reset\_to\_after\_index()}{22}{subsubsection.6.8.10}%
+\contentsline {subsubsection}{\numberline {6.8.11}save\_all\_scores\_df()}{22}{subsubsection.6.8.11}%
+\contentsline {subsubsection}{\numberline {6.8.12}save\_resource\_log\_df()}{22}{subsubsection.6.8.12}%
+\contentsline {subsubsection}{\numberline {6.8.13}get\_best\_structures()}{22}{subsubsection.6.8.13}%
+\contentsline {subsubsection}{\numberline {6.8.14}remove\_intersection\_best\_structures()}{22}{subsubsection.6.8.14}%
+\contentsline {subsubsection}{\numberline {6.8.15}trace\_mutation\_tree()}{22}{subsubsection.6.8.15}%
+\contentsline {subsubsection}{\numberline {6.8.16}wait\_for\_file()}{22}{subsubsection.6.8.16}%
+\contentsline {subsubsection}{\numberline {6.8.17}hamming\_distance()}{22}{subsubsection.6.8.17}%
+\contentsline {subsubsection}{\numberline {6.8.18}exponential\_func()}{22}{subsubsection.6.8.18}%
+\contentsline {subsubsection}{\numberline {6.8.19}create\_new\_index()}{22}{subsubsection.6.8.19}%
+\contentsline {subsubsection}{\numberline {6.8.20}count\_mutations()}{22}{subsubsection.6.8.20}%
+\contentsline {subsubsection}{\numberline {6.8.21}print\_statistics\_df()}{22}{subsubsection.6.8.21}%
+\contentsline {subsubsection}{\numberline {6.8.22}neg\_norm\_array()}{22}{subsubsection.6.8.22}%
+\contentsline {subsubsection}{\numberline {6.8.23}get\_mutations()}{23}{subsubsection.6.8.23}%
+\contentsline {subsubsection}{\numberline {6.8.24}count\_offspring()}{23}{subsubsection.6.8.24}%
+\contentsline {subsubsection}{\numberline {6.8.25}plot\_scores()}{23}{subsubsection.6.8.25}%
+\contentsline {subsubsection}{\numberline {6.8.26}get\_active\_site\_sequence()}{23}{subsubsection.6.8.26}%
+\contentsline {subsection}{\numberline {6.9}main\_design.py}{23}{subsection.6.9}%
+\contentsline {subsubsection}{\numberline {6.9.1}run\_design()}{23}{subsubsection.6.9.1}%
+\contentsline {subsection}{\numberline {6.10}main\_running.py}{23}{subsection.6.10}%
+\contentsline {subsubsection}{\numberline {6.10.1}start\_controller()}{23}{subsubsection.6.10.1}%
+\contentsline {subsubsection}{\numberline {6.10.2}select\_scheduled\_variant()}{24}{subsubsection.6.10.2}%
+\contentsline {subsubsection}{\numberline {6.10.3}check\_running\_jobs()}{24}{subsubsection.6.10.3}%
+\contentsline {subsubsection}{\numberline {6.10.4}update\_potential()}{24}{subsubsection.6.10.4}%
+\contentsline {subsubsection}{\numberline {6.10.5}update\_scores()}{24}{subsubsection.6.10.5}%
+\contentsline {subsubsection}{\numberline {6.10.6}update\_resource\_log()}{24}{subsubsection.6.10.6}%
+\contentsline {subsubsection}{\numberline {6.10.7}boltzmann\_selection()}{24}{subsubsection.6.10.7}%
+\contentsline {subsubsection}{\numberline {6.10.8}schedule\_design\_method()}{25}{subsubsection.6.10.8}%
+\contentsline {subsubsection}{\numberline {6.10.9}start\_calculation()}{25}{subsubsection.6.10.9}%
+\contentsline {subsection}{\numberline {6.11}main\_scripts.py}{25}{subsection.6.11}%
+\contentsline {subsubsection}{\numberline {6.11.1}make\_main\_scripts()}{25}{subsubsection.6.11.1}%
+\contentsline {subsection}{\numberline {6.12}main\_startup.py}{25}{subsection.6.12}%
+\contentsline {subsubsection}{\numberline {6.12.1}submit\_controller\_parallel()}{25}{subsubsection.6.12.1}%
+\contentsline {subsubsection}{\numberline {6.12.2}initialize\_controller()}{25}{subsubsection.6.12.2}%
+\contentsline {subsubsection}{\numberline {6.12.3}prepare\_input\_files()}{25}{subsubsection.6.12.3}%
+\contentsline {subsubsection}{\numberline {6.12.4}initialize\_variables()}{25}{subsubsection.6.12.4}%
+\contentsline {subsubsection}{\numberline {6.12.5}initialize\_logging()}{25}{subsubsection.6.12.5}%
+\contentsline {subsubsection}{\numberline {6.12.6}check\_settings()}{25}{subsubsection.6.12.6}%
+\contentsline {subsubsection}{\numberline {6.12.7}aizymes\_setup()}{25}{subsubsection.6.12.7}%
+\contentsline {subsubsection}{\numberline {6.12.8}make\_empty\_all\_scores\_df()}{25}{subsubsection.6.12.8}%
+\contentsline {subsubsection}{\numberline {6.12.9}make\_empty\_resource\_log\_df()}{25}{subsubsection.6.12.9}%
+\contentsline {subsubsection}{\numberline {6.12.10}schedlue\_parent\_design()}{25}{subsubsection.6.12.10}%
+\contentsline {subsection}{\numberline {6.13}plotting.py}{25}{subsection.6.13}%
+\contentsline {subsubsection}{\numberline {6.13.1}make\_plots()}{25}{subsubsection.6.13.1}%
+\contentsline {subsubsection}{\numberline {6.13.2}load\_plot\_scores\_df()}{25}{subsubsection.6.13.2}%
+\contentsline {subsubsection}{\numberline {6.13.3}plot\_statistics()}{25}{subsubsection.6.13.3}%
+\contentsline {subsubsection}{\numberline {6.13.4}plot\_scores\_hist()}{25}{subsubsection.6.13.4}%
+\contentsline {subsubsection}{\numberline {6.13.5}plot\_scores\_v\_index()}{25}{subsubsection.6.13.5}%
+\contentsline {subsubsection}{\numberline {6.13.6}plot\_scores\_v\_generation()}{26}{subsubsection.6.13.6}%
+\contentsline {subsubsection}{\numberline {6.13.7}plot\_mutations\_v\_generation()}{26}{subsubsection.6.13.7}%
+\contentsline {subsubsection}{\numberline {6.13.8}print\_vals()}{26}{subsubsection.6.13.8}%
+\contentsline {subsubsection}{\numberline {6.13.9}combine\_images()}{26}{subsubsection.6.13.9}%
+\contentsline {subsubsection}{\numberline {6.13.10}plot\_resource\_log()}{26}{subsubsection.6.13.10}%
+\contentsline {subsubsection}{\numberline {6.13.11}plot\_score\_v\_index()}{26}{subsubsection.6.13.11}%
+\contentsline {subsubsection}{\numberline {6.13.12}plot\_score\_hist()}{26}{subsubsection.6.13.12}%
+\contentsline {subsubsection}{\numberline {6.13.13}plot\_score\_v\_generation\_violin()}{26}{subsubsection.6.13.13}%
+\contentsline {subsection}{\numberline {6.14}plotting\_tree.py}{26}{subsection.6.14}%
+\contentsline {subsubsection}{\numberline {6.14.1}plot\_tree()}{26}{subsubsection.6.14.1}%
+\contentsline {subsubsection}{\numberline {6.14.2}calculate\_subtree\_sizes()}{26}{subsubsection.6.14.2}%
+\contentsline {subsubsection}{\numberline {6.14.3}assign\_polar\_positions()}{26}{subsubsection.6.14.3}%
+\contentsline {subsubsection}{\numberline {6.14.4}adjust\_uniform\_angles()}{26}{subsubsection.6.14.4}%
+\contentsline {subsubsection}{\numberline {6.14.5}polar\_to\_cartesian()}{26}{subsubsection.6.14.5}%
+\contentsline {subsection}{\numberline {6.15}scoring\_BioDC.py}{26}{subsection.6.15}%
+\contentsline {subsubsection}{\numberline {6.15.1}prepare\_BioDC()}{26}{subsubsection.6.15.1}%
+\contentsline {subsubsection}{\numberline {6.15.2}get\_redox\_score()}{26}{subsubsection.6.15.2}%
+\contentsline {subsubsection}{\numberline {6.15.3}BioDC\_check()}{26}{subsubsection.6.15.3}%
+\contentsline {subsection}{\numberline {6.16}scoring\_efields.py}{27}{subsection.6.16}%
+\contentsline {subsubsection}{\numberline {6.16.1}prepare\_efields()}{27}{subsubsection.6.16.1}%
+\contentsline {subsubsection}{\numberline {6.16.2}get\_efields\_score()}{27}{subsubsection.6.16.2}%
+\contentsline {subsubsection}{\numberline {6.16.3}update\_efieldsdf()}{27}{subsubsection.6.16.3}%
+\contentsline {subsection}{\numberline {6.17}setup\_system.py}{27}{subsection.6.17}%
+\contentsline {subsubsection}{\numberline {6.17.1}set\_system()}{27}{subsubsection.6.17.1}%
+\contentsline {subsubsection}{\numberline {6.17.2}submit\_head()}{27}{subsubsection.6.17.2}%

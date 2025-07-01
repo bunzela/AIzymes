@@ -175,7 +175,7 @@ def plot_scores_hist(self):
             score_type = "combined"
         else:
             score_type = self.SELECTED_SCORES[idx - 1]
-            
+
         plot_score_hist(self, ax, f'{score_type}_score')
         
     plt.tight_layout()
@@ -403,8 +403,23 @@ def plot_score_hist(self, ax, score_type):
         xmin = -0.1
         xmax = 1.1
     else:
-        xmin = np.percentile(normalized_scores, 5)-0.5
+        xmin = np.percentile(normalized_scores, 10)-0.5
         xmax = np.max(normalized_scores)+0.1
+
+
+
+def plot_score_hist(self, ax, score_type):
+    
+    normalized_scores = np.array(self.scores[score_type])
+    normalized_scores = normalized_scores[np.isfinite(normalized_scores)]
+    cut_min, cut_max = -2, 2
+    normalized_scores = normalized_scores[(normalized_scores >= cut_min) & (normalized_scores <= cut_max)]
+
+    if score_type != "combined_score":
+        xmin, xmax = -0.1, 1.1
+    else:
+        xmin = max(np.percentile(normalized_scores, 5) - 0.5, cut_min)
+        xmax = min(np.max(normalized_scores) + 0.1, cut_max)
         
     # Plot score
     ax.hist(normalized_scores, bins=np.arange(xmin,xmax,0.02),color='grey')
